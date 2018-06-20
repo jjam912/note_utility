@@ -1,5 +1,5 @@
 """
-This module contains 3 classes that are used to store data from a file and turn them into usable notes.
+This module contains classes that are used to store data from a file and turn them into usable notes.
 """
 import random
 
@@ -17,12 +17,15 @@ class NoteUtil:
             notes, but with newlines included.
         notes_list : list of str
             list created after splitting notes_newlines using "\n".
+        line_index : int
+            Pointer to the next line to pass chronologically
 
         Constants
         ---------
             KEY_NOTES : str
             KEY_NOTES_NEWLINES : str
             KEY_NOTES_LIST : str
+            KEY_LINE_INDEX : str
 
     Special Methods
     ---------------
@@ -34,8 +37,9 @@ class NoteUtil:
     KEY_NOTES = "notes"
     KEY_NOTES_NEWLINES = "notes_newlines"
     KEY_NOTES_LIST = "notes_list"
+    KEY_LINE_INDEX = "line_index"
 
-    def __init__(self, file_name: str=""):
+    def __init__(self, file_name: str="", comments: str=""):
         """
         Creates empty versions of all variables.
         If a file is supplied, set the variables.
@@ -44,14 +48,17 @@ class NoteUtil:
         ----------
         file_name : str
             Name of the file to be converted into noteutil.
+        comments : str
+            Prefix of lines to be ignored.
         """
 
         self.notes = ""
         self.notes_newlines = ""
         self.notes_list = []
+        self.line_index = 0
 
-        if file_name != "":
-            NoteUtil.make_notes(self, file_name)
+        if file_name != "" and comments != "":
+            NoteUtil.make_notes(self, file_name, comments)
 
     def __str__(self):
         """
@@ -64,12 +71,12 @@ class NoteUtil:
         """
 
         message = "NoteUtil:\n"
-        message += "Notes string: " + self.get_notes() + "\n"
-        message += "Notes string with newlines: " + self.get_notes_newlines() + "\n"
-        message += "Notes list: " + str(self.get_notes_list()) + "\n"
+        message += "Notes string: " + self.notes + "\n"
+        message += "Notes string with newlines: " + self.notes_newlines + "\n"
+        message += "Notes list: " + str(self.notes_list) + "\n"
         return message
 
-    def make_notes(self, file_name: str):
+    def make_notes(self, file_name: str, comments: str):
         """
         Converts all the data from the file into variables.
 
@@ -77,6 +84,8 @@ class NoteUtil:
         ----------
         file_name : str
             Name of the file to extract data from.
+        comments : str
+            Prefix of lines to be ignored.
 
         Returns
         -------
@@ -85,10 +94,10 @@ class NoteUtil:
         Notes
         -----
         Implementation
-            0. Read the file.
-            1. Create notes by splitting by \n and then joining all the strings.
-            2. Create notes_newlines, which is file.read() by default.
-            3. Create notes_list by splitting by \n.
+            0. Open and read the file.
+            1. Iterate through each line.
+            2. Skip any lines that begin with the 'comments' parameter.
+            3. Make the raw notes, notes with newlines, and notes list.
 
         In effect, this is also a setter method.
 
@@ -96,11 +105,14 @@ class NoteUtil:
 
         # Opening file 3 times just to make sure the data is not changed while reading
         file = open(file_name, mode="r", encoding="UTF-8")
-        self.notes = "".join(file.read().split("\n"))
-        file = open(file_name, mode="r", encoding="UTF-8")
-        self.notes_newlines = file.read()
-        file = open(file_name, mode="r", encoding="UTF-8")
-        self.notes_list = file.read().split("\n")
+        data = file.readlines()
+        for line in data:
+            line = line.strip()
+            if line.startswith(comments):
+                continue
+            self.notes += line
+            self.notes_newlines += line + "\n"
+            self.notes_list.append(line)
 
     def to_dict(self):
         """
@@ -113,9 +125,10 @@ class NoteUtil:
         """
 
         notes = dict()
-        notes[self.KEY_NOTES] = self.get_notes()
-        notes[self.KEY_NOTES_NEWLINES] = self.get_notes_newlines()
-        notes[self.KEY_NOTES_LIST] = self.get_notes_list()
+        notes[self.KEY_NOTES] = self.get_notes
+        notes[self.KEY_NOTES_NEWLINES] = self.notes_newlines
+        notes[self.KEY_NOTES_LIST] = self.notes_list
+        notes[self.KEY_LINE_INDEX] = self.line_index
         return notes
 
     @staticmethod
@@ -143,6 +156,36 @@ class NoteUtil:
         noteutil.notes_newlines = notes[NoteUtil.KEY_NOTES_NEWLINES]
         noteutil.notes_list = notes[NoteUtil.KEY_NOTES_LIST]
         return noteutil
+
+    def reset(self):
+        """
+        Resets any pointers to notes
+        Does not reset notes (use make_notes() for that)
+
+        Returns
+        -------
+        None
+        """
+
+        self.line_index = 0
+
+    def get_line(self):
+        """
+        Retrieves a line of notes, moving chronologically.
+        Resets to the first (top) line when all lines have been retrieved.
+
+        Returns
+        -------
+        str
+            The next line in the notes list.
+        """
+
+        line = self.notes_list[self.line_index]
+        self.line_index += 1
+        if self.line_index == len(self.notes_list):
+            self.line_index = 0
+            print("All notes have been read.")
+        return line
 
     def get_notes(self):
         """
@@ -218,7 +261,7 @@ class SubjectText(NoteUtil):
     KEY_RANDOM = "random"
     KEY_SUBJECT = "subject"
 
-    def __init__(self, file_name: str="", subject: str=""):
+    def __init__(self, file_name: str="", comments: str="", subject: str=""):
         """
         Creates empty versions of all variables.
         If a file and subject is supplied, set the variables.
@@ -227,11 +270,13 @@ class SubjectText(NoteUtil):
         ----------
         file_name : str
             Name of the file to be converted into SubjectText.
+        comments : str
+            Prefix of lines to be ignored
         subject : str
             Name of the subject (that appears twice)
         """
 
-        super(SubjectText, self).__init__(file_name)
+        super(SubjectText, self).__init__(file_name, comments)
         self.subject = ""
         self.tips_start_index = -1
         self.tips_end_index = -1
@@ -276,7 +321,7 @@ class SubjectText(NoteUtil):
         notes[self.KEY_TIPS_END_INDEX] = self.tips_end_index
         notes[self.KEY_TIPS_INDEX] = self.tips_index
         notes[self.KEY_RANDOM] = self.random
-        notes[self.KEY_SUBJECT] = self.get_subject()
+        notes[self.KEY_SUBJECT] = self.subject
         return notes
 
     def _find_tips(self):
@@ -290,11 +335,11 @@ class SubjectText(NoteUtil):
         """
 
         for index in range(len(self.notes_list)):
-            if self.notes_list[index] == self.get_subject():
+            if self.notes_list[index] == self.subject:
                 self.tips_start_index = index
                 break
         for index in range(self.tips_start_index + 1, len(self.notes_list)):
-            if self.notes_list[index] == self.get_subject():
+            if self.notes_list[index] == self.subject:
                 self.tips_end_index = index
                 break
 
@@ -302,7 +347,7 @@ class SubjectText(NoteUtil):
             raise EOFError("Start or end of subject not found. Please make sure that there are two lines"
                            " that have your subject.")
 
-    def make_notes(self, file_name: str, subject: str):
+    def make_notes(self, file_name: str, comments: str, subject: str):
         """
         Converts all the data from the file into variables.
 
@@ -328,7 +373,7 @@ class SubjectText(NoteUtil):
 
         """
 
-        super(SubjectText, self).make_notes(file_name)
+        super(SubjectText, self).make_notes(file_name, comments)
         self.subject = subject
         self._find_tips()
         for index in range(self.tips_start_index + 1, self.tips_end_index):
@@ -477,7 +522,7 @@ class KeyValueNoteUtil(NoteUtil):
 
         message = super().__str__()
         message += "KeyValueNoteUtil:\n"
-        message += "Notes dict: " + str(self.get_notes_dict()) + "\n"
+        message += "Notes dict: " + str(self.notes_dict) + "\n"
         message += "Notes dict key indexes: " + str(self.key_indexes) + "\n"
         return message
 
@@ -493,7 +538,7 @@ class KeyValueNoteUtil(NoteUtil):
 
         notes = super().to_dict()
         notes[self.KEY_DELIM] = self.delim
-        notes[self.KEY_NOTES_DICT] = self.get_notes_dict()
+        notes[self.KEY_NOTES_DICT] = self.notes_dict
         notes[self.KEY_KEY_INDEXES] = self.key_indexes
         return notes
 
@@ -544,7 +589,7 @@ class KeyValueNoteUtil(NoteUtil):
             8. Print a different error message if the Tuple size is greater than 3, indicating an extra colon.
         """
 
-        notes_list_copy = self.get_notes_list().copy()                                                          # 1
+        notes_list_copy = self.notes_list.copy()                                                                # 1
         for index in range(len(notes_list_copy)):
             notes_list_copy[index] = notes_list_copy[index].split(self.delim)                                   # 2, 3
 
@@ -577,7 +622,7 @@ class KeyValueNoteUtil(NoteUtil):
         -------
         None
         """
-        self.key_indexes = [x for x in range(len(self.get_notes_dict()))]
+        self.key_indexes = [x for x in range(len(self.notes_dict))]
 
     def get_notes_dict(self):
         """
@@ -626,7 +671,7 @@ class KeyValueNoteUtil(NoteUtil):
         """
 
         value_list = []
-        for k, v in self.get_notes_dict().items():
+        for k, v in self.notes_dict.items():
             if key.lower() in k.lower():
                 value_list.append(v)
         return value_list
@@ -648,7 +693,7 @@ class KeyValueNoteUtil(NoteUtil):
             If no keys are found that have the exact value as the one provided.
         """
 
-        for k, v in self.get_notes_dict().items():
+        for k, v in self.notes_dict.items():
             if v.lower() == value.lower():
                 return k
         return None
@@ -677,7 +722,7 @@ class KeyValueNoteUtil(NoteUtil):
         key_list = []
 
         if value != "":
-            for k, v in self.get_notes_dict().items():
+            for k, v in self.notes_dict.items():
                 if value.lower() in v.lower() or value.lower() in k.lower():
                     key_list.append(k)
 
@@ -745,6 +790,7 @@ class KeyValueNoteUtil(NoteUtil):
         return self.get_key_value(rand_index)
 
     def get_index(self, key: str="", value: str=""):
+
         """
         Returns the index of a key or value if it matches exactly.
 
@@ -761,7 +807,7 @@ class KeyValueNoteUtil(NoteUtil):
         """
 
         index = 0
-        for k, v in self.get_notes_dict().items():
+        for k, v in self.notes_dict.items():
             if k.lower() == key.lower() or v.lower() == value.lower():
                 return index
             index += 1
@@ -794,4 +840,10 @@ class KeyValueNoteUtil(NoteUtil):
         return noteutil
 
 
+notes = NoteUtil("test_notes.txt", "#")
+print(notes)
+for _ in range(10):
+    print(notes.get_line())
+notes.reset()
+print(notes.get_line())
 
