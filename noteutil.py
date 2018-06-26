@@ -476,7 +476,7 @@ class NoteUtil:
 #         return subject_text
 
 
-class KeyValueNoteUtil(NoteUtil):
+class PairedNoteUtil(NoteUtil):
     """
     Splits all lines in notes_list into key, value pairs known as Terms and Definitions.
     Terms and Definitions are separated by delimeters, which occur only once in each line but can be any character.
@@ -496,7 +496,6 @@ class KeyValueNoteUtil(NoteUtil):
             Used to make sure terms are not repeating.
 
         Keys that are used for converting to a dictionary.
-            KEY_DELIMETER : str
             KEY_DICT_INDEX : str
             KEY_DICT_INDEXES : str
 
@@ -507,7 +506,6 @@ class KeyValueNoteUtil(NoteUtil):
 
     """
 
-    KEY_DELIMETER = "delimeter"
     KEY_DICT_INDEX = "dict_index"
     KEY_DICT_INDEXES = "dict_indexes"
 
@@ -519,7 +517,7 @@ class KeyValueNoteUtil(NoteUtil):
         Parameters
         ----------
         file_name : str
-            Name of the file to be converted into KeyValueNoteUtil.
+            Name of the file to be converted into PairedNoteUtil.
         comments : str
             The prefix of lines that will be ignored.
         delimeter : str
@@ -547,7 +545,7 @@ class KeyValueNoteUtil(NoteUtil):
         """
 
         message = super().__str__() + "\n"
-        message += "KeyValueNoteUtil:\n"
+        message += "PairedNoteUtil:\n"
         message += "Delimeter: " + self.delimeter + "\n"
         message += "Notes dict: \n"
         for t, d in self.notes_dict.items():
@@ -568,7 +566,6 @@ class KeyValueNoteUtil(NoteUtil):
         """
 
         notes = super().to_dict()
-        notes[self.KEY_DELIMETER] = self.delimeter
         notes[self.KEY_DICT_INDEX] = self.dict_index
         notes[self.KEY_DICT_INDEXES] = self.dict_indexes
         return notes
@@ -577,7 +574,7 @@ class KeyValueNoteUtil(NoteUtil):
         """
         Creates a dictionary based off the notes_list created in NoteUtil.
         If we want to create a new dictionary from a new file, we must first read_file()
-            before calling this or recreate a KeyValueNoteUtil.
+            before calling this or recreate a PairedNoteUtil.
 
         Returns
         -------
@@ -807,10 +804,10 @@ class KeyValueNoteUtil(NoteUtil):
 
         Parameters
         ----------
-        noteutil : KeyValueNoteUtil
+        noteutil : PairedNoteUtil
             An instance of NoteUtil that has been initialized with the same file as the dictionary was created from.
         var_dict : dict
-            A dictionary created from KeyValueNoteUtil.to_dict() that has all of the key constants.
+            A dictionary created from PairedNoteUtil.to_dict() that has all of the key constants.
 
         Returns
         -------
@@ -818,9 +815,8 @@ class KeyValueNoteUtil(NoteUtil):
         """
 
         super().parse_dict(noteutil, var_dict)
-        noteutil.delimeter = var_dict[KeyValueNoteUtil.KEY_DELIMETER]
-        noteutil.dict_index = var_dict[KeyValueNoteUtil.KEY_DICT_INDEX]
-        noteutil.dict_indexes = var_dict[KeyValueNoteUtil.KEY_DICT_INDEXES]
+        noteutil.dict_index = var_dict[PairedNoteUtil.KEY_DICT_INDEX]
+        noteutil.dict_indexes = var_dict[PairedNoteUtil.KEY_DICT_INDEXES]
 
     def reset_all(self):
         """
@@ -859,8 +855,3 @@ class KeyValueNoteUtil(NoteUtil):
 
         super().reset_random()
         self.dict_indexes = [x for x in range(len(self.notes_dict))]
-
-
-notes = KeyValueNoteUtil("test_notes.txt", "!", ":", strip=True)
-print(notes)
-print(notes.to_dict())
