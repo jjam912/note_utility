@@ -2,6 +2,7 @@
 This module contains classes that are used to store data from a file and turn them into usable notes.
 """
 import random
+from note_format.notations import Term, Definition
 
 
 class NoteUtil:
@@ -11,10 +12,6 @@ class NoteUtil:
 
     Attributes
     ----------
-        notes_string : str
-            Raw contents of the notes file.
-        notes_newlines : str
-            notes, but with newlines included.
         notes_list : list of str
             list created after splitting notes_newlines using "\n".
         line_index : int
@@ -50,10 +47,10 @@ class NoteUtil:
             Name of the file to be converted into NoteUtil.
         comments : str
             Prefix of lines to be ignored.
+        strip : bool
+            Whether to strip() the file lines when they are read.
         """
 
-        self.notes_string = ""
-        self.notes_newlines = ""
         self.notes_list = []
         self.line_index = 0
         self.line_indexes = []
@@ -71,8 +68,6 @@ class NoteUtil:
         """
 
         message = "NoteUtil:\n"
-        message += "Notes string: " + self.notes_string + "\n"
-        message += "Notes string with newlines: " + self.notes_newlines + "\n"
         message += "Notes list: " + str(self.notes_list) + "\n"
         message += "Line index: " + str(self.line_index) + "\n"
         message += "Line indexes: " + str(self.line_indexes) + "\n"
@@ -81,7 +76,7 @@ class NoteUtil:
 
     def read_file(self, file_name: str, comments: str, strip=True):
         """
-        Converts all the data from the file into variables.
+        Converts all the data from the file into a list of notes.
         If a line contains nothing (possibly after strip), the line will be ignored.
 
         Parameters
@@ -106,7 +101,7 @@ class NoteUtil:
             2. Skip any lines that begin with the 'comments' parameter.
             3. If strip is True, strip the line.
             4. Check again if the line begins with the 'comments' parameter.
-            5. Make the raw notes, notes with newlines, and notes list.
+            5. Make the notes list.
             6. When iteration is complete, create line_indexes of the same size as the notes_list.
 
         Even though this method is used in __init__(), this also a setter method.
@@ -122,8 +117,6 @@ class NoteUtil:
             if line.startswith(comments):
                 continue
             # The \n may vary if strip=True or strip=False, so use ternary conditions to add to the notes
-            self.notes_string += line[:-1] if line.endswith("\n") else line
-            self.notes_newlines += line if line.endswith("\n") else line + "\n"
             self.notes_list.append(line[:-1] if line.endswith("\n") else line)
         self.line_indexes = [x for x in range(len(self.notes_list))]
 
@@ -145,7 +138,7 @@ class NoteUtil:
         return notes
 
     @staticmethod
-    def parse_dict(noteutil, notes_dict: dict):
+    def parse_dict(noteutil, var_dict: dict):
         """
         Sets changeable class variables by reading a dictionary.
         Reads using the key constants the dictionary should have been created with.
@@ -154,7 +147,7 @@ class NoteUtil:
         ----------
         noteutil : NoteUtil
             If a NoteUtil already exists, add on to that NoteUtil instead of creating a new one.
-        notes_dict : dict
+        var_dict : dict
             Should be a dictionary created from to_dict().
             Contains all of the keys and values of a saved NoteUtil state.
 
@@ -163,28 +156,13 @@ class NoteUtil:
         None
         """
 
-        noteutil.line_index = notes_dict[NoteUtil.KEY_LINE_INDEX]
-        noteutil.line_indexes = notes_dict[NoteUtil.KEY_LINE_INDEXES]
-        noteutil.last_index = notes_dict[NoteUtil.KEY_LAST_INDEX]
-
-    @staticmethod
-    def empty_noteutil():
-        """
-        Provides a NoteUtil with default instance variables.
-        The notes will only consist of an empty string ''.
-        notes_list will have 1 element: ['']
-
-        Returns
-        -------
-        NoteUtil
-            NoteUtil with default instance variables
-        """
-
-        return NoteUtil("empty_file.txt", ":")
+        noteutil.line_index = var_dict[NoteUtil.KEY_LINE_INDEX]
+        noteutil.line_indexes = var_dict[NoteUtil.KEY_LINE_INDEXES]
+        noteutil.last_index = var_dict[NoteUtil.KEY_LAST_INDEX]
 
     def get_line(self, rand=False):
         """
-        Retrieves a line of notes, moving chronologically.
+        Retrieves a line of notes, moving chronologically or randomly.
         Resets to the first (top) line when all lines have been retrieved.
 
         Parameters
@@ -271,42 +249,6 @@ class NoteUtil:
         """
 
         self.line_indexes = [x for x in range(len(self.notes_list))]
-
-    def get_notes(self):
-        """
-        Returns
-        -------
-        str
-        """
-
-        return self.notes_string
-
-    def get_notes_newlines(self):
-        """
-        Returns
-        -------
-        str
-        """
-
-        return self.notes_newlines
-
-    def get_notes_list(self):
-        """
-        Returns
-        -------
-        list of str
-        """
-
-        return self.notes_list
-
-    def get_line_index(self):
-        """
-        Returns
-        -------
-        int
-        """
-
-        return self.line_index
 
 
 # class SubjectText(NoteUtil):
@@ -536,25 +478,27 @@ class NoteUtil:
 
 class KeyValueNoteUtil(NoteUtil):
     """
-    Takes a file of notes and converts it to a string, a string with \n after each line, and a list of strings.
+    Splits all lines in notes_list into key, value pairs known as Terms and Definitions.
+    Terms and Definitions are separated by delimeters, which occur only once in each line but can be any character.
+    Creates a dictionary out of all of the Terms and Definitions by splitting by the delimeter.
     Keys are used for to_dict().
 
     Attributes
     ----------
-        delim : str
-            list created after splitting notes_newlines using "\n".
-        notes_dict : dict of str: str
-            Dictionary created from splitting each element in notes_list with delim
-            {key [delim] val}
-        key_indexes : list of int
-            Keep tracks of what indexes (terms) have been used.
-            Used to make sure terms are nonrepeating
+        delimeter : str
+            The character that separates Terms from Definitions.
+        notes_dict : dict of {str: str}
+            Dictionary created from splitting each element in notes_list with the delimeter.
+        dict_index : int
+            Chronological index of the next pair of Term and Definitions.
+        dict_indexes : list of int
+            Keep tracks of what pairs (Terms and Definitions) have been used.
+            Used to make sure terms are not repeating.
 
-        Constants
-        ---------
-            KEY_DELIM : str
-            KEY_NOTES_DICT : dict of str: str
-            KEY_KEY_INDEXES : list of int
+        Keys that are used for converting to a dictionary.
+            KEY_DELIMETER : str
+            KEY_DICT_INDEX : str
+            KEY_DICT_INDEXES : str
 
     Special Methods
     ---------------
@@ -563,30 +507,34 @@ class KeyValueNoteUtil(NoteUtil):
 
     """
 
-    KEY_DELIM = "delim"
-    KEY_NOTES_DICT = "notes_dict"
-    KEY_KEY_INDEXES = "key_indexes"
+    KEY_DELIMETER = "delimeter"
+    KEY_DICT_INDEX = "dict_index"
+    KEY_DICT_INDEXES = "dict_indexes"
 
-    def __init__(self, file_name: str="", delim: str=""):
+    def __init__(self, file_name: str, comments: str, delimeter: str, strip=True):
         """
         Creates empty versions of all variables.
-        If a file and delimeter is supplied, set the variables.
+        Initialize all variables with the file given.
 
         Parameters
         ----------
         file_name : str
-            Name of the file to be converted into noteutil.
-        delim : str
+            Name of the file to be converted into KeyValueNoteUtil.
+        comments : str
+            The prefix of lines that will be ignored.
+        delimeter : str
             The delimeter character that separates the key from the value, or the term from the definition.
+        strip : bool
+            Whether to strip() the file line
+
         """
 
-        super().__init__(file_name)
+        super().__init__(file_name, comments, strip)
+        self.delimeter = delimeter
         self.notes_dict = {}
-        self.key_indexes = []
-        self.delim = delim
-
-        if file_name != "" and delim != "":
-            KeyValueNoteUtil.make_notes(self, file_name, delim)
+        self.dict_index = 0
+        self.dict_indexes = []
+        self.make_notes_dict(strip)
 
     def __str__(self):
         """
@@ -598,15 +546,20 @@ class KeyValueNoteUtil(NoteUtil):
             All variables separated by newlines \n.
         """
 
-        message = super().__str__()
+        message = super().__str__() + "\n"
         message += "KeyValueNoteUtil:\n"
-        message += "Notes dict: " + str(self.notes_dict) + "\n"
-        message += "Notes dict key indexes: " + str(self.key_indexes) + "\n"
+        message += "Delimeter: " + self.delimeter + "\n"
+        message += "Notes dict: \n"
+        for t, d in self.notes_dict.items():
+            message += str(t) + " " + self.delimeter + " " + str(d) + " Index: " + str(t.index) + "\n"
+        message += "Dict indexes: " + str(self.dict_indexes) + "\n"
+
         return message
 
     def to_dict(self):
         """
         Converts all current variables into a dictionary using key constants.
+        Will not convert any 'notes' because those can be remade from the notes files.
 
         Returns
         -------
@@ -615,37 +568,16 @@ class KeyValueNoteUtil(NoteUtil):
         """
 
         notes = super().to_dict()
-        notes[self.KEY_DELIM] = self.delim
-        notes[self.KEY_NOTES_DICT] = self.notes_dict
-        notes[self.KEY_KEY_INDEXES] = self.key_indexes
+        notes[self.KEY_DELIMETER] = self.delimeter
+        notes[self.KEY_DICT_INDEX] = self.dict_index
+        notes[self.KEY_DICT_INDEXES] = self.dict_indexes
         return notes
 
-    def make_notes(self, file_name, comments, delim):
+    def make_notes_dict(self, strip=True):
         """
-        Converts all the data from the file into variables.
-
-        Parameters
-        ----------
-        file_name : str
-            Name of the file to extract data from.
-        delim : str
-            The delimeter used to separate keys from values in the notes.
-
-        Returns
-        -------
-        None
-
-        In effect, this is also a setter method.
-        """
-
-        super(KeyValueNoteUtil, self).make_notes(file_name)
-        self.delim = delim
-        self._create_dict()
-        self._create_key_indexes()
-
-    def _create_dict(self):
-        """
-        Creates a dictionary based off the notes_list created in NoteUtil
+        Creates a dictionary based off the notes_list created in NoteUtil.
+        If we want to create a new dictionary from a new file, we must first read_file()
+            before calling this or recreate a KeyValueNoteUtil.
 
         Returns
         -------
@@ -654,269 +586,281 @@ class KeyValueNoteUtil(NoteUtil):
         Notes
         -----
         Implementation
-            0. Create a copy of the notes_list.
+            0. Create a shallow copy of the notes_list (all elements are Strings, so no need for deep copy).
             1. Go through each element of the list and split it using the given delimeter.
-            2. The above step will create a List[Tuple[str]] where the size of the Tuple is 2 in the order (key, value).
-            3. Therefore, we must go through the List, and assign the Tuple[0] (key) to the Tuple[1] (value) for our
-            notes_dict.
-                4. Before assigning the key and value, we must make sure to .strip() the key and value because otherwise
-                the keys may become inaccurate and filled with spaces, something we don't want.
-                5. We can ignore any keys that are '' because those are just empty spaces.
-                6. However, we cannot ignore any values that are '' because that means a term is not defined.
-            7. Print an Error message and raise an IndexError if a key has no value.
-            8. Print a different error message if the Tuple size is greater than 3, indicating an extra colon.
+            2. The above step will create a List[Tuple[str]] where the size of the Tuple
+                is 2 in the order (Term, Definition).
+            3. Therefore, we must go through the List, and assign the Tuple[0] (Term) to the Tuple[1] (Definition)
+                for our notes_dict.
+                4. Before assigning the key and value, we have the option to .strip() the Term and Definition
+                5. We can ignore any keys that are '' because those are just empty lines.
+                6. However, we cannot ignore any values that are '' because that means a Term is not defined.
+            7. Print an error message if the Tuple size is greater than 2, meaning a delimeter appeared
+                more than once in a line.
+            8. Print a different error message for each key that has no definition.
+            9. Check for any duplicates.
+            10. Create the dict indexes once all notes have been iterated through.
+
+        Errors are not raised until the loop has exited because there could be
+             many Syntax or Value errors in a file, and it may be easier just to print all the errors at once.
         """
 
-        notes_list_copy = self.notes_list.copy()                                                                # 1
-        for index in range(len(notes_list_copy)):
-            notes_list_copy[index] = notes_list_copy[index].split(self.delim)                                   # 2, 3
+        notes_list = self.notes_list[:]
+        error = False
+        for i in range(len(notes_list)):
+            notes_list[i] = notes_list[i].split(self.delimeter)
 
-        for index in range(len(notes_list_copy)):                                                               # 4
+        for i in range(len(notes_list)):
             try:
-                if notes_list_copy[index][0] == "":                                                             # 6
+                if len(notes_list[i]) > 2:
+                    raise SyntaxError       # More than 1 delimeter in the line.
+                term = notes_list[i][0]
+                definition = notes_list[i][1]
+                if strip:
+                    term = term.strip()
+                    definition = definition.strip()
+                if term == "":              # Blank space (baby, and I'll write your name ~help me~)
                     continue
-                else:
-                    if notes_list_copy[index][1].strip() == "":                                                 # 7
-                        raise IndexError
-                    try:
-                        notes_list_copy[index][2] = ""
-                        raise ValueError
-                    except IndexError:
-                        self.notes_dict[notes_list_copy[index][0].strip()] = notes_list_copy[index][1].strip()  # 4,5
-            except IndexError:
-                print("ERROR: Missed pairing at index " + str(index))                                           # 7
-                print("Term: " + str(notes_list_copy[index]))
-                raise
-            except ValueError:                                                                                  # 8
-                print("ERROR: Extra delimeter at index " + str(index))
-                print("Term: " + str(notes_list_copy[index]))
-                raise
+                if definition == "":
+                    raise ValueError        # Term has no Definition
 
-    def _create_key_indexes(self):
-        """
-        Creates key indexes for notes_dict
+                term = Term(term, i)
+                definition = Definition(definition, i)
 
-        Returns
-        -------
-        None
-        """
-        self.key_indexes = [x for x in range(len(self.notes_dict))]
+                self.notes_dict[term] = definition
 
-    def get_notes_dict(self):
-        """
-        Returns
-        -------
-        dict
-        """
-        return self.notes_dict
+            except SyntaxError:
+                print("ERROR: Extra delimeter at around index " + str(i))
+                print("Pair: " + str(notes_list[i]))
+                error = True
+            except ValueError:
+                print("ERROR: Missed pairing at around index " + str(i))
+                print("Pair: " + str(notes_list[i]))
+                error = True
+        if error:
+            raise AssertionError("There were syntax errors found in your file.\n"
+                                 "Please review above error messages and fix them.")
 
-    def get_value(self, key: str):
+        self.dict_indexes = [x for x in range(len(self.notes_dict))]
+
+    def definitions(self, term: str="", definition: str=""):
         """
-        Returns the value of a given key
+        Returns a list of Definitions that have the Term name or Definition name in it.
+        Case insensitive search.
+        "in" operator is used to determine if the term name is in another Term.
 
         Parameters
         ----------
-        key : str
-            Key of the pair you want to find the value for
+        term : str
+            Name that may appear in multiple other Terms' names.
+        definition : str
+            Name that may appear in multiple other Definitions' names.
 
         Returns
         -------
-        str
-            Value of the given key
-        None
-            If no key is found
+        list of Definition
+            All of the Definitions that corresponded with the Term name or Definition name.
         """
 
-        for k, val in self.notes_dict.items():
-            if k.lower() == key.lower():
-                return val
-        return None
+        definition_list = []
+        for t, d in self.notes_dict.items():
+            if term.lower() in t.text.lower():
+                definition_list.append(d)
+            elif definition.lower() in d.text.lower():
+                definition_list.append(d)
+        return definition_list
 
-    def get_values(self, key: str):
+    def terms(self, term: str="", definition: str=""):
         """
-        Returns a list of values that have the key in it.
+        Returns all of the Terms that have the provided Definition name inside the Term's name.
+        Case insensitive search.
+        "in" operator is used to determine if the term name is in another Term.
 
         Parameters
         ----------
-        key : str
-            Key that may appear in multiple other keys.
-            "in" operator is used to find multiple keys.
-
-        Returns
-        -------
-        list of str
-            All of the values that corresponded with the found keys
-        """
-
-        value_list = []
-        for k, v in self.notes_dict.items():
-            if key.lower() in k.lower():
-                value_list.append(v)
-        return value_list
-
-    def get_key(self, value: str=""):
-        """
-        Finds the first key that has the exact value (ignores case) as the value provided.
-
-        Parameters
-        ----------
-        value : str
-            Value/definition of the first key found with exact definition.
-
-        Returns
-        -------
-        str
-            Key of the first value that matches.
-        None
-            If no keys are found that have the exact value as the one provided.
-        """
-
-        for k, v in self.notes_dict.items():
-            if v.lower() == value.lower():
-                return k
-        return None
-
-    def get_keys(self, value: str):
-        """
-        Returns all of the keys that have the provided value inside the key's name or value.
-
-        Parameters
-        ----------
-        value : str
+        term : str
+            Name that may appear in multiple other Terms' names.
+        definition : str
             Value that may appear in multiple other values.
-            "in" operator is used to find multiple values.
 
         Returns
         -------
-        list of str
-            All of the keys that have the provided value or name in their own respective value.
-
-        Notes
-        -----
-        If any of the values are "", they will be ignored.
-        If both of the values are "", an empty list will be returned.
+        list of Term
+            All of the Terms that corresponded with the Term name or Definition name.
         """
 
-        key_list = []
+        term_list = []
+        for t, d in self.notes_dict.items():
+            if term.lower() in t.text.lower():
+                term_list.append(t)
+            elif definition.lower() in d.text.lower():
+                term_list.append(t)
+        return term_list
 
-        if value != "":
-            for k, v in self.notes_dict.items():
-                if value.lower() in v.lower() or value.lower() in k.lower():
-                    key_list.append(k)
-
-        return key_list
-
-    def get_key_value(self, index: int):
+    def pair(self, index: int):
         """
-        Returns the key and value of the notes_dict at the provided index.
+        Returns the Term and Definition of the notes_dict at the provided index.
 
         Parameters
         ----------
         index : int
-            Index of the key and value in the dictionary.
+            Index of the Term and Definition in the dictionary.
 
         Returns
         -------
-        str
-            Key of the notes_dict at the provided index.
-        str
-            Value of the notes_dict at the provided index.
+        Term
+            Term of the notes_dict at the provided index.
+        Definition
+            Definition of the notes_dict at the provided index.
 
-        If index is out of range (greater than len(notes_dict) or less than 0), return None, None
+        If index is out of range (greater than len(notes_dict) or less than 0), raise an IndexError.
         """
 
-        ind = 0
-        for key, val, in self.notes_dict.items():
-            if ind == index:
-                return key, val
-            ind += 1
-        return None, None
+        for term, definition in self.notes_dict.items():
+            if term.index == index:
+                return term, definition
+        raise IndexError
 
-    def get_random_key_value_repeating(self):
+    def get_pair(self, rand=False):
         """
-        Returns a random key and value of notes_dict
-
-        Returns
-        -------
-        str
-            Key of a random element in notes_dict
-        str
-            Value the same element in notes_dict
-        """
-
-        return self.get_key_value(random.randint(0, len(self.notes_dict) - 1))
-
-    def get_random_key_value_nonrepeating(self):
-        """
-        Returns a random key and value from notes_dict, but without repeating.
-        Used key and values are held in memory by key_indexes and deleting indexes from it.
-
-        Returns
-        -------
-        str
-            Key of a random element in notes_dict.
-        str
-            Value of the same element in notes_dict
-        """
-
-        rand_index = random.randint(0, len(self.notes_dict) - 1)
-        while rand_index not in self.key_indexes:
-            rand_index = random.randint(0, len(self.notes_dict) - 1)
-        del self.key_indexes[self.key_indexes.index(rand_index)]
-        if not self.key_indexes:
-            self.key_indexes = [x for x in range(len(self.notes_dict))]
-        return self.get_key_value(rand_index)
-
-    def get_index(self, key: str="", value: str=""):
-
-        """
-        Returns the index of a key or value if it matches exactly.
+        Retrieves a pair (Term and Definition), moving chronologically or randomly.
+        Resets to the first (top) pair when all pairs have been retrieved.
+        Resets the dict indexes when all of them are used for random generation.
 
         Parameters
         ----------
-        key : str, optional if value is provided.
+        rand : bool
+            Whether to return a line from a random index or from chronological order.
+
+        Returns
+        -------
+        Term
+            The Term of a pair that is either next chronologically or randomly chosen.
+        Definition
+            The Definition of a pair that is either next chronologically or randomly chosen.
+        bool
+            Whether the chronological index or random index has repeated.
+
+        Notes
+        -----
+        Implementation
+            0. If a random pair is wanted (rand=True)
+                1. Continuously generate random indexes until we find one that is in dict_indexes (unused).
+                2. Delete the index from dict_indexes because that index is now used.
+                3. If we have used all indexes from dict_indexes, recreate it.
+            0. If a line in chronological order is wanted (rand=False)
+                1. Get the next line using dict_index
+                2. Increment the dict_index
+                3. Reset the dict_index if it equals the length of the notes_dict (out of bounds)
+            4. Set repeat to True if 3 occurs.
+            5. Set the last index retrieved to whichever index was used.
+            6. Return the line and if repeat occurred.
+        """
+
+        repeat = False
+        if rand:
+            rand_index = random.randint(0, len(self.notes_dict) - 1)
+            while rand_index not in self.dict_indexes:
+                rand_index = random.randint(0, len(self.notes_dict) - 1)
+            del self.dict_indexes[self.dict_indexes.index(rand_index)]
+            if not self.dict_indexes:
+                self.dict_indexes = [x for x in range(len(self.notes_dict))]
+                repeat = True
+            self.last_index = rand_index
+            pair = self.pair(rand_index)
+        else:
+            pair = self.pair(self.dict_index)
+            self.dict_index += 1
+            if self.dict_index == len(self.notes_dict):
+                self.dict_index = 0
+                repeat = True
+        return pair, repeat
+
+    def index(self, term: str="", definition: str=""):
+
+        """
+        Returns the index of a key or value if it matches exactly.
+        Case insensitive.
+
+        Parameters
+        ----------
+        term : str, optional if value is provided.
             Key of the element that is being searched for.
-        value : str, optional if key is provided.
+        definition : str, optional if key is provided.
             Value of the element that is being searched for.
+
         Returns
         -------
         int
             Index of the key or value in the notes_dict.
         """
 
-        index = 0
-        for k, v in self.notes_dict.items():
-            if k.lower() == key.lower() or v.lower() == value.lower():
-                return index
-            index += 1
+        for t, d in self.notes_dict.items():
+            if t.text.lower() == term.lower() or d.text.lower() == definition.lower():
+                return t.index
 
     @staticmethod
-    def parse_dict(notes: dict, noteutil=None):
+    def parse_dict(noteutil, var_dict: dict):
         """
-        Sets all of this class' variables by reading a dictionary.
+        Sets all of this class' changeable variables by reading a dictionary.
         Reads using the key constants the dictionary should have been created with.
 
         Parameters
         ----------
-        notes : dict
-            Must be a dictionary created from to_dict().
-        noteutil : KeyValueNoteUtil, optional
-            If a noteutil already exists, add on to that noteutil instead of creating a new one.
+        noteutil : KeyValueNoteUtil
+            An instance of NoteUtil that has been initialized with the same file as the dictionary was created from.
+        var_dict : dict
+            A dictionary created from KeyValueNoteUtil.to_dict() that has all of the key constants.
 
         Returns
         -------
-        KeyValueNoteUtil
-            An instance of KeyValueNoteUtil or some subclass.
+        None
         """
 
-        if noteutil is None:
-            noteutil = KeyValueNoteUtil()
-        noteutil = NoteUtil.parse_dict(notes, noteutil)
-        noteutil.delim = notes[KeyValueNoteUtil.KEY_DELIM]
-        noteutil.notes_dict = notes[KeyValueNoteUtil.KEY_NOTES_DICT]
-        noteutil.key_indexes = notes[KeyValueNoteUtil.KEY_KEY_INDEXES]
-        return noteutil
+        super().parse_dict(noteutil, var_dict)
+        noteutil.delimeter = var_dict[KeyValueNoteUtil.KEY_DELIMETER]
+        noteutil.dict_index = var_dict[KeyValueNoteUtil.KEY_DICT_INDEX]
+        noteutil.dict_indexes = var_dict[KeyValueNoteUtil.KEY_DICT_INDEXES]
+
+    def reset_all(self):
+        """
+        Resets all indexes except last_index to default.
+        Does not reset notes (use make_notes() for that).
+
+        Returns
+        -------
+        None
+        """
+
+        super().reset_all()
+        self.dict_index = 0
+        self.dict_indexes = [x for x in range(len(self.notes_dict))]
+
+    def reset_chronological(self):
+        """
+        Resets only the chronological index (line_index) back to 0.
+
+        Returns
+        -------
+        None
+        """
+
+        super().reset_all()
+        self.dict_index = 0
+
+    def reset_random(self):
+        """
+        Resets the list of indexes that have not been randomly retrieved from yet.
+
+        Returns
+        -------
+        None
+        """
+
+        super().reset_random()
+        self.dict_indexes = [x for x in range(len(self.notes_dict))]
 
 
-notes = NoteUtil("test_notes.txt", "!", strip=False)
+notes = KeyValueNoteUtil("test_notes.txt", "!", ":", strip=True)
 print(notes)
+print(notes.to_dict())
