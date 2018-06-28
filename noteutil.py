@@ -116,6 +116,8 @@ class NoteUtil:
                 line = line.strip()
             if line.startswith(comments):
                 continue
+            if line == "":
+                continue
             # The \n may vary if strip=True or strip=False, so use ternary conditions to add to the notes
             self.notes_list.append(line[:-1] if line.endswith("\n") else line)
         self.line_indexes = [x for x in range(len(self.notes_list))]
@@ -636,7 +638,7 @@ class PairedNoteUtil(NoteUtil):
 
         notes_list = self.notes_list[:]
         error = False
-        error_message = "Errors: " + "\n"
+        error_message = ""
         for i in range(len(notes_list)):
             notes_list[i] = notes_list[i].split(self.delimeter)
 
@@ -645,7 +647,7 @@ class PairedNoteUtil(NoteUtil):
                 if len(notes_list[i]) > 2:
                     raise SyntaxError       # More than 1 delimeter in the line.
                 term = notes_list[i][0]
-                definition = notes_list[i][1]
+                definition = notes_list[i][1]   # This may raise an Index Error if there is a line without a delimeter.
                 if strip:
                     term = term.strip()
                     definition = definition.strip()
@@ -663,6 +665,10 @@ class PairedNoteUtil(NoteUtil):
                 error_message += "ERROR: Extra delimeter at around line " + str(i+1) + ". "
                 error_message += "Pair: " + str(notes_list[i]) + "\n"
                 error = True
+            except IndexError:
+                error_message += "ERROR: Missing delimeter at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(notes_list[i]) + "\n"
+                error = True
             except ValueError:
                 error_message += "ERROR: Missed pairing at around line " + str(i+1) + ". "
                 error_message += "Pair: " + str(notes_list[i]) + "\n"
@@ -671,9 +677,10 @@ class PairedNoteUtil(NoteUtil):
                 error_message += "WARNING: Repeated term at around line " + str(i+1) + ". "
                 error_message += "Pair: " + str(notes_list[i]) + "\n"
 
-        print(error_message)
+        if error_message != "":
+            print("Warnings and Errors: \n" + error_message)
         assert error is False, \
-            "There were syntax errors found in your file.\n" "Please review above error messages and fix them."
+            "There were syntax errors found in your file.\n" "Please review the above error messages and fix them.\n"
 
         self.dict_indexes = [x for x in range(len(self.notes_dict))]
 
@@ -911,7 +918,7 @@ class PairedNoteUtil(NoteUtil):
             if self.dict_index == len(self.notes_dict):
                 self.dict_index = 0
                 repeat = True
-        return pair, repeat
+        return pair[0], pair[1], repeat
 
     def reset_all(self):
         """
@@ -951,3 +958,4 @@ class PairedNoteUtil(NoteUtil):
 
         super().reset_random()
         self.dict_indexes = [x for x in range(len(self.notes_dict))]
+
