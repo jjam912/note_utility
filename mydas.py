@@ -96,13 +96,11 @@ class IndexedDict(dict):
             k, v = kv
             if not case_sensitive:
                 if key:
-                    key = key.lower()
+                    if key.lower() == k.lower():
+                        return i
                 if val:
-                    val = val.lower()
-
-                k = k.lower()
-                v = v.lower()
-
+                    if val.lower() == v.lower():
+                        return i
             if key == k or val == v:
                 return i
         raise ValueError("Equivalent key or value not found in items.")
@@ -138,12 +136,14 @@ class IndexedDict(dict):
             k, v = kv
             if not case_sensitive:
                 if key:
-                    key = key.lower()
+                    if key.lower() in k.lower():
+                        indexes.append(i)
+                        continue
                 if val:
-                    val = val.lower()
+                    if val.lower() in v.lower():
+                        indexes.append(i)
+                        continue
 
-                k = k.lower()
-                v = v.lower()
             try:
                 if key in k:
                     indexes.append(i)
@@ -188,9 +188,8 @@ class IndexedDict(dict):
 
         for k, v in self.items():
             if not case_sensitive:
-                if val:
-                    val = val.lower()
-                v = v.lower()
+                if val.lower() == v.lower():
+                    return k
             if val == v:
                 return k
         return ValueError("No key was found to have the name or associated value.")
@@ -223,12 +222,13 @@ class IndexedDict(dict):
         for k, v in self.items():
             if not case_sensitive:
                 if name:
-                    name = name.lower()
+                    if name.lower() in k.lower():
+                        keys.append(k)
+                        continue
                 if val:
-                    val = val.lower()
-
-                k = k.lower()
-                v = v.lower()
+                    if val.lower() in v.lower():
+                        keys.append(k)
+                        continue
             try:
                 if name in k:
                     keys.append(k)
@@ -272,10 +272,9 @@ class IndexedDict(dict):
 
         for k, v in self.items():
             if not case_sensitive:
-                if key:
-                    key = key.lower()
+                if key.lower() == k.lower():
+                    return v
 
-                k = k.lower()
             if key == k:
                 return v
         raise ValueError("No values were found to have the name or associated key.")
@@ -308,12 +307,13 @@ class IndexedDict(dict):
         for k, v in self.items():
             if not case_sensitive:
                 if key:
-                    key = key.lower()
+                    if key.lower() in k.lower():
+                        vals.append(v)
+                        continue
                 if name:
-                    name = name.lower()
-
-                k = k.lower()
-                v = v.lower()
+                    if name.lower() in v.lower():
+                        vals.append(v)
+                        continue
             try:
                 if key in k:
                     vals.append(v)
