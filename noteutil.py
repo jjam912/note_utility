@@ -2,7 +2,7 @@
 This module contains classes that are used to store data from a file and turn them into usable notes.
 """
 import random
-from note_format.notations import Term, Definition
+from note_format.mydas import IndexedDict
 
 
 class NoteUtil:
@@ -478,21 +478,22 @@ class NoteUtil:
 
 class PairedNoteUtil(NoteUtil):
     """
-    Splits all lines in notes_list into key, value pairs known as Terms and Definitions.
-    Terms and Definitions are separated by delimeters, which occur only once in each line but can be any character.
-    Creates a dictionary out of all of the Terms and Definitions by splitting by the delimeter.
+    Splits all lines in notes_list into key, value pairs known as terms and definitions.
+
+    Terms and definitions are separated by delimeters, which occur only once in each line but can be any character.
+    Creates a dictionary out of all of the terms and definitions by splitting by the delimeter.
     Keys are used for to_dict().
 
     Attributes
     ----------
         delimeter : str
-            The character that separates Terms from Definitions.
-        notes_dict : dict of {str: str}
-            Dictionary created from splitting each element in notes_list with the delimeter.
+            The character that separates terms from definitions.
+        notes_dict : IndexedDict of {str: str}
+            IndexedDict (see mydas.py) created from splitting each element in notes_list with the delimeter.
         dict_index : int
-            Chronological index of the next pair of Term and Definitions.
+            Chronological index of the next pair of term and definitions.
         dict_indexes : list of int
-            Keep tracks of what pairs (Terms and Definitions) have been used.
+            Keep tracks of what pairs (terms and definitions) have been used.
             Used to make sure terms are not repeating.
 
         Keys that are used for converting to a dictionary.
@@ -511,7 +512,6 @@ class PairedNoteUtil(NoteUtil):
 
     def __init__(self, file_name: str, comments: str, delimeter: str, strip=True):
         """
-        Creates empty versions of all variables.
         Initialize all variables with the file given.
 
         Parameters
@@ -519,17 +519,17 @@ class PairedNoteUtil(NoteUtil):
         file_name : str
             Name of the file to be converted into PairedNoteUtil.
         comments : str
-            The prefix of lines that will be ignored.
+            The prefix of lines that will be ignored, checked both before and after strip.
         delimeter : str
-            The delimeter character that separates the key from the value, or the term from the definition.
+            The character that separates the key from the value, or the term from the definition.
         strip : bool
-            Whether to strip() the file line
+            Whether to strip() the file line of whitespace.
 
         """
 
         super().__init__(file_name, comments, strip)
         self.delimeter = delimeter
-        self.notes_dict = {}
+        self.notes_dict = IndexedDict()
         self.dict_index = 0
         self.dict_indexes = []
         self.make_notes_dict(strip)
@@ -541,22 +541,25 @@ class PairedNoteUtil(NoteUtil):
         Returns
         -------
         str
-            All variables separated by newlines \n.
+            All variables with labels separated by newlines.
         """
 
         message = super().__str__() + "\n"
         message += "PairedNoteUtil:\n"
         message += "Delimeter: " + self.delimeter + "\n"
         message += "Notes dict: \n"
-        for t, d in self.notes_dict.items():
-            message += str(t) + " " + self.delimeter + " " + str(d) + " Index: " + str(t.index) + "\n"
+        for i, td in enumerate(self.notes_dict.items()):
+            t, d = td
+            message += t + " " + self.delimeter + " " + d + " Index: " + str(i) + "\n"
+        message += "Dict index: " + str(self.dict_index) + "\n"
         message += "Dict indexes: " + str(self.dict_indexes) + "\n"
 
         return message
 
     def to_dict(self):
         """
-        Converts all current variables into a dictionary using key constants.
+        Converts all changeable variables into a dictionary using key constants.
+
         Will not convert any 'notes' because those can be remade from the notes files.
 
         Returns
@@ -570,9 +573,33 @@ class PairedNoteUtil(NoteUtil):
         notes[self.KEY_DICT_INDEXES] = self.dict_indexes
         return notes
 
+    @staticmethod
+    def parse_dict(noteutil, var_dict: dict):
+        """
+        Sets all of this class' changeable variables by reading a dictionary.
+
+        Reads using the key constants the dictionary should have been created with.
+
+        Parameters
+        ----------
+        noteutil : PairedNoteUtil
+            An instance of NoteUtil that has been initialized with the same file as the dictionary was created from.
+        var_dict : dict
+            A dictionary created from PairedNoteUtil.to_dict() that has all of the key constants.
+
+        Returns
+        -------
+        None
+        """
+
+        super().parse_dict(noteutil, var_dict)
+        noteutil.dict_index = var_dict[PairedNoteUtil.KEY_DICT_INDEX]
+        noteutil.dict_indexes = var_dict[PairedNoteUtil.KEY_DICT_INDEXES]
+
     def make_notes_dict(self, strip=True):
         """
-        Creates a dictionary based off the notes_list created in NoteUtil.
+        Creates a IndexedDict based off the notes_list created in NoteUtil.
+
         If we want to create a new dictionary from a new file, we must first read_file()
             before calling this or recreate a PairedNoteUtil.
 
@@ -580,22 +607,27 @@ class PairedNoteUtil(NoteUtil):
         -------
         None
 
+        Raises
+        ------
+        AssertionError
+            If there is a syntax error or value error while parsing the notes_list for terms and definitions.
+
         Notes
         -----
         Implementation
             0. Create a shallow copy of the notes_list (all elements are Strings, so no need for deep copy).
             1. Go through each element of the list and split it using the given delimeter.
             2. The above step will create a List[Tuple[str]] where the size of the Tuple
-                is 2 in the order (Term, Definition).
-            3. Therefore, we must go through the List, and assign the Tuple[0] (Term) to the Tuple[1] (Definition)
+                is 2 in the order (term, definition).
+            3. Therefore, we must go through the List, and assign the Tuple[0] (term) to the Tuple[1] (definition)
                 for our notes_dict.
-                4. Before assigning the key and value, we have the option to .strip() the Term and Definition
+                4. Before assigning the term to the definition, we have the option to .strip() the term and definition
                 5. We can ignore any keys that are '' because those are just empty lines.
-                6. However, we cannot ignore any values that are '' because that means a Term is not defined.
+                6. However, we cannot ignore any values that are '' because that means a term is not defined.
             7. Print an error message if the Tuple size is greater than 2, meaning a delimeter appeared
                 more than once in a line.
-            8. Print a different error message for each key that has no definition.
-            9. Check for any duplicates.
+            8. Print a different error message for each term that has no definition.
+            9. Check for any duplicates and print a warning message.
             10. Create the dict indexes once all notes have been iterated through.
 
         Errors are not raised until the loop has exited because there could be
@@ -604,6 +636,7 @@ class PairedNoteUtil(NoteUtil):
 
         notes_list = self.notes_list[:]
         error = False
+        error_message = "Errors: " + "\n"
         for i in range(len(notes_list)):
             notes_list[i] = notes_list[i].split(self.delimeter)
 
@@ -619,108 +652,214 @@ class PairedNoteUtil(NoteUtil):
                 if term == "":              # Blank space (baby, and I'll write your name ~help me~)
                     continue
                 if definition == "":
-                    raise ValueError        # Term has no Definition
+                    raise ValueError        # Term has no definition
 
-                term = Term(term, i)
-                definition = Definition(definition, i)
+                if term in self.notes_dict:
+                    raise KeyError          # Term already exists
 
                 self.notes_dict[term] = definition
 
             except SyntaxError:
-                print("ERROR: Extra delimeter at around index " + str(i))
-                print("Pair: " + str(notes_list[i]))
+                error_message += "ERROR: Extra delimeter at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(notes_list[i]) + "\n"
                 error = True
             except ValueError:
-                print("ERROR: Missed pairing at around index " + str(i))
-                print("Pair: " + str(notes_list[i]))
+                error_message += "ERROR: Missed pairing at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(notes_list[i]) + "\n"
                 error = True
-        if error:
-            raise AssertionError("There were syntax errors found in your file.\n"
-                                 "Please review above error messages and fix them.")
+            except KeyError:
+                error_message += "WARNING: Repeated term at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(notes_list[i]) + "\n"
+
+        print(error_message)
+        assert error is False, \
+            "There were syntax errors found in your file.\n" "Please review above error messages and fix them."
 
         self.dict_indexes = [x for x in range(len(self.notes_dict))]
 
-    def definitions(self, term: str="", definition: str=""):
+    def term(self, definition: str, case_sensitive: bool=True):
         """
-        Returns a list of Definitions that have the Term name or Definition name in it.
-        Case insensitive search.
-        "in" operator is used to determine if the term name is in another Term.
+        Returns a list of terms that matches exactly with the given definition.
+
+        Parameters
+        ----------
+        definition : str
+            Name that mtaches a definition in notes_dict.
+        case_sensitive : bool
+            Whether case matters.
+
+        Returns
+        -------
+        list of term
+            All of the terms that corresponded with the term name or definition name.
+
+        Raises
+        ------
+        ValueError
+            If the provided term or definition is not found within the notes_dict's keys.
+        """
+
+        return self.notes_dict.key_with(definition, case_sensitive=case_sensitive)
+
+    def definition(self, term: str, case_sensitive: bool=True):
+        """
+        Returns a list of definitions that have part of the term name as its key or part of the definition name in it.
 
         Parameters
         ----------
         term : str
-            Name that may appear in multiple other Terms' names.
-        definition : str
-            Name that may appear in multiple other Definitions' names.
+            Name of the term that may be in a definition's key.
+        case_sensitive : bool
+            Whether case matters.
 
         Returns
         -------
-        list of Definition
-            All of the Definitions that corresponded with the Term name or Definition name.
+        list of str
+            All definitions that had a key that corresponded with term or part of the definition. See IndexedDict.
+
+        Raises
+        ------
+        ValueError
+            If the provided term or definition is not found within the notes_dict's values.
         """
 
-        definition_list = []
-        for t, d in self.notes_dict.items():
-            if term.lower() in t.text.lower():
-                definition_list.append(d)
-            elif definition.lower() in d.text.lower():
-                definition_list.append(d)
-        return definition_list
+        return self.notes_dict.val_with(key=term, case_sensitive=case_sensitive)
 
-    def terms(self, term: str="", definition: str=""):
+    def index(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
         """
-        Returns all of the Terms that have the provided Definition name inside the Term's name.
-        Case insensitive search.
-        "in" operator is used to determine if the term name is in another Term.
+        Returns the index of a term or definition if it matches exactly.
 
         Parameters
         ----------
-        term : str
-            Name that may appear in multiple other Terms' names.
-        definition : str
-            Value that may appear in multiple other values.
+        term : str, optional if definition is provided.
+            Key of the element that is being searched for.
+        definition : str, optional if term is provided.
+            Value of the element that is being searched for.
+        case_sensitive : bool, optional
+            Whether case matters.
 
         Returns
         -------
-        list of Term
-            All of the Terms that corresponded with the Term name or Definition name.
+        int
+            Index of the term or definition in the notes_dict.
+
+        Raises
+        ------
+        ValueError
+            If the term or definition is not found within the notes_dict's items.
         """
 
-        term_list = []
-        for t, d in self.notes_dict.items():
-            if term.lower() in t.text.lower():
-                term_list.append(t)
-            elif definition.lower() in d.text.lower():
-                term_list.append(t)
-        return term_list
+        return self.notes_dict.index_with(key=term, val=definition, case_sensitive=case_sensitive)
+
+    def terms(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+        """
+        Returns a list of terms that have part of the term name in it or part of the definition in its own definition.
+
+        "in" operator is used to determine if the term name is in another term. If "in" doesn't work, use ==.
+
+        Parameters
+        ----------
+        term : str, optional if definition is provided.
+            Name that may appear in multiple other terms' names.
+        definition : str, optional if term is provided.
+            Name that may appear in multiple other definitions.
+        case_sensitive : bool
+            Whether case matters.
+
+        Returns
+        -------
+        list of term
+            All of the terms that corresponded with the term name or definition name.
+
+        Raises
+        ------
+        ValueError
+            If no term had the name in its name or had the definition in its value.
+        """
+
+        return self.notes_dict.keys_with(name=term, val=definition, case_sensitive=case_sensitive)
+
+    def definitions(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+        """
+        Returns a list of definitions that have part of the term name as its key or part of the definition name in it.
+
+        "in" operator is used to determine if the term name is in another term. If "in" doesn't work, use ==.
+
+        Parameters
+        ----------
+        term : str, optional if definition is provided.
+            Name of the term that may be in a definition's key.
+        definition : str, optional if term is provided.
+            Part of a definition that appears in the desired definition.
+        case_sensitive : bool
+            Whether case matters.
+
+        Returns
+        -------
+        list of str
+            All definitions that had a key that corresponded with term or part of the definition. See IndexedDict.
+
+        Raises
+        ------
+        ValueError
+            If no definition had the definition in its name or had the term in its key.
+        """
+
+        return self.notes_dict.vals_with(key=term, name=definition, case_sensitive=case_sensitive)
+
+    def indexes(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+        """
+        Returns the index of a term or definition if it matches exactly.
+
+        "in" operator is used to determine if the term name is in another term. If "in" doesn't work, use ==.
+
+        Parameters
+        ----------
+        term : str, optional if definition is provided.
+            Key of the element that is being searched for.
+        definition : str, optional if term is provided.
+            Value of the element that is being searched for.
+        case_sensitive : bool, optional
+            Whether case matters.
+
+        Returns
+        -------
+        int
+            Index of the term or definition in the notes_dict.
+
+        Raises
+        ------
+        ValueError
+            If no items had part of the term in its key or part of the definition in its value.
+        """
+
+        return self.notes_dict.indexes_with(key=term, val=definition, case_sensitive=case_sensitive)
 
     def pair(self, index: int):
         """
-        Returns the Term and Definition of the notes_dict at the provided index.
+        Returns the term and definition of the notes_dict at the provided index.
 
         Parameters
         ----------
         index : int
-            Index of the Term and Definition in the dictionary.
+            Index of the term and definition in the dictionary.
 
         Returns
         -------
-        Term
-            Term of the notes_dict at the provided index.
-        Definition
-            Definition of the notes_dict at the provided index.
+        str
+            term of the notes_dict at the provided index.
+        str
+            definition of the notes_dict at the provided index.
 
         If index is out of range (greater than len(notes_dict) or less than 0), raise an IndexError.
         """
 
-        for term, definition in self.notes_dict.items():
-            if term.index == index:
-                return term, definition
-        raise IndexError
+        return self.notes_dict.item_at(index)
 
     def get_pair(self, rand=False):
         """
-        Retrieves a pair (Term and Definition), moving chronologically or randomly.
+        Retrieves a pair (term and definition), moving chronologically or randomly.
+
         Resets to the first (top) pair when all pairs have been retrieved.
         Resets the dict indexes when all of them are used for random generation.
 
@@ -731,10 +870,10 @@ class PairedNoteUtil(NoteUtil):
 
         Returns
         -------
-        Term
-            The Term of a pair that is either next chronologically or randomly chosen.
-        Definition
-            The Definition of a pair that is either next chronologically or randomly chosen.
+        str
+            The term of a pair that is either next chronologically or randomly chosen.
+        str
+            The definition of a pair that is either next chronologically or randomly chosen.
         bool
             Whether the chronological index or random index has repeated.
 
@@ -767,60 +906,17 @@ class PairedNoteUtil(NoteUtil):
             pair = self.pair(rand_index)
         else:
             pair = self.pair(self.dict_index)
+            self.last_index = self.dict_index
             self.dict_index += 1
             if self.dict_index == len(self.notes_dict):
                 self.dict_index = 0
                 repeat = True
         return pair, repeat
 
-    def index(self, term: str="", definition: str=""):
-
-        """
-        Returns the index of a key or value if it matches exactly.
-        Case insensitive.
-
-        Parameters
-        ----------
-        term : str, optional if value is provided.
-            Key of the element that is being searched for.
-        definition : str, optional if key is provided.
-            Value of the element that is being searched for.
-
-        Returns
-        -------
-        int
-            Index of the key or value in the notes_dict.
-        """
-
-        for t, d in self.notes_dict.items():
-            if t.text.lower() == term.lower() or d.text.lower() == definition.lower():
-                return t.index
-
-    @staticmethod
-    def parse_dict(noteutil, var_dict: dict):
-        """
-        Sets all of this class' changeable variables by reading a dictionary.
-        Reads using the key constants the dictionary should have been created with.
-
-        Parameters
-        ----------
-        noteutil : PairedNoteUtil
-            An instance of NoteUtil that has been initialized with the same file as the dictionary was created from.
-        var_dict : dict
-            A dictionary created from PairedNoteUtil.to_dict() that has all of the key constants.
-
-        Returns
-        -------
-        None
-        """
-
-        super().parse_dict(noteutil, var_dict)
-        noteutil.dict_index = var_dict[PairedNoteUtil.KEY_DICT_INDEX]
-        noteutil.dict_indexes = var_dict[PairedNoteUtil.KEY_DICT_INDEXES]
-
     def reset_all(self):
         """
         Resets all indexes except last_index to default.
+
         Does not reset notes (use make_notes() for that).
 
         Returns
