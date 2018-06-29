@@ -253,231 +253,6 @@ class NoteUtil:
         self.line_indexes = [x for x in range(len(self.notes_list))]
 
 
-# class SubjectText(NoteUtil):
-#     """
-#     This class is designed to return a tip from a list of tips.
-#     The list is NoteUtil's notes_list.
-#     A subject is defined as an element in the list that appears twice.
-#     In between the subject are the tips.
-#
-#     Key constants are used for to_dict().
-#
-#     Attributes
-#     ----------
-#     subject : str
-#         Name of the element that appears twice.
-#     tips_start_index : int
-#         Start index in the list of the subject.
-#     tips_end_index : int
-#         End index in the list of the subject
-#     tips : list of str
-#         Elements in-between the subject
-#     tips_index : int
-#         Keeps track of how many tips have been used
-#     random : bool
-#         Determines whether the tips will be randomized
-#
-#         Constants
-#         ---------
-#             KEY_TIPS: str
-#             KEY_TIPS_INDEX : str
-#             KEY_RANDOM : str
-#
-#     Special Methods
-#     ---------------
-#         __str__()
-#             Prints all variables separated by newlines \n in addition to NoteUtil's variables.
-#     """
-#
-#     KEY_TIP_INDEX = "tip_index"
-#     KEY_TIPS_INDEXES = "tips_indexes"
-#     KEY_RANDOM = "random"
-#
-#     def __init__(self, file_name: str, comments: str, subject: str):
-#         """
-#         Creates empty versions of all variables.
-#         If a file and subject is supplied, set the variables.
-#
-#         Parameters
-#         ----------
-#         file_name : str
-#             Name of the file to be converted into SubjectText.
-#         comments : str
-#             Prefix of lines to be ignored.
-#         subject : str
-#             Name of the subject (that appears twice).
-#         """
-#
-#         super(SubjectText, self).__init__(file_name, comments)
-#         self.subject = subject
-#         self.tips_start_index = -1
-#         self.tips_end_index = -1
-#         self.tips = []
-#         self.tip_index = 0
-#         self.tips_indexes = []
-#         self.random = False
-#
-#         # SubjectText.make_notes(self, file_name, subject)
-#
-#     def __str__(self):
-#         """
-#         Converts all variables into strings.
-#
-#         Returns
-#         -------
-#         str
-#             All variables separated by newlines \n.
-#         """
-#
-#         message = super().__str__()
-#         message += "SubjectText:\n"
-#         message += "Start index: " + str(self.tips_start_index)
-#         message += "End index: " + str(self.tips_end_index)
-#         message += "Notes: " + str(self.tips)
-#         message += "Tip index: " + str(self.tip_index)
-#         message += "Tip indexes: " + str(self.tips_indexes)
-#         message += "Random: " + str(self.random)
-#         return message
-#
-#     def to_dict(self):
-#         """
-#         Converts all current variables into a dictionary using key constants.
-#
-#         Returns
-#         -------
-#         dict
-#             Dictionary of all variables {KEY_CONSTANT: variable}.
-#         """
-#
-#         notes = super().to_dict()
-#         notes[self.KEY_TIP_INDEX] = self.tip_index
-#         notes[self.KEY_TIPS_INDEXES] = self.tips_indexes
-#         notes[self.KEY_RANDOM] = self.random
-#         return notes
-#
-#     def _find_indexes(self):
-#         """
-#         Looks for the first occurrence of subject, and then the second occurrence of subject.
-#         The subject is an element that occurs twice, and anything in between it will be tips.
-#         Reads the notes_list created from NoteUtil.
-#
-#         Returns
-#         -------
-#         None
-#         """
-#
-#         for index in range(len(self.notes_list)):
-#             if self.notes_list[index] == self.subject:
-#                 self.tips_start_index = index
-#                 break
-#         for index in range(self.tips_start_index + 1, len(self.notes_list)):
-#             if self.notes_list[index] == self.subject:
-#                 self.tips_end_index = index
-#                 break
-#
-#         if self.tips_start_index < 0 or self.tips_end_index < 0:
-#             raise EOFError("Start or end of subject not found. Please make sure that there are two lines"
-#                            " that have your subject.")
-#
-#     def make_tips(self, subject: str, strip=True):
-#         """
-#         Take all elements from notes_list between the start index and end index and convert into tips.
-#         If there is nothing after the whitespace (possibly after strip), the tip will be ignored.
-#
-#         Parameters
-#         ----------
-#         subject : str
-#             Name of the subject (that appears twice)
-#         strip : bool, optional
-#             Whether to remove whitespace and tabs from the tip before adding to the tips.
-#
-#         Returns
-#         -------
-#         None
-#
-#         Notes
-#         -----
-#         Implementation
-#             0. Call NoteUtil's make_notes()
-#             1. Set the subject
-#             2. Find and make the tips using start and end index
-#
-#         Even though this method is used in __init__(), this is also a setter method.
-#
-#         """
-#
-#         self.subject = subject
-#         self._find_indexes()
-#         for index in range(self.tips_start_index + 1, self.tips_end_index):
-#             tip = self.notes_list[index]
-#             if strip:
-#                 tip = tip.strip()
-#             if tip != "":
-#                 self.tips.append(self.notes_list[index])
-#
-#     def get_subject(self):
-#         """
-#         Returns
-#         -------
-#         str
-#         """
-#
-#         return self.subject
-#
-#     def get_tip(self):
-#         """
-#         Retrieves a tip.
-#         Resets to the first (top) tip when all tips have been returned.
-#         If randomize() has been used, the tips will be shuffled after all tips are used.
-#
-#         Returns
-#         -------
-#         str
-#             The next tip.
-#         bool
-#             Whether all of the tips have been used.
-#         """
-#         tip = self.tips[self.tips_index]
-#         repeat = False
-#         self.tips_index += 1
-#         if self.tips_index == len(self.tips):
-#             repeat = True
-#             self.tips_indexes = [x for x in range(len(self.tips))]
-#             if self.random:
-#                 self.randomize()
-#         return tip, repeat
-#
-#     @staticmethod
-#     def parse_dict(notes: dict, subject_text=None):
-#         """
-#         Sets all of this class' variables by reading a dictionary.
-#         Reads using the key constants the dictionary should have been created with.
-#
-#         Parameters
-#         ----------
-#         notes : dict
-#             Must be a dictionary created from to_dict().
-#         subject_text : SubjectText, optional
-#             If a subject_text already exists, add on to that subject_text instead of creating a new one.
-#
-#         Returns
-#         -------
-#         SubjectText
-#             An instance of SubjectText or some subclass.
-#         """
-#
-#         if subject_text is None:
-#             subject_text = SubjectText()
-#         subject_text = NoteUtil.parse_dict(notes, subject_text)
-#         subject_text.tips = notes[SubjectText.KEY_TIPS]
-#         subject_text.tips_start_index = notes[SubjectText.KEY_TIPS_START_INDEX]
-#         subject_text.tips_end_index = notes[SubjectText.KEY_TIPS_END_INDEX]
-#         subject_text.tips_index = notes[SubjectText.KEY_TIPS_INDEX]
-#         subject_text.random = notes[SubjectText.KEY_RANDOM]
-#         subject_text.subject = notes[SubjectText.KEY_SUBJECT]
-#         return subject_text
-
-
 class PairedNoteUtil(NoteUtil):
     """
     Splits all lines in notes_list into key, value pairs known as terms and definitions.
@@ -655,7 +430,6 @@ class PairedNoteUtil(NoteUtil):
                     continue
                 if definition == "":
                     raise ValueError        # Term has no definition
-
                 if term in self.notes_dict:
                     raise KeyError          # Term already exists
 
@@ -897,7 +671,7 @@ class PairedNoteUtil(NoteUtil):
                 3. Reset the dict_index if it equals the length of the notes_dict (out of bounds)
             4. Set repeat to True if 3 occurs.
             5. Set the last index retrieved to whichever index was used.
-            6. Return the line and if repeat occurred.
+            6. Return the term, definition, and if repeat occurred.
         """
 
         repeat = False
@@ -937,7 +711,7 @@ class PairedNoteUtil(NoteUtil):
 
     def reset_chronological(self):
         """
-        Resets only the chronological index (line_index) back to 0.
+        Resets only the chronological index back to 0.
 
         Returns
         -------

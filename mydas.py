@@ -332,9 +332,3 @@ class IndexedDict(dict):
         if not vals:
             raise ValueError("No values were found to have the name or associated key in them.")
         return vals
-
-
-class Category:
-    pass
-
-
