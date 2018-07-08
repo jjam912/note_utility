@@ -2,13 +2,18 @@
 This module contains classes that are used to store data from a file and turn them into usable notes.
 """
 import random
-from note_format.mydas import IndexedDict
+import note_format.errors as errors
 
 
 class NoteUtil:
     """
     Takes a file of notes and converts it into several data structures.
+
     Keys are used for to_dict().
+    Keys that are used for converting to a dictionary:
+        KEY_LINE_INDEX : str
+        KEY_LINE_INDEXES : str
+        KEY_LAST_INDEX : str
 
     Attributes
     ----------
@@ -21,11 +26,6 @@ class NoteUtil:
         last_index : int
             Index to the previous line that was retrieved.
 
-        Keys that are used for converting to a dictionary.
-            KEY_LINE_INDEX : str
-            KEY_LINE_INDEXES : str
-            KEY_LAST_INDEX : str
-
     Special Methods
     ---------------
         __str__()
@@ -36,26 +36,25 @@ class NoteUtil:
     KEY_LINE_INDEXES = "line_indexes"
     KEY_LAST_INDEX = "last_index"
 
-    def __init__(self, file_name: str, comments: str, strip=True):
+    def __init__(self, file_name: str, comments: list):
         """
         Creates empty versions of all variables.
+
         Initialize all variables with the file given.
 
         Parameters
         ----------
         file_name : str
             Name of the file to be converted into NoteUtil.
-        comments : str
-            Prefix of lines to be ignored.
-        strip : bool
-            Whether to strip() the file lines when they are read.
+        comments : list of str
+            List of prefixes of lines to be ignored.
         """
 
         self.notes_list = []
         self.line_index = 0
         self.line_indexes = []
         self.last_index = 0
-        self.read_file(file_name, comments, strip)
+        self.read_file(file_name, comments)
 
     def __str__(self):
         """
@@ -68,15 +67,18 @@ class NoteUtil:
         """
 
         message = "NoteUtil:\n"
+
         message += "Notes list: " + str(self.notes_list) + "\n"
+
         message += "Line index: " + str(self.line_index) + "\n"
         message += "Line indexes: " + str(self.line_indexes) + "\n"
         message += "Last index: " + str(self.last_index) + "\n"
         return message
 
-    def read_file(self, file_name: str, comments: str, strip=True):
+    def read_file(self, file_name: str, comments: list):
         """
         Converts all the data from the file into a list of notes.
+
         If a line contains nothing (possibly after strip), the line will be ignored.
 
         Parameters
@@ -86,8 +88,6 @@ class NoteUtil:
         comments : str
             Prefix of lines to be ignored.
             Setting this to '' will skip all lines.
-        strip : bool, optional
-            Whether to remove whitespace / tabs / newlines for each line.
 
         Returns
         -------
@@ -99,7 +99,7 @@ class NoteUtil:
             0. Open and read the file.
             1. Iterate through each line.
             2. Skip any lines that begin with the 'comments' parameter.
-            3. If strip is True, strip the line.
+            3. Strip the line.
             4. Check again if the line begins with the 'comments' parameter.
             5. Make the notes list.
             6. When iteration is complete, create line_indexes of the same size as the notes_list.
@@ -108,23 +108,31 @@ class NoteUtil:
         """
 
         file = open(file_name, mode="r", encoding="UTF-8")
-        data = file.readlines()
-        for line in data:
-            if line.startswith(comments):
+        for line in file.readlines():
+            skip = False
+            for c in comments:
+                if line.startswith(c):
+                    skip = True
+                    break
+            if skip:
                 continue
-            if strip:
-                line = line.strip()
-            if line.startswith(comments):
+            line = line.strip()
+            for c in comments:
+                if line.startswith(c):
+                    skip = True
+                    break
+            if skip:
                 continue
+
             if line == "":
                 continue
-            # The \n may vary if strip=True or strip=False, so use ternary conditions to add to the notes
-            self.notes_list.append(line[:-1] if line.endswith("\n") else line)
+            self.notes_list.append(line)
         self.line_indexes = [x for x in range(len(self.notes_list))]
 
     def to_dict(self):
         """
-        Converts all current variables into a dictionary using key constants.
+        Converts all changeable variables into a dictionary using key constants.
+
         Will not convert any 'notes' because those can be remade from the notes files.
 
         Returns
@@ -143,6 +151,7 @@ class NoteUtil:
     def parse_dict(noteutil, var_dict: dict):
         """
         Sets changeable class variables by reading a dictionary.
+
         Reads using the key constants the dictionary should have been created with.
 
         Parameters
@@ -162,9 +171,65 @@ class NoteUtil:
         noteutil.line_indexes = var_dict[NoteUtil.KEY_LINE_INDEXES]
         noteutil.last_index = var_dict[NoteUtil.KEY_LAST_INDEX]
 
+    def line(self, index: int):
+        """
+        Returns a line of text from the notes_list.
+
+        Parameters
+        ----------
+        index : int
+            The index of the line in notes_list.
+
+        Returns
+        -------
+        str
+            The line of text in the notes_list.
+        """
+
+        return self.notes_list[index]
+
+    def lines(self, name: str, case_sensitive: bool=False):
+        """
+        Returns all lines that have the provided name "in" it.
+
+        Uses the "in" operator to compare lines.
+
+        Parameters
+        ----------
+        name : str
+            A part of a line in the notes_list.
+        case_sensitive : bool
+            Whether case matters.
+
+        Returns
+        -------
+        list of str
+            All lines that had the provided name in it.
+
+        Raises
+        ------
+        ValueError
+            If no lines had the provided name in it.
+        """
+
+        lines = []
+        if case_sensitive:
+            name = name.lower()
+        for line in self.notes_list:
+            if case_sensitive:
+                if name == line.lower():
+                    lines.append(line)
+            else:
+                if name == line:
+                    lines.append(line)
+        if not lines:
+            raise ValueError("No line had the name in it.")
+        return lines
+
     def get_line(self, rand=False):
         """
         Retrieves a line of notes, moving chronologically or randomly.
+
         Resets to the first (top) line when all lines have been retrieved.
 
         Parameters
@@ -220,6 +285,7 @@ class NoteUtil:
     def reset_all(self):
         """
         Resets all indexes except last_index to default.
+
         Does not reset notes (use make_notes() for that).
 
         Returns
@@ -253,29 +319,403 @@ class NoteUtil:
         self.line_indexes = [x for x in range(len(self.notes_list))]
 
 
+class IndexedDict(dict):
+
+    def item_at(self, index: int):
+        """
+        Returns a (key, value) tuple given a specific index in the dictionary.
+
+        Parameters
+        ----------
+        index : int
+            The index of the desired item.
+
+        Returns
+        -------
+        object
+            Key at the given index.
+        object
+            Value at the given index.
+
+        Raises
+        ------
+        IndexError
+            If index >= len(self.items) or index < 0.
+        """
+
+        return list(self.keys())[index], list(self.values())[index]
+
+    def key_at(self, index: int):
+        """
+        Returns a key given a specific index in the dictionary.
+
+        Parameters
+        ----------
+        index : int
+            The index of the desired key.
+
+        Returns
+        -------
+        object
+            Key at the given index.
+
+        Raises
+        ------
+        IndexError
+            If index >= len(self.items) or index < 0.
+        """
+
+        return list(self.keys())[index]
+
+    def val_at(self, index: int):
+        """
+        Returns a value given a specific index in the dictionary.
+
+        Parameters
+        ----------
+        index : int
+            The index of the desired value.
+
+        Returns
+        -------
+        object
+            Value at the given index.
+
+        Raises
+        ------
+        IndexError
+            If index >= len(self.items) or index < 0.
+        """
+
+        return list(self.values())[index]
+
+    def index_with(self, *, key=None, val=None, func=None):
+        """
+        Returns the first index where the key or value matches exactly as the given key or value.
+
+        Parameters
+        ----------
+        key : object, optional if value is provided.
+            Specific key to look for in the dictionary's keys.
+        val : object, optional if key is provided.
+            Specific value to look for in the dictionary's values.
+        func : function, optional
+            Function to apply to dictionary's key or value before comparison of equality.
+            Does not affect the provided key or value.
+
+        Returns
+        -------
+        int
+            The first index where the specific key or value was found.
+
+        Raises
+        ------
+        IndexError
+            If the key or value doesn't exist in the dictionary.
+        """
+
+        for i, kv in enumerate(self.items()):
+            k, v = kv
+            if func is not None:
+                if key == func(k):
+                    return i
+                if val == func(v):
+                    return i
+            elif key == k or val == v:
+                return i
+        raise IndexError("Equivalent key or value not found in items.")
+
+    def indexes_with(self, *, key=None, val=None, func=None):
+        """
+        Returns multiple indexes where the provided key or value is "in" a key or value of the dictionary.
+
+        If the "in" operator does not work, the TypeError will be caught and == will be used instead.
+
+        Parameters
+        ----------
+        key : object, optional if value is provided.
+            Part of a key that exists in the dictionary's keys.
+        val : object, optional if key is provided.
+            Part of a value that exists in the dictionary's values.
+        func : function, optional
+            Function to apply to dictionary's key or value before comparison of equality.
+            Does not affect the provided key or value.
+
+        Returns
+        -------
+        list of int
+            Multiple indexes where the key or value provided was found in a dictionary's key or value.
+
+        Raises
+        ------
+        IndexError
+            If no keys or values had the provided key or value in them (thus, the list is empty).
+        """
+
+        indexes = []
+        for i, kv in enumerate(self.items()):
+            k, v = kv
+            if func is not None:
+                try:
+                    if key in func(k):
+                        indexes.append(i)
+                        continue
+                except TypeError:
+                    if key == func(k):
+                        indexes.append(i)
+                        continue
+                try:
+                    if val in func(v):
+                        indexes.append(i)
+                        continue
+                except TypeError:
+                    if val == func(v):
+                        indexes.append(i)
+                        continue
+            else:
+                try:
+                    if key in k:
+                        indexes.append(i)
+                        continue
+                except TypeError:
+                    if key == k:
+                        indexes.append(i)
+                        continue
+                try:
+                    if val in v:
+                        indexes.append(i)
+                        continue
+                except TypeError:
+                    if val == v:
+                        indexes.append(i)
+                        continue
+
+        if not indexes:
+            raise IndexError("No keys or values were found to have the key or value in them.")
+        return indexes
+
+    def key_with(self, val, *, func=None):
+        """
+        Returns the key of a given value if that key's value matches exactly with a key in the dictionary.
+
+        Parameters
+        ----------
+        val : object
+            The value that matches to a dictionary key's value.
+        func : function, optional
+            Function to apply to the dictionary's value before comparison of equality.
+            Does not affect the provided value.
+
+        Returns
+        -------
+        object
+            The first key that has the exact corresponding value.
+
+        Raises
+        ------
+        KeyError
+            If no keys were found to have the exact value provided.
+        """
+
+        for k, v in self.items():
+            if func is not None:
+                if val == func(v):
+                    return k
+            elif val == v:
+                return k
+        return KeyError("No key was found to have the name or associated value.")
+
+    def keys_with(self, *, name=None, val=None, func=None):
+        """
+        Returns the keys that have the given name in the key or the given value in their corresponding value.
+
+        If the "in" operator does not work, the TypeError will be caught and == will be used instead.
+
+        Parameters
+        ----------
+        name : object, optional if value is provided.
+            The name of the key that are part of the dictionary's keys.
+        val : object, optional if name is provided.
+            The name of the value that are part of the dictionary's values.
+        func : function, optional
+            Function to apply to the dictionary's keys and values before comparison of "in" or equality.
+            Does not affect the provided name or value.
+
+        Returns
+        -------
+        list of object
+            List of all of the keys that had the name or the value provided in them.
+
+        Raises
+        ------
+        KeyError
+            If no keys were found to have part of the name provided or no values have part of the value provided.
+        """
+
+        keys = []
+        for i, kv in enumerate(self.items()):
+            k, v = kv
+            if func is not None:
+                try:
+                    if name in func(k):
+                        keys.append(k)
+                        continue
+                except TypeError:
+                    if name == func(k):
+                        keys.append(k)
+                        continue
+                try:
+                    if val in func(v):
+                        keys.append(k)
+                        continue
+                except TypeError:
+                    if val == func(v):
+                        keys.append(k)
+                        continue
+            else:
+                try:
+                    if name in k:
+                        keys.append(k)
+                        continue
+                except TypeError:
+                    if name == k:
+                        keys.append(k)
+                        continue
+                try:
+                    if val in v:
+                        keys.append(k)
+                        continue
+                except TypeError:
+                    if val == v:
+                        keys.append(k)
+                        continue
+        if not keys:
+            raise KeyError("No keys were found that had the name or value in them.")
+        return keys
+
+    def val_with(self, key, *, func=None):
+        """
+        Returns the value of a given key if that value's key matches exactly with the dictionary's key.
+
+        If the "in" operator does not work, the TypeError will be caught and == will be used instead.
+
+        Parameters
+        ----------
+        key : object
+            The key that matches to a value's key exactly.
+        func : function, optional
+            Function to apply to the dictionary's key before comparison of equality.
+            Does not affect the provided key.
+
+        Returns
+        -------
+        object
+            The first value that has the exact corresponding key.
+
+        Raises
+        ------
+        ValueError
+            If no values were found to have the exact key provided.
+        """
+
+        for k, v in self.items():
+            if func is not None:
+                if key == func(k):
+                    return v
+            elif key == k:
+                return v
+        raise ValueError("No values were found to have the name or associated key.")
+
+    def vals_with(self, *, key=None, name=None, func=None):
+        """
+        Returns the values that have the given name in the value or the given key in their corresponding key.
+
+        Parameters
+        ----------
+        key : object, optional if name is provided.
+            The name of the key that is part of the dictionary's keys.
+        name : object, optional if key is provided.
+            The name of the value that is part of the dictionary's values.
+        func : function, optional
+            Function to apply to the dictionary's key and value before comparison of "in" or equality.
+            Does not affect the provided key or name.
+
+        Returns
+        -------
+        list of object
+            List of all of the values that had the name provided in them or the key name in their corresponding key.
+
+        Raises
+        ------
+        ValueError
+            If no values were found to have part of the name provided or no keys have part of the key provided.
+        """
+
+        vals = []
+        for i, kv in enumerate(self.items()):
+            k, v = kv
+            if func is not None:
+                try:
+                    if key in func(k):
+                        vals.append(v)
+                        continue
+                except TypeError:
+                    if key == func(k):
+                        vals.append(v)
+                        continue
+                try:
+                    if name in func(v):
+                        vals.append(v)
+                        continue
+                except TypeError:
+                    if name == func(v):
+                        vals.append(v)
+                        continue
+            else:
+                try:
+                    if key in k:
+                        vals.append(v)
+                        continue
+                except TypeError:
+                    if key == k:
+                        vals.append(v)
+                        continue
+                try:
+                    if name in v:
+                        vals.append(v)
+                        continue
+                except TypeError:
+                    if name == v:
+                        vals.append(v)
+                        continue
+        if not vals:
+            raise ValueError("No values were found to have the name or associated key in them.")
+        return vals
+
+
 class PairedNoteUtil(NoteUtil):
     """
     Splits all lines in notes_list into key, value pairs known as terms and definitions.
 
     Terms and definitions are separated by delimeters, which occur only once in each line but can be any character.
     Creates a dictionary out of all of the terms and definitions by splitting by the delimeter.
+
     Keys are used for to_dict().
+    Keys that are used for converting to a dictionary.
+        KEY_DICT_INDEX : str
+        KEY_DICT_INDEXES : str
 
     Attributes
     ----------
         delimeter : str
             The character that separates terms from definitions.
-        notes_dict : IndexedDict of {str: str}
+        notes_paired : IndexedDict of {str: str}
             IndexedDict (see mydas.py) created from splitting each element in notes_list with the delimeter.
-        dict_index : int
+        pair_index : int
             Chronological index of the next pair of term and definitions.
-        dict_indexes : list of int
+        pair_indexes : list of int
             Keep tracks of what pairs (terms and definitions) have been used.
             Used to make sure terms are not repeating.
-
-        Keys that are used for converting to a dictionary.
-            KEY_DICT_INDEX : str
-            KEY_DICT_INDEXES : str
 
     Special Methods
     ---------------
@@ -287,7 +727,7 @@ class PairedNoteUtil(NoteUtil):
     KEY_DICT_INDEX = "dict_index"
     KEY_DICT_INDEXES = "dict_indexes"
 
-    def __init__(self, file_name: str, comments: str, delimeter: str, strip=True):
+    def __init__(self, file_name: str, comments: list, delimeter: str, skip_warnings=False):
         """
         Initialize all variables with the file given.
 
@@ -295,21 +735,19 @@ class PairedNoteUtil(NoteUtil):
         ----------
         file_name : str
             Name of the file to be converted into PairedNoteUtil.
-        comments : str
-            The prefix of lines that will be ignored, checked both before and after strip.
+        comments : list of str
+            The prefixes of lines that will be ignored, checked both before and after strip.
         delimeter : str
             The character that separates the key from the value, or the term from the definition.
-        strip : bool
-            Whether to strip() the file line of whitespace.
 
         """
 
-        super().__init__(file_name, comments, strip)
+        super().__init__(file_name, comments)
         self.delimeter = delimeter
-        self.notes_dict = IndexedDict()
-        self.dict_index = 0
-        self.dict_indexes = []
-        self.make_notes_dict(strip)
+        self.notes_paired = IndexedDict()
+        self.pair_index = 0
+        self.pair_indexes = []
+        self.make_notes_paired(skip_warnings)
 
     def __str__(self):
         """
@@ -324,12 +762,11 @@ class PairedNoteUtil(NoteUtil):
         message = super().__str__() + "\n"
         message += "PairedNoteUtil:\n"
         message += "Delimeter: " + self.delimeter + "\n"
-        message += "Notes dict: \n"
-        for i, td in enumerate(self.notes_dict.items()):
-            t, d = td
-            message += t + " " + self.delimeter + " " + d + " Index: " + str(i) + "\n"
-        message += "Dict index: " + str(self.dict_index) + "\n"
-        message += "Dict indexes: " + str(self.dict_indexes) + "\n"
+
+        message += "Notes paired: " + str(self.notes_paired) + "\n"
+
+        message += "Dict index: " + str(self.pair_index) + "\n"
+        message += "Dict indexes: " + str(self.pair_indexes) + "\n"
 
         return message
 
@@ -346,8 +783,8 @@ class PairedNoteUtil(NoteUtil):
         """
 
         notes = super().to_dict()
-        notes[self.KEY_DICT_INDEX] = self.dict_index
-        notes[self.KEY_DICT_INDEXES] = self.dict_indexes
+        notes[self.KEY_DICT_INDEX] = self.pair_index
+        notes[self.KEY_DICT_INDEXES] = self.pair_indexes
         return notes
 
     @staticmethod
@@ -370,10 +807,10 @@ class PairedNoteUtil(NoteUtil):
         """
 
         super().parse_dict(noteutil, var_dict)
-        noteutil.dict_index = var_dict[PairedNoteUtil.KEY_DICT_INDEX]
-        noteutil.dict_indexes = var_dict[PairedNoteUtil.KEY_DICT_INDEXES]
+        noteutil.pair_index = var_dict[PairedNoteUtil.KEY_DICT_INDEX]
+        noteutil.pair_indexes = var_dict[PairedNoteUtil.KEY_DICT_INDEXES]
 
-    def make_notes_dict(self, strip=True):
+    def make_notes_paired(self, skip_warnings=False):
         """
         Creates a IndexedDict based off the notes_list created in NoteUtil.
 
@@ -398,7 +835,7 @@ class PairedNoteUtil(NoteUtil):
                 is 2 in the order (term, definition).
             3. Therefore, we must go through the List, and assign the Tuple[0] (term) to the Tuple[1] (definition)
                 for our notes_dict.
-                4. Before assigning the term to the definition, we have the option to .strip() the term and definition
+                4. Before assigning the term to the definition, we .strip() the term and definition
                 5. We can ignore any keys that are '' because those are just empty lines.
                 6. However, we cannot ignore any values that are '' because that means a term is not defined.
             7. Print an error message if the Tuple size is greater than 2, meaning a delimeter appeared
@@ -411,61 +848,57 @@ class PairedNoteUtil(NoteUtil):
              many Syntax or Value errors in a file, and it may be easier just to print all the errors at once.
         """
 
-        notes_list = self.notes_list[:]
-        error = False
         error_message = ""
-        for i in range(len(notes_list)):
-            notes_list[i] = notes_list[i].split(self.delimeter)
+        self.notes_paired = IndexedDict()
 
-        for i in range(len(notes_list)):
+        for i in range(len(self.notes_list)):
             try:
-                if len(notes_list[i]) > 2:
-                    raise SyntaxError       # More than 1 delimeter in the line.
-                term = notes_list[i][0]
-                definition = notes_list[i][1]   # This may raise an Index Error if there is a line without a delimeter.
-                if strip:
-                    term = term.strip()
-                    definition = definition.strip()
-                if term == "":              # Blank space (baby, and I'll write your name ~help me~)
-                    continue
+                try:
+                    self.notes_list[i] = self.notes_list[i].split(self.delimeter)
+                except AttributeError:
+                    # List has already been split
+                    pass
+
+                if len(self.notes_list[i]) > 2:
+                    raise errors.ExtraDelimeterError
+                elif len(self.notes_list[i]) == 1:
+                    raise errors.MissingDelimeterError
+
+                self.notes_list[i][0] = self.notes_list[i][0].strip()
+                self.notes_list[i][1] = self.notes_list[i][1].strip()
+
+                term, definition = self.notes_list[i]
+
                 if definition == "":
-                    raise ValueError        # Term has no definition
-                if term in self.notes_dict:
-                    raise KeyError          # Term already exists
+                    raise errors.NoDefinitionError
 
-                self.notes_dict[term] = definition
+                self.notes_paired[term] = definition
 
-            except SyntaxError:
-                error_message += "ERROR: Extra delimeter at around line " + str(i+1) + ". "
-                error_message += "Pair: " + str(notes_list[i]) + "\n"
-                error = True
-            except IndexError:
-                error_message += "ERROR: Missing delimeter at around line " + str(i+1) + ". "
-                error_message += "Pair: " + str(notes_list[i]) + "\n"
-                error = True
-            except ValueError:
-                error_message += "ERROR: Missed pairing at around line " + str(i+1) + ". "
-                error_message += "Pair: " + str(notes_list[i]) + "\n"
-                error = True
-            except KeyError:
-                error_message += "WARNING: Repeated term at around line " + str(i+1) + ". "
-                error_message += "Pair: " + str(notes_list[i]) + "\n"
+            except errors.ExtraDelimeterError:
+                error_message += "WARNING: Extra delimeter at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(self.notes_list[i]) + "\n"
+            except errors.MissingDelimeterError:
+                error_message += "WARNING: Missing delimeter at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(self.notes_list[i]) + "\n"
+            except errors.NoDefinitionError:
+                error_message += "WARNING: Missed pairing at around line " + str(i+1) + ". "
+                error_message += "Pair: " + str(self.notes_list[i]) + "\n"
 
-        if error_message != "":
-            print("Warnings and Errors: \n" + error_message)
-        assert error is False, \
-            "There were syntax errors found in your file.\n" "Please review the above error messages and fix them.\n"
+        if error_message != "" and not skip_warnings:
+            print("Warnings: (All pairs with warnings have been skipped)\n" + error_message)
 
-        self.dict_indexes = [x for x in range(len(self.notes_dict))]
+        self.pair_indexes = [x for x in range(len(self.notes_paired))]
 
-    def term(self, definition: str, case_sensitive: bool=True):
+    def term(self, *, index: int=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of terms that matches exactly with the given definition.
 
         Parameters
         ----------
-        definition : str
-            Name that mtaches a definition in notes_dict.
+        index : int, optional if definition is provided.
+            Index of the term.
+        definition : str, optional if index is provided.
+            Name that matches a definition in notes_dict.
         case_sensitive : bool
             Whether case matters.
 
@@ -480,15 +913,22 @@ class PairedNoteUtil(NoteUtil):
             If the provided term or definition is not found within the notes_dict's keys.
         """
 
-        return self.notes_dict.key_with(definition, case_sensitive=case_sensitive)
+        if index is not None:
+            return self.notes_paired.key_at(index)
+        if not case_sensitive:
+            return self.notes_paired.key_with(definition.lower() if definition is not None else definition,
+                                              func=str.lower)
+        return self.notes_paired.key_with(val=definition)
 
-    def definition(self, term: str, case_sensitive: bool=True):
+    def definition(self, *, index: int=None, term: str=None, case_sensitive: bool=False):
         """
         Returns a list of definitions that have part of the term name as its key or part of the definition name in it.
 
         Parameters
         ----------
-        term : str
+        index : int, optional if term is provided.
+            Index of the definition.
+        term : str, optional if index is provided.
             Name of the term that may be in a definition's key.
         case_sensitive : bool
             Whether case matters.
@@ -504,9 +944,14 @@ class PairedNoteUtil(NoteUtil):
             If the provided term or definition is not found within the notes_dict's values.
         """
 
-        return self.notes_dict.val_with(key=term, case_sensitive=case_sensitive)
+        if index is not None:
+            return self.notes_paired.val_at(index)
+        if not case_sensitive:
+            return self.notes_paired.val_with(key=term.lower() if term is not None else term,
+                                              func=str.lower)
+        return self.notes_paired.val_with(key=term)
 
-    def index(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+    def index(self, *, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns the index of a term or definition if it matches exactly.
 
@@ -530,9 +975,13 @@ class PairedNoteUtil(NoteUtil):
             If the term or definition is not found within the notes_dict's items.
         """
 
-        return self.notes_dict.index_with(key=term, val=definition, case_sensitive=case_sensitive)
+        if not case_sensitive:
+            return self.notes_paired.index_with(key=term.lower() if term is not None else term,
+                                                val=definition.lower() if definition is not None else definition,
+                                                func=str.lower)
+        return self.notes_paired.index_with(key=term, val=definition)
 
-    def terms(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+    def terms(self, *, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of terms that have part of the term name in it or part of the definition in its own definition.
 
@@ -558,9 +1007,13 @@ class PairedNoteUtil(NoteUtil):
             If no term had the name in its name or had the definition in its value.
         """
 
-        return self.notes_dict.keys_with(name=term, val=definition, case_sensitive=case_sensitive)
+        if not case_sensitive:
+            return self.notes_paired.keys_with(name=term.lower() if term is not None else term,
+                                               val=definition.lower() if definition is not None else definition,
+                                               func=str.lower)
+        return self.notes_paired.keys_with(name=term, val=definition)
 
-    def definitions(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+    def definitions(self, *, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of definitions that have part of the term name as its key or part of the definition name in it.
 
@@ -586,9 +1039,13 @@ class PairedNoteUtil(NoteUtil):
             If no definition had the definition in its name or had the term in its key.
         """
 
-        return self.notes_dict.vals_with(key=term, name=definition, case_sensitive=case_sensitive)
+        if not case_sensitive:
+            return self.notes_paired.vals_with(key=term.lower() if term is not None else term,
+                                               name=definition.lower() if definition is not None else definition,
+                                               func=str.lower)
+        return self.notes_paired.vals_with(key=term, name=definition)
 
-    def indexes(self, *, term: str=None, definition: str=None, case_sensitive: bool=True):
+    def indexes(self, *, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns the index of a term or definition if it matches exactly.
 
@@ -614,7 +1071,11 @@ class PairedNoteUtil(NoteUtil):
             If no items had part of the term in its key or part of the definition in its value.
         """
 
-        return self.notes_dict.indexes_with(key=term, val=definition, case_sensitive=case_sensitive)
+        if not case_sensitive:
+            return self.notes_paired.indexes_with(key=term if term is not None else term,
+                                                  val=definition.lower() if definition is not None else definition,
+                                                  func=str.lower)
+        return self.notes_paired.indexes_with(key=term, val=definition)
 
     def pair(self, index: int):
         """
@@ -635,7 +1096,7 @@ class PairedNoteUtil(NoteUtil):
         If index is out of range (greater than len(notes_dict) or less than 0), raise an IndexError.
         """
 
-        return self.notes_dict.item_at(index)
+        return self.notes_paired.item_at(index)
 
     def get_pair(self, rand=False):
         """
@@ -676,21 +1137,21 @@ class PairedNoteUtil(NoteUtil):
 
         repeat = False
         if rand:
-            rand_index = random.randint(0, len(self.notes_dict) - 1)
-            while rand_index not in self.dict_indexes:
-                rand_index = random.randint(0, len(self.notes_dict) - 1)
-            del self.dict_indexes[self.dict_indexes.index(rand_index)]
-            if not self.dict_indexes:
-                self.dict_indexes = [x for x in range(len(self.notes_dict))]
+            rand_index = random.randint(0, len(self.notes_paired) - 1)
+            while rand_index not in self.pair_indexes:
+                rand_index = random.randint(0, len(self.notes_paired) - 1)
+            del self.pair_indexes[self.pair_indexes.index(rand_index)]
+            if not self.pair_indexes:
+                self.pair_indexes = [x for x in range(len(self.notes_paired))]
                 repeat = True
             self.last_index = rand_index
             pair = self.pair(rand_index)
         else:
-            pair = self.pair(self.dict_index)
-            self.last_index = self.dict_index
-            self.dict_index += 1
-            if self.dict_index == len(self.notes_dict):
-                self.dict_index = 0
+            pair = self.pair(self.pair_index)
+            self.last_index = self.pair_index
+            self.pair_index += 1
+            if self.pair_index == len(self.notes_paired):
+                self.pair_index = 0
                 repeat = True
         return pair[0], pair[1], repeat
 
@@ -706,8 +1167,8 @@ class PairedNoteUtil(NoteUtil):
         """
 
         super().reset_all()
-        self.dict_index = 0
-        self.dict_indexes = [x for x in range(len(self.notes_dict))]
+        self.pair_index = 0
+        self.pair_indexes = [x for x in range(len(self.notes_paired))]
 
     def reset_chronological(self):
         """
@@ -719,7 +1180,7 @@ class PairedNoteUtil(NoteUtil):
         """
 
         super().reset_all()
-        self.dict_index = 0
+        self.pair_index = 0
 
     def reset_random(self):
         """
@@ -731,5 +1192,197 @@ class PairedNoteUtil(NoteUtil):
         """
 
         super().reset_random()
-        self.dict_indexes = [x for x in range(len(self.notes_dict))]
+        self.pair_indexes = [x for x in range(len(self.notes_paired))]
+
+
+class CategorizedNoteUtil(PairedNoteUtil):
+
+    def __init__(self, file_name: str, comments: list, delimeter: str,
+                 *, generics: list=None, positionals: list=None, extensions: list=None,
+                 ignore_generics: bool=False, filter_extensions: bool=True):
+
+        super().__init__(file_name, comments, delimeter, skip_warnings=True)
+
+        self.positionals = positionals
+        self.generics = generics
+        self.extensions = extensions
+
+        self.notes_categorized = IndexedDict()
+        self.exclusive_dict = IndexedDict()
+        self.generic_dict = IndexedDict()
+
+        if positionals is not None:
+            for name, prefix in positionals:
+                self.exclusive_dict[name] = IndexedDict()
+                self.exclusive_dict["Uncategorized"] = IndexedDict()
+        if generics is not None:
+            for name, prefix in generics:
+                self.generic_dict[name] = IndexedDict()
+
+        self.make_notes_categorized(ignore_generics, filter_extensions)
+        self.make_notes_paired(skip_warnings=False)
+
+    def __str__(self):
+        message = super().__str__() + "\n"
+        message += "CategorizedNoteUtil: \n"
+        message += "Positionals: " + str(self.positionals) + "\n"
+        message += "Generics: " + str(self.generics) + "\n"
+        message += "Extensions: " + str(self.extensions) + "\n"
+
+        message += "Generic dict: " + str(self.generic_dict) + "\n"
+        message += "Positional dict: " + str(self.exclusive_dict) + "\n"
+        message += "Notes categorized: " + str(self.notes_categorized) + "\n"
+
+        return message
+
+    def to_dict(self):
+        notes = super().to_dict()
+
+    @staticmethod
+    def parse_dict(noteutil, var_dict: dict):
+        pass
+
+    def make_notes_categorized(self, ignore_generics: bool=False, filter_extensions: bool=True, skip_warnings=False):
+
+        error_message = ""
+
+        if self.extensions is not None:
+            for i in range(len(self.notes_list)):
+                if len(self.notes_list[i]) == 2:
+                    orig_len = len(self.notes_list[i][1])
+                    for nb in self.extensions:
+                        name, bound1, bound2 = None, None, None
+                        if len(nb) == 2:
+                            name, bound1 = nb
+                            bound2 = bound1
+                        elif len(nb) == 3:
+                            name, bound1, bound2 = nb
+                        while True:     # There could be multiple extensions of a single name.
+                            try:
+                                try:
+                                    b1 = self.notes_list[i][1].index(bound1, 0, orig_len)
+                                except ValueError:
+                                    # No extension for this term, just pass
+                                    break
+                                try:
+                                    b2 = self.notes_list[i][1].index(bound2, b1 + 1, orig_len)
+                                except ValueError:
+                                    # Only one bound is probably an error
+                                    raise errors.MissingBoundError
+                                self.notes_list[i][1] += "\n" + name + self.delimeter + " " + \
+                                                         self.notes_list[i][1][b1 + len(bound1): b2]
+                                if filter_extensions:
+                                    self.notes_list[i][1] = self.notes_list[i][1][:b1] + \
+                                                            self.notes_list[i][1][b2 + len(bound2):]
+                                    orig_len -= (b2 - b1 + len(bound1))
+                                self.notes_list[i][1] = self.notes_list[i][1].strip()
+                            except errors.MissingBoundError:
+                                error_message += "WARNING: Missed bound at around line " + str(i+1) + ".\n"
+                                error_message += "Pair: " + str(self.notes_list[i])
+                                break
+
+        if self.generics is not None:
+            for i in range(len(self.notes_list) - 1, -1, -1):
+
+                if len(self.notes_list[i]) != 2:
+                    continue
+
+                for n, p in self.generics:
+                    if self.notes_list[i][0].startswith(p):
+                        self.notes_list[i][0] = self.notes_list[i][0][len(p):].strip()
+                        self.generic_dict[n][self.notes_list[i][0]] = self.notes_list[i][1]
+                        if ignore_generics:
+                            del self.notes_list[i]
+
+        if self.positionals is not None:
+            name, prefix, curr = None, None, None
+            for i in range(len(self.notes_list)):
+
+                for n, p in self.positionals[::-1]:
+                    if self.notes_list[i][0].startswith(p):
+                        name, prefix, curr = n, p, self.notes_list[i][0][len(p):].strip()
+                        self.exclusive_dict[name][curr] = IndexedDict()
+                        break
+                else:
+                    if len(self.notes_list[i]) != 2:
+                        continue
+                    if name is None or prefix is None:
+                        self.exclusive_dict["Uncategorized"][self.notes_list[i][0]] = self.notes_list[i][1]
+                    else:
+                        self.exclusive_dict[name][curr][self.notes_list[i][0]] = self.notes_list[i][1]
+
+            for name in self.exclusive_dict.keys():
+                if name == "Uncategorized":
+                    continue
+                for category in self.exclusive_dict[name].keys():
+                    self.notes_categorized[category] = IndexedDict()
+
+            self.notes_categorized["Uncategorized"] = self.exclusive_dict["Uncategorized"]
+
+            for name, prefix in self.positionals:
+                curr = None
+                for i in range(len(self.notes_list)):
+                    if self.notes_list[i][0].startswith(prefix):
+                        for n, p in self.positionals[::-1]:
+                            if n == name:
+                                curr = self.notes_list[i][0][len(prefix):].strip()
+                                break
+                            elif self.notes_list[i][0].startswith(p):
+                                if p.startswith(prefix):
+                                    break
+                        continue
+                    else:
+                        for n, p in self.positionals[::-1]:
+                            if self.notes_list[i][0].startswith(p):
+                                if p != prefix and not p.startswith(prefix):
+                                    curr = None
+                        if len(self.notes_list[i]) != 2:
+                            continue
+                        elif curr is None:
+                            continue
+                        else:
+                            self.notes_categorized[curr][self.notes_list[i][0]] = self.notes_list[i][1]
+
+        for i in range(len(self.notes_list) - 1, -1, -1):
+            for n, p in self.positionals:
+                if self.notes_list[i][0].startswith(p):
+                    del self.notes_list[i]
+
+        if error_message != "" and not skip_warnings:
+            print("Warnings: ( All pairs with warnings have been skipped)\n" + error_message)
+
+    def generic(self, name: str, case_sensitive: bool=False):
+        pass
+
+    def category(self, name: str, case_sensitive: bool=False):
+        pass
+
+    def excategory(self, name: str, case_sensitive: bool=False):
+        pass
+
+    def generics(self, name: str, case_sensitive: bool=False):
+        pass
+
+    def categories(self, name: str, case_sensitive: bool=False):
+        pass
+
+    def excategories(self, name: str, case_sensitive: bool=False):
+        pass
+
+
+noteutil = CategorizedNoteUtil("test_notes2.txt", ["#"], ":",
+                               positionals=[("Periods", "~"), ("Chapters", "~~")])
+
+# noteutil = CategorizedNoteUtil("test_notes.txt", ["#"], ":", generics=[("Important", "!")],
+#                                positionals=[("Cat1", "~"), ("Cat2", "~~")],
+#                                extensions=[("Decimal", "%")], ignore_generics=False, filter_extensions=True)
+
+print(noteutil)
+
+
+
+
+
+
+
 
