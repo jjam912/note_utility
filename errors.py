@@ -1,4 +1,28 @@
-class DelimeterError(Exception):
+class NotesError(Exception):
+    pass
+
+
+class NotesNotFoundError(NotesError):
+    pass
+
+
+class NotesIndexError(NotesNotFoundError):
+    pass
+
+
+class ForbiddenEdit(NotesError):
+    pass
+
+
+class DuplicateError(NotesError):
+    pass
+
+
+class MultipleFoundError(NotesError):
+    pass
+
+
+class DelimeterError(NotesError):
     pass
 
 
@@ -10,13 +34,14 @@ class ExtraDelimeterError(DelimeterError):
     pass
 
 
-class NoDefinitionError(Exception):
+class NoDefinitionError(NotesNotFoundError):
     pass
 
 
-class TermAlreadyExistsError(Exception):
+class DuplicateTermError(DuplicateError):
     pass
 
 
-class MissingBoundError(Exception):
+class MissingBoundError(NotesError):
     pass
+

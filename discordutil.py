@@ -247,3 +247,49 @@ def println(message: str):
     """
     pyautogui.typewrite(message)
     pyautogui.press("enter")
+
+
+def split_message(message: str, embedded: bool=False, language: str=""):
+    """
+    Splits a message into more messages of size less than 2000 characters.
+
+    This is to bypass the Discord 2000 character limit.
+
+    Parameters
+    ----------
+    message : str
+        A long message to split up.
+    embedded : bool
+        Whether to embed the message in code format (surrounded by ```)
+    language : str
+        Name of the language of the code.
+
+    Returns
+    -------
+    list of str
+        All messages to send.
+    """
+
+    lines = message.split("\n")
+    curr_message = ""
+    messages = []
+
+    if embedded:
+        curr_message += "```" + language + "\n"
+        for line in lines:
+            if len(line) + len(curr_message) + 5 > 2000:
+                messages.append(curr_message + "```")
+                curr_message = "```" + language + line + "\n"
+            else:
+                curr_message += line + "\n"
+        messages.append(curr_message + "```")
+
+    else:
+        for line in lines:
+            if len(line) + len(curr_message) + 2 > 2000:
+                messages.append(curr_message)
+                curr_message = line + "\n"
+            else:
+                curr_message += line + "\n"
+        messages.append(curr_message)
+    return messages

@@ -19,7 +19,7 @@ class NoteUtil:
             Prints all variables separated by new lines.
     """
 
-    def __init__(self, file_name: str, comments: list):
+    def __init__(self, file_name: str, comments: list=None):
         """
         Creates empty versions of all variables.
 
@@ -29,7 +29,7 @@ class NoteUtil:
         ----------
         file_name : str
             Name of the file to be converted into NoteUtil.
-        comments : list of str
+        comments : list of str, optional
             List of prefixes of lines to be ignored.
         """
 
@@ -51,7 +51,7 @@ class NoteUtil:
         message += "Notes list: " + str(self.notes_list) + "\n"
         return message
 
-    def read_file(self, file_name: str, comments: list):
+    def read_file(self, file_name: str, comments: list=None):
         """
         Converts all the data from the file into a list of notes.
 
@@ -62,9 +62,9 @@ class NoteUtil:
         ----------
         file_name : str
             Name of the file to extract data from.
-        comments : str
+        comments : str, optional
             Prefix of lines to be ignored.
-            Setting this to '' will skip all lines.
+            Having '' in this list will skip all lines.
 
         Returns
         -------
@@ -74,25 +74,101 @@ class NoteUtil:
         file = open(file_name, mode="r", encoding="UTF-8")
         for line in file.readlines():
             skip = False
-            for c in comments:
-                if line.startswith(c):
-                    skip = True
-                    break
-            if skip:
-                continue
-            line = line.strip()
-            for c in comments:
-                if line.startswith(c):
-                    skip = True
-                    break
-            if skip:
-                continue
 
-            if line == "":
+            if comments is not None:
+                for c in comments:
+                    if line.startswith(c):
+                        skip = True
+                        break
+
+            line = line.strip()
+
+            if comments is not None and not skip:
+                for c in comments:
+                    if line.startswith(c):
+                        skip = True
+                        break
+
+            if line == "" or skip:
                 continue
             self.notes_list.append(line)
 
-    def line(self, index: int):
+    def line_index(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
+        """
+        Finds the index of a line in a notes list.
+
+        Parameters
+        ----------
+        name : str
+            The name of the full line.
+        notes_list : list, optional
+            A list of notes that should contain the line that is being searched for.
+            Default list is self.notes_list (made from the file).
+        case_sensitive : bool, optional
+            Whether case matters while searching for the line.
+
+        Returns
+        -------
+        int
+            Index of the line in the notes list provided.
+
+        Raises
+        ------
+        NotesNotFoundError
+            If no line is found to be equivalent to the name given.
+        """
+
+        if notes_list is None:
+            notes_list = self.notes_list
+        if not case_sensitive:
+            insensitive_notes_list = list(map(str.lower, notes_list))
+            for i in range(len(insensitive_notes_list)):
+                if name == insensitive_notes_list[i]:
+                    return i
+        else:
+            for i in range(len(notes_list)):
+                if name == notes_list[i]:
+                    return i
+        raise errors.NotesNotFoundError
+
+    def line_indexes(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
+        """
+        Finds the index of all lines that have the name in them.
+
+        Parameters
+        ----------
+        notes_list : list
+            A list of notes that should contain the lines being searched for.
+            Default list is self.notes_list (made from the file).
+        name : str
+            A name that may be part of a line or the entire line.
+        case_sensitive : bool
+            Whether case matters while searching for lines.
+
+        Returns
+        -------
+        list of int
+            All indexes that were matched with the name.
+
+        Raises
+        ------
+        NotesNotFoundError
+            If no line is found to be equivalent to the name given.
+        """
+
+        indexes = []
+        if notes_list is None:
+            notes_list = self.notes_list
+        if not case_sensitive:
+            insensitive_notes_list = list(map(str.lower, notes_list))
+            for i in range(len(insensitive_notes_list)):
+                if name in insensitive_notes_list[i]:
+                    indexes.append(i)
+        if not indexes:
+            raise errors.NotesNotFoundError
+        return indexes
+
+    def line(self, *, index: int=None, name: str=None, case_sensitive: bool=False):
         """
         Returns a line of text from the notes_list.
 
@@ -100,14 +176,36 @@ class NoteUtil:
         ----------
         index : int
             The index of the line in notes_list.
+        name : str
+            The name of the line in notes_list
+        case_sensitive : bool
+            Whether case matters
 
         Returns
         -------
         str
             The line of text in the notes_list.
+
+        Raises
+        ------
+        NotesNotFoundError
+            If no lines are found to be equivalent to the name provided.
         """
 
-        return self.notes_list[index]
+        if index is not None:
+            return self.notes_list[index]
+        if name is not None:
+            if not case_sensitive:
+                insensitive_notes_list = map(str.lower, self.notes_list)
+                if name in insensitive_notes_list:
+                    return name
+                else:
+                    raise errors.NotesNotFoundError
+            else:
+                if name in self.notes_list:
+                    return name
+                else:
+                    raise errors.NotesNotFoundError
 
     def lines(self, *, indexes: list=None, name: str=None, case_sensitive: bool=False):
         """
@@ -131,7 +229,7 @@ class NoteUtil:
 
         Raises
         ------
-        ValueError
+        NotesNotFoundError
             If no lines had the provided name in it.
         """
 
@@ -152,7 +250,7 @@ class NoteUtil:
                         continue
 
         if not lines:
-            raise ValueError("No line had the name in it.")
+            raise errors.NotesNotFoundError
         return lines
 
 
@@ -177,7 +275,7 @@ class IndexedDict(dict):
         Raises
         ------
         IndexError
-            If index >= len(self.items) or index < 0.
+            If index >= len(self.items).
         """
 
         return list(self.keys())[index], list(self.values())[index]
@@ -195,6 +293,11 @@ class IndexedDict(dict):
         -------
         list of tuple(object, object)
             All items in the (key, value) pairing.
+
+        Raises
+        ------
+        IndexError
+            If one of the indexes in the list is >= len(self.items).
         """
 
         indexed_items = []
@@ -307,7 +410,7 @@ class IndexedDict(dict):
             raise IndexError("No keys or values were found to have the key or value in them.")
         return indexes
 
-    def key_with(self, *, index=None, val=None, func=None):
+    def key_with(self, *, index=None, name=None, val=None, func=None):
         """
         Returns the key of a given value if that key's value matches exactly with a key in the dictionary.
 
@@ -315,6 +418,8 @@ class IndexedDict(dict):
         ----------
         index : int, optional if val is provided.
             The index of the key
+        name : object
+            The name of the key that may equal the key after func is applied.
         val : object, optional if index is provided.
             The value that matches to a dictionary key's value.
         func : function, optional
@@ -334,11 +439,9 @@ class IndexedDict(dict):
         i = 0
         for k, v in self.items():
             if func is not None:
-                if val == func(v):
+                if name == func(k) or val == func(v):
                     return k
-            elif val == v:
-                return k
-            if index == i:
+            elif val == v or name == k or index == i:
                 return k
             i += 1
         return KeyError("No key was found to have the name or associated value.")
@@ -377,13 +480,8 @@ class IndexedDict(dict):
             k, v = kv
 
             if indexes is not None:
-                found_index = False
-                for index in indexes:
-                    if index == i:
-                        keys.append(k)
-                        found_index = True
-                        break
-                if found_index:
+                if i in indexes:
+                    keys.append(k)
                     continue
 
             if func is not None:
@@ -424,7 +522,7 @@ class IndexedDict(dict):
             raise KeyError("No keys were found that had the name or value in them.")
         return keys
 
-    def val_with(self, *, index=None, key=None, func=None):
+    def val_with(self, *, index=None, key=None, name=None, func=None):
         """
         Returns the value of a given key if that value's key matches exactly with the dictionary's key.
 
@@ -436,6 +534,8 @@ class IndexedDict(dict):
             Index of a key.
         key : object
             The key that matches to a value's key exactly.
+        name : object
+            The name of the value that may equal the val after func is applied.
         func : function, optional
             Function to apply to the dictionary's key before comparison of equality.
             Does not affect the provided key.
@@ -454,11 +554,9 @@ class IndexedDict(dict):
         i = 0
         for k, v in self.items():
             if func is not None:
-                if key == func(k):
+                if key == func(k) or name == func(v):
                     return v
-            elif key == k:
-                return v
-            if index == i:
+            elif key == k or name == v or index == i:
                 return v
             i += 1
         raise ValueError("No values were found to have the name or associated key.")
@@ -495,13 +593,8 @@ class IndexedDict(dict):
             k, v = kv
 
             if indexes is not None:
-                found_index = False
-                for index in indexes:
-                    if index == i:
-                        vals.append(v)
-                        found_index = True
-                        break
-                if found_index:
+                if i in indexes:
+                    vals.append(v)
                     continue
 
             if func is not None:
@@ -549,11 +642,6 @@ class PairedNoteUtil(NoteUtil):
 
     Terms and definitions are separated by delimeters, which occur only once in each line but can be any character.
     Creates a dictionary out of all of the terms and definitions by splitting by the delimeter.
-
-    Keys are used for to_dict().
-    Keys that are used for converting to a dictionary.
-        KEY_DICT_INDEX : str
-        KEY_DICT_INDEXES : str
 
     Attributes
     ----------
@@ -624,8 +712,7 @@ class PairedNoteUtil(NoteUtil):
         for i in range(len(self.notes_list)):
             try:
                 self.notes_list[i] = self.notes_list[i].split(self.delimeter)
-            except AttributeError:
-                # List has already been split
+            except AttributeError:  # List has already been split
                 pass
 
             self.notes_list[i][0] = self.notes_list[i][0].strip()
@@ -642,7 +729,6 @@ class PairedNoteUtil(NoteUtil):
         Returns
         -------
         None
-
         """
 
         self.notes_paired = IndexedDict()
@@ -659,6 +745,9 @@ class PairedNoteUtil(NoteUtil):
                 if definition == "":
                     raise errors.NoDefinitionError
 
+                if term in self.notes_paired:
+                    raise errors.DuplicateTermError
+
                 self.notes_paired[term] = definition
 
             except errors.ExtraDelimeterError:
@@ -670,15 +759,23 @@ class PairedNoteUtil(NoteUtil):
             except errors.NoDefinitionError:
                 self.error_message += "WARNING: Missed pairing at around line " + str(i+1) + ". "
                 self.error_message += "Pair: " + str(self.notes_list[i]) + "\n"
+            except errors.DuplicateTermError:
+                self.error_message += "WARNING: Duplicate term at around line " + str(i+1) + ". "
+                self.error_message += "Pair: " + str(self.notes_list[i]) + "\n"
 
-    def term(self, *, index: int=None, definition: str=None, case_sensitive: bool=False):
+    def term(self, *, notes_dict: IndexedDict=None,
+             index: int=None, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of terms that matches exactly with the given definition.
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         index : int, optional if definition is provided.
             Index of the term.
+        term : str
+            A name of the term that may not match exactly (cases).
         definition : str, optional if index is provided.
             Name that matches a definition in notes_dict.
         case_sensitive : bool
@@ -691,27 +788,38 @@ class PairedNoteUtil(NoteUtil):
 
         Raises
         ------
-        KeyError
-            If the provided term or definition is not found within the notes_dict's keys.
+        NotesNotFoundError
+            If the provided term or definition is not found within the notes_dict's keys and values.
         """
 
-        if index is not None:
-            return self.notes_paired.key_with(index=index)
-        if not case_sensitive:
-            return self.notes_paired.key_with(val=definition.lower() if definition is not None else definition,
-                                              func=str.lower)
-        return self.notes_paired.key_with(val=definition)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            if index is not None:
+                return notes_dict.key_with(index=index)
+            if not case_sensitive:
+                return notes_dict.key_with(name=term.lower() if term is not None else term,
+                                           val=definition.lower() if definition is not None else definition,
+                                           func=str.lower)
+            return notes_dict.key_with(name=term, val=definition)
+        except KeyError:
+            raise errors.NotesNotFoundError
 
-    def definition(self, *, index: int=None, term: str=None, case_sensitive: bool=False):
+    def definition(self, *, notes_dict: IndexedDict=None,
+                   index: int=None, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of definitions that have part of the term name as its key or part of the definition name in it.
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         index : int, optional if term is provided.
             Index of the definition.
         term : str, optional if index is provided.
             Name of the term that may be in a definition's key.
+        definition : str
+            The name of the definition that may not match exactly (cases).
         case_sensitive : bool
             Whether case matters.
 
@@ -722,23 +830,32 @@ class PairedNoteUtil(NoteUtil):
 
         Raises
         ------
-        ValueError
-            If the provided term or definition is not found within the notes_dict's values.
+        NotesNotFoundError
+            If the provided term or definition is not found within the notes_dict's keys or values.
         """
 
-        if index is not None:
-            return self.notes_paired.val_with(index=index)
-        if not case_sensitive:
-            return self.notes_paired.val_with(key=term.lower() if term is not None else term,
-                                              func=str.lower)
-        return self.notes_paired.val_with(key=term)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            if index is not None:
+                return notes_dict.val_with(index=index)
+            if not case_sensitive:
+                return notes_dict.val_with(key=term.lower() if term is not None else term,
+                                           name=definition.lower() if definition is not None else definition,
+                                           func=str.lower)
+            return notes_dict.val_with(key=term)
+        except ValueError:
+            raise errors.NotesNotFoundError
 
-    def index(self, *, term: str=None, definition: str=None, case_sensitive: bool=False):
+    def pair_index(self, *, notes_dict: IndexedDict=None,
+                   term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns the index of a term or definition if it matches exactly.
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         term : str, optional if definition is provided.
             Key of the element that is being searched for.
         definition : str, optional if term is provided.
@@ -753,17 +870,23 @@ class PairedNoteUtil(NoteUtil):
 
         Raises
         ------
-        IndexError
-            If the term or definition is not found within the notes_dict's items.
+        NotesIndexError
+            If the index is out of range (and thus no terms or definitions are found).
         """
 
-        if not case_sensitive:
-            return self.notes_paired.index_with(key=term.lower() if term is not None else term,
-                                                val=definition.lower() if definition is not None else definition,
-                                                func=str.lower)
-        return self.notes_paired.index_with(key=term, val=definition)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            if not case_sensitive:
+                return notes_dict.index_with(key=term.lower() if term is not None else term,
+                                             val=definition.lower() if definition is not None else definition,
+                                             func=str.lower)
+            return notes_dict.index_with(key=term, val=definition)
+        except IndexError:
+            raise errors.NotesIndexError
 
-    def terms(self, *, indexes: list=None, term: str=None, definition: str=None, case_sensitive: bool=False):
+    def terms(self, *, notes_dict: IndexedDict=None,
+              indexes: list=None, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of terms that have part of the term name in it or part of the definition in its own definition.
 
@@ -771,6 +894,8 @@ class PairedNoteUtil(NoteUtil):
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         indexes : list of int, optional if term or definition is provided.
             Indexes of terms to be added.
         term : str, optional if indexes or definition is provided.
@@ -787,18 +912,24 @@ class PairedNoteUtil(NoteUtil):
 
         Raises
         ------
-        KeyError
+        NotesNotFoundError
             If no term had the name in its name or had the definition in its value.
         """
 
-        if not case_sensitive:
-            return self.notes_paired.keys_with(indexes=indexes,
-                                               name=term.lower() if term is not None else term,
-                                               val=definition.lower() if definition is not None else definition,
-                                               func=str.lower)
-        return self.notes_paired.keys_with(name=term, val=definition)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            if not case_sensitive:
+                return notes_dict.keys_with(indexes=indexes,
+                                            name=term.lower() if term is not None else term,
+                                            val=definition.lower() if definition is not None else definition,
+                                            func=str.lower)
+            return notes_dict.keys_with(indexes=indexes, name=term, val=definition)
+        except KeyError:
+            raise errors.NotesNotFoundError
 
-    def definitions(self, *, indexes: list=None, term: str=None, definition: str=None, case_sensitive: bool=False):
+    def definitions(self, *, notes_dict: IndexedDict=None,
+                    indexes: list=None, term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns a list of definitions that have part of the term name as its key or part of the definition name in it.
 
@@ -806,6 +937,8 @@ class PairedNoteUtil(NoteUtil):
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         indexes : list of int
             Indexes of terms to be added.
         term : str, optional if definition is provided.
@@ -822,18 +955,24 @@ class PairedNoteUtil(NoteUtil):
 
         Raises
         ------
-        ValueError
+        NotesNotFoundError
             If no definition had the definition in its name or had the term in its key.
         """
 
-        if not case_sensitive:
-            return self.notes_paired.vals_with(indexes=indexes,
-                                               key=term.lower() if term is not None else term,
-                                               name=definition.lower() if definition is not None else definition,
-                                               func=str.lower)
-        return self.notes_paired.vals_with(key=term, name=definition)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            if not case_sensitive:
+                return notes_dict.vals_with(indexes=indexes,
+                                            key=term.lower() if term is not None else term,
+                                            name=definition.lower() if definition is not None else definition,
+                                            func=str.lower)
+            return notes_dict.vals_with(indexes=indexes, key=term, name=definition)
+        except ValueError:
+            raise errors.NotesNotFoundError
 
-    def indexes(self, *, term: str=None, definition: str=None, case_sensitive: bool=False):
+    def pair_indexes(self, *, notes_dict: IndexedDict=None,
+                     term: str=None, definition: str=None, case_sensitive: bool=False):
         """
         Returns the index of a term or definition if it is part of a key or definition in the paired notes.
 
@@ -841,6 +980,8 @@ class PairedNoteUtil(NoteUtil):
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         term : str, optional if definition is provided.
             Key of the element that is being searched for.
         definition : str, optional if term is provided.
@@ -855,22 +996,29 @@ class PairedNoteUtil(NoteUtil):
 
         Raises
         ------
-        IndexError
-            If no items had part of the term in its key or part of the definition in its value.
+        NotesIndexError
+            If all indexes were out of range of the IndexedDict and no items were found.
         """
 
-        if not case_sensitive:
-            return self.notes_paired.indexes_with(key=term if term is not None else term,
-                                                  val=definition.lower() if definition is not None else definition,
-                                                  func=str.lower)
-        return self.notes_paired.indexes_with(key=term, val=definition)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            if not case_sensitive:
+                return notes_dict.indexes_with(key=term if term is not None else term,
+                                               val=definition.lower() if definition is not None else definition,
+                                               func=str.lower)
+            return notes_dict.indexes_with(key=term, val=definition)
+        except IndexError:
+            raise errors.NotesIndexError
 
-    def pair(self, index: int):
+    def pair(self, *, notes_dict: IndexedDict=None, index: int):
         """
         Returns the term and definition of the notes_dict at the provided index.
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         index : int
             Index of the term and definition in the dictionary.
 
@@ -881,17 +1029,27 @@ class PairedNoteUtil(NoteUtil):
         str
             definition of the notes_dict at the provided index.
 
-        If index is out of range (greater than len(notes_dict) or less than 0), raise an IndexError.
+        Raises
+        ------
+        NotesIndexError
+            If the provided index is out of range of the IndexedDict.
         """
 
-        return self.notes_paired.item_at(index)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            return notes_dict.item_at(index)
+        except IndexError:
+            raise errors.NotesIndexError
 
-    def pairs(self, indexes: list):
+    def pairs(self, *, notes_dict: IndexedDict=None, indexes: list):
         """
         Returns a list of (key, value) tuples that represent term and definition pairs.
 
         Parameters
         ----------
+        notes_dict : IndexedDict
+            Any IndexedDict that contains terms and definitions.
         indexes : list of int
             Indexes of the pairs.
 
@@ -899,9 +1057,19 @@ class PairedNoteUtil(NoteUtil):
         -------
         list of tuple(str, str)
             The list of term and definition pairs.
+
+        Raises
+        ------
+        NotesIndexError
+            If one of the indexes are out of range of the IndexedDict.
         """
 
-        return self.notes_paired.items_at(indexes)
+        if notes_dict is None:
+            notes_dict = self.notes_paired
+        try:
+            return notes_dict.items_at(indexes)
+        except IndexError:
+            raise errors.NotesIndexError
 
 
 class CategorizedNoteUtil(PairedNoteUtil):
@@ -1185,11 +1353,11 @@ class CategorizedNoteUtil(PairedNoteUtil):
                         return d
 
 
-noteutil = CategorizedNoteUtil("test_notes.txt", ["#"], ":",
-                               generics=[("Important", "!")],
-                               positionals=[("Category 1", "~"), ("Category 2", "~~")],
-                               extensions=[("Decimal", "%")],
-                               ignore_generics=True)
-
-print(noteutil)
+# noteutil = CategorizedNoteUtil("test_notes.txt", ["#"], ":",
+#                                generics=[("Important", "!")],
+#                                positionals=[("Category 1", "~"), ("Category 2", "~~")],
+#                                extensions=[("Decimal", "%")],
+#                                ignore_generics=True)
+#
+# print(noteutil)
 
