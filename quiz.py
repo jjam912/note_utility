@@ -747,27 +747,32 @@ class PairedQuiz(Quiz):
         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 
         if self.random:
+
+            if not rand_list:
+                rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(notes_dict))]
+                random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
+
             try:
                 rand_index = rand_list.pop()
             except IndexError:
-                raise errors.NotesIndexError
+                raise errors.NotesIndexError("The notes_dict provided is empty")
 
             pair = self.noteutil.pair(notes_dict=notes_dict, index=rand_index)
             self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.pair_index(term=pair[0], definition=pair[1])
 
             if not rand_list:
-                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(notes_dict))]
-                random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
                 repeat = True
 
         else:
+            if self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] >= len(notes_dict):
+                chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
+
             pair = self.noteutil.pair(notes_dict=notes_dict, index=chrono_index)
             self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.pair_index(term=pair[0], definition=pair[1])
 
             self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] += 1
 
             if self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] == len(notes_dict):
-                self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
                 repeat = True
 
         return pair[0], pair[1], repeat
