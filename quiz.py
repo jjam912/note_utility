@@ -180,8 +180,8 @@ class Quiz:
         None
         """
 
-        self.all_indexes = var_dict[Quiz.KEY_ALL_INDEXES]
-        self.all_lists = var_dict[Quiz.KEY_ALL_LISTS]
+        self.all_indexes.update(var_dict[Quiz.KEY_ALL_INDEXES])
+        self.all_lists.update(var_dict[Quiz.KEY_ALL_LISTS])
         self.current_notes = var_dict[Quiz.KEY_CURRENT_NOTES]
         self.random = var_dict[Quiz.KEY_RANDOM]
 
@@ -712,7 +712,7 @@ class PairedQuiz(Quiz):
         """
 
         super().parse_dict(var_dict)
-        self.all_dicts = var_dict[PairedQuiz.KEY_ALL_DICTS]
+        self.all_dicts.update(var_dict[PairedQuiz.KEY_ALL_DICTS])
         for k in self.all_dicts.keys():
             self.all_dicts[k] = IndexedDict(self.all_dicts[k])
         self.term_first = var_dict[PairedQuiz.KEY_TERM_FIRST]
