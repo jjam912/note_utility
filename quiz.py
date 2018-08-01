@@ -13,6 +13,7 @@ class Quiz:
     Keys that are used for converting to a dictionary or setting the current notes:
         For dictionary:
             KEY_ALL_INDEXES : str
+                All of the keys are constructed from KEY_LIST + either CHRONOLOGICAL or RANDOM suffix.
                 KEY_LINE_INDEX : str
                 KEY_LINE_INDEXES : str
                 KEY_CORRECT_INDEX : str
@@ -20,6 +21,7 @@ class Quiz:
                 KEY_INCORRECT_INDEX : str
                 KEY_INCORRECT_INDEXES : str
                 KEY_LAST_INDEX : str
+                    Last index generated.
             KEY_RANDOM : str
             KEY_CORRECT_LIST : str
             KEY_INCORRECT_LIST : str
@@ -60,21 +62,16 @@ class Quiz:
 
     CHRONOLOGICAL_SUFFIX = "_chronological_index"
     RANDOM_SUFFIX = "_random_indexes"
+    LIST_SUFFIX = "_list"
 
     KEY_ALL_INDEXES = "all_indexes"
     KEY_ALL_LISTS = "all_lists"
 
-    KEY_NOTES_LIST = "notes_list"
-    KEY_LINE_INDEX = KEY_NOTES_LIST + CHRONOLOGICAL_SUFFIX
-    KEY_LINE_INDEXES = KEY_NOTES_LIST + RANDOM_SUFFIX
+    KEY_NOTES_LIST = "notes" + LIST_SUFFIX
 
-    KEY_CORRECT_LIST = "correct_list"
-    KEY_CORRECT_LINE_INDEX = KEY_CORRECT_LIST + CHRONOLOGICAL_SUFFIX
-    KEY_CORRECT_LINE_INDEXES = KEY_CORRECT_LIST + RANDOM_SUFFIX
+    KEY_CORRECT_LIST = "correct" + LIST_SUFFIX
 
-    KEY_INCORRECT_LIST = "incorrect_list"
-    KEY_INCORRECT_LINE_INDEX = KEY_INCORRECT_LIST + CHRONOLOGICAL_SUFFIX
-    KEY_INCORRECT_LINE_INDEXES = KEY_INCORRECT_LIST + RANDOM_SUFFIX
+    KEY_INCORRECT_LIST = "incorrect" + LIST_SUFFIX
 
     KEY_CURRENT_NOTES = "current_notes"
 
@@ -93,15 +90,15 @@ class Quiz:
 
         self.noteutil = noteutil
 
-        self.all_indexes = {self.KEY_LINE_INDEX: 0,
-                            self.KEY_LINE_INDEXES: [x for x in range(len(self.noteutil.notes_list))],
-                            self.KEY_CORRECT_LINE_INDEX: 0,
-                            self.KEY_CORRECT_LINE_INDEXES: [],
-                            self.KEY_INCORRECT_LINE_INDEX: 0,
-                            self.KEY_INCORRECT_LINE_INDEXES: [],
+        self.all_indexes = {self.KEY_NOTES_LIST + self.CHRONOLOGICAL_SUFFIX: 0,
+                            self.KEY_NOTES_LIST + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_list))],
+                            self.KEY_CORRECT_LIST + self.CHRONOLOGICAL_SUFFIX: 0,
+                            self.KEY_CORRECT_LIST + self.RANDOM_SUFFIX: [],
+                            self.KEY_INCORRECT_LIST + self.CHRONOLOGICAL_SUFFIX: 0,
+                            self.KEY_INCORRECT_LIST + self.RANDOM_SUFFIX: [],
                             self.KEY_LAST_INDEX: 0}
 
-        random.shuffle(self.all_indexes[self.KEY_LINE_INDEXES])
+        random.shuffle(self.all_indexes[self.KEY_NOTES_LIST + self.RANDOM_SUFFIX])
 
         self.all_lists = {self.KEY_NOTES_LIST: self.noteutil.notes_list,
                           self.KEY_CORRECT_LIST: [],
@@ -235,7 +232,7 @@ class Quiz:
         return line, repeat
 
     def add_line(self, *, notes_key: str=None,
-                 last: bool=False, index: int=None, name: str=None, case_sensitive: bool=False):
+                 last: bool=False, index: int=None, name: str=None, func=lambda x: x.lower()):
         """
         Adds a line of notes to the correct list.
 
@@ -249,8 +246,8 @@ class Quiz:
             Add the line that corresponds to the provided index in notes_list.
         name : str, optional if one of the other two is provided.
             Part of or the entire line of notes, must be unique to that notes line. Add the line found.
-        case_sensitive : bool, optional
-            Whether case matters while searching with the name.
+        func : function, Optional
+            Function to apply to the name and line, default is case insensitive.
 
         Returns
         -------
@@ -258,8 +255,14 @@ class Quiz:
 
         Raises
         ------
-        ValueError
-            If the provided name appears in multiple lines or no lines.
+        ForbiddenEdit
+            If the notes_paired was attempted to be edited.
+        DuplicateError
+            If the line is already in the selected list.
+        NotesNotFoundError
+            If the no lines were found from the name.
+        MultipleFoundError
+            If more than 1 line was found from the name.
         """
 
         if notes_key is None:
@@ -274,26 +277,26 @@ class Quiz:
         if last:
             last_index = self.all_indexes[self.KEY_LAST_INDEX]
 
-            if self.noteutil.line(last_index) in notes_list:
+            if self.noteutil.line(index=last_index) in notes_list:
                 raise errors.DuplicateError
             else:
-                notes_list.append(self.noteutil.line(last_index))
+                notes_list.append(self.noteutil.line(index=last_index))
 
             rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
             return
 
         if index is not None:
-            if self.noteutil.line(index) in notes_list:
+            if self.noteutil.line(index=index) in notes_list:
                 raise errors.DuplicateError
             else:
-                notes_list.append(self.noteutil.line(index))
+                notes_list.append(self.noteutil.line(index=index))
 
             rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
             return
 
         if name is not None:
             try:
-                line = self.noteutil.line(name=name, case_sensitive=case_sensitive)
+                line = self.noteutil.line(name=name, func=func)
 
                 if line in notes_list:
                     raise errors.DuplicateError
@@ -304,7 +307,7 @@ class Quiz:
             except errors.NotesNotFoundError:  # Try again with the lines method.
                 pass
 
-            lines = self.noteutil.lines(name=name, case_sensitive=case_sensitive)
+            lines = self.noteutil.lines(name=name, func=func)
             if len(lines) > 1:
                 raise errors.MultipleFoundError("More than one line found.")
 
@@ -317,7 +320,7 @@ class Quiz:
                 rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
 
     def remove_line(self, *, notes_key: str=None,
-                    last: bool=False, index: int=None, name: str=None, case_sensitive: bool=False):
+                    last: bool=False, index: int=None, name: str=None, func=lambda x: x.lower()):
         """
         Removes a line of notes from the correct list.
 
@@ -331,8 +334,8 @@ class Quiz:
             Add the line that corresponds to the provided index in notes_list.
         name : str, optional if one of the other two is provided.
             Part of or the entire line of notes, must be unique to that notes line. Add the line found.
-        case_sensitive : bool
-            Whether case matters while searching with the name.
+        func : function, Optional
+            Function to apply to the name and line, default is case insensitive.
 
         Returns
         -------
@@ -340,9 +343,13 @@ class Quiz:
 
         Raises
         ------
-        ValueError
-            If the line does not exist in the correct list.
-            If the provided name appears in multiple lines or no lines.
+        ForbiddenEdit
+            If the notes_paired was attempted to be edited.
+        NotesNotFoundError
+            If the no lines were found from the name.
+            If the line was not in the dictionary to begin with.
+        MultipleFoundError
+            If more than one line was found from the name.
         """
 
         if notes_key is None:
@@ -396,7 +403,7 @@ class Quiz:
         if name is not None:
 
             try:
-                line = self.noteutil.line(name=name, case_sensitive=case_sensitive)
+                line = self.noteutil.line(name=name, func=func)
                 line_index = notes_list.index(line)
 
                 if line not in notes_list:
@@ -416,7 +423,7 @@ class Quiz:
             except errors.NotesNotFoundError:  # Try again with the lines method.
                 pass
 
-            lines = self.noteutil.lines(name=name, case_sensitive=case_sensitive)
+            lines = self.noteutil.lines(name=name, func=func)
 
             if len(lines) > 1:
                 raise errors.MultipleFoundError
@@ -438,7 +445,7 @@ class Quiz:
 
             del notes_list[line_index]
 
-    def lookup_lines(self, *, indexes: list=None, name: str=None, case_sensitive: bool=False):
+    def lookup_lines(self, *, indexes: list=None, name: str=None, func=lambda x: x.lower()):
         """
         Searches through all lines of notes and adds them to a list.
 
@@ -448,8 +455,8 @@ class Quiz:
             Specific indexes in the noteutil notes_list to add.
         name : str
             A string that occurs in lines of notes. Any line that has this name in it will be added.
-        case_sensitive : bool
-            Whether case matters while searching with the name.
+        func : function, Optional
+            Function to apply to the name and line, default is case insensitive.
 
         Returns
         -------
@@ -460,9 +467,9 @@ class Quiz:
         lines = []
         if indexes is not None:
             for index in indexes:
-                lines.append(self.noteutil.line(index))
+                lines.append(self.noteutil.line(index=index))
         if name is not None:
-            for line in self.noteutil.lines(name=name, case_sensitive=case_sensitive):
+            for line in self.noteutil.lines(name=name, func=func):
                 if line not in lines:
                     lines.append(line)
         return lines
@@ -478,6 +485,39 @@ class Quiz:
 
         self.random = not self.random
 
+    def reset(self, chronological: bool=None, *, notes_key: str=None):
+        """
+        Resets the indexes of a certain notes list.
+
+        Parameters
+        ----------
+        chronological : bool, Optional
+            If this is not provided (left as None), it will reset both the random and chronological progress.
+            Otherwise, if it is True, it will reset chronological progress of the notes list.
+            If it is False, it will reset the random progress of the notes list.
+        notes_key : str, Optional
+            If this is not provided, it will default to whatever the current notes are.
+            Otherwise, it will use the key provided to find a corresponding notes list.
+
+        Returns
+        -------
+        None
+        """
+
+        if notes_key is None:
+            notes_key = self.current_notes
+
+        if chronological is None:
+            self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
+            self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_lists[notes_key]))]
+            random.shuffle(self.all_lists[self.current_notes])
+        else:
+            if chronological:
+                self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
+            else:
+                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_lists[notes_key]))]
+                random.shuffle(self.all_lists[self.current_notes])
+
     def reset_all(self):
         """
         Resets all indexes except last_index to default. Empties the correct and incorrect lists.
@@ -489,15 +529,17 @@ class Quiz:
         None
         """
 
+        self.all_lists[self.KEY_CORRECT_LIST] = []
+        self.all_lists[self.KEY_INCORRECT_LIST] = []
         for key in self.all_indexes.keys():
             if key.endswith(self.CHRONOLOGICAL_SUFFIX):
                 self.all_indexes[key] = 0
             elif key.endswith(self.RANDOM_SUFFIX):
-                self.all_indexes[key] = []
-        self.all_indexes[self.KEY_LINE_INDEXES] = [x for x in range(len(self.noteutil.notes_list))]
-        random.shuffle(self.all_indexes[self.KEY_LINE_INDEXES])
-        self.all_lists[self.KEY_CORRECT_LIST] = []
-        self.all_lists[self.KEY_INCORRECT_LIST] = []
+                try:
+                    self.all_indexes[key] = [x for x in range(len(self.all_lists[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    random.shuffle(self.all_indexes[key])
+                except KeyError:
+                    pass
 
     def reset_chronological(self):
         """
@@ -523,9 +565,11 @@ class Quiz:
 
         for key in self.all_indexes:
             if key.endswith(self.RANDOM_SUFFIX):
-                self.all_indexes[key] = []
-        self.all_indexes[self.KEY_LINE_INDEXES] = [x for x in range(len(self.noteutil.notes_list))]
-        random.shuffle(self.all_indexes[self.KEY_LINE_INDEXES])
+                try:
+                    self.all_indexes[key] = [x for x in range(len(self.all_lists[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    random.shuffle(self.all_indexes[key])
+                except KeyError:
+                    pass
 
     def reset_correct(self):
         """
@@ -537,6 +581,8 @@ class Quiz:
         """
 
         self.all_lists[self.KEY_CORRECT_LIST] = []
+        self.all_indexes[self.KEY_CORRECT_LIST + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_CORRECT_LIST + self.RANDOM_SUFFIX] = []
 
     def reset_incorrect(self):
         """
@@ -548,6 +594,8 @@ class Quiz:
         """
 
         self.all_lists[self.KEY_INCORRECT_LIST] = []
+        self.all_indexes[self.KEY_INCORRECT_LIST + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_INCORRECT_LIST + self.RANDOM_SUFFIX] = []
 
 
 class PairedQuiz(Quiz):
@@ -557,6 +605,7 @@ class PairedQuiz(Quiz):
     Keys are used for to_dict().
     Keys that are used for converting to a dictionary.
         In all_indexes:
+            All keys are constructed from KEY_DICT + RANDOM or CHRONOLOGICAL suffix.
             KEY_DICT_INDEX : str
             KEY_DICT_INDEXES : str
             KEY_CORRECT_PAIR_INDEX : str
@@ -564,7 +613,7 @@ class PairedQuiz(Quiz):
             KEY_INCORRECT_PAIR_INDEXES : str
             KEY_INCORRECT_PAIR_INDEXES : str
 
-        For notes_paired:
+        Dict keys:
             KEY_NOTES_PAIRED : str
             KEY_CORRECT_DICT : str
             KEY_INCORRECT_DICT : str
@@ -589,32 +638,27 @@ class PairedQuiz(Quiz):
             incorrect_pair_indexes : list of int
                 Random indexes of the next pair in the incorrect dict.
         all_dicts : dict {str: IndexedDict}
-            notes_paired : IndexedDict {str : str}
+            notes_dict : IndexedDict {str : str}
                 All terms and definitions in a dictionary
             correct_dict : IndexedDict {str: str}
-                Subset of notes_paired that contains the user's correct terms and definitions.
+                Subset of notes_dict that contains the user's correct terms and definitions.
             incorrect_dict : IndexedDict {str: str}
-                Subset of notes_paired that contains the user's incorrect terms and definitions.
+                Subset of notes_dict that contains the user's incorrect terms and definitions.
         term_first : bool
             Whether to return the term first in the qa method.
     """
 
     CHRONOLOGICAL_SUFFIX = Quiz.CHRONOLOGICAL_SUFFIX
     RANDOM_SUFFIX = Quiz.RANDOM_SUFFIX
+    DICT_SUFFIX = "_dict"
 
     KEY_ALL_DICTS = "all_dicts"
 
-    KEY_NOTES_PAIRED = "notes_paired"
-    KEY_DICT_INDEX = KEY_NOTES_PAIRED + CHRONOLOGICAL_SUFFIX
-    KEY_DICT_INDEXES = KEY_NOTES_PAIRED + RANDOM_SUFFIX
+    KEY_NOTES_DICT = "notes" + DICT_SUFFIX
 
-    KEY_CORRECT_DICT = "correct_dict"
-    KEY_CORRECT_PAIR_INDEX = KEY_CORRECT_DICT + CHRONOLOGICAL_SUFFIX
-    KEY_CORRECT_PAIR_INDEXES = KEY_CORRECT_DICT + RANDOM_SUFFIX
+    KEY_CORRECT_DICT = "correct" + DICT_SUFFIX
 
-    KEY_INCORRECT_DICT = "incorrect_dict"
-    KEY_INCORRECT_PAIR_INDEX = KEY_INCORRECT_DICT + CHRONOLOGICAL_SUFFIX
-    KEY_INCORRECT_PAIR_INDEXES = KEY_INCORRECT_DICT + RANDOM_SUFFIX
+    KEY_INCORRECT_DICT = "incorrect" + DICT_SUFFIX
 
     KEY_TERM_FIRST = "term_first"
 
@@ -629,21 +673,21 @@ class PairedQuiz(Quiz):
         """
 
         super().__init__(noteutil)
-        self.current_notes = self.KEY_NOTES_PAIRED
+        self.current_notes = self.KEY_NOTES_DICT
 
         self.all_indexes.update(
-            {self.KEY_DICT_INDEX: 0,
-             self.KEY_DICT_INDEXES: [x for x in range(len(self.noteutil.notes_paired))],
-             self.KEY_CORRECT_PAIR_INDEX: 0,
-             self.KEY_CORRECT_PAIR_INDEXES: [],
-             self.KEY_INCORRECT_PAIR_INDEX: 0,
-             self.KEY_INCORRECT_PAIR_INDEXES: []})
+            {self.KEY_NOTES_DICT + self.CHRONOLOGICAL_SUFFIX: 0,
+             self.KEY_NOTES_DICT + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_paired))],
+             self.KEY_CORRECT_DICT + self.CHRONOLOGICAL_SUFFIX: 0,
+             self.KEY_CORRECT_DICT + self.RANDOM_SUFFIX: [],
+             self.KEY_INCORRECT_DICT + self.CHRONOLOGICAL_SUFFIX: 0,
+             self.KEY_INCORRECT_DICT + self.RANDOM_SUFFIX: []})
 
-        random.shuffle(self.all_indexes[self.KEY_DICT_INDEXES])
+        random.shuffle(self.all_indexes[self.KEY_NOTES_DICT + self.RANDOM_SUFFIX])
         self.delimeter = noteutil.delimeter
-        self.all_dicts = {self.KEY_NOTES_PAIRED: self.noteutil.notes_paired,
-                          self.KEY_CORRECT_DICT: IndexedDict(),
-                          self.KEY_INCORRECT_DICT: IndexedDict()}
+        self.all_dicts = IndexedDict({self.KEY_NOTES_DICT: self.noteutil.notes_paired,
+                                      self.KEY_CORRECT_DICT: IndexedDict(),
+                                      self.KEY_INCORRECT_DICT: IndexedDict()})
 
         self.term_first = True
 
@@ -664,8 +708,6 @@ class PairedQuiz(Quiz):
         for key in self.all_dicts.keys():
             message += key + ": " + str(self.all_dicts[key]) + "\n"
         message += "Delimeter: " + self.delimeter + "\n"
-        message += "Dict index: " + str(self.all_indexes[self.KEY_DICT_INDEX]) + "\n"
-        message += "Dict indexes: " + str(self.all_indexes[self.KEY_DICT_INDEXES]) + "\n"
         message += "Term first: " + str(self.term_first) + "\n"
 
         return message
@@ -684,7 +726,7 @@ class PairedQuiz(Quiz):
 
         quiz = super().to_dict()
 
-        ignore_keys = [self.KEY_NOTES_PAIRED]
+        ignore_keys = [self.KEY_NOTES_DICT]
         filtered_dict = dict()
         for k in self.all_dicts:
             if k not in ignore_keys:
@@ -811,7 +853,7 @@ class PairedQuiz(Quiz):
         return question, answer, repeat
 
     def add_pair(self, *, notes_key: str=None,
-                 last: bool=False, index: int=None, term: str=None, definition: str=None, case_sensitive=False):
+                 last: bool=False, index: int=None, term: str=None, definition: str=None, func=lambda x: x.lower()):
         """
         Assigns a definition to a term in a notes dict.
 
@@ -827,8 +869,8 @@ class PairedQuiz(Quiz):
             Part of or the entire term, must be unique to noteutil.notes_paired.
         definition : str, optional if one of the other three is provided.
             Part of or the entire definition, must be unique to noteutil.notes_paired.
-        case_sensitive : bool, optional
-            Whether case matters while searching with the name.
+        func : function, Optional
+            Function to apply to the term and definition of parameter and dictionary, default is case insensitive.
 
         Returns
         -------
@@ -836,14 +878,20 @@ class PairedQuiz(Quiz):
 
         Raises
         ------
-        KeyError
-            If the provided name appears in multiple lines or no lines.
+        ForbiddenEdit
+            If the notes_paired was attempted to be edited.
+        DuplicateError
+            If the term is already in the selected list.
+        NotesNotFoundError
+            If the no terms were found from the name.
+        MultipleFoundError
+            If more than 1 term was found from the name.
         """
 
         if notes_key is None:
             notes_key = self.current_notes
 
-        if notes_key == self.KEY_NOTES_PAIRED:
+        if notes_key == self.KEY_NOTES_DICT:
             raise errors.ForbiddenEdit
 
         notes_dict = self.all_dicts[notes_key]
@@ -873,7 +921,7 @@ class PairedQuiz(Quiz):
 
         if term is not None:
             try:
-                exact_term = self.noteutil.term(term=term, case_sensitive=case_sensitive)
+                exact_term = self.noteutil.term(term=term, func=func)
                 if exact_term in notes_dict:
                     raise errors.DuplicateError
 
@@ -885,7 +933,7 @@ class PairedQuiz(Quiz):
                 pass    # Try again with terms
 
             try:
-                terms = self.noteutil.terms(term=term, case_sensitive=case_sensitive)
+                terms = self.noteutil.terms(term=term, func=func)
                 if len(terms) == 1:     # Only throw error if there is no definition parameter (we can search that too)
                     exact_term = terms[0]
 
@@ -903,7 +951,7 @@ class PairedQuiz(Quiz):
 
         if definition is not None:
             try:
-                exact_term = self.noteutil.term(definition=definition, case_sensitive=case_sensitive)
+                exact_term = self.noteutil.term(definition=definition, func=func)
                 if exact_term in notes_dict:
                     raise errors.DuplicateError
                 else:
@@ -913,7 +961,7 @@ class PairedQuiz(Quiz):
             except errors.NotesNotFoundError:
                 pass
 
-            terms = self.noteutil.terms(definition=definition, case_sensitive=case_sensitive)
+            terms = self.noteutil.terms(definition=definition, func=func)
             if len(terms) == 1:
                 exact_term = terms[0]
 
@@ -927,7 +975,7 @@ class PairedQuiz(Quiz):
                 raise errors.MultipleFoundError
 
     def remove_pair(self, *, notes_key: str=None,
-                    last: bool=False, index: int=None, term: str=None, definition: str=None, case_sensitive=False):
+                    last: bool=False, index: int=None, term: str=None, definition: str=None, func=lambda x: x.lower()):
         """
         Adds a line of notes to the incorrect list.
 
@@ -944,8 +992,8 @@ class PairedQuiz(Quiz):
             If a term is not found, and a definition was provided, this will continue to the definition section.
         definition : str, optional if one of the other is provided.
             The definition of the term to remove.
-        case_sensitive : bool, optional
-            Whether case matters while searching with the name.
+        func : function, Optional
+            Function to apply to the term and definition of parameter and dictionary, default is case insensitive.
 
         Returns
         -------
@@ -953,14 +1001,19 @@ class PairedQuiz(Quiz):
 
         Raises
         ------
-        KeyError
-            If the provided name appears in multiple lines or no lines.
+        ForbiddenEdit
+            If the notes_paired was attempted to be edited.
+        NotesNotFoundError
+            If the no lines were found from the name.
+            If the term was not in the dictionary to begin with.
+        MultipleFoundError
+            If more than 1 line was found from the name.
         """
 
         if notes_key is None:
             notes_key = self.current_notes
 
-        if notes_key == self.KEY_NOTES_PAIRED:
+        if notes_key == self.KEY_NOTES_DICT:
             raise errors.ForbiddenEdit
 
         notes_dict = self.all_dicts[notes_key]
@@ -971,7 +1024,8 @@ class PairedQuiz(Quiz):
             last_index = self.all_indexes[self.KEY_LAST_INDEX]
             exact_term, exact_definition = self.noteutil.pair(index=last_index)
 
-            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term, definition=exact_definition)
+            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term,
+                                                  definition=exact_definition)
 
             if exact_term in notes_dict:
 
@@ -990,7 +1044,8 @@ class PairedQuiz(Quiz):
 
         if index is not None:
             exact_term, exact_definition = self.noteutil.pair(index=index)
-            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term, definition=exact_definition)
+            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term,
+                                                  definition=exact_definition)
 
             if exact_term in notes_dict:
                 if pair_index <= chrono_index:
@@ -1008,7 +1063,7 @@ class PairedQuiz(Quiz):
         if term is not None:
 
             try:
-                exact_term = self.noteutil.term(term=term, case_sensitive=case_sensitive)
+                exact_term = self.noteutil.term(term=term, func=func)
                 pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term)
 
                 if exact_term not in notes_dict:
@@ -1030,7 +1085,7 @@ class PairedQuiz(Quiz):
                 pass
 
             try:
-                terms = self.noteutil.terms(term=term, case_sensitive=case_sensitive)
+                terms = self.noteutil.terms(term=term, func=func)
 
                 if len(terms) == 1:
                     exact_term = terms[0]
@@ -1053,7 +1108,7 @@ class PairedQuiz(Quiz):
         if definition is not None:
 
             try:
-                exact_term = self.noteutil.term(definition=definition, case_sensitive=case_sensitive)
+                exact_term = self.noteutil.term(definition=definition, func=func)
                 pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term)
 
                 if exact_term not in notes_dict:
@@ -1074,7 +1129,7 @@ class PairedQuiz(Quiz):
             except errors.NotesNotFoundError:  # Try again with the terms method.
                 pass
 
-            terms = self.noteutil.terms(definition=definition, case_sensitive=case_sensitive)
+            terms = self.noteutil.terms(definition=definition, func=func)
 
             if len(terms) == 1:
                 exact_term = terms[0]
@@ -1087,7 +1142,7 @@ class PairedQuiz(Quiz):
                     self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] -= 1
                 del notes_dict[exact_term]
 
-    def define_term(self, *, index: int=None, term: str=None, case_sensitive: bool=False):
+    def define_term(self, *, index: int=None, term: str=None, func=lambda x: x.lower()):
         """
         Defines a term at a specific index or with a certain name.
 
@@ -1099,8 +1154,8 @@ class PairedQuiz(Quiz):
             Index of a term in notes_paired.
         term : str, optional if index is provided.
             Name of key in notes_paired to be defined.
-        case_sensitive : bool
-            Whether the case matters while searching for the definition of the term.
+        func : function, Optional
+            Function to apply to the term of parameter and dictionary, default is case insensitive.
 
         Returns
         -------
@@ -1109,17 +1164,16 @@ class PairedQuiz(Quiz):
 
         Raises
         ------
-        ValueError
+        NotesNotFoundError
             If no values were associated with the index or term.
-
         """
 
         if index is not None:
             return self.noteutil.definition(index=index)
         if term is not None:
-            return self.noteutil.definition(term=term, case_sensitive=case_sensitive)
+            return self.noteutil.definition(term=term, func=func)
 
-    def define_terms(self, *, indexes: list=None, terms: list=None, case_sensitive: bool=False):
+    def define_terms(self, *, indexes: list=None, terms: list=None, func=lambda x: x.lower()):
         """
         Defines a list of terms from given indexes or term names.
 
@@ -1131,13 +1185,18 @@ class PairedQuiz(Quiz):
             All indexes of terms to be defined.
         terms : list of str, optional if indexes is provided.
             All names of terms to be defined.
-        case_sensitive : bool
-            Whether case matters while searching for the term.
+        func : function, Optional
+            Function to apply to the term of parameter and dictionary, default is case insensitive.
 
         Returns
         -------
         list of str
             All definitions that corresponded to the indexes and names without repeating.
+
+        Raises
+        ------
+        NotesNotFoundError
+            If any of the values were not associated with the index or term.
         """
 
         definitions = []
@@ -1146,12 +1205,12 @@ class PairedQuiz(Quiz):
                 definitions.append(self.define_term(index=index))
         if terms is not None:
             for term in terms:
-                definition = self.define_term(term=term, case_sensitive=case_sensitive)
+                definition = self.define_term(term=term, func=func)
                 if definition not in definitions:
                     definitions.append(definition)
         return definitions
 
-    def lookup_terms(self, *, indexes: list=None, name: str=None, definition: str=None, case_sensitive: bool=False):
+    def lookup_terms(self, *, indexes: list=None, name: str=None, definition: str=None, func=lambda x: x.lower()):
         """
         Gathers a list of terms from the given indexes, name, and/or definition.
 
@@ -1165,8 +1224,8 @@ class PairedQuiz(Quiz):
             A name that may appear in the terms' names.
         definition : str
             A definition that may correspond to terms.
-        case_sensitive : bool
-            Whether case matters while looking for terms.
+        func : function, Optional
+            Function to apply to the term and definition of parameter and dictionary, default is case insensitive.
 
         Returns
         -------
@@ -1179,7 +1238,7 @@ class PairedQuiz(Quiz):
             for index in indexes:
                 terms.append(self.noteutil.term(index=index))
         if name is not None:
-            for term in self.noteutil.terms(term=name, definition=definition, case_sensitive=case_sensitive):
+            for term in self.noteutil.terms(term=name, definition=definition, func=func):
                 if term not in terms:
                     terms.append(term)
         return terms
@@ -1195,6 +1254,39 @@ class PairedQuiz(Quiz):
 
         self.term_first = not self.term_first
 
+    def reset(self, chronological: bool=None, *, notes_key: str=None):
+        """
+        Resets the indexes of a certain notes dict.
+
+        Parameters
+        ----------
+        chronological : bool, Optional
+            If this is not provided (left as None), it will reset both the random and chronological progress.
+            Otherwise, if it is True, it will reset chronological progress of the notes dict.
+            If it is False, it will reset the random progress of the notes dict.
+        notes_key : str, Optional
+            If this is not provided, it will default to whatever the current notes are.
+            Otherwise, it will use the key provided to find a corresponding notes dict.
+
+        Returns
+        -------
+        None
+        """
+
+        if notes_key is None:
+            notes_key = self.current_notes
+
+        if chronological is None:
+            self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
+            self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_dicts[notes_key]))]
+            random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
+        else:
+            if chronological:
+                self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
+            else:
+                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_dicts[notes_key]))]
+                random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
+
     def reset_all(self):
         """
         Resets all indexes except last_index to default.
@@ -1207,23 +1299,19 @@ class PairedQuiz(Quiz):
         """
 
         super().reset_all()
-        self.all_indexes[self.KEY_DICT_INDEX] = 0
-        self.all_indexes[self.KEY_DICT_INDEXES] = [x for x in range(len(self.noteutil.notes_paired))]
-        random.shuffle(self.all_indexes[self.KEY_DICT_INDEXES])
 
         self.all_dicts[self.KEY_CORRECT_DICT] = IndexedDict()
         self.all_dicts[self.KEY_INCORRECT_DICT] = IndexedDict()
 
-    def reset_chronological(self):
-        """
-        Resets only the chronological index back to 0.
-
-        Returns
-        -------
-        None
-        """
-
-        super().reset_chronological()
+        for key in self.all_indexes.keys():
+            if key.endswith(self.CHRONOLOGICAL_SUFFIX):
+                self.all_indexes[key] = 0
+            elif key.endswith(self.RANDOM_SUFFIX):
+                try:
+                    self.all_indexes[key] = [x for x in range(len(self.all_dicts[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    random.shuffle(self.all_indexes[key])
+                except KeyError:
+                    pass
 
     def reset_random(self):
         """
@@ -1235,8 +1323,13 @@ class PairedQuiz(Quiz):
         """
 
         super().reset_random()
-        self.all_indexes[self.KEY_DICT_INDEXES] = [x for x in range(len(self.noteutil.notes_paired))]
-        random.shuffle(self.all_indexes[self.KEY_DICT_INDEXES])
+        for key in self.all_indexes:
+            if key.endswith(self.RANDOM_SUFFIX):
+                try:
+                    self.all_indexes[key] = [x for x in range(len(self.all_dicts[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    random.shuffle(self.all_indexes[key])
+                except KeyError:
+                    pass
 
     def reset_correct(self):
         """
@@ -1249,6 +1342,8 @@ class PairedQuiz(Quiz):
 
         super().reset_correct()
         self.all_dicts[self.KEY_CORRECT_DICT] = IndexedDict()
+        self.all_indexes[self.KEY_CORRECT_DICT + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_CORRECT_DICT + self.RANDOM_SUFFIX] = []
 
     def reset_incorrect(self):
         """
@@ -1261,11 +1356,54 @@ class PairedQuiz(Quiz):
 
         super().reset_incorrect()
         self.all_dicts[self.KEY_INCORRECT_DICT] = IndexedDict()
+        self.all_indexes[self.KEY_INCORRECT_DICT + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_INCORRECT_DICT + self.RANDOM_SUFFIX] = []
 
 
 class CategorizedQuiz(PairedQuiz):
-    pass
+    """
+    A quiz with extended terms and definitions. It has been separated by "categories" for better organization.
 
+    All keys used will have the following and can be found in all_dicts:
+        n - name of the extension/category
+        DICT_SUFFIX - a suffix to indicate that it is a dict
 
+    A key is constructed from n + DICT_SUFFIX
+    """
 
+    def __init__(self, noteutil):
+        """
+        Creates all of the dictionary maps and indexes.
 
+        Parameters
+        ----------
+        noteutil : CategorizedNoteUtil
+            The CategorizedNoteUtil used to make the notes.
+        """
+
+        super().__init__(noteutil)
+
+        extensions = self.noteutil.extension_dict
+        generics = self.noteutil.generic_dict
+        categorized = self.noteutil.notes_categorized
+
+        if extensions:
+            for n, d in extensions.items():
+                self.all_dicts[n + self.DICT_SUFFIX] = d
+                self.all_indexes[n + self.CHRONOLOGICAL_SUFFIX] = 0
+                self.all_indexes[n + self.RANDOM_SUFFIX] = [x for x in range(len(d))]
+                random.shuffle(self.all_indexes[n + self.RANDOM_SUFFIX])
+
+        if generics:
+            for n, d in generics.items():
+                self.all_dicts[n + self.DICT_SUFFIX] = d
+                self.all_indexes[n + self.CHRONOLOGICAL_SUFFIX] = 0
+                self.all_indexes[n + self.RANDOM_SUFFIX] = [x for x in range(len(d))]
+                random.shuffle(self.all_indexes[n + self.RANDOM_SUFFIX])
+
+        if categorized:
+            for n, d in categorized.items():
+                self.all_dicts[n + self.DICT_SUFFIX] = d
+                self.all_indexes[n + self.CHRONOLOGICAL_SUFFIX] = 0
+                self.all_indexes[n + self.RANDOM_SUFFIX] = [x for x in range(len(d))]
+                random.shuffle(self.all_indexes[n + self.RANDOM_SUFFIX])
