@@ -45,3 +45,12 @@ class DuplicateTermError(DuplicateError):
 class MissingBoundError(NotesError):
     pass
 
+
+class NoCategoryError(NotesNotFoundError):
+    pass
+
+
+class NoExtensionError(NotesNotFoundError):
+    pass
+
+
