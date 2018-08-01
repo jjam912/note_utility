@@ -94,6 +94,18 @@ class NoteUtil:
                 continue
             self.notes_list.append(line)
 
+    def format(self):
+        """
+        Formats the notes in the way the noteutil read it.
+
+        Returns
+        -------
+        str
+            What was read from the note file.
+        """
+
+        return "\n".join(self.notes_list)
+
     def line_index(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
         """
         Finds the index of a line in a notes list.
@@ -773,16 +785,33 @@ class PairedNoteUtil(NoteUtil):
 
             except errors.ExtraDelimeterError:
                 self.error_message += "WARNING: Extra delimeter at around line " + str(i+1) + ". "
-                self.error_message += "Pair: " + str(notes_split[i]) + "\n"
+                self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
             except errors.MissingDelimeterError:
                 self.error_message += "WARNING: Missing delimeter at around line " + str(i+1) + ". "
-                self.error_message += "Pair: " + str(notes_split[i]) + "\n"
+                self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
             except errors.NoDefinitionError:
                 self.error_message += "WARNING: Missed pairing at around line " + str(i+1) + ". "
-                self.error_message += "Pair: " + str(notes_split[i]) + "\n"
+                self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
             except errors.DuplicateTermError:
                 self.error_message += "WARNING: Duplicate term at around line " + str(i+1) + ". "
-                self.error_message += "Pair: " + str(notes_split[i]) + "\n"
+                self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
+
+    def format(self):
+        """
+        Formats the notes in the way the noteutil read it.
+
+        It prints each term separated by a delimeter, then a space, and then the definition.
+
+        Returns
+        -------
+        str
+            What was read from the note file.
+        """
+
+        formatted = ""
+        for term, definition in self.notes_paired.items():
+            formatted += "{0}{1} {2}\n".format(term, self.delimeter, definition)
+        return formatted
 
     def term(self, *, notes_dict: IndexedDict=None,
              index: int=None, term: str=None, definition: str=None, func=str.lower):
@@ -1117,6 +1146,8 @@ class CategorizedNoteUtil(PairedNoteUtil):
     ----------
     error_message : str
         Any errors that occur while making categorized notes.
+    place_holder : str
+        What to replace an extension with if it is being filtered.
     extensions : list of tuple of either (str, str) or (str, str, str).
         Each extension is a group of (name, surrounding character(s)) or (name, beginning character, ending character).
         When an extension is found in a definition, it will be added to the end of the string, separated by a \n
@@ -1142,6 +1173,11 @@ class CategorizedNoteUtil(PairedNoteUtil):
         The note pairs in positional dict are pairs that are exclusive only to that name and prefix.
         An "Uncategorized" category contains all note pairs that do not have a category above them in the file.
         "Uncategorized" is double nested to maintain continuity with the rest of positional_dict.
+    nested_dict : IndexedDict
+        A dictionary with keys of each positional name and values of a list of positional names that are nested in it.
+        Another positional is considered nested if the other positional's prefix starts with the positional's prefix.
+        Example : A positional key with prefix '&' will have a positional with prefix '&&' in its values
+            because '&&' starts with '&'.
     notes_categorized : IndexedDict
         A dictionary with keys of each positional name but values of IndexedDicts of note pairs from several categories.
         Think of it as curriculum Units and Chapters.
@@ -1155,9 +1191,10 @@ class CategorizedNoteUtil(PairedNoteUtil):
         __str__()
             Prints all of the variables separated by new lines.
     """
-    def __init__(self, file_name: str, comments: list, delimeter: str, skip_warnings=False,
+    def __init__(self, file_name: str, comments: list, delimeter: str, skip_warnings: bool=False,
                  *, generics: list=None, positionals: list=None, extensions: list=None,
-                 ignore_generics: bool=False, filter_extensions: bool=True, remove_categories: bool=True):
+                 ignore_generics: bool=False, filter_extensions: bool=True,
+                 place_holder: str="", remove_categories: bool=True):
         """
         Sets up all variables and creates notes.
 
@@ -1181,12 +1218,15 @@ class CategorizedNoteUtil(PairedNoteUtil):
             Whether to exclude generic terms from the positional and categorized notes.
         filter_extensions : bool
             Whether to remove extensions from the main definition.
+        place_holder : str
+            What to replace the extension with if it is filtered.
         remove_categories : bool
             Whether to remove lines with the category prefix from the notes.
         """
 
         super().__init__(file_name, comments, delimeter, skip_warnings=True)
         self.error_message = ""
+        self.place_holder = place_holder
 
         self.positional_list = positionals
         self.generic_list = generics
@@ -1196,6 +1236,7 @@ class CategorizedNoteUtil(PairedNoteUtil):
         self.generic_dict = IndexedDict()
         self.extension_dict = IndexedDict()
         self.positional_dict = IndexedDict()
+        self.nested_dict = IndexedDict()
         self.notes_categorized = IndexedDict()
 
         if extensions is not None:
@@ -1243,6 +1284,7 @@ class CategorizedNoteUtil(PairedNoteUtil):
         message += "Generic dict: " + str(self.generic_dict) + "\n"
         message += "Extension dict: " + str(self.extension_dict) + "\n"
         message += "Positional dict: " + str(self.positional_dict) + "\n"
+        message += "Nested dict: " + str(self.nested_dict) + "\n"
         message += "Notes categorized: " + str(self.notes_categorized) + "\n"
 
         return message
@@ -1269,6 +1311,7 @@ class CategorizedNoteUtil(PairedNoteUtil):
                     continue
 
                 orig_len = len(self.notes_extended[i][1])
+                start_len = 0
                 for nb in self.extension_list:
                     name, bound1, bound2 = None, None, None
                     if len(nb) == 2:
@@ -1280,7 +1323,7 @@ class CategorizedNoteUtil(PairedNoteUtil):
                     while True:     # There could be multiple extensions of a single name.
                         try:
                             try:
-                                b1 = self.notes_extended[i][1].index(bound1, 0, orig_len)
+                                b1 = self.notes_extended[i][1].index(bound1, start_len, orig_len)
                             except ValueError:
                                 # No extensions left for this term, move to next extension
                                 break
@@ -1294,17 +1337,24 @@ class CategorizedNoteUtil(PairedNoteUtil):
                             self.notes_extended[i][1] += "\n" + name + self.delimeter + " " + \
                                                          self.notes_extended[i][1][b1 + len(bound1): b2]
                             if filter_extensions:
-                                self.notes_extended[i][1] = self.notes_extended[i][1][:b1] + \
+                                self.notes_extended[i][1] = self.notes_extended[i][1][:b1] + self.place_holder + \
                                                             self.notes_extended[i][1][b2 + len(bound2):]
                                 orig_len -= (b2 - b1 + len(bound1))
+                                start_len -= len(bound1) + len(bound2)
+                            start_len += b2 + 1
                             self.notes_extended[i][1] = self.notes_extended[i][1].strip()
+
                             if "\n" not in self.notes_extended[i][1]:
                                 self.notes_extended[i][1] = "\n" + self.notes_extended[i][1]
+                                raise errors.NoDefinitionError
 
                         except errors.MissingBoundError:
                             self.error_message += "WARNING: Missed bound at around line " + str(i+1) + ".\n"
-                            self.error_message += "Pair: " + str(self.notes_extended[i])
+                            self.error_message += "Extension was ignored: " + str(self.notes_extended[i]) + "\n"
                             break
+                        except errors.NoDefinitionError:
+                            self.error_message += "WARNING: No definition at around line " + str(i+1) + ".\n"
+                            self.error_message += "Pair was still added: " + str(self.notes_extended[i]) + "\n"
 
     def _make_generic_dict(self):
         """
@@ -1437,9 +1487,11 @@ class CategorizedNoteUtil(PairedNoteUtil):
                     for n, p in self.positional_list[::-1]:
                         if n == name:
                             curr = self.notes_extended[i][0][len(prefix):].strip()
+                            self.nested_dict[curr] = []
                             break
                         elif self.notes_extended[i][0].startswith(p):
                             if p.startswith(prefix):
+                                self.nested_dict[curr].append(self.notes_extended[i][0][len(p):].strip())
                                 break
                     continue
                 else:
@@ -1493,6 +1545,75 @@ class CategorizedNoteUtil(PairedNoteUtil):
                 for n, p in self.generic_list:
                     if self.notes_split[i][0].startswith(p):
                         self.notes_split[i][0] = self.notes_split[i][0][len(p):].strip()
+
+    def format(self):
+        """
+        Formats the notes in the way the noteutil read it.
+
+        First it adds all the notes in the positional categories, indicating nested positions with tabs.
+        Then it puts the generic terms at the bottom, after the positional terms.
+
+        Returns
+        -------
+        str
+            What was read from the note file.
+        """
+
+        formatted = ""
+
+        if self.positional_list is not None:
+            for term, definition in self.notes_categorized["Uncategorized"].items():
+                formatted += "{0}{1} {2}\n".format(term, self.delimeter, definition.split("\n")[0])
+                for ext in definition.split("\n")[1:]:
+                    formatted += "\t" + ext + "\n"
+
+            formatted += "\n"
+
+            def dfs(name: str, tabs: int):
+                nonlocal formatted
+
+                formatted += (tabs * "\t") + name + "\n"
+                tabs += 1
+                for n in self.positional_dict.keys():
+                    try:
+                        id = self.positional_dict[n].val_with(key=name)
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    raise errors.NoCategoryError
+
+                for t, d in id.items():
+                    formatted += (tabs * "\t") + "{0}{1} {2}\n".format(t, self.delimeter, d.split("\n")[0])
+                    tabs += 1
+                    for e in d.split("\n")[1:]:
+                        formatted += (tabs * "\t") + e + "\n"
+                    tabs -= 1
+
+                if self.nested_dict[name]:
+                    for nest in self.nested_dict[name]:
+                        dfs(nest, tabs)
+
+            for cat in self.nested_dict.keys():
+                dfs(cat, 0)
+        else:
+            formatted += super().format()
+
+        formatted += "\n"
+
+        if self.generic_dict is not None:
+            for n, idict in self.generic_dict.items():
+                formatted += n + "\n"
+                tab_count = 1
+                for term, definition in idict.items():
+                    formatted += ("\t" * tab_count) + "{0}{1} {2}\n".format(term, self.delimeter,
+                                                                            definition.split("\n")[0])
+                    tab_count += 1
+                    for ext in definition.split("\n")[1:]:
+                        formatted += ("\t" * tab_count) + ext + "\n"
+                    tab_count -= 1
+
+        return formatted
 
     def term(self, *, notes_dict: IndexedDict=None,
              index: int=None, term: str=None, definition: str=None, func=lambda x: x.lower().split("\n")[0]):
@@ -1685,6 +1806,27 @@ class CategorizedNoteUtil(PairedNoteUtil):
 
         return all_extensions
 
+    def positionals(self, name: str, func=lambda x: x.lower()):
+        """
+        Returns all positional names that correspond to the provided name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the positional given in the positionals list.
+        func : function
+            A function applied to the names. This makes checks case insensitive by default.
+
+        Returns
+        -------
+        list of str
+            All of the names of the positionals that fall under the provided name.
+        """
+
+        for n in self.positional_dict.keys():
+            if func(n) == func(name):
+                return list(self.positional_dict[n].keys())
+
     def categories(self, *, term: str=None, definition: str=None, func=lambda x: x.lower().split("\n")[0]):
         """
         Returns all positional categories the term is a part of.
@@ -1722,25 +1864,3 @@ class CategorizedNoteUtil(PairedNoteUtil):
             raise errors.NoCategoryError
 
         return all_categories
-
-
-# noteutil = CategorizedNoteUtil("test_notes.txt", ["#"], ":",
-#                                generics=[("Important", "!")],
-#                                positionals=[("Category 1", "~"), ("Category 2", "~~")],
-#                                extensions=[("Decimal", "%")],
-#                                ignore_generics=True)
-
-# noteutil = CategorizedNoteUtil("test_notes2.txt", ["#"], ":")
-
-# noteutil = CategorizedNoteUtil("test_notes3.txt", ["#"], ":",
-#                                generics=[("Important", "!")],
-#                                positionals=[("Chapters", "~~")],
-#                                extensions=[("Latex", "$$"), ("Abbreviation", "(", ")"),
-#                                            ("Example", "{", "}")], )
-
-# print(noteutil)
-# try:
-#     print(noteutil.category(term="beatniks (1950)"))
-# except errors.NotesNotFoundError as e:
-#     print("error")
-#     print(e)
