@@ -67,11 +67,11 @@ class Quiz:
     KEY_ALL_INDEXES = "all_indexes"
     KEY_ALL_LISTS = "all_lists"
 
-    KEY_NOTES_LIST = "notes" + LIST_SUFFIX
+    KEY_NOTES = "notes"
 
-    KEY_CORRECT_LIST = "correct" + LIST_SUFFIX
+    KEY_CORRECT = "correct"
 
-    KEY_INCORRECT_LIST = "incorrect" + LIST_SUFFIX
+    KEY_INCORRECT = "incorrect"
 
     KEY_CURRENT_NOTES = "current_notes"
 
@@ -90,21 +90,21 @@ class Quiz:
 
         self.noteutil = noteutil
 
-        self.all_indexes = {self.KEY_NOTES_LIST + self.CHRONOLOGICAL_SUFFIX: 0,
-                            self.KEY_NOTES_LIST + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_list))],
-                            self.KEY_CORRECT_LIST + self.CHRONOLOGICAL_SUFFIX: 0,
-                            self.KEY_CORRECT_LIST + self.RANDOM_SUFFIX: [],
-                            self.KEY_INCORRECT_LIST + self.CHRONOLOGICAL_SUFFIX: 0,
-                            self.KEY_INCORRECT_LIST + self.RANDOM_SUFFIX: [],
+        self.all_indexes = {self.KEY_NOTES + self.CHRONOLOGICAL_SUFFIX: 0,
+                            self.KEY_NOTES + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_list))],
+                            self.KEY_CORRECT + self.CHRONOLOGICAL_SUFFIX: 0,
+                            self.KEY_CORRECT + self.RANDOM_SUFFIX: [],
+                            self.KEY_INCORRECT + self.CHRONOLOGICAL_SUFFIX: 0,
+                            self.KEY_INCORRECT + self.RANDOM_SUFFIX: [],
                             self.KEY_LAST_INDEX: 0}
 
-        random.shuffle(self.all_indexes[self.KEY_NOTES_LIST + self.RANDOM_SUFFIX])
+        random.shuffle(self.all_indexes[self.KEY_NOTES + self.RANDOM_SUFFIX])
 
-        self.all_lists = {self.KEY_NOTES_LIST: self.noteutil.notes_list,
-                          self.KEY_CORRECT_LIST: [],
-                          self.KEY_INCORRECT_LIST: []}
+        self.all_lists = {self.KEY_NOTES + self.LIST_SUFFIX: self.noteutil.notes_list,
+                          self.KEY_CORRECT + self.LIST_SUFFIX: [],
+                          self.KEY_INCORRECT + self.LIST_SUFFIX: []}
 
-        self.current_notes = self.KEY_NOTES_LIST
+        self.current_notes = self.KEY_NOTES
         self.random = False
 
     def __str__(self):
@@ -149,7 +149,7 @@ class Quiz:
         quiz = dict()
         quiz[self.KEY_ALL_INDEXES] = self.all_indexes
 
-        ignore_keys = [self.KEY_NOTES_LIST]
+        ignore_keys = [self.KEY_NOTES + self.LIST_SUFFIX]
         filtered_dict = dict()
         for k in self.all_lists:
             if k not in ignore_keys:
@@ -205,7 +205,7 @@ class Quiz:
         repeat = False
         if notes_key is None:
             notes_key = self.current_notes
-        notes_list = self.all_lists[notes_key]
+        notes_list = self.all_lists[notes_key + self.LIST_SUFFIX]
         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 
@@ -268,10 +268,10 @@ class Quiz:
         if notes_key is None:
             notes_key = self.current_notes
 
-        if notes_key == self.KEY_NOTES_LIST:
+        if notes_key == self.KEY_NOTES:
             raise errors.ForbiddenEdit
 
-        notes_list = self.all_lists[notes_key]
+        notes_list = self.all_lists[notes_key + self.LIST_SUFFIX]
         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
 
         if last:
@@ -355,10 +355,10 @@ class Quiz:
         if notes_key is None:
             notes_key = self.current_notes
 
-        if notes_key == self.KEY_NOTES_LIST:
+        if notes_key == self.KEY_NOTES:
             raise errors.ForbiddenEdit
 
-        notes_list = self.all_lists[notes_key]
+        notes_list = self.all_lists[notes_key + self.LIST_SUFFIX]
         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 
@@ -509,14 +509,16 @@ class Quiz:
 
         if chronological is None:
             self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
-            self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_lists[notes_key]))]
-            random.shuffle(self.all_lists[self.current_notes])
+            self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [
+                x for x in range(len(self.all_lists[notes_key + self.LIST_SUFFIX]))]
+            random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
         else:
             if chronological:
                 self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
             else:
-                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_lists[notes_key]))]
-                random.shuffle(self.all_lists[self.current_notes])
+                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [
+                    x for x in range(len(self.all_lists[notes_key + self.LIST_SUFFIX]))]
+                random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
 
     def reset_all(self):
         """
@@ -529,14 +531,15 @@ class Quiz:
         None
         """
 
-        self.all_lists[self.KEY_CORRECT_LIST] = []
-        self.all_lists[self.KEY_INCORRECT_LIST] = []
+        self.all_lists[self.KEY_CORRECT + self.LIST_SUFFIX] = []
+        self.all_lists[self.KEY_INCORRECT + self.LIST_SUFFIX] = []
         for key in self.all_indexes.keys():
             if key.endswith(self.CHRONOLOGICAL_SUFFIX):
                 self.all_indexes[key] = 0
             elif key.endswith(self.RANDOM_SUFFIX):
                 try:
-                    self.all_indexes[key] = [x for x in range(len(self.all_lists[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    self.all_indexes[key] = [
+                        x for x in range(len(self.all_lists[key[:-1 * len(self.RANDOM_SUFFIX)] + self.LIST_SUFFIX]))]
                     random.shuffle(self.all_indexes[key])
                 except KeyError:
                     pass
@@ -566,7 +569,8 @@ class Quiz:
         for key in self.all_indexes:
             if key.endswith(self.RANDOM_SUFFIX):
                 try:
-                    self.all_indexes[key] = [x for x in range(len(self.all_lists[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    self.all_indexes[key] = [
+                        x for x in range(len(self.all_lists[key[:-1 * len(self.RANDOM_SUFFIX)] + self.LIST_SUFFIX]))]
                     random.shuffle(self.all_indexes[key])
                 except KeyError:
                     pass
@@ -580,9 +584,9 @@ class Quiz:
         None
         """
 
-        self.all_lists[self.KEY_CORRECT_LIST] = []
-        self.all_indexes[self.KEY_CORRECT_LIST + self.CHRONOLOGICAL_SUFFIX] = 0
-        self.all_indexes[self.KEY_CORRECT_LIST + self.RANDOM_SUFFIX] = []
+        self.all_lists[self.KEY_CORRECT + self.LIST_SUFFIX] = []
+        self.all_indexes[self.KEY_CORRECT + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_CORRECT + self.RANDOM_SUFFIX] = []
 
     def reset_incorrect(self):
         """
@@ -593,9 +597,9 @@ class Quiz:
         None
         """
 
-        self.all_lists[self.KEY_INCORRECT_LIST] = []
-        self.all_indexes[self.KEY_INCORRECT_LIST + self.CHRONOLOGICAL_SUFFIX] = 0
-        self.all_indexes[self.KEY_INCORRECT_LIST + self.RANDOM_SUFFIX] = []
+        self.all_lists[self.KEY_INCORRECT + self.LIST_SUFFIX] = []
+        self.all_indexes[self.KEY_INCORRECT + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_INCORRECT + self.RANDOM_SUFFIX] = []
 
 
 class PairedQuiz(Quiz):
@@ -648,17 +652,9 @@ class PairedQuiz(Quiz):
             Whether to return the term first in the qa method.
     """
 
-    CHRONOLOGICAL_SUFFIX = Quiz.CHRONOLOGICAL_SUFFIX
-    RANDOM_SUFFIX = Quiz.RANDOM_SUFFIX
     DICT_SUFFIX = "_dict"
 
     KEY_ALL_DICTS = "all_dicts"
-
-    KEY_NOTES_DICT = "notes" + DICT_SUFFIX
-
-    KEY_CORRECT_DICT = "correct" + DICT_SUFFIX
-
-    KEY_INCORRECT_DICT = "incorrect" + DICT_SUFFIX
 
     KEY_TERM_FIRST = "term_first"
 
@@ -673,21 +669,21 @@ class PairedQuiz(Quiz):
         """
 
         super().__init__(noteutil)
-        self.current_notes = self.KEY_NOTES_DICT
+        self.current_notes = self.KEY_NOTES
 
         self.all_indexes.update(
-            {self.KEY_NOTES_DICT + self.CHRONOLOGICAL_SUFFIX: 0,
-             self.KEY_NOTES_DICT + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_paired))],
-             self.KEY_CORRECT_DICT + self.CHRONOLOGICAL_SUFFIX: 0,
-             self.KEY_CORRECT_DICT + self.RANDOM_SUFFIX: [],
-             self.KEY_INCORRECT_DICT + self.CHRONOLOGICAL_SUFFIX: 0,
-             self.KEY_INCORRECT_DICT + self.RANDOM_SUFFIX: []})
+            {self.KEY_NOTES + self.CHRONOLOGICAL_SUFFIX: 0,
+             self.KEY_NOTES + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_paired))],
+             self.KEY_CORRECT + self.CHRONOLOGICAL_SUFFIX: 0,
+             self.KEY_CORRECT + self.RANDOM_SUFFIX: [],
+             self.KEY_INCORRECT + self.CHRONOLOGICAL_SUFFIX: 0,
+             self.KEY_INCORRECT + self.RANDOM_SUFFIX: []})
 
-        random.shuffle(self.all_indexes[self.KEY_NOTES_DICT + self.RANDOM_SUFFIX])
+        random.shuffle(self.all_indexes[self.KEY_NOTES + self.RANDOM_SUFFIX])
         self.delimeter = noteutil.delimeter
-        self.all_dicts = IndexedDict({self.KEY_NOTES_DICT: self.noteutil.notes_paired,
-                                      self.KEY_CORRECT_DICT: IndexedDict(),
-                                      self.KEY_INCORRECT_DICT: IndexedDict()})
+        self.all_dicts = IndexedDict({self.KEY_NOTES + self.DICT_SUFFIX: self.noteutil.notes_paired,
+                                      self.KEY_CORRECT + self.DICT_SUFFIX: IndexedDict(),
+                                      self.KEY_INCORRECT + self.DICT_SUFFIX: IndexedDict()})
 
         self.term_first = True
 
@@ -726,7 +722,7 @@ class PairedQuiz(Quiz):
 
         quiz = super().to_dict()
 
-        ignore_keys = [self.KEY_NOTES_DICT]
+        ignore_keys = [self.KEY_NOTES + self.DICT_SUFFIX]
         filtered_dict = dict()
         for k in self.all_dicts:
             if k not in ignore_keys:
@@ -784,7 +780,7 @@ class PairedQuiz(Quiz):
         repeat = False
         if notes_key is None:
             notes_key = self.current_notes
-        notes_dict = self.all_dicts[notes_key]
+        notes_dict = self.all_dicts[notes_key + self.DICT_SUFFIX]
         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 
@@ -800,7 +796,7 @@ class PairedQuiz(Quiz):
                 raise errors.NotesIndexError("The notes_dict provided is empty")
 
             pair = self.noteutil.pair(notes_dict=notes_dict, index=rand_index)
-            self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.pair_index(term=pair[0], definition=pair[1])
+            self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.pair_index(term=pair[0])
 
             if not rand_list:
                 repeat = True
@@ -810,7 +806,7 @@ class PairedQuiz(Quiz):
                 chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
 
             pair = self.noteutil.pair(notes_dict=notes_dict, index=chrono_index)
-            self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.pair_index(term=pair[0], definition=pair[1])
+            self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.pair_index(term=pair[0])
 
             self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] += 1
 
@@ -891,10 +887,10 @@ class PairedQuiz(Quiz):
         if notes_key is None:
             notes_key = self.current_notes
 
-        if notes_key == self.KEY_NOTES_DICT:
+        if notes_key == self.KEY_NOTES:
             raise errors.ForbiddenEdit
 
-        notes_dict = self.all_dicts[notes_key]
+        notes_dict = self.all_dicts[notes_key + self.DICT_SUFFIX]
         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
 
         if last:
@@ -1013,10 +1009,10 @@ class PairedQuiz(Quiz):
         if notes_key is None:
             notes_key = self.current_notes
 
-        if notes_key == self.KEY_NOTES_DICT:
+        if notes_key == self.KEY_NOTES:
             raise errors.ForbiddenEdit
 
-        notes_dict = self.all_dicts[notes_key]
+        notes_dict = self.all_dicts[notes_key + self.DICT_SUFFIX]
         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 
@@ -1024,8 +1020,7 @@ class PairedQuiz(Quiz):
             last_index = self.all_indexes[self.KEY_LAST_INDEX]
             exact_term, exact_definition = self.noteutil.pair(index=last_index)
 
-            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term,
-                                                  definition=exact_definition)
+            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term)
 
             if exact_term in notes_dict:
 
@@ -1044,8 +1039,7 @@ class PairedQuiz(Quiz):
 
         if index is not None:
             exact_term, exact_definition = self.noteutil.pair(index=index)
-            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term,
-                                                  definition=exact_definition)
+            pair_index = self.noteutil.pair_index(notes_dict=notes_dict, term=exact_term)
 
             if exact_term in notes_dict:
                 if pair_index <= chrono_index:
@@ -1278,13 +1272,15 @@ class PairedQuiz(Quiz):
 
         if chronological is None:
             self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
-            self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_dicts[notes_key]))]
+            self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [
+                x for x in range(len(self.all_dicts[notes_key + self.DICT_SUFFIX]))]
             random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
         else:
             if chronological:
                 self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
             else:
-                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(self.all_dicts[notes_key]))]
+                self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [
+                    x for x in range(len(self.all_dicts[notes_key + self.DICT_SUFFIX]))]
                 random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
 
     def reset_all(self):
@@ -1300,15 +1296,16 @@ class PairedQuiz(Quiz):
 
         super().reset_all()
 
-        self.all_dicts[self.KEY_CORRECT_DICT] = IndexedDict()
-        self.all_dicts[self.KEY_INCORRECT_DICT] = IndexedDict()
+        self.all_dicts[self.KEY_CORRECT + self.DICT_SUFFIX] = IndexedDict()
+        self.all_dicts[self.KEY_INCORRECT + self.DICT_SUFFIX] = IndexedDict()
 
         for key in self.all_indexes.keys():
             if key.endswith(self.CHRONOLOGICAL_SUFFIX):
                 self.all_indexes[key] = 0
             elif key.endswith(self.RANDOM_SUFFIX):
                 try:
-                    self.all_indexes[key] = [x for x in range(len(self.all_dicts[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    self.all_indexes[key] = [
+                        x for x in range(len(self.all_dicts[key[:-1 * len(self.RANDOM_SUFFIX)] + self.DICT_SUFFIX]))]
                     random.shuffle(self.all_indexes[key])
                 except KeyError:
                     pass
@@ -1326,7 +1323,8 @@ class PairedQuiz(Quiz):
         for key in self.all_indexes:
             if key.endswith(self.RANDOM_SUFFIX):
                 try:
-                    self.all_indexes[key] = [x for x in range(len(self.all_dicts[key[:-1 * len(self.RANDOM_SUFFIX)]]))]
+                    self.all_indexes[key] = [
+                        x for x in range(len(self.all_dicts[key[:-1 * len(self.RANDOM_SUFFIX)] + self.DICT_SUFFIX]))]
                     random.shuffle(self.all_indexes[key])
                 except KeyError:
                     pass
@@ -1341,9 +1339,9 @@ class PairedQuiz(Quiz):
         """
 
         super().reset_correct()
-        self.all_dicts[self.KEY_CORRECT_DICT] = IndexedDict()
-        self.all_indexes[self.KEY_CORRECT_DICT + self.CHRONOLOGICAL_SUFFIX] = 0
-        self.all_indexes[self.KEY_CORRECT_DICT + self.RANDOM_SUFFIX] = []
+        self.all_dicts[self.KEY_CORRECT + self.DICT_SUFFIX] = IndexedDict()
+        self.all_indexes[self.KEY_CORRECT + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_CORRECT + self.RANDOM_SUFFIX] = []
 
     def reset_incorrect(self):
         """
@@ -1355,9 +1353,9 @@ class PairedQuiz(Quiz):
         """
 
         super().reset_incorrect()
-        self.all_dicts[self.KEY_INCORRECT_DICT] = IndexedDict()
-        self.all_indexes[self.KEY_INCORRECT_DICT + self.CHRONOLOGICAL_SUFFIX] = 0
-        self.all_indexes[self.KEY_INCORRECT_DICT + self.RANDOM_SUFFIX] = []
+        self.all_dicts[self.KEY_INCORRECT + self.DICT_SUFFIX] = IndexedDict()
+        self.all_indexes[self.KEY_INCORRECT + self.CHRONOLOGICAL_SUFFIX] = 0
+        self.all_indexes[self.KEY_INCORRECT + self.RANDOM_SUFFIX] = []
 
 
 class CategorizedQuiz(PairedQuiz):
