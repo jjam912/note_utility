@@ -249,7 +249,7 @@ def println(message: str):
     pyautogui.press("enter")
 
 
-def split_message(message: str, embedded: bool=False, language: str=""):
+def split_message(message: str, code_block: bool=False, language: str= ""):
     """
     Splits a message into more messages of size less than 2000 characters.
 
@@ -259,7 +259,7 @@ def split_message(message: str, embedded: bool=False, language: str=""):
     ----------
     message : str
         A long message to split up.
-    embedded : bool
+    code_block : bool
         Whether to embed the message in code format (surrounded by ```)
     language : str
         Name of the language of the code.
@@ -274,7 +274,7 @@ def split_message(message: str, embedded: bool=False, language: str=""):
     curr_message = ""
     messages = []
 
-    if embedded:
+    if code_block:
         curr_message += "```" + language + "\n"
         for line in lines:
             if len(line) + len(curr_message) + 5 > 2000:
