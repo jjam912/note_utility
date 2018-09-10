@@ -1,6 +1,3 @@
-"""
-This module contains classes that are used to store data from a file and turn them into usable notes.
-"""
 import note_utility.errors as errors
 import copy
 import textwrap
@@ -143,7 +140,7 @@ class NoteUtil:
             for i in range(len(notes_list)):
                 if name == notes_list[i]:
                     return i
-        raise errors.NotesNotFoundError
+        raise errors.NotesNotFoundError("No index was found for the specified line: {0}".format(name))
 
     def line_indexes(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
         """
@@ -179,7 +176,7 @@ class NoteUtil:
                 if name in insensitive_notes_list[i]:
                     indexes.append(i)
         if not indexes:
-            raise errors.NotesNotFoundError
+            raise errors.NotesNotFoundError("No indexes were found for the specified line: {0}".format(name))
         return indexes
 
     def line(self, *, notes_list: list=None, index: int=None, name: str=None, case_sensitive: bool=False):
@@ -219,12 +216,12 @@ class NoteUtil:
                 if name in insensitive_notes_list:
                     return name
                 else:
-                    raise errors.NotesNotFoundError
+                    raise errors.NotesNotFoundError("No line was found with the name: {0}.".format(name))
             else:
                 if name in notes_list:
                     return name
                 else:
-                    raise errors.NotesNotFoundError
+                    raise errors.NotesNotFoundError("No line was found with the name: {0}.".format(name))
 
     def lines(self, *, notes_list: list=None, indexes: list=None, name: str=None, case_sensitive: bool=False):
         """
@@ -273,7 +270,7 @@ class NoteUtil:
                         continue
 
         if not lines:
-            raise errors.NotesNotFoundError
+            raise errors.NotesNotFoundError("No lines were found with the name: {0}".format(name))
         return lines
 
 
@@ -430,7 +427,7 @@ class IndexedDict(dict):
                         continue
 
         if not indexes:
-            raise IndexError("No keys or values were found to have the key or value in them.")
+            raise IndexError("No keys or values were found to have the provided key or value in them.")
         return indexes
 
     def key_with(self, *, index=None, name=None, val=None, func=None):
@@ -467,7 +464,7 @@ class IndexedDict(dict):
             elif val == v or name == k or index == i:
                 return k
             i += 1
-        raise KeyError("No key was found to have the name or associated value.")
+        raise KeyError("No key was found to have the provided name or value.")
 
     def keys_with(self, *, indexes: list=None, name=None, val=None, func=None):
         """
@@ -542,7 +539,7 @@ class IndexedDict(dict):
                         keys.append(k)
                         continue
         if not keys:
-            raise KeyError("No keys were found that had the name or value in them.")
+            raise KeyError("No keys were found to have the provided name or value in them.")
         return keys
 
     def val_with(self, *, index=None, key=None, name=None, func=None):
@@ -582,7 +579,7 @@ class IndexedDict(dict):
             elif key == k or name == v or index == i:
                 return v
             i += 1
-        raise ValueError("No values were found to have the name or associated key.")
+        raise ValueError("No values were found to have the provided name or key.")
 
     def vals_with(self, *, indexes: list=None, key=None, name=None, func=None):
         """
@@ -655,7 +652,7 @@ class IndexedDict(dict):
                         vals.append(v)
                         continue
         if not vals:
-            raise ValueError("No values were found to have the name or associated key in them.")
+            raise ValueError("No values were found to have the provided name or key in them.")
         return vals
 
 
@@ -785,16 +782,16 @@ class PairedNoteUtil(NoteUtil):
                 self.notes_paired[term] = definition
 
             except errors.ExtraDelimeterError:
-                self.error_message += "WARNING: Extra delimeter at around line " + str(i+1) + ". "
+                self.error_message += "WARNING: Extra delimeter at around index " + str(i+1) + ". "
                 self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
             except errors.MissingDelimeterError:
-                self.error_message += "WARNING: Missing delimeter at around line " + str(i+1) + ". "
+                self.error_message += "WARNING: Missing delimeter at around index " + str(i+1) + ". "
                 self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
             except errors.NoDefinitionError:
-                self.error_message += "WARNING: Missed pairing at around line " + str(i+1) + ". "
+                self.error_message += "WARNING: Missed pairing at around index " + str(i+1) + ". "
                 self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
             except errors.DuplicateTermError:
-                self.error_message += "WARNING: Duplicate term at around line " + str(i+1) + ". "
+                self.error_message += "WARNING: Duplicate term at around index " + str(i+1) + ". "
                 self.error_message += "Pair was skipped: " + str(notes_split[i]) + "\n"
 
     def format(self):
@@ -855,7 +852,7 @@ class PairedNoteUtil(NoteUtil):
                                            func=func)
             return notes_dict.key_with(name=term, val=definition)
         except KeyError:
-            raise errors.NotesNotFoundError
+            raise errors.NotesNotFoundError("No term was found with the provided term or definition.")
 
     def definition(self, *, notes_dict: IndexedDict=None,
                    index: int=None, term: str=None, definition: str=None, func=str.lower):
@@ -898,7 +895,7 @@ class PairedNoteUtil(NoteUtil):
                                            func=func)
             return notes_dict.val_with(key=term)
         except ValueError:
-            raise errors.NotesNotFoundError
+            raise errors.NotesNotFoundError("No definition was found with the provided term or definition.")
 
     def pair_index(self, *, notes_dict: IndexedDict=None,
                    term: str=None, definition: str=None, func=str.lower):
@@ -937,7 +934,7 @@ class PairedNoteUtil(NoteUtil):
                                              func=func)
             return notes_dict.index_with(key=term, val=definition)
         except IndexError:
-            raise errors.NotesIndexError
+            raise errors.NotesIndexError("No index was found for the provided term or definition.")
 
     def terms(self, *, notes_dict: IndexedDict=None,
               indexes: list=None, term: str=None, definition: str=None, func=str.lower):
@@ -981,7 +978,7 @@ class PairedNoteUtil(NoteUtil):
                                             func=func)
             return notes_dict.keys_with(indexes=indexes, name=term, val=definition)
         except KeyError:
-            raise errors.NotesNotFoundError
+            raise errors.NotesNotFoundError("No terms has the provided term or definition in them.")
 
     def definitions(self, *, notes_dict: IndexedDict=None,
                     indexes: list=None, term: str=None, definition: str=None, func=str.lower):
@@ -1025,7 +1022,7 @@ class PairedNoteUtil(NoteUtil):
                                             func=func)
             return notes_dict.vals_with(indexes=indexes, key=term, name=definition)
         except ValueError:
-            raise errors.NotesNotFoundError
+            raise errors.NotesNotFoundError("No definitions had the provided term or definition in them.")
 
     def pair_indexes(self, *, notes_dict: IndexedDict=None,
                      term: str=None, definition: str=None, func=str.lower):
@@ -1066,7 +1063,7 @@ class PairedNoteUtil(NoteUtil):
                                                func=func)
             return notes_dict.indexes_with(key=term, val=definition)
         except IndexError:
-            raise errors.NotesIndexError
+            raise errors.NotesIndexError("No indexes were found for the provided terms or definitions.")
 
     def pair(self, index: int, *, notes_dict: IndexedDict=None):
         """
@@ -1097,7 +1094,7 @@ class PairedNoteUtil(NoteUtil):
         try:
             return notes_dict.item_at(index)
         except IndexError:
-            raise errors.NotesIndexError
+            raise errors.NotesIndexError("The provided index was out of range.")
 
     def pairs(self, indexes: list, *, notes_dict: IndexedDict=None):
         """
@@ -1126,7 +1123,7 @@ class PairedNoteUtil(NoteUtil):
         try:
             return notes_dict.items_at(indexes)
         except IndexError:
-            raise errors.NotesIndexError
+            raise errors.NotesIndexError("At least one of the provided indexes were out of range.")
 
 
 class CategorizedNoteUtil(PairedNoteUtil):
@@ -1343,8 +1340,8 @@ class CategorizedNoteUtil(PairedNoteUtil):
                             if filter_extensions:
                                 self.notes_extended[i][1] = self.notes_extended[i][1][:b1] + place_holder + \
                                                             self.notes_extended[i][1][b2 + len(bound2):]
-                                orig_len -= (b2 - b1) + len(bound2) - len(place_holder)
-                                start_len -= len(bound1) + len(bound2) - len(place_holder)
+                                orig_len -= (b2 - b1) + len(bound1) - len(place_holder)
+                                start_len -= b2 + len(bound2) - len(place_holder)
                             start_len += b2 + len(bound2)
                             self.notes_extended[i][1] = self.notes_extended[i][1].strip()
 
@@ -1374,10 +1371,11 @@ class CategorizedNoteUtil(PairedNoteUtil):
             if len(self.notes_extended[i]) != 2:
                 continue
 
-            for n, p in self.generic_list:
-                if self.notes_extended[i][0].startswith(p):
-                    self.notes_extended[i][0] = self.notes_extended[i][0][len(p):].strip()
-                    self.generic_dict[n][self.notes_extended[i][0]] = self.notes_extended[i][1]
+            if self.generic_list is not None:
+                for n, p in self.generic_list:
+                    if self.notes_extended[i][0].startswith(p):
+                        self.notes_extended[i][0] = self.notes_extended[i][0][len(p):].strip()
+                        self.generic_dict[n][self.notes_extended[i][0]] = self.notes_extended[i][1]
 
     def _make_extension_dict(self, ignore_generics: bool=False):
         """
@@ -1399,13 +1397,14 @@ class CategorizedNoteUtil(PairedNoteUtil):
 
             is_generic = False
             prefix = None
-            for n, p in self.generic_list:
-                if self.notes_extended[i][0].startswith(p):
-                    is_generic = True
-                    prefix = p
-                    break
-            if ignore_generics and is_generic:
-                continue
+            if self.generic_list is not None:
+                for n, p in self.generic_list:
+                    if self.notes_extended[i][0].startswith(p):
+                        is_generic = True
+                        prefix = p
+                        break
+                if ignore_generics and is_generic:
+                    continue
 
             split_extensions = self.notes_extended[i][1].split("\n")
             for ex in split_extensions:
@@ -1437,13 +1436,13 @@ class CategorizedNoteUtil(PairedNoteUtil):
         name, prefix, curr = None, None, None
         for i in range(len(self.notes_extended)):
 
-            if ignore_generics:
+            if self.generic_list is not None:
                 is_generic = False
                 for n, p in self.generic_list:
                     if self.notes_extended[i][0].startswith(p):
                         is_generic = True
                         break
-                if is_generic:
+                if is_generic and ignore_generics:
                     continue
 
             for n, p in self.positional_list[::-1]:
@@ -1603,7 +1602,7 @@ class CategorizedNoteUtil(PairedNoteUtil):
                     except ValueError:
                         continue
                 else:
-                    raise errors.NoCategoryError
+                    raise errors.NoCategoryError("A category was in the nested dict but not the positional dict.")
 
                 for t, d in idi.items():
                     wrapper.initial_indent = tabs * "\t"
@@ -1727,7 +1726,8 @@ class CategorizedNoteUtil(PairedNoteUtil):
                     if ext.startswith(ex):
                         all_values.append(ext[ext.index(self.delimeter) + len(self.delimeter) + 1:])
         if not all_values:
-            raise errors.NoExtensionError
+            raise errors.NoExtensionError(
+                "The definition found from the provided term or definition did not have this extension.")
         return all_values
 
     def category(self, *, term: str=None, definition: str=None, func=lambda x: x.lower().split("\n")[0]):
@@ -1830,7 +1830,8 @@ class CategorizedNoteUtil(PairedNoteUtil):
                     except KeyError:
                         all_extensions[ex] = [ext[ext.index(self.delimeter) + len(self.delimeter) + 1:]]
         if not all_extensions:
-            raise errors.NoExtensionError
+            raise errors.NoExtensionError(
+                "The definition from the provided term or definition did not have any extensions.")
 
         return all_extensions
 
@@ -1889,6 +1890,6 @@ class CategorizedNoteUtil(PairedNoteUtil):
             else:
                 all_categories.append(n)
         if not all_categories:
-            raise errors.NoCategoryError
+            raise errors.NoCategoryError("The term from the provided term or definition did not have any categories.")
 
         return all_categories
