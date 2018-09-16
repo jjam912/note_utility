@@ -9,6 +9,8 @@ class NoteUtil:
 
     Attributes
     ----------
+        file_name : str
+            Name of the file.
         notes_list : list of str
             List created after splitting file contents.
 
@@ -33,6 +35,7 @@ class NoteUtil:
         """
 
         self.notes_list = []
+        self.file_name = file_name
         self._read_file(file_name, comments)
 
     def __str__(self):
