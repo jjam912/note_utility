@@ -1,4 +1,4 @@
-import noteutil.errors as errors
+import errors
 import copy
 import textwrap
 
