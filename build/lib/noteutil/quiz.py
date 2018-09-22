@@ -1,6 +1,6 @@
 import random
-from note_utility.noteutil import IndexedDict
-import note_utility.errors as errors
+from noteutil import IndexedDict
+import errors
 
 
 class Quiz:
