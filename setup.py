@@ -11,7 +11,7 @@ setuptools.setup(
     description="A module to turn specifically written notes into terms and categories.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",    # TODO
+    url="https://github.com/jjam912/noteutil",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
