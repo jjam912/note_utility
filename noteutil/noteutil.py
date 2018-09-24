@@ -38,8 +38,6 @@ class NoteUtil:
     ----------
         file_name : str
             Name of the file.
-        notes_list : list of str
-            List created after splitting file contents.
 
     Special Methods
     ---------------
@@ -47,23 +45,28 @@ class NoteUtil:
             Prints all variables separated by new lines.
     """
 
-    def __init__(self, file_name: str, comments: list=None):
+    def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
         """
-        Creates empty versions of all variables.
-
-        Initialize all variables with the file given.
-
         Parameters
         ----------
         file_name : str
             Name of the file to be converted into NoteUtil.
-        comments : list of str, optional
+        separator : str
+            Separates lines in the file.
+        comment : str
             List of prefixes of lines to be ignored.
         """
 
-        self.notes_list = []
+        self.notes = []
+        self.lines = []
         self.file_name = file_name
-        self._read_file(file_name, comments)
+        self.separator = separator
+        self.comment = comment
+        if self.file_name.endswith(".nu"):
+            self._read_file()
+        else:
+            self._compile_file()
+            self._read_file()
 
     def __str__(self):
         """
@@ -75,52 +78,53 @@ class NoteUtil:
             All variables with labels, separated by new lines.
         """
 
-        message = "NoteUtil:\n"
+        message = ("NoteUtil:\n"
+                   "--------")
 
-        message += "Notes list: " + str(self.notes_list) + "\n"
+        message += "File name: " + str(self.file_name) + "\n"
+        message += "Lines: " + str(self.lines) + "\n"
+        message += "Separator: " + str(self.separator) + "\n"
+        message += "Comment prefix: " + str(self.comment) + "\n"
         return message
 
-    def _read_file(self, file_name: str, comments: list=None):
+    def _compile_file(self):
         """
         Converts all the data from the file into a list of notes.
 
         If a line contains nothing (possibly after strip), the line will be ignored.
-
-        Parameters
-        ----------
-        file_name : str
-            Name of the file to extract data from.
-        comments : str, optional
-            Prefix of lines to be ignored.
-            Having '' in this list will skip all lines.
 
         Returns
         -------
         None
         """
 
-        self.notes_list = []
-        file = open(file_name, mode="r", encoding="UTF-8")
-        for line in file.readlines():
-            skip = False
+        with open(self.file_name, mode="r", encoding="UTF-8") as f:
+            for line in f.read().split(self.separator):
+                if self.comment is not None:
+                    if line.startswith(self.comment):
+                        continue
 
-            if comments is not None:
-                for c in comments:
-                    if line.startswith(c):
-                        skip = True
-                        break
+                line = line.strip()
 
-            line = line.strip()
+                if self.comment is not None:
+                    if line.startswith(self.comment):
+                        continue
 
-            if comments is not None and not skip:
-                for c in comments:
-                    if line.startswith(c):
-                        skip = True
-                        break
+                if line == "":
+                    continue
 
-            if line == "" or skip:
-                continue
-            self.notes_list.append(line)
+                self.lines.append(line)
+
+        self.file_name = self.file_name.split(".")[0] + ".nu"
+        with open(self.file_name, mode="w", encoding="UTF-8") as f:
+            f.write(self.format())
+
+    def _read_file(self):
+
+        len_notes = len(self.notes)
+        with open(self.file_name, mode="r", encoding="UTF-8") as f:
+            for i, line in enumerate(f.read().split(self.separator)):
+                self.lines.append(Line(line, len_notes + i, i))
 
     def format(self):
         """
