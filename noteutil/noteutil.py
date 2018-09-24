@@ -138,14 +138,29 @@ class NoteUtil:
 
         return self.separator.join(self.lines)
 
-    def line_index(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
+    def nindex(self, content: str):
+        for note in self.notes:
+            if note.content.lower() == content.lower():
+                return note.nindex
+        raise errors.NotesNotFoundError("No line was found to equal the content: {0}".format(content))
+
+    def nindexes(self, content: str):
+        nindexes = []
+        for note in self.notes:
+            if note.content.lower() in content.lower():
+                nindexes.append(note.nindex)
+        if not nindexes:
+            raise errors.NotesNotFoundError("No line was found with the content: {0}.".format(content))
+        return nindexes
+
+    def lindex(self, content: str):
         """
         Finds the index of a line in a notes list.
 
         Parameters
         ----------
-        name : str
-            The name of the full line.
+        content : str
+            The content of the full line.
         notes_list : list, optional
             A list of notes that should contain the line that is being searched for.
             Default list is self.notes_list (made from the file).
@@ -163,20 +178,12 @@ class NoteUtil:
             If no line is found to be equivalent to the name given.
         """
 
-        if notes_list is None:
-            notes_list = self.notes_list
-        if not case_sensitive:
-            insensitive_notes_list = list(map(str.lower, notes_list))
-            for i in range(len(insensitive_notes_list)):
-                if name == insensitive_notes_list[i]:
-                    return i
-        else:
-            for i in range(len(notes_list)):
-                if name == notes_list[i]:
-                    return i
-        raise errors.NotesNotFoundError("No index was found for the specified line: {0}".format(name))
+        for line in self.lines:
+            if content.lower() == line.content.lower():
+                return line.lindex
+        raise errors.NotesNotFoundError("No line was found to equal the content: {0}".format(content))
 
-    def line_indexes(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
+    def lindexes(self, content: str):
         """
         Finds the index of all lines that have the name in them.
 
@@ -201,17 +208,13 @@ class NoteUtil:
             If no line is found to be equivalent to the name given.
         """
 
-        indexes = []
-        if notes_list is None:
-            notes_list = self.notes_list
-        if not case_sensitive:
-            insensitive_notes_list = list(map(str.lower, notes_list))
-            for i in range(len(insensitive_notes_list)):
-                if name in insensitive_notes_list[i]:
-                    indexes.append(i)
-        if not indexes:
-            raise errors.NotesNotFoundError("No indexes were found for the specified line: {0}".format(name))
-        return indexes
+        lindexes = []
+        for line in self.lines:
+            if content.lower() in line.content.lower():
+                lindexes.append(line.lindex)
+        if not lindexes:
+            raise errors.NotesNotFoundError("No line was found with the content: {0}".format(content))
+        return lindexes
 
     def line(self, *, notes_list: list=None, index: int=None, name: str=None, case_sensitive: bool=False):
         """
