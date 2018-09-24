@@ -136,7 +136,7 @@ class NoteUtil:
             What was read from the note file.
         """
 
-        return "\n".join(self.notes_list)
+        return self.separator.join(self.lines)
 
     def line_index(self, name: str, *, notes_list: list=None, case_sensitive: bool=False):
         """
