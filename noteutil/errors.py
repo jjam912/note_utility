@@ -2,11 +2,11 @@ class NotesError(Exception):
     pass
 
 
-class NotesNotFoundError(NotesError):
+class NotesNotFound(NotesError):
     pass
 
 
-class NotesIndexError(NotesNotFoundError):
+class NotesIndexError(NotesNotFound):
     pass
 
 
@@ -34,7 +34,7 @@ class ExtraDelimeterError(DelimeterError):
     pass
 
 
-class NoDefinitionError(NotesNotFoundError):
+class NoDefinitionError(NotesNotFound):
     pass
 
 
@@ -46,11 +46,11 @@ class MissingBoundError(NotesError):
     pass
 
 
-class NoCategoryError(NotesNotFoundError):
+class NoCategoryError(NotesNotFound):
     pass
 
 
-class NoExtensionError(NotesNotFoundError):
+class NoExtensionError(NotesNotFound):
     pass
 
 
