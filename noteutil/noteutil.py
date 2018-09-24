@@ -1,11 +1,38 @@
-import errors
+import noteutil.errors as errors
 import copy
 import textwrap
 
 
+class Note:
+    def __init__(self, content, nindex):
+        self.content = content
+        self.nindex = nindex
+
+    def __eq__(self, other):
+        return self.content == other.content
+
+    def __ne__(self, other):
+        return self.content != other.content
+
+    def __str__(self):
+        return self.content
+
+    def __repr__(self):
+        return "noteutil.Note(\"{0}\"}, {1})".format(self.content, self.nindex)
+
+
+class Line(Note):
+    def __init__(self, content, nindex, lindex):
+        super().__init__(content, nindex)
+        self.lindex = lindex
+
+    def __repr__(self):
+        return "noteutil.Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
+
+
 class NoteUtil:
     """
-    Takes a file of notes and converts it into a list of notes.
+    Takes a file of notes and separates it into lines.
 
     Attributes
     ----------
