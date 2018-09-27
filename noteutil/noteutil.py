@@ -95,6 +95,33 @@ class NoteUtil:
             raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
         return nindexes
 
+    def note(self, *, content: str=None, nindex: int=None):
+        if nindex is not None:
+            try:
+                return self.notes[nindex]
+            except IndexError:
+                raise errors.NotesIndexError("The note index {0} was out of bounds of the notes.".format(nindex))
+        if content is not None:
+            for note in self.notes:
+                if note.content.lower() == content.lower():
+                    return note
+        raise errors.NotesNotFoundError("No note was found to equal content: {0}".format(content))
+
+    def notes(self, *, content: str=None, nindexes: list=None):
+        notes = []
+        for note in self.notes:
+            if content is not None:
+                if note.content.lower() == content.lower():
+                    notes.append(note)
+                    continue
+            if nindexes is not None:
+                if note.nindex in set(nindexes):
+                    notes.append(note)
+                    continue
+        if not notes:
+            raise errors.NotesNotFoundError(
+                "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+
 
 class Line(Note):
     def __init__(self, content, nindex, lindex):
@@ -168,6 +195,8 @@ class LineNoteUtil(NoteUtil):
         lindexes = []
         for line in self.lines:
             if content.lower() in line.content.lower():
+                lindexes.append(line.lindex)
+            elif line.nindex == nindex:
                 lindexes.append(line.lindex)
         if not lindexes:
             raise errors.NotesNotFoundError("No line was found with the content: {0}".format(content))
