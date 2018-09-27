@@ -88,9 +88,10 @@ class NoteUtil:
 
     def nindexes(self, *, content: str=None):
         nindexes = []
-        for note in self.notes:
-            if note.content.lower() in content.lower():
-                nindexes.append(note.nindex)
+        if content is not None:
+            for note in self.notes:
+                if note.content.lower() in content.lower():
+                    nindexes.append(note.nindex)
         if not nindexes:
             raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
         return nindexes
@@ -100,12 +101,12 @@ class NoteUtil:
             try:
                 return self.notes[nindex]
             except IndexError:
-                raise errors.NotesIndexError("The note index {0} was out of bounds of the notes.".format(nindex))
+                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
         if content is not None:
             for note in self.notes:
                 if note.content.lower() == content.lower():
                     return note
-        raise errors.NotesNotFoundError("No note was found to equal content: {0}".format(content))
+            raise errors.NotesNotFoundError("No note was found to equal content: {0}".format(content))
 
     def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
