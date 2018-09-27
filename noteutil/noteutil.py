@@ -66,7 +66,7 @@ class NoteUtil:
 
         self.file_name = self.file_name.split(".")[0] + ".nu"
         with open(self.file_name, mode="w", encoding="UTF-8") as f:
-            f.write(self.format())
+            f.write(self.separator.join(self.notes))
 
     def _read_file(self):
 
@@ -84,7 +84,8 @@ class NoteUtil:
             for note in self.notes:
                 if note.content.lower() == content.lower():
                     return note.nindex
-        raise errors.NotesNotFoundError("No note was found to equal the content: {0}".format(content))
+            raise errors.NotesNotFoundError("No note was found to equal the content: {0}".format(content))
+        raise errors.NoArgsPassed
 
     def nindexes(self, *, content: str=None):
         nindexes = []
@@ -92,9 +93,10 @@ class NoteUtil:
             for note in self.notes:
                 if note.content.lower() in content.lower():
                     nindexes.append(note.nindex)
-        if not nindexes:
-            raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
-        return nindexes
+            if not nindexes:
+                raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
+            return nindexes
+        raise errors.NoArgsPassed
 
     def note(self, *, content: str=None, nindex: int=None):
         if nindex is not None:
@@ -107,21 +109,24 @@ class NoteUtil:
                 if note.content.lower() == content.lower():
                     return note
             raise errors.NotesNotFoundError("No note was found to equal content: {0}".format(content))
+        raise errors.NoArgsPassed
 
     def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
-        for note in self.notes:
-            if content is not None:
-                if note.content.lower() == content.lower():
-                    notes.append(note)
-                    continue
-            if nindexes is not None:
-                if note.nindex in set(nindexes):
-                    notes.append(note)
-                    continue
-        if not notes:
-            raise errors.NotesNotFoundError(
-                "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+        if content is not None or nindexes is not None:
+            for note in self.notes:
+                if content is not None:
+                    if note.content.lower() == content.lower():
+                        notes.append(note)
+                        continue
+                if nindexes is not None:
+                    if note.nindex in set(nindexes):
+                        notes.append(note)
+                        continue
+            if not notes:
+                raise errors.NotesNotFoundError(
+                    "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+        raise errors.NoArgsPassed
 
 
 class Line(Note):
