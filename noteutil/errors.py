@@ -14,3 +14,6 @@ class NoArgsPassed(NotesError):
     pass
 
 
+class NotALine(NotesError):
+    pass
+
