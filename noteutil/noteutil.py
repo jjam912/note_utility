@@ -37,7 +37,7 @@ class NoteUtil:
     def __str__(self):
 
         message = ("NoteUtil:\n"
-                   "--------")
+                   "---------")
 
         message += "File name: " + str(self.file_name) + "\n"
         message += "Notes: " + str(self.notes) + "\n"
@@ -126,6 +126,7 @@ class NoteUtil:
             if not notes:
                 raise errors.NotesNotFoundError(
                     "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+            return notes
         raise errors.NoArgsPassed
 
 
@@ -146,14 +147,10 @@ class LineNoteUtil(NoteUtil):
         super().__init__(file_name, separator=separator, comment=comment)
 
     def __str__(self):
-
-        message = ("NoteUtil:\n"
-                   "--------")
-
-        message += "File name: " + str(self.file_name) + "\n"
-        message += "Notes: " + str(self.notes) + "\n"
-        message += "Separator: " + str(self.separator) + "\n"
-        message += "Comment prefix: " + str(self.comment) + "\n"
+        message = super().__str__() + "\n"
+        message += ("LineNoteUtil:\n"
+                    "-------------")
+        message += "Lines: " + str(self.lines)
         return message
 
     def _read_file(self):
@@ -164,119 +161,112 @@ class LineNoteUtil(NoteUtil):
                 self.notes.append(Line(line, len_notes + i, i))
 
     def nindex(self, *, content: str=None, lindex: int=None):
-        for note in self.notes:
-            if content is not None:
-                if note.content.lower() == content.lower():
-                    return note.nindex
-            elif isinstance(note, Line):
-                if note.lindex == lindex:
-                    return note.nindex
-        raise errors.NotesNotFoundError("No note was found to equal the content: {0}".format(content))
+        if content is not None or lindex is not None:
+            for note in self.notes:
+                if content is not None:
+                    if note.content.lower() == content.lower():
+                        return note.nindex
+                if lindex is not None:
+                    if isinstance(note, Line):
+                        if note.lindex == lindex:
+                            return note.nindex
+            raise errors.NotesNotFoundError(
+                "No note was found to equal the content: {0} or have the lindex: {1}".format(content, lindex))
+        raise errors.NoArgsPassed
 
     def nindexes(self, *, content: str=None, lindexes: list=None):
         nindexes = []
-        for note in self.notes:
-            if content is not None:
-                if note.content.lower() in content.lower():
-                    nindexes.append(note.nindex)
-            elif isinstance(note, Line):
-                for lindex in lindexes:
-                    if note.lindex == lindex:
+        if content is not None or lindexes is not None:
+            for note in self.notes:
+                if content is not None:
+                    if note.content.lower() in content.lower():
                         nindexes.append(note.nindex)
-                        break
-        if not nindexes:
-            raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
-        return nindexes
+                        continue
+                if lindexes is not None:
+                    if isinstance(note, Line):
+                        if note.lindex in set(lindexes):
+                            nindexes.append(note.nindex)
+                            continue
+            if not nindexes:
+                raise errors.NotesNotFoundError("No note was found containing the content: {0} or "
+                                                "have any indexes in: {1}.".format(content, lindexes))
+            return nindexes
+        raise errors.NoArgsPassed
 
     def lindex(self, *, content: str=None, nindex: int=None):
-        for line in self.lines:
-            if content.lower() == line.content.lower():
-                return line.lindex
-            elif line.nindex == nindex:
-                return line.lindex
-        raise errors.NotesNotFoundError("No line was found to equal the content: {0}".format(content))
+        if content is not None or nindex is not None:
+            for line in self.lines:
+                if content is not None:
+                    if content.lower() == line.content.lower():
+                        return line.lindex
+                if nindex is not None:
+                    if line.nindex == nindex:
+                        return line.lindex
+            raise errors.NotesNotFoundError("No line was found to equal the content: {0} or "
+                                            "have the nindex: {1}".format(content, nindex))
+        raise errors.NoArgsPassed
 
     def lindexes(self, *, content: str=None, nindex: int=None):
 
         lindexes = []
-        for line in self.lines:
-            if content.lower() in line.content.lower():
-                lindexes.append(line.lindex)
-            elif line.nindex == nindex:
-                lindexes.append(line.lindex)
-        if not lindexes:
-            raise errors.NotesNotFoundError("No line was found with the content: {0}".format(content))
-        return lindexes
+        if content is not None or nindex is not None:
+            for line in self.lines:
+                if content is not None:
+                    if content.lower() in line.content.lower():
+                        lindexes.append(line.lindex)
+                        continue
+                if nindex is not None:
+                    if line.nindex == nindex:
+                        lindexes.append(line.lindex)
+                        continue
+            if not lindexes:
+                raise errors.NotesNotFoundError("No line was found with the content: {0} or "
+                                                "have the nindex: [1}".format(content, nindex))
+            return lindexes
+        raise errors.NoArgsPassed
 
-    def line(self, *, notes_list: list=None, index: int=None, name: str=None, case_sensitive: bool=False):
-
-        if notes_list is None:
-            notes_list = self.notes_list
-
-        if index is not None:
-            return notes_list[index]
-        if name is not None:
-            if not case_sensitive:
-                insensitive_notes_list = map(str.lower, notes_list)
-                if name in insensitive_notes_list:
-                    return name
+    def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
+        if nindex is not None:
+            try:
+                if isinstance(self.notes[nindex], Line):
+                    return self.notes[nindex]
                 else:
-                    raise errors.NotesNotFoundError("No line was found with the name: {0}.".format(name))
-            else:
-                if name in notes_list:
-                    return name
-                else:
-                    raise errors.NotesNotFoundError("No line was found with the name: {0}.".format(name))
+                    raise errors.NotALine
+            except IndexError:
+                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
+        if lindex is not None:
+            try:
+                return self.lines[lindex]
+            except IndexError:
+                raise errors.NotesIndexError("The line index: {0} was out of bounds of the lines.".format(lindex))
+        if content is not None:
+            for line in self.lines:
+                if line.content.lower() == content.lower():
+                    return line
+            raise errors.NotesNotFoundError("No line was found to equal content: {0}".format(content))
+        raise errors.NoArgsPassed
 
-    def lines(self, *, notes_list: list=None, indexes: list=None, name: str=None, case_sensitive: bool=False):
-        """
-        Returns all lines that have the provided name "in" it.
-
-        Uses the "in" operator to compare lines.
-
-        Parameters
-        ----------
-        notes_list : list of str, optional - default is self.notes_list
-            A list of notes.
-        indexes : list of int
-            Indexes of lines.
-        name : str
-            A part of a line in the notes_list.
-        case_sensitive : bool
-            Whether case matters.
-
-        Returns
-        -------
-        list of str
-            All lines that had the provided name in it.
-
-        Raises
-        ------
-        NotesNotFoundError
-            If no lines had the provided name in it.
-        """
-
-        if notes_list is None:
-            notes_list = self.notes_list
+    def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
-        for i, line in enumerate(notes_list):
-            if not case_sensitive:
-                if name.lower() in line.lower():
-                    lines.append(line)
-                    continue
-            else:
-                if name in line:
-                    lines.append(line)
-                    continue
-            if indexes is not None:
-                for j in indexes:
-                    if i == j:
+        if content is not None or nindexes is not None or lindexes is not None:
+            for line in self.lines:
+                if content is not None:
+                    if line.content.lower() == content.lower():
                         lines.append(line)
                         continue
-
-        if not lines:
-            raise errors.NotesNotFoundError("No lines were found with the name: {0}".format(name))
-        return lines
+                if nindexes is not None:
+                    if line.nindex in set(nindexes):
+                        lines.append(line)
+                        continue
+                if lindexes is not None:
+                    if line.lindex in set(lindexes):
+                        lines.append(line)
+                        continue
+            if not lines:
+                raise errors.NotesNotFoundError(
+                    "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+            return lines
+        raise errors.NoArgsPassed
 
 
 class Pair(Line):
