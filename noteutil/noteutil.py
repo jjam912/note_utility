@@ -21,44 +21,10 @@ class Note:
         return "noteutil.Note(\"{0}\"}, {1})".format(self.content, self.nindex)
 
 
-class Line(Note):
-    def __init__(self, content, nindex, lindex):
-        super().__init__(content, nindex)
-        self.lindex = lindex
-
-    def __repr__(self):
-        return "noteutil.Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
-
-
 class NoteUtil:
-    """
-    Takes a file of notes and separates it into lines.
-
-    Attributes
-    ----------
-        file_name : str
-            Name of the file.
-
-    Special Methods
-    ---------------
-        __str__()
-            Prints all variables separated by new lines.
-    """
 
     def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
-        """
-        Parameters
-        ----------
-        file_name : str
-            Name of the file to be converted into NoteUtil.
-        separator : str
-            Separates lines in the file.
-        comment : str
-            List of prefixes of lines to be ignored.
-        """
-
         self.notes = []
-        self.lines = []
         self.file_name = file_name
         self.separator = separator
         self.comment = comment
@@ -69,34 +35,17 @@ class NoteUtil:
             self._read_file()
 
     def __str__(self):
-        """
-        Converts all variables into strings.
-
-        Returns
-        -------
-        str
-            All variables with labels, separated by new lines.
-        """
 
         message = ("NoteUtil:\n"
                    "--------")
 
         message += "File name: " + str(self.file_name) + "\n"
-        message += "Lines: " + str(self.lines) + "\n"
+        message += "Notes: " + str(self.notes) + "\n"
         message += "Separator: " + str(self.separator) + "\n"
         message += "Comment prefix: " + str(self.comment) + "\n"
         return message
 
     def _compile_file(self):
-        """
-        Converts all the data from the file into a list of notes.
-
-        If a line contains nothing (possibly after strip), the line will be ignored.
-
-        Returns
-        -------
-        None
-        """
 
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for line in f.read().split(self.separator):
@@ -113,7 +62,7 @@ class NoteUtil:
                 if line == "":
                     continue
 
-                self.lines.append(line)
+                self.notes.append(line)
 
         self.file_name = self.file_name.split(".")[0] + ".nu"
         with open(self.file_name, mode="w", encoding="UTF-8") as f:
@@ -124,89 +73,97 @@ class NoteUtil:
         len_notes = len(self.notes)
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for i, line in enumerate(f.read().split(self.separator)):
-                self.lines.append(Line(line, len_notes + i, i))
+                self.notes.append(Note(line, len_notes + i,))
 
     def format(self):
-        """
-        Formats the notes in the way the noteutil read it.
 
-        Returns
-        -------
-        str
-            What was read from the note file.
-        """
+        return self.separator.join(self.notes)
 
-        return self.separator.join(self.lines)
+    def nindex(self, *, content: str=None):
+        if content is not None:
+            for note in self.notes:
+                if note.content.lower() == content.lower():
+                    return note.nindex
+        raise errors.NotesNotFoundError("No note was found to equal the content: {0}".format(content))
 
-    def nindex(self, content: str):
-        for note in self.notes:
-            if note.content.lower() == content.lower():
-                return note.nindex
-        raise errors.NotesNotFoundError("No line was found to equal the content: {0}".format(content))
-
-    def nindexes(self, content: str):
+    def nindexes(self, *, content: str=None):
         nindexes = []
         for note in self.notes:
             if note.content.lower() in content.lower():
                 nindexes.append(note.nindex)
         if not nindexes:
-            raise errors.NotesNotFoundError("No line was found with the content: {0}.".format(content))
+            raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
         return nindexes
 
-    def lindex(self, content: str):
-        """
-        Finds the index of a line in a notes list.
 
-        Parameters
-        ----------
-        content : str
-            The content of the full line.
-        notes_list : list, optional
-            A list of notes that should contain the line that is being searched for.
-            Default list is self.notes_list (made from the file).
-        case_sensitive : bool, optional
-            Whether case matters while searching for the line.
+class Line(Note):
+    def __init__(self, content, nindex, lindex):
+        super().__init__(content, nindex)
+        self.lindex = lindex
 
-        Returns
-        -------
-        int
-            Index of the line in the notes list provided.
+    def __repr__(self):
+        return "noteutil.Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
 
-        Raises
-        ------
-        NotesNotFoundError
-            If no line is found to be equivalent to the name given.
-        """
 
+class LineNoteUtil(NoteUtil):
+
+    def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
+
+        self.lines = []
+        super().__init__(file_name, separator=separator, comment=comment)
+
+    def __str__(self):
+
+        message = ("NoteUtil:\n"
+                   "--------")
+
+        message += "File name: " + str(self.file_name) + "\n"
+        message += "Notes: " + str(self.notes) + "\n"
+        message += "Separator: " + str(self.separator) + "\n"
+        message += "Comment prefix: " + str(self.comment) + "\n"
+        return message
+
+    def _read_file(self):
+
+        len_notes = len(self.notes)
+        with open(self.file_name, mode="r", encoding="UTF-8") as f:
+            for i, line in enumerate(f.read().split(self.separator)):
+                self.notes.append(Line(line, len_notes + i, i))
+
+    def nindex(self, *, content: str=None, lindex: int=None):
+        for note in self.notes:
+            if content is not None:
+                if note.content.lower() == content.lower():
+                    return note.nindex
+            elif isinstance(note, Line):
+                if note.lindex == lindex:
+                    return note.nindex
+        raise errors.NotesNotFoundError("No note was found to equal the content: {0}".format(content))
+
+    def nindexes(self, *, content: str=None, lindexes: list=None):
+        nindexes = []
+        for note in self.notes:
+            if content is not None:
+                if note.content.lower() in content.lower():
+                    nindexes.append(note.nindex)
+            elif isinstance(note, Line):
+                for lindex in lindexes:
+                    if note.lindex == lindex:
+                        nindexes.append(note.nindex)
+                        break
+        if not nindexes:
+            raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
+        return nindexes
+
+    def lindex(self, *, content: str=None, nindex: int=None):
         for line in self.lines:
             if content.lower() == line.content.lower():
                 return line.lindex
+            elif line.nindex == nindex:
+                return line.lindex
         raise errors.NotesNotFoundError("No line was found to equal the content: {0}".format(content))
 
-    def lindexes(self, content: str):
-        """
-        Finds the index of all lines that have the name in them.
-
-        Parameters
-        ----------
-        notes_list : list
-            A list of notes that should contain the lines being searched for.
-            Default list is self.notes_list (made from the file).
-        name : str
-            A name that may be part of a line or the entire line.
-        case_sensitive : bool
-            Whether case matters while searching for lines.
-
-        Returns
-        -------
-        list of int
-            All indexes that were matched with the name.
-
-        Raises
-        ------
-        NotesNotFoundError
-            If no line is found to be equivalent to the name given.
-        """
+    def lindexes(self, *, content: str=None, nindex: int=None):
 
         lindexes = []
         for line in self.lines:
@@ -217,30 +174,6 @@ class NoteUtil:
         return lindexes
 
     def line(self, *, notes_list: list=None, index: int=None, name: str=None, case_sensitive: bool=False):
-        """
-        Returns a line of text from the notes_list.
-
-        Parameters
-        ----------
-        notes_list : list of str, optional - default is self.notes_list
-            A list of notes
-        index : int
-            The index of the line in notes_list.
-        name : str
-            The name of the line in notes_list
-        case_sensitive : bool
-            Whether case matters
-
-        Returns
-        -------
-        str
-            The line of text in the notes_list.
-
-        Raises
-        ------
-        NotesNotFoundError
-            If no lines are found to be equivalent to the name provided.
-        """
 
         if notes_list is None:
             notes_list = self.notes_list
@@ -311,7 +244,15 @@ class NoteUtil:
         return lines
 
 
-class PairedNoteUtil(NoteUtil):
+class Pair(Line):
+    def __init__(self, content, nindex, lindex, pindex, term, definition):
+        super().__init__(content, nindex, lindex)
+        self.pindex = pindex
+        self.term = term
+        self.definition = definition
+
+
+class PairedNoteUtil(LineNoteUtil):
     """
     Splits all lines in notes_list into key, value pairs known as terms and definitions.
 
