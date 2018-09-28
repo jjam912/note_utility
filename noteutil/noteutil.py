@@ -19,7 +19,7 @@ class Note:
         return self.content
 
     def __repr__(self):
-        return "noteutil.Note(\"{0}\"}, {1})".format(self.content, self.nindex)
+        return "Note(\"{0}\"}, {1})".format(self.content, self.nindex)
 
 
 def one(func):
@@ -149,7 +149,7 @@ class Line(Note):
         self.lindex = lindex
 
     def __repr__(self):
-        return "noteutil.Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
+        return "Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
 
 
 class LineNoteUtil(NoteUtil):
