@@ -168,10 +168,9 @@ class LineNoteUtil(NoteUtil):
 
     def _read_file(self):
 
-        len_notes = len(self.notes)
-        with open(self.file_name, mode="r", encoding="UTF-8") as f:
-            for i, line in enumerate(f.read().split(self.separator)):
-                self.notes.append(Line(line, len_notes + i, i))
+        for i in range(len(self.notes)):
+            self.notes[i] = Line(self.notes[i], i, i)
+            self.lines.append(Line(self.notes[i], i, i))
 
     def nindex(self, *, content: str=None, lindex: int=None):
         if content is not None or lindex is not None:
