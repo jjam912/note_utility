@@ -52,10 +52,10 @@ class NoteUtil:
         message = ("NoteUtil:\n"
                    "---------\n")
 
-        message += "File name: " + str(self.file_name) + "\n"
-        message += "Notes: " + str(self.notes) + "\n"
-        message += "Separator: " + str(self.separator) + "\n"
-        message += "Comment prefix: " + str(self.comment) + "\n"
+        message += "File name: " + repr(self.file_name) + "\n"
+        message += "Notes: " + repr(self.notes) + "\n"
+        message += "Separator: " + repr(self.separator) + "\n"
+        message += "Comment prefix: " + repr(self.comment) + "\n"
         return message
 
     def _compile_file(self):
@@ -163,7 +163,7 @@ class LineNoteUtil(NoteUtil):
         message = super().__str__() + "\n"
         message += ("LineNoteUtil:\n"
                     "-------------\n")
-        message += "Lines: " + str(self.lines)
+        message += "Lines: " + repr(self.lines) + "\n"
         return message
 
     def _read_file(self):
