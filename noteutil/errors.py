@@ -25,7 +25,7 @@ class NoArgsPassed(NotesError):
     pass
 
 
-class NotALine(NotesError):
+class LineExpected(NotesError):
     """This exception is thrown when a `Line`_ or subclass of `Line`_ was expected from the ``notes_list``.
     
     This should theoretically never happen because all `Note`_\ s automatically convert to `Line`_\ s.
