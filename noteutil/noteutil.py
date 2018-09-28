@@ -241,7 +241,7 @@ class LineNoteUtil(NoteUtil):
                 if isinstance(self.notes_list[nindex], Line):
                     return self.notes_list[nindex]
                 else:
-                    raise errors.NotALine
+                    raise errors.LineExpected
             except IndexError:
                 raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
         if lindex is not None:
