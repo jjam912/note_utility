@@ -1,6 +1,4 @@
-import errors
-import copy
-import textwrap
+from noteutil.noteutil import errors
 import inspect
 
 
@@ -37,7 +35,7 @@ def one(func):
 class NoteUtil:
 
     def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
-        self.notes = []
+        self.notes_list = []
         self.file_name = file_name
         self.separator = separator
         self.comment = comment
@@ -53,7 +51,7 @@ class NoteUtil:
                    "---------\n")
 
         message += "File name: " + repr(self.file_name) + "\n"
-        message += "Notes: " + repr(self.notes) + "\n"
+        message += "Notes: " + repr(self.notes_list) + "\n"
         message += "Separator: " + repr(self.separator) + "\n"
         message += "Comment prefix: " + repr(self.comment) + "\n"
         return message
@@ -75,61 +73,61 @@ class NoteUtil:
                 if line == "":
                     continue
 
-                self.notes.append(line)
+                self.notes_list.append(line)
 
         self.file_name = self.file_name.split(".")[0] + ".nu"
         with open(self.file_name, mode="w", encoding="UTF-8") as f:
-            f.write(self.separator.join(self.notes))
+            f.write(self.separator.join(self.notes_list))
 
     def _read_file(self):
 
-        len_notes = len(self.notes)
+        len_notes = len(self.notes_list)
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for i, line in enumerate(f.read().split(self.separator)):
-                self.notes.append(Note(line, len_notes + i,))
+                self.notes_list.append(Note(line, len_notes + i, ))
 
     def format(self):
 
-        return self.separator.join(self.notes)
+        return self.separator.join(self.notes_list)
 
     def nindex(self, *, content: str=None):
         if content is not None:
-            for note in self.notes:
-                if note.content.lower() == content.lower():
+            for note in self.notes_list:
+                if content.lower() == note.content.lower():
                     return note.nindex
-            raise errors.NotesNotFoundError("No note was found to equal the content: {0}".format(content))
+            raise errors.NotesNotFound("No note was found to equal the content: {0}".format(content))
         raise errors.NoArgsPassed
 
     def nindexes(self, *, content: str=None):
         nindexes = []
         if content is not None:
-            for note in self.notes:
-                if note.content.lower() in content.lower():
+            for note in self.notes_list:
+                if content.lower() in note.content.lower():
                     nindexes.append(note.nindex)
             if not nindexes:
-                raise errors.NotesNotFoundError("No note was found containing the content: {0}.".format(content))
+                raise errors.NotesNotFound("No note was found containing the content: {0}.".format(content))
             return nindexes
         raise errors.NoArgsPassed
 
     def note(self, *, content: str=None, nindex: int=None):
         if nindex is not None:
             try:
-                return self.notes[nindex]
+                return self.notes_list[nindex]
             except IndexError:
-                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
+                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
         if content is not None:
-            for note in self.notes:
+            for note in self.notes_list:
                 if note.content.lower() == content.lower():
                     return note
-            raise errors.NotesNotFoundError("No note was found to equal content: {0}".format(content))
+            raise errors.NotesNotFound("No note was found to equal content: {0}".format(content))
         raise errors.NoArgsPassed
 
     def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
         if content is not None or nindexes is not None:
-            for note in self.notes:
+            for note in self.notes_list:
                 if content is not None:
-                    if note.content.lower() == content.lower():
+                    if content.lower() in note.content.lower():
                         notes.append(note)
                         continue
                 if nindexes is not None:
@@ -137,7 +135,7 @@ class NoteUtil:
                         notes.append(note)
                         continue
             if not notes:
-                raise errors.NotesNotFoundError(
+                raise errors.NotesNotFound(
                     "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
             return notes
         raise errors.NoArgsPassed
@@ -156,42 +154,42 @@ class LineNoteUtil(NoteUtil):
 
     def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
 
-        self.lines = []
+        self.lines_list = []
         super().__init__(file_name, separator=separator, comment=comment)
 
     def __str__(self):
         message = super().__str__() + "\n"
         message += ("LineNoteUtil:\n"
                     "-------------\n")
-        message += "Lines: " + repr(self.lines) + "\n"
+        message += "Lines: " + repr(self.lines_list) + "\n"
         return message
 
     def _read_file(self):
 
-        for i in range(len(self.notes)):
-            self.notes[i] = Line(self.notes[i], i, i)
-            self.lines.append(Line(self.notes[i], i, i))
+        for i in range(len(self.notes_list)):
+            self.notes_list[i] = Line(self.notes_list[i], i, i)
+            self.lines_list.append(self.notes_list[i])
 
     def nindex(self, *, content: str=None, lindex: int=None):
         if content is not None or lindex is not None:
-            for note in self.notes:
+            for note in self.notes_list:
                 if content is not None:
-                    if note.content.lower() == content.lower():
+                    if content.lower() == note.content.lower():
                         return note.nindex
                 if lindex is not None:
                     if isinstance(note, Line):
                         if note.lindex == lindex:
                             return note.nindex
-            raise errors.NotesNotFoundError(
+            raise errors.NotesNotFound(
                 "No note was found to equal the content: {0} or have the lindex: {1}".format(content, lindex))
         raise errors.NoArgsPassed
 
     def nindexes(self, *, content: str=None, lindexes: list=None):
         nindexes = []
         if content is not None or lindexes is not None:
-            for note in self.notes:
+            for note in self.notes_list:
                 if content is not None:
-                    if note.content.lower() in content.lower():
+                    if content.lower() in note.content.lower():
                         nindexes.append(note.nindex)
                         continue
                 if lindexes is not None:
@@ -200,29 +198,29 @@ class LineNoteUtil(NoteUtil):
                             nindexes.append(note.nindex)
                             continue
             if not nindexes:
-                raise errors.NotesNotFoundError("No note was found containing the content: {0} or "
-                                                "have any indexes in: {1}.".format(content, lindexes))
+                raise errors.NotesNotFound("No note was found containing the content: {0} or "
+                                           "have any indexes in: {1}.".format(content, lindexes))
             return nindexes
         raise errors.NoArgsPassed
 
     def lindex(self, *, content: str=None, nindex: int=None):
         if content is not None or nindex is not None:
-            for line in self.lines:
+            for line in self.lines_list:
                 if content is not None:
                     if content.lower() == line.content.lower():
                         return line.lindex
                 if nindex is not None:
                     if line.nindex == nindex:
                         return line.lindex
-            raise errors.NotesNotFoundError("No line was found to equal the content: {0} or "
-                                            "have the nindex: {1}".format(content, nindex))
+            raise errors.NotesNotFound("No line was found to equal the content: {0} or "
+                                       "have the nindex: {1}".format(content, nindex))
         raise errors.NoArgsPassed
 
     def lindexes(self, *, content: str=None, nindex: int=None):
 
         lindexes = []
         if content is not None or nindex is not None:
-            for line in self.lines:
+            for line in self.lines_list:
                 if content is not None:
                     if content.lower() in line.content.lower():
                         lindexes.append(line.lindex)
@@ -232,38 +230,38 @@ class LineNoteUtil(NoteUtil):
                         lindexes.append(line.lindex)
                         continue
             if not lindexes:
-                raise errors.NotesNotFoundError("No line was found with the content: {0} or "
-                                                "have the nindex: [1}".format(content, nindex))
+                raise errors.NotesNotFound("No line was found with the content: {0} or "
+                                           "have the nindex: [1}".format(content, nindex))
             return lindexes
         raise errors.NoArgsPassed
 
     def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
         if nindex is not None:
             try:
-                if isinstance(self.notes[nindex], Line):
-                    return self.notes[nindex]
+                if isinstance(self.notes_list[nindex], Line):
+                    return self.notes_list[nindex]
                 else:
                     raise errors.NotALine
             except IndexError:
-                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
+                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
         if lindex is not None:
             try:
-                return self.lines[lindex]
+                return self.lines_list[lindex]
             except IndexError:
-                raise errors.NotesIndexError("The line index: {0} was out of bounds of the lines.".format(lindex))
+                raise errors.NotesIndexError("The line index: {0} was out of bounds of the lines_list.".format(lindex))
         if content is not None:
-            for line in self.lines:
+            for line in self.lines_list:
                 if line.content.lower() == content.lower():
                     return line
-            raise errors.NotesNotFoundError("No line was found to equal content: {0}".format(content))
+            raise errors.NotesNotFound("No line was found to equal content: {0}".format(content))
         raise errors.NoArgsPassed
 
     def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
         if content is not None or nindexes is not None or lindexes is not None:
-            for line in self.lines:
+            for line in self.lines_list:
                 if content is not None:
-                    if line.content.lower() == content.lower():
+                    if content.lower() in line.content.lower():
                         lines.append(line)
                         continue
                 if nindexes is not None:
@@ -275,17 +273,11 @@ class LineNoteUtil(NoteUtil):
                         lines.append(line)
                         continue
             if not lines:
-                raise errors.NotesNotFoundError(
+                raise errors.NotesNotFound(
                     "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
             return lines
         raise errors.NoArgsPassed
 
-
-import os
-os.chdir(os.getcwd() + "\\testing_notes")
-
-noteutil = LineNoteUtil("test1.txt", comment="#")
-print(noteutil)
 
 # class Pair(Line):
 #     def __init__(self, content, nindex, lindex, pindex, term, definition):
@@ -297,7 +289,7 @@ print(noteutil)
 #
 # class PairedNoteUtil(LineNoteUtil):
 #     """
-#     Splits all lines in notes_list into key, value pairs known as terms and definitions.
+#     Splits all lines_list in notes_list into key, value pairs known as terms and definitions.
 #
 #     Terms and definitions are separated by delimeters, which occur only once in each line but can be any character.
 #     Creates a dictionary out of all of the terms and definitions by splitting by the delimeter.
@@ -309,11 +301,11 @@ print(noteutil)
 #         notes_paired : IndexedDict of {str: str}
 #             IndexedDict created from splitting each element in notes_list with the delimeter.
 #         error_message : str
-#             Any errors that occurred while creating the paired notes.
+#             Any errors that occurred while creating the paired notes_list.
 #     Special Methods
 #     ---------------
 #         __str__()
-#             Prints all variables separated by new lines.
+#             Prints all variables separated by new lines_list.
 #     """
 #
 #     def __init__(self, file_name: str, comments: list, delimeter: str, skip_warnings=False):
@@ -325,7 +317,7 @@ print(noteutil)
 #         file_name : str
 #             Name of the file to be converted into PairedNoteUtil.
 #         comments : list of str
-#             The prefixes of lines that will be ignored, checked both before and after strip.
+#             The prefixes of lines_list that will be ignored, checked both before and after strip.
 #         delimeter : str
 #             The character that separates the key from the value, or the term from the definition.
 #         """
@@ -349,7 +341,7 @@ print(noteutil)
 #         Returns
 #         -------
 #         str
-#             All variables with labels separated by new lines.
+#             All variables with labels separated by new lines_list.
 #         """
 #
 #         message = super().__str__() + "\n"
@@ -435,7 +427,7 @@ print(noteutil)
 #
 #     def format(self):
 #         """
-#         Formats the notes in the way the noteutil read it.
+#         Formats the notes_list in the way the noteutil read it.
 #
 #         It prints each term separated by a delimeter, then a space, and then the definition.
 #
@@ -666,7 +658,7 @@ print(noteutil)
 #     def pair_indexes(self, *, notes_dict: IndexedDict=None,
 #                      term: str=None, definition: str=None, func=str.lower):
 #         """
-#         Returns the index of a term or definition if it is part of a key or definition in the paired notes.
+#         Returns the index of a term or definition if it is part of a key or definition in the paired notes_list.
 #
 #         "in" operator is used to determine if the term name is in another term. If "in" doesn't work, use ==.
 #
@@ -767,22 +759,22 @@ print(noteutil)
 #
 # class CategorizedNoteUtil(PairedNoteUtil):
 #     """
-#     Uses prefixes to separate notes into categories, of which are either positional or generic.
+#     Uses prefixes to separate notes_list into categories, of which are either positional or generic.
 #
-#     Definitions may contain additional information, known as extensions, which are separated by new lines.
+#     Definitions may contain additional information, known as extensions, which are separated by new lines_list.
 #         Extensions must be surrounded by given characters.
 #
 #     Generic terms are added to a category based on a generic prefix.
 #     The position of generic terms do not matter and they will never be nested within another generic term.
 #
-#     Positional terms are added to a category based on their relative position in notes.
+#     Positional terms are added to a category based on their relative position in notes_list.
 #     In order to nest positional terms,
 #         the term must have a prefix of a previous positional prefix with its own additional prefix.
 #
 #     Attributes
 #     ----------
 #     error_message : str
-#         Any errors that occur while making categorized notes.
+#         Any errors that occur while making categorized notes_list.
 #     extensions : list of tuple of either (str, str) or (str, str, str) or (str, str, str, str).
 #         Each extension is a group of (name, surrounding character(s), place holder)
 #         When an extension is found in a definition, it will be added to the end of the string, separated by a \n
@@ -824,27 +816,27 @@ print(noteutil)
 #         Think of it as curriculum Units and Chapters.
 #             All Units have Chapters, thus the Units will have all of the note pairs of the Chapters.
 #             In this case, Unit may have a prefix of, for example, "~", and Chapter "~~".
-#         For the notes to be nested, one inner one must start with the prefix of the outer one.
-#         Otherwise, notes will not be added to the outer positional key.
+#         For the notes_list to be nested, one inner one must start with the prefix of the outer one.
+#         Otherwise, notes_list will not be added to the outer positional key.
 #
 #     Special Methods
 #     ---------------
 #         __str__()
-#             Prints all of the variables separated by new lines.
+#             Prints all of the variables separated by new lines_list.
 #     """
 #     def __init__(self, file_name: str, comments: list, delimeter: str, skip_warnings: bool=False,
 #                  *, generics: list=None, positionals: list=None, extensions: list=None,
 #                  ignore_generics: bool=False, filter_extensions: bool=True,
 #                  remove_categories: bool=True):
 #         """
-#         Sets up all variables and creates notes.
+#         Sets up all variables and creates notes_list.
 #
 #         Parameters
 #         ----------
 #         file_name : str
-#             Name of the file to retrieve notes from.
+#             Name of the file to retrieve notes_list from.
 #         comments : list of str
-#             All prefixes to ignore while reading notes.
+#             All prefixes to ignore while reading notes_list.
 #         delimeter : str
 #             Character that separates terms from definitions.
 #         skip_warnings : bool
@@ -856,11 +848,11 @@ print(noteutil)
 #         extensions : list of tuple(str, str)
 #             List of extensions that are tuples.
 #         ignore_generics : bool
-#             Whether to exclude generic terms from the positional and categorized notes.
+#             Whether to exclude generic terms from the positional and categorized notes_list.
 #         filter_extensions : bool
 #             Whether to remove extensions from the main definition.
 #         remove_categories : bool
-#             Whether to remove lines with the category prefix from the notes.
+#             Whether to remove lines_list with the category prefix from the notes_list.
 #         """
 #
 #         super().__init__(file_name, comments, delimeter, skip_warnings=True)
@@ -909,7 +901,7 @@ print(noteutil)
 #         Returns
 #         -------
 #         str
-#             All variables separated by new lines.
+#             All variables separated by new lines_list.
 #         """
 #
 #         message = super().__str__() + "\n"
@@ -1059,7 +1051,7 @@ print(noteutil)
 #         """
 #         Makes a dict where each term and definition is under the correct category.
 #
-#         Creates a dict of keys as names of positionals and values as another dict of keys as names of the notes
+#         Creates a dict of keys as names of positionals and values as another dict of keys as names of the notes_list
 #         positional with the value of an IndexedDict with terms and definitions in that positional.
 #
 #         Parameters
@@ -1196,9 +1188,9 @@ print(noteutil)
 #
 #     def format(self, width: int=40, tabsize: int=4):
 #         """
-#         Formats the notes in the way the noteutil read it.
+#         Formats the notes_list in the way the noteutil read it.
 #
-#         First it adds all the notes in the positional categories, indicating nested positions with tabs.
+#         First it adds all the notes_list in the positional categories, indicating nested positions with tabs.
 #         Then it puts the generic terms at the bottom, after the positional terms.
 #
 #         Returns
@@ -1342,7 +1334,7 @@ print(noteutil)
 #             Name of the definition to find.
 #         func : function
 #             Removes the extensions from the definition if left blank.
-#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes dict.
+#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes_list dict.
 #
 #         Returns
 #         -------
@@ -1381,7 +1373,7 @@ print(noteutil)
 #             Name of the definition to find.
 #         func : function
 #             Removes the extensions from the definition if left blank.
-#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes dict.
+#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes_list dict.
 #
 #         Returns
 #         -------
@@ -1440,7 +1432,7 @@ print(noteutil)
 #             Name of the definition to find.
 #         func : function
 #             Removes the extensions from the definition if left blank.
-#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes dict.
+#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes_list dict.
 #
 #         Returns
 #         -------
@@ -1507,7 +1499,7 @@ print(noteutil)
 #             Name of the definition to find.
 #         func : function
 #             Removes the extensions from the definition if left blank.
-#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes dict.
+#             Otherwise applies this function to the term, definition, and key and value of the parameter and notes_list dict.
 #
 #         Returns
 #         -------
