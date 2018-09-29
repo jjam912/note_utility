@@ -22,13 +22,9 @@ class Note:
 
 def one(func):
     def wrapper(*args, **kwargs):
-        sign = inspect.signature(func)
-        params = sign.parameters
-        for val in params.values():
-            if val is not None:
-                break
-        else:
+        if len(locals()["kwargs"]) == 0:
             raise errors.NoArgsPassed
+
         return func(*args, **kwargs)
     return wrapper
 
