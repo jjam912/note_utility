@@ -1,5 +1,5 @@
 from noteutil.noteutil import errors
-import inspect
+import typing
 
 
 class Note:
@@ -120,15 +120,16 @@ class NoteUtil:
             raise errors.NoteNotFound("No note was found to equal content: {0}".format(content))
 
     @one
-    def notes(self, *, content: str=None, nindexes: set=None):
+    def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
+        nindexes = set(nindexes)
         for note in self.notes_list:
             if content is not None:
                 if content.lower() in note.content.lower():
                     notes.append(note)
                     continue
             if nindexes is not None:
-                if note.nindex in set(nindexes):
+                if note.nindex in nindexes:
                     notes.append(note)
                     continue
         if not notes:
@@ -179,14 +180,15 @@ class LineNoteUtil(NoteUtil):
             raise
 
     @one
-    def nindexes(self, *, content: str=None, lindexes: set=None):
+    def nindexes(self, *, content: str=None, lindexes: list=None):
         nindexes = []
+        lindexes = set(lindexes)
         try:
             nindexes = super().nindexes(content=content)
         except errors.NoteNotFound:
             if lindexes is not None:
                 for line in self.lines_list:
-                    if line.lindex in set(lindexes):
+                    if line.lindex in lindexes:
                         nindexes.append(line.nindex)
         if not nindexes:
             raise errors.NoteNotFound("No note was found containing the content: {0} or "
@@ -206,9 +208,10 @@ class LineNoteUtil(NoteUtil):
                                   "have the nindex: {1}".format(content, nindex))
 
     @one
-    def lindexes(self, *, content: str=None, nindexes: set=None):
+    def lindexes(self, *, content: str=None, nindexes: list=None):
 
         lindexes = []
+        nindexes = set(nindexes)
         for line in self.lines_list:
             if content is not None:
                 if content.lower() in line.content.lower():
@@ -245,19 +248,20 @@ class LineNoteUtil(NoteUtil):
             raise errors.NoteNotFound("No line was found to equal content: {0}".format(content))
 
     @one
-    def lines(self, *, content: str=None, nindexes: list=None, lindexes: set=None):
+    def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
+        lindexes = set(lindexes)
         for line in self.lines_list:
             if content is not None:
                 if content.lower() in line.content.lower():
                     lines.append(line)
                     continue
             if nindexes is not None:
-                if line.nindex in set(nindexes):
+                if line.nindex in nindexes:
                     lines.append(line)
                     continue
             if lindexes is not None:
-                if line.lindex in set(lindexes):
+                if line.lindex in lindexes:
                     lines.append(line)
                     continue
         if not lines:
