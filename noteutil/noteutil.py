@@ -89,24 +89,20 @@ class NoteUtil:
 
     @one
     def nindex(self, *, content: str=None):
-        if content is not None:
-            for note in self.notes_list:
-                if content.lower() == note.content.lower():
-                    return note.nindex
-            raise errors.NotesNotFound("No note was found to equal the content: {0}".format(content))
-        raise errors.NoArgsPassed
+        for note in self.notes_list:
+            if content.lower() == note.content.lower():
+                return note.nindex
+        raise errors.NotesNotFound("No note was found to equal the content: {0}".format(content))
 
     @one
     def nindexes(self, *, content: str=None):
         nindexes = []
-        if content is not None:
-            for note in self.notes_list:
-                if content.lower() in note.content.lower():
-                    nindexes.append(note.nindex)
-            if not nindexes:
-                raise errors.NotesNotFound("No note was found containing the content: {0}.".format(content))
-            return nindexes
-        raise errors.NoArgsPassed
+        for note in self.notes_list:
+            if content.lower() in note.content.lower():
+                nindexes.append(note.nindex)
+        if not nindexes:
+            raise errors.NotesNotFound("No note was found containing the content: {0}.".format(content))
+        return nindexes
 
     @one
     def note(self, *, content: str=None, nindex: int=None):
@@ -120,26 +116,23 @@ class NoteUtil:
                 if note.content.lower() == content.lower():
                     return note
             raise errors.NotesNotFound("No note was found to equal content: {0}".format(content))
-        raise errors.NoArgsPassed
 
     @one
     def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
-        if content is not None or nindexes is not None:
-            for note in self.notes_list:
-                if content is not None:
-                    if content.lower() in note.content.lower():
-                        notes.append(note)
-                        continue
-                if nindexes is not None:
-                    if note.nindex in set(nindexes):
-                        notes.append(note)
-                        continue
-            if not notes:
-                raise errors.NotesNotFound(
-                    "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
-            return notes
-        raise errors.NoArgsPassed
+        for note in self.notes_list:
+            if content is not None:
+                if content.lower() in note.content.lower():
+                    notes.append(note)
+                    continue
+            if nindexes is not None:
+                if note.nindex in set(nindexes):
+                    notes.append(note)
+                    continue
+        if not notes:
+            raise errors.NotesNotFound(
+                "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+        return notes
 
 
 class Line(Note):
