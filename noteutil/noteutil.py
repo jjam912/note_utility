@@ -166,72 +166,60 @@ class LineNoteUtil(NoteUtil):
 
     @one
     def nindex(self, *, content: str=None, lindex: int=None):
-        if content is not None or lindex is not None:
-            for note in self.notes_list:
-                if content is not None:
-                    if content.lower() == note.content.lower():
-                        return note.nindex
-                if lindex is not None:
-                    if isinstance(note, Line):
-                        if note.lindex == lindex:
-                            return note.nindex
-            raise errors.NotesNotFound(
-                "No note was found to equal the content: {0} or have the lindex: {1}".format(content, lindex))
-        raise errors.NoArgsPassed
+        try:
+            return super().nindex(content=content)
+        except errors.NotesNotFound:
+            if lindex is not None:
+                for line in self.lines_list:
+                    if line.lindex == lindex:
+                        return line.nindex
+                raise errors.NotesNotFound("No line was found to have the lindex: {0}".format(lindex))
+            raise
 
     @one
     def nindexes(self, *, content: str=None, lindexes: list=None):
         nindexes = []
-        if content is not None or lindexes is not None:
-            for note in self.notes_list:
-                if content is not None:
-                    if content.lower() in note.content.lower():
-                        nindexes.append(note.nindex)
-                        continue
-                if lindexes is not None:
-                    if isinstance(note, Line):
-                        if note.lindex in set(lindexes):
-                            nindexes.append(note.nindex)
-                            continue
+        try:
+            nindexes = super().nindexes(content=content)
+        except errors.NotesNotFound:
+            if lindexes is not None:
+                for line in self.lines_list:
+                    if line.lindex in set(lindexes):
+                        nindexes.append(line.nindex)
             if not nindexes:
                 raise errors.NotesNotFound("No note was found containing the content: {0} or "
                                            "have any indexes in: {1}.".format(content, lindexes))
             return nindexes
-        raise errors.NoArgsPassed
 
     @one
     def lindex(self, *, content: str=None, nindex: int=None):
-        if content is not None or nindex is not None:
-            for line in self.lines_list:
-                if content is not None:
-                    if content.lower() == line.content.lower():
-                        return line.lindex
-                if nindex is not None:
-                    if line.nindex == nindex:
-                        return line.lindex
-            raise errors.NotesNotFound("No line was found to equal the content: {0} or "
-                                       "have the nindex: {1}".format(content, nindex))
-        raise errors.NoArgsPassed
+        for line in self.lines_list:
+            if content is not None:
+                if content.lower() == line.content.lower():
+                    return line.lindex
+            if nindex is not None:
+                if line.nindex == nindex:
+                    return line.lindex
+        raise errors.NotesNotFound("No line was found to equal the content: {0} or "
+                                   "have the nindex: {1}".format(content, nindex))
 
     @one
     def lindexes(self, *, content: str=None, nindex: int=None):
 
         lindexes = []
-        if content is not None or nindex is not None:
-            for line in self.lines_list:
-                if content is not None:
-                    if content.lower() in line.content.lower():
-                        lindexes.append(line.lindex)
-                        continue
-                if nindex is not None:
-                    if line.nindex == nindex:
-                        lindexes.append(line.lindex)
-                        continue
-            if not lindexes:
-                raise errors.NotesNotFound("No line was found with the content: {0} or "
-                                           "have the nindex: [1}".format(content, nindex))
-            return lindexes
-        raise errors.NoArgsPassed
+        for line in self.lines_list:
+            if content is not None:
+                if content.lower() in line.content.lower():
+                    lindexes.append(line.lindex)
+                    continue
+            if nindex is not None:
+                if line.nindex == nindex:
+                    lindexes.append(line.lindex)
+                    continue
+        if not lindexes:
+            raise errors.NotesNotFound("No line was found with the content: {0} or "
+                                       "have the nindex: [1}".format(content, nindex))
+        return lindexes
 
     @one
     def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
@@ -253,30 +241,27 @@ class LineNoteUtil(NoteUtil):
                 if line.content.lower() == content.lower():
                     return line
             raise errors.NotesNotFound("No line was found to equal content: {0}".format(content))
-        raise errors.NoArgsPassed
 
     @one
     def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
-        if content is not None or nindexes is not None or lindexes is not None:
-            for line in self.lines_list:
-                if content is not None:
-                    if content.lower() in line.content.lower():
-                        lines.append(line)
-                        continue
-                if nindexes is not None:
-                    if line.nindex in set(nindexes):
-                        lines.append(line)
-                        continue
-                if lindexes is not None:
-                    if line.lindex in set(lindexes):
-                        lines.append(line)
-                        continue
-            if not lines:
-                raise errors.NotesNotFound(
-                    "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
-            return lines
-        raise errors.NoArgsPassed
+        for line in self.lines_list:
+            if content is not None:
+                if content.lower() in line.content.lower():
+                    lines.append(line)
+                    continue
+            if nindexes is not None:
+                if line.nindex in set(nindexes):
+                    lines.append(line)
+                    continue
+            if lindexes is not None:
+                if line.lindex in set(lindexes):
+                    lines.append(line)
+                    continue
+        if not lines:
+            raise errors.NotesNotFound(
+                "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
+        return lines
 
 
 # class Pair(Line):
