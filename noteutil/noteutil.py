@@ -81,7 +81,7 @@ class NoteUtil:
         len_notes = len(self.notes_list)
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for i, line in enumerate(f.read().split(self.separator)):
-                self.notes_list.append(Note(line, len_notes + i, ))
+                self.notes_list.append(Note(line, len_notes + i,))
 
     def format(self):
 
@@ -89,19 +89,21 @@ class NoteUtil:
 
     @one
     def nindex(self, *, content: str=None):
-        for note in self.notes_list:
-            if content.lower() == note.content.lower():
-                return note.nindex
-        raise errors.NotesNotFound("No note was found to equal the content: {0}".format(content))
+        if content is not None:
+            for note in self.notes_list:
+                if content.lower() == note.content.lower():
+                    return note.nindex
+        raise errors.NoteNotFound("No note was found to equal the content: {0}".format(content))
 
     @one
     def nindexes(self, *, content: str=None):
         nindexes = []
         for note in self.notes_list:
-            if content.lower() in note.content.lower():
-                nindexes.append(note.nindex)
+            if content is not None:
+                if content.lower() in note.content.lower():
+                    nindexes.append(note.nindex)
         if not nindexes:
-            raise errors.NotesNotFound("No note was found containing the content: {0}.".format(content))
+            raise errors.NoteNotFound("No note was found containing the content: {0}.".format(content))
         return nindexes
 
     @one
@@ -110,15 +112,15 @@ class NoteUtil:
             try:
                 return self.notes_list[nindex]
             except IndexError:
-                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                raise errors.NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
         if content is not None:
             for note in self.notes_list:
                 if note.content.lower() == content.lower():
                     return note
-            raise errors.NotesNotFound("No note was found to equal content: {0}".format(content))
+            raise errors.NoteNotFound("No note was found to equal content: {0}".format(content))
 
     @one
-    def notes(self, *, content: str=None, nindexes: list=None):
+    def notes(self, *, content: str=None, nindexes: set=None):
         notes = []
         for note in self.notes_list:
             if content is not None:
@@ -130,7 +132,7 @@ class NoteUtil:
                     notes.append(note)
                     continue
         if not notes:
-            raise errors.NotesNotFound(
+            raise errors.NoteNotFound(
                 "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
         return notes
 
@@ -168,28 +170,28 @@ class LineNoteUtil(NoteUtil):
     def nindex(self, *, content: str=None, lindex: int=None):
         try:
             return super().nindex(content=content)
-        except errors.NotesNotFound:
+        except errors.NoteNotFound:
             if lindex is not None:
                 for line in self.lines_list:
                     if line.lindex == lindex:
                         return line.nindex
-                raise errors.NotesNotFound("No line was found to have the lindex: {0}".format(lindex))
+                raise errors.NoteNotFound("No line was found to have the lindex: {0}".format(lindex))
             raise
 
     @one
-    def nindexes(self, *, content: str=None, lindexes: list=None):
+    def nindexes(self, *, content: str=None, lindexes: set=None):
         nindexes = []
         try:
             nindexes = super().nindexes(content=content)
-        except errors.NotesNotFound:
+        except errors.NoteNotFound:
             if lindexes is not None:
                 for line in self.lines_list:
                     if line.lindex in set(lindexes):
                         nindexes.append(line.nindex)
-            if not nindexes:
-                raise errors.NotesNotFound("No note was found containing the content: {0} or "
-                                           "have any indexes in: {1}.".format(content, lindexes))
-            return nindexes
+        if not nindexes:
+            raise errors.NoteNotFound("No note was found containing the content: {0} or "
+                                      "have any indexes in: {1}.".format(content, lindexes))
+        return nindexes
 
     @one
     def lindex(self, *, content: str=None, nindex: int=None):
@@ -200,11 +202,11 @@ class LineNoteUtil(NoteUtil):
             if nindex is not None:
                 if line.nindex == nindex:
                     return line.lindex
-        raise errors.NotesNotFound("No line was found to equal the content: {0} or "
-                                   "have the nindex: {1}".format(content, nindex))
+        raise errors.NoteNotFound("No line was found to equal the content: {0} or "
+                                  "have the nindex: {1}".format(content, nindex))
 
     @one
-    def lindexes(self, *, content: str=None, nindex: int=None):
+    def lindexes(self, *, content: str=None, nindexes: set=None):
 
         lindexes = []
         for line in self.lines_list:
@@ -212,13 +214,13 @@ class LineNoteUtil(NoteUtil):
                 if content.lower() in line.content.lower():
                     lindexes.append(line.lindex)
                     continue
-            if nindex is not None:
-                if line.nindex == nindex:
+            if nindexes is not None:
+                if line.nindex in nindexes:
                     lindexes.append(line.lindex)
                     continue
         if not lindexes:
-            raise errors.NotesNotFound("No line was found with the content: {0} or "
-                                       "have the nindex: [1}".format(content, nindex))
+            raise errors.NoteNotFound("No line was found with the content: {0} or "
+                                      "have any of the nindexes: [1}".format(content, nindexes))
         return lindexes
 
     @one
@@ -230,20 +232,20 @@ class LineNoteUtil(NoteUtil):
                 else:
                     raise errors.LineExpected
             except IndexError:
-                raise errors.NotesIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                raise errors.NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
         if lindex is not None:
             try:
                 return self.lines_list[lindex]
             except IndexError:
-                raise errors.NotesIndexError("The line index: {0} was out of bounds of the lines_list.".format(lindex))
+                raise errors.NoteIndexError("The line index: {0} was out of bounds of the lines_list.".format(lindex))
         if content is not None:
             for line in self.lines_list:
                 if line.content.lower() == content.lower():
                     return line
-            raise errors.NotesNotFound("No line was found to equal content: {0}".format(content))
+            raise errors.NoteNotFound("No line was found to equal content: {0}".format(content))
 
     @one
-    def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
+    def lines(self, *, content: str=None, nindexes: list=None, lindexes: set=None):
         lines = []
         for line in self.lines_list:
             if content is not None:
@@ -259,7 +261,7 @@ class LineNoteUtil(NoteUtil):
                     lines.append(line)
                     continue
         if not lines:
-            raise errors.NotesNotFound(
+            raise errors.NoteNotFound(
                 "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
         return lines
 
@@ -537,7 +539,7 @@ class LineNoteUtil(NoteUtil):
 #
 #         Raises
 #         ------
-#         NotesIndexError
+#         NoteIndexError
 #             If the index is out of range (and thus no terms or definitions are found).
 #         """
 #
@@ -550,7 +552,7 @@ class LineNoteUtil(NoteUtil):
 #                                              func=func)
 #             return notes_dict.index_with(key=term, val=definition)
 #         except IndexError:
-#             raise errors.NotesIndexError("No index was found for the provided term or definition.")
+#             raise errors.NoteIndexError("No index was found for the provided term or definition.")
 #
 #     def terms(self, *, notes_dict: IndexedDict=None,
 #               indexes: list=None, term: str=None, definition: str=None, func=str.lower):
@@ -666,7 +668,7 @@ class LineNoteUtil(NoteUtil):
 #
 #         Raises
 #         ------
-#         NotesIndexError
+#         NoteIndexError
 #             If all indexes were out of range of the IndexedDict and no items were found.
 #         """
 #
@@ -679,7 +681,7 @@ class LineNoteUtil(NoteUtil):
 #                                                func=func)
 #             return notes_dict.indexes_with(key=term, val=definition)
 #         except IndexError:
-#             raise errors.NotesIndexError("No indexes were found for the provided terms or definitions.")
+#             raise errors.NoteIndexError("No indexes were found for the provided terms or definitions.")
 #
 #     def pair(self, index: int, *, notes_dict: IndexedDict=None):
 #         """
@@ -701,7 +703,7 @@ class LineNoteUtil(NoteUtil):
 #
 #         Raises
 #         ------
-#         NotesIndexError
+#         NoteIndexError
 #             If the provided index is out of range of the IndexedDict.
 #         """
 #
@@ -710,7 +712,7 @@ class LineNoteUtil(NoteUtil):
 #         try:
 #             return notes_dict.item_at(index)
 #         except IndexError:
-#             raise errors.NotesIndexError("The provided index was out of range.")
+#             raise errors.NoteIndexError("The provided index was out of range.")
 #
 #     def pairs(self, indexes: list, *, notes_dict: IndexedDict=None):
 #         """
@@ -730,7 +732,7 @@ class LineNoteUtil(NoteUtil):
 #
 #         Raises
 #         ------
-#         NotesIndexError
+#         NoteIndexError
 #             If one of the indexes are out of range of the IndexedDict.
 #         """
 #
@@ -739,7 +741,7 @@ class LineNoteUtil(NoteUtil):
 #         try:
 #             return notes_dict.items_at(indexes)
 #         except IndexError:
-#             raise errors.NotesIndexError("At least one of the provided indexes were out of range.")
+#             raise errors.NoteIndexError("At least one of the provided indexes were out of range.")
 #
 #
 # class CategorizedNoteUtil(PairedNoteUtil):
