@@ -1,0 +1,323 @@
+# = comments
+# $$ = equation in latex
+# () = abbreviation
+# {} = example
+# : = delimiter for terms
+# ~~ = positional (chapter)
+# ! = global (important)
+
+~~ Chapter 1: Measurements and Relationships for Laboratory Skills
+
+Unit for force: Newton (N) $$kg\frac{m}{s^2}$$
+Unit for frequency (cyclic): Hertz (Hz) $$s^{-1} \text{ or }\frac{1}{s}$$
+Unit for pressure: Pascal (Pa) $$\frac{N}{m^2}$$
+Unit for energy (work, heat): Joule (J) $$Nm$$
+Unit for power: Watt (W) $$\frac{J}{s}$$
+Unit for electric charge: Coulomb (C) $$As$$
+Unit for electric potential (emf): Volt (V) $$\frac{J}{C}$$
+Unit for capacitance: Farad (F) $$\frac{C}{V}$$
+Unit for resistance: Ohm (omega) $$\frac{V}{A}$$
+Unit for magnetic flux: Weber (Wb) $$Vs$$
+Unit for magnetic flux density: Tesla (T) $$\frac{Wb}{m^2}$$
+Unit for inductance: Henry (H) $$\frac{Wb}{A}$$
+
+Equation for a direct relationship: $$y = kx$$
+Equation for an inverse relationship: $$y = \frac{k}{x}$$
+~~ Chapter 2: Vectors
+
+!Vector quantity: Any quantity that has both magnitude and direction {force, velocity, weight, and displacement}
+!Scalar quantity: Any quantity that has only magnitude {mass, distance, speed, and energy}
+
+Resultant: This is the final or net combined result when vectors are added.
+Equilibrant: This is a vector equal and opposite to the resultant and that makes the net result equal to zero.
+Concurrent Forces: These are all forces that pass through a common point.
+
+~~ Chapter 3: One-Dimensional Motion
+Equation to find average velocity: $$\bar{v} = \frac{\Delta x}{\Delta t} \text{ or } \bar{v} = \frac{v_i + v_f}{2}$$
+Equation to find relative velocity: $$v_{net} = v_a - v_b$$ if moving in the same direction, and $$v_{net} = v_a + v_b$$ if approaching each other in opposite directions.
+Equation to find final velocity: $$v_f = v_i + at$$
+Equation to find displacement: $$x = \frac{v_i + v_f}{2}t \text{ or } x = v_it + \frac{1}{2}at^2 \text{ or } x = \frac{v^2_f - v^2_i}{2a}$$
+
+!Gravity: $$g = -9.8 \frac{m}{s^2}$$ and has a constant value near the surface of Earth.
+
+Instantaneous velocity: This is the slope of the line tangent to a curved graph of displacement versus time.
+
+~~ Chapter 4: Two-Dimensional Motion
+
+!Equation to find centripetal velocity: $$v = \frac{2\pi r}{T}$$ where T = period of circular motion
+Centripetal force: This is the net force required to pull an object into a circular path. The velocity always points in the direction, tangent to the circle, that the object would go had a force not been acting on it, pulling it into a circular path. The acceleration is always directed toward the center of the circle.
+Equation to find centripetal acceleration: $$a = \frac{v^2}{r}$$
+Equation for frequency given period: $$\nu = \frac{1}{T}$$
+Equation to find time until max height: $$t_{up} = \frac{\lvert v_{i_y} \rvert}{\lvert g \rvert} \text{ or } t_{up} = \frac{\lvert v_i \rvert \sin{\theta}}{\lvert g \rvert}$$
+Equation to find max height: $$y_{max} = \frac{v_{i_y}^2}{2g}$$
+Equation to find range / horizontal distance: $$R = 2v_{i_x}t_{up}  \text{ or } \frac{v_i^2\sin{2\theta}}{g}$$
+
+~~ Chapter 5: Force and Newton's Laws of Motion
+
+Net Force: This is the force that is the vector sum of all forces acting on a mass.
+Equilibrium: This is the state of an object if the net force acting on it is equal to zero. It is considered dynamic if the object is moving relative to us and static if it is at rest relative to us.
+
+Inertia: This is the tendency of an object to resist a net force changing its state of motion.
+Newton's first law of motion: This law says that every body continues in its state of rest, or of uniform motion in a straight line, unless it is compelled to change that state by forces acting on it. An object at rest will tend to stay at rest, and an object in motion will tend to stay in motion, unless acted upon by an external force.
+Newton's second law of motion: This law says that the change of motion is proportional to the applied force, and is in the direction which that force acts. The acceleration produced by the force is in the same direction as the force. $$F = ma \text{ or } F_{net} = \Sigma F = ma$$
+Weight: This is a force and is directed toward the center of Earth. $$W = mg$$
+Newton's third law of motion: This law says that for every action, there is an equal but opposite reaction. It stresses the fact that forces are the result of mutual interactions and are thus produced in pairs.
+Normal force: This is the force that is directed perpendicularly (and away) from the surface on which a mass is resting or moving.
+
+Hooke's law: This law says that when a mass is attached vertically to a spring that has a certain natural length, the amount of stretching, or elongation, is directly proportional to the applied weight. $$F = -kx$$ where k is the spring constant in units of newtons per meter (N/m) and x is the elongation beyond the natural length.
+
+Equation for centripetal force: $$F_c = \frac{mv^2}{r}$$
+Static friction: This is the friction that must be overcome when an object is first moved.
+Kinetic friction: This is the friction that occurs when an object is moving. If we apply a force equal to this friction, the acceleration and net force will be zero.
+Equation for friction: $$F_f = \mu N$$ where mu is the coefficient of friction and N is normal force. The mu will have the subscript k for kinetic and s for static.
+Tension: This is the force exerted by a string when it is subjected to pull.
+
+~~ Chapter 6: Work, Energy, and Power
+
+Work: This is a measure of the transfer of energy. This is done on an object 1. to give it potential energy, 2. to give it kinetic energy, 3. to overcome friction [turned into heat], and 4. to accomplish a combination of the above three. Note - Lifting and lowering an object against gravity results in zero net work against gravity. Pushing an object against friction will result in F * D net work. $$W = F * D$$ where D is distance.
+Energy: This is the capacity to do work. If an object does work, it has less of this.
+
+Potential energy: This is energy possessed by an object because of its position / condition with respect to its original position.
+Equation for gravitational potential energy: $$GPE = wh = mgh$$
+Kinetic energy: This is energy possessed by an object because of its motion. $$KE = \frac{1}{2}mv^2$$
+Power: This is the rate of doing work. $$P = \frac{W}{t} \text{ or } P = \frac{F * d}{t}$$
+Mechanical energy: This is the sum of the total potential and kinetic energy.
+Equation for elastic potential energy: $$EPE = \frac{1}{2}kx^2$$ is the work done in stretching or compressing a spring
+Law of conservation of energy: This law says that the total energy of a system remains the same.
+
+~~ Chapter 7: Impacts and Linear Momentum
+Momentum: This is a vector quantity that describes the quantity of motion of a moving body. $$p = mv$$
+Impulse: This is a vector quantity that is equal to the change of momentum of an object. $$F_{net}\Delta t = \Delta p = m\Delta v = mv_f - mv_i$$
+Law of conservation of momentum: This law says that the change in the sum of momenta is zero in the absence of external forces. $$m_1v_{1i} + m_2v_{2i} = m_1v_{1f} + m_2v_{2f}$$
+
+Elastic collision: This is a collision where kinetic energy is conserved as well as the momentum.
+Inelastic collision: This is a collision where kinetic energy is not conserved.
+
+~~ Chapter 8: Gravitation
+
+Kepler's first law of planetary motion: This law says that all planets orbit the Sun in elliptical paths.
+Kepler's second law of planetary motion: This law says that a planet sweeps out an equal area of space in an equal amount of time in its orbit.
+Kepler's third law of planetary motion: This law says that the ratio of the cube of a planet's mean distance from the Sun and the square of its period is a constant. $$K = \frac{R^3}{T^2}$$ It also says that, for any system, the ratio of distance cubed to time squared is a constant for any two intervals of time. $$\frac{R^3_t}{T^2_1} = \frac{R^3_2}{T^2_2}$$
+Newton's law of gravity: This law is often referred to as an inverse square law. It says that the force of gravity should be proportional to the product of both masses. $$F_g = \frac{GM_1M_2}{R^2}$$ where G is the universal gravitational constant $$G = 6.67 * 10^{-11}$$
+Equation for the acceleration of a planet: $$a = \frac{GM}{R^2}$$
+Equation for gravitational potential energy when farther from Earth: $$PE = \frac{-GM_0M_E}{R_E}$$
+Equation for escape velocity: $$v_{esc} = \sqrt{\frac{2GM_E}{R_E}}$$
+Equation for orbital velocity: $$v_{orbit} = \sqrt{\frac{GM_E}{R_E}}$$
+~~ Chapter 9: Heat and Temperature
+
+Kinetic theory of matter: This theory states that all matter is composed of molecules that are relatively far apart and exert force on each other only when they collide.
+Temperature: This is the average kinetic energy per molecule of a substance.
+Heat: This is the form of energy that flows between two bodies because they are at different temperatures.
+Standard pressure / atmosphere: This is the pressure that would be produced by a column of mercury 760 millimeters high. The SI unit for this is pascals.
+Charles' law: This law says that if the pressure on a gas is kept constant, its volume is directly proportional to its absolute temperature (K). $$\frac{v_1}{v_2} = \frac{T_1}{T_2}$$
+Boyle's law: This law says that if the temperature of a gas is kept constant, the volume of the gas varies inversely with its pressure. $$P_1V_1 = P_2V_2$$
+Equation for general gas law: $$\frac{P_1V_1}{T_1} = \frac{P_2V_2}{T_2}$$
+
+~~ Chapter 10: Measurement of Heat
+
+Specific heat capacity: This is the amount of heat required to raise the temperature of 1 gram of a substance 1 degree celsius. Its units are $$\frac{kJ}{kg * \circ C}$$ and 1 calorie = 4.184 J.$$\text{heat lost (or gained) } = \text{ mass X specific heat X temperature change} = mc\Delta T$$ for any object that loses or gains heat without changing phase. $$c_{ice} = 2.05 \frac{kJ}{kg * \circ C} \text{ and }c_{water} = 4.18 \frac{kJ}{kg * \circ C}$$
+Heat of fusion: This is the amount of heat required to melt a unit mass of the substance without change of temperature. 335 kJ/kg is required to melt ice. $$\text{heat required for melting = mass X }H_F$$
+Regelation: This is melting under increased pressure and refreezing when the pressure is reduced. It happens with a substance such as ice that expands on freezing. On the other hand, a substance that contracts on solidifying has a higher melting point at higher pressures.
+Evaporation: This occurs at the surface of a liquid and involves the fastest moving molecules of a liquid escaping at the surface in spite of gravity and the attractive force between molecules.  Since the molecules with the greatest kinetic energy escaped, the average kinetic energy of the remaining molecules in the liquid decreased. The liquid cools when this takes place unless it is being heated. The rate of this process can be increased by making it easier for the molecules to escape from the liquid by 1. heating the liquid to give more molecules higher speeds 2. spread the liquid over a greater area 3. decrease the air pressure on top of the liquid 4. blow away the air above the liquid.
+Boiling: This occurs in the body of a liquid and when the pressure of the vapor forming inside the liquid equals the external pressure on the liquid, generally at atmospheric pressure. The temperature does not change but energy must be supplied for this process to do work against the cohesive force between molecules.
+Heat of vaporization: This is the amount of heat needed to vaporize a unit mass of the substance without changing its temperature. $$\text{heat required for vaporization = mass X }H_v$$. 2,260 kJ/kg is required to vaporize water.
+Sublimation: This is the direct change from a solid to a vapor. (Dry ice)
+Condensation: This is the changing of a vapor to a liquid. It is also used to refer to the reverse of sublimation. (Frost)
+Equation for total heat gained or lost: $$\text{mass X specific heat X temperature change + mass melted X heat of fusion + mass vaporized X heat of vaporization}$$
+
+~~ Chapter 11: Heat and Work
+
+Adiabatic process: This is a process in which no heat is allowed to enter or leave the system. Boyle's law does not apply to this process.
+Isothermal process: This is a process in which change occurs without a change in temperature.
+Isobaric process: This is a process in which change occurs without a change in pressure.
+Isochoric process: This is a process in which change occurs without a change in volume.
+First law of thermodynamics: This law says that the heat supplied to a system is equal to the increase in internal energy of the system plus the work done by the system. $$\text{heat flow = change in internal energy + work done by system } Q = \Delta U + W$$. Heat flow is positive when heat is transferred to the system. Work is positive when it is done by the system.
+Second law of thermodynamics: This law says that heat cannot flow from a cold object to a hot object unless external work is done.
+Entropy: This is a quantitative way to measure the disorder of a system. For any complete process in an isolated system, this either remains constant or increases. It can remain constant only in reversible processes, so the entropy of the universe is increasing. For reversible processes, $$\text{entropy change} = \frac{\text{heat added}}{\text{Kelvin temperature}}$$
+Conduction: This is the process of transferring heat through a medium that does not involve appreciable motion of the medium. The energy transfer is by means of "free"electrons, but also involves bombardment of one molecule by the next. In general, metals are good conductors; good conductors of heat are also good conductors of electricity. Liquids and gases, as well as nonmetallic solids, are poor conductors of heat. Poor conductors are known as insulators.
+Convection: This is the process of transferring heat in a fluid that involves motion of the heated portion to the cooler portion of the fluid. The heated portion expands, rises, and is replaced by cooler fluid, thus producing so-called convection currents.
+Radiation: This is the process of transferring heat that can occur in a vacuum; it takes place by a wave motion similar to light. It is known as an electromagnetic wave. The higher the temperature of an object, the greater the amount of heat it radiates. Black objects radiate more heat from each square centimeter of surface than light-colored objects at the same temperature.
+
+~~ Chapter 12: Wave Motion and Sound
+
+Wave motion: This is a method of transferring energy through a medium by means of a distortion that travels away from the place where the distortion of the medium is produced. The medium itself moves only slightly.
+Pulse: This is a single vibratory disturbance that travels away from its source through the medium.
+Equation for the period of a pendulum: $$T = 2\pi \sqrt{\frac{L}{g}}$$ where L is the length of the string from which the bob is suspended, and g is acceleration due to gravity.
+Equation for the period for a spring being released: $$T = 2\pi \sqrt{\frac{m}{k}}$$ where m is mass and k is the spring constant
+Elasticity: This is the ability of a material to generate periodic waves.
+Longitudinal wave: This is a wave in which the particles of the medium vibrate back and forth along the path that the wave travels. {Sound waves}
+Transverse wave: This is a wave in which the vibrations of the medium are at right angles to the direction in which the wave is traveling. It is readily set up along a rope. {Water waves, Light waves}
+Frequency of a wave: This is the number of complete vibrations back and forth per second. Since the period is the time for one vibration, $$T = \frac{1}{f}$$. The frequency of vibration of each part of the rope is the same as the frequency of vibration of each part of the source and the same as the number of peaks or troughs produced per second.
+Velocity of a wave: $$\text{velocity of a wave = frequency of wave X wavelength or } v = f * \lambda$$
+Sound: This is a longitudinal, mechanical wave that is produced by vibrating objects.
+Compression or Condensation: This is a region of higher pressure.
+Rarefaction: This is a region of reduced pressure.
+Velocity of sound: $$331 \frac{m}{s} \text{ at } 0 \circ C.$$ The speed goes up 0.6 meters per second for each Celsius degree that the temperature goes up. It is independent of the atmospheric pressure. In general, sound travels faster in liquids and solids than in air.
+Resonance: This exists between two systems if vibration of one system results in vibration or oscillation of the second system, whose natural frequency is the same as that of the first. It involves matching the natural vibrating frequency of objects
+Interference: This occurs when two waves pass through the same portion of the medium at the same time.
+Reinforcement or Constructive interference: This occurs when two waves, at a given time and place, tend to make the medium vibrate in the same direction.
+Phase: This is said to occur in waves when they coincide with peaks and troughs. Points can also have this occur to them.
+Destructive interference: This occurs when two waves tend to make the medium vibrate in opposite directions. The two waves then tend to cancel each other. It occurs when the peaks of one coincide with the troughs of the other.
+
+Beats: These are heard when two notes of slightly different frequencies reach the ear at the same time. It is an outburst of sound followed by comparative silence. It results from the interference of two waves reaching the ear. When two compressions or two rarefactions combine, the eardrum vibrates with relatively large amplitude and a loud sound is heard. When a compression combines with a rarefaction, the two tend to annul each other and relatively little sound is heard.
+Equation for wavelength of a resonant closed air column: $$\lambda = 4l_a$$
+Equation for wavelength of an open air column: $$\lambda = 2l_a$$
+Equation for wavelength of a string: $$\lambda = 2l_s$$
+Nodes: These are points that do not move in a standing wave. Points where peaks and troughs occur are called anti-nodes. $$\text{Distance between successive nodes is } = \frac{1}{2}\lambda$$ of the wave in the string.
+Laws of vibrating strings: These laws say that the fundamental frequency of vibration of a string depends on its length, its tension, and its mass per unit length. If one these is varied at a time, the effect is as follows - 1. The frequency varies inversely as the length; that is, making the string twice as long produces a frequency one-half as great. 2. The frequency varies directly as the square root of the tension; that is, to double the frequency the force stretching the string must be quadrupled. 3. The frequency varies inversely as the square root of the mass per unit length.
+Doppler effect for sound: This effect says that if there is relative motion between the source of a wave and the observer, the frequency of vibrations received by the observer will be different from the frequency produced by the source. In the case of sound this difference will affect the pitch of the perceived sound, since pitch depends on the number of vibrations reaching the ear per second. Toward observer - $$f = f_0 [\frac{v}{v-v_s}]$$ Away from observer - $$f = f_0[\frac{v}{v+v_s}]$$ where $$f = \text{observed frequency, } v = \text{wave velocity, } f_0 = \text{transmitted frequency, and } v_s = \text{source velocity.}$$
+Shock wave: This is produced if the source of a frequency is moving faster than the waves in the medium.
+Mach number: This is the ratio of the speed of the source to the speed of the wave.
+Sonic boom: This is a shock wave in the air caused by an aircraft breaking the sound barrier at a given altitude.
+
+~~ Chapter 13: Geometrical Optics - Reflection and Refraction
+
+Incident light: This is the light that goes toward the surface and is represented by the incident ray. The angle of incidence (i) is the angle between the incident ray and its normal. The reflected light is represented by the reflected ray, and the angle of reflection (r) is the angle between the reflected ray and its normal.
+Law of reflection: This law says that, when a wave is reflected, the angle of incidence equals the angle of reflection, and the incident ray, the normal, and the reflected ray lie in one plane. This law applies not only to light but also to other waves and is true of both smooth and rough surfaces.
+Regular reflection: This occurs if a surface is smooth and flat. Parallel incident rays are reflected as parallel rays.
+Diffuse reflection: This occurs if a surface is rough. Reflected light goes off in all directions even when the incident light is parallel.
+Characteristics of an image in a plane mirror: 1. The image is the same size as the object. 2. The image is erect if the object is erect. 3. The image is as far behind the mirror as the object is in front. 4. The image is virtual; that is, the image is formed by rays that do not actually pass through it. If a screen were placed at the position of the image, no image would be seen. 5. The image is laterally reversed.
+Convex: This is a surface with an outside of a spherical shell. Lens with this property are thicker in the middle than at the edges and is also called a converging lens.
+Concave: This is a surface with an inside of a spherical shell. Lens with this property are thinner in the middle than at the edges and is also called a diverging lens.
+Center of curvature (C): This is the center of a spherical shell.
+Principal axis: This is the line through the center of curvature and the midpoint of the mirror.
+Principal focus (F): This is a common point on the principal axis after reflection by a concave mirror. A convex mirror also has a principal focus. Incident rays parallel to the principal axis are reflected by a convex mirror so that the reflected rays seem to come from a common point on the principal axis.
+Focal length (f): This is the distance from the principal focus to the mirror. For a spherical mirror the focal length is equal to one-half of the radius of the spherical shell. $$f = \frac{C}{2}$$.
+
+Refraction: This is the bending of a wave on going into a second medium. It depends on the difference in speed of the wave in the two media.
+Denser medium: This is the medium in which light travels more slowly. (Higher index). Also, when a wave encounters this, its reflection at that point will undergo a phase change of 180 degrees.
+Rarer medium: This is the medium in which light travels faster. (Lower index). No change of phase occurs when a wave encounters this.
+Speed of light: In vacuum - $$3 * 10^{10} \frac{\text{cm}}{\text{sec}} \text{ or } 3 * 10^8 \frac{\text{m}}{\text{sec}}$$. In air the speed of light is only slightly less. Light travels faster in air than in liquids and solids, and faster in water than in glass.
+Law of refraction: This law says that a ray of light passing obliquely into a denser medium (higher-index) is bent toward the normal; a ray of light entering a rarer medium (lower-index) obliquely is bent away from the normal; a ray entering a second medium at right angles to the surface goes through without being bent or deviated.
+Angle of refraction: This is the angle formed by the refracted ray and its normal.
+Absolute index of refraction (n): This is equal to the ratio of the speed of light in vacuum to the speed of the substance - $$n = \frac{\text{speed of light in vacuum (or air)}}{\text{speed of light in the substance}}$$ To calculate this, we divide the sine of the angle in vacuum (or air) by the sine of the angle in the denser medium. If vacuum is not used, the relationship becomes - $$\frac{n_2}{n_1} = \frac{\sin \theta_1}{\sin \theta_2} \text{ or } n_1\sin \theta_1 = n_2\sin \theta_2$$
+Partial reflection: This occurs whenever light enters a second medium whose index of refraction is different from that of the first medium, causing some light to be reflected. The greater the angle of incidence, the greater the amount of reflection.
+Total internal reflection: This can only occur only as light refracts from a material with a higher index of refraction to a material with a lower index of refraction. It occurs when the angle of incidence in the optically denser medium is greater than the critical angle, causing no light to enter the rarer medium.
+Critical angle: This is the angle of incidence in the optically denser medium for which the refracted ray makes an angle of 90 degrees with the normal.
+Lens equation: $$\frac{1}{\text{object distance}} + \frac{1}{\text{image distance}} = \frac{1}{\text{focal length}} \text{ or } \frac{1}{d_o} + \frac{1}{d_i} = \frac{1}{f}$$. Rules for this equation are - 1. Distances are measured from the lens; object distance is distance of object from lens, and so on. 2. The object distance $$d_o$$ is always positive. 3. The image distance $$d_i$$ is positive for real images, negative for virtual images. 4. The focal length f is positive for convex lenses, negative for concave lenses. Equation for Magnification - The size (height) of the image can be calculated with - $$\frac{\text{size of image}}{\text{size of object}} = \frac{\text{image distance}}{\text{object distance}} = \text{magnification (m)}$$. Rules about convex lenses applies to concave mirrors, and what has been said about concave lenses applies to convex mirrors.
+Characteristics of lenses and spherical mirrors with object distance: Convex lens / concave mirror - 1. greater than 2f = real, smaller, between f and 2f, inverted. 2. 2f = real, same size, 2f, inverted. 3. between f and 2f = real, larger, greater than 2f, inverted 3. less than f = virtual, larger, $$d_i$$ more than $$d_o$$, erect. Concave lens / Convex mirror - any distance = virtual, smaller, erect, $$d_i$$ less than $$d_o$$.
+
+Dispersion: This is the breaking up of light into its component colors.
+Spectrum: This is the array of colors produced by dispersion, or the range of waves capable of stimulating the sense of sight. This range of wavelengths is approximately 4E-7 meter for violet to 7E-7 for red. Infrared light has a greater wavelength than red and ultraviolet a shorter one than violet.
+Chromatic aberration: This is a phenomenon where images produced by lenses have a slight color fringe, and photographs with such lenses may be slightly fuzzy. It can be minimized / corrected by using a suitable combination of lenses known as an achromat.
+Spectroscope: This is an instrument used to examine the spectrum of light from any source. The light to be examined goes through a narrow, rectangular slit before it reaches the prism, which disperses the light. A telescope is then usually used to look at this dispersed light.
+Doppler effect for light: This effect occurs if the distance between a source of light and an observer is changing. If the distance is decreasing, the observed frequency is greater than that of the source. In the case of light, frequency determines the color of light we see. If the frequency is greater than the source frequency (wavelength is smaller), the light is more violet than it would have been if there were no relative motion. If the distance is increasing, the observed frequency is lower than that of the source. In the case of light, this difference means the observed light will be shifted toward the red.
+
+~~ Chapter 14: Physical Optics - Interference and Diffraction
+
+Coherent sources: These are sources that produce waves with a constant phase relation. For example, two waves that are always in phase will always reinforce each other. If two waves are of opposite phase -- that is, one wave is 180 degrees out of step with the other -- they will tend to annul each other.
+Huygen's principle: This principle states that every point on a wavefront is a source of wavelets. These wavelets spread out in the forward direction, at the same speed as the source wave. The new wavefront is a line tangent to all of the wavelets.
+Equation for finding bright fringes: $$\frac{\lambda}{d} = \frac{x}{L}$$ where d is the distance between the two slits, L is the distance between the barrier and the screen, lambda is the wavelength, and x is the distance between the central maximum and the first bright fringe. Also any two adjacent bright fringes has the same value of x. Complete annulment occurs midway between the bright fringes.
+Angstrom: This unit equals 1E-10 meters, used to measure wavelength and interatomic distances. 1 nanometer = 1E-9.
+Diffraction: This is the bending of a wave around obstacles. It occurs in the case of sound because, for example, we can hear a speaker even if our direction of view of her is blocked by a crowd of people. The smaller the wavelength, the smaller the diffraction effects.
+Diffraction patterns: These are observations obtained from observing light going through a small slit. 1. The width of the central maximum varies inversely as the width of the slit; that is, if we make the slit narrower, the central bright line becomes broader; in other words, there is more and more diffraction, more and more bending of the light around the edges of the slit. 2. The width of the central maximum varies directly as the wavelength; if we use red light, we get a wider or broader central line than if we use blue light. 2. The distances between successive dark bands are approximately the same.
+Equation for single-slit diffraction: $$\sin \theta = \frac{n\lambda}{d} n = 1, 2, 3, ...$$
+Polarized light: This is light whose direction of vibration has been restricted in some way.
+
+~~ Chapter 15: Electricity
+
+Coulomb's Law: This law says that two charges experience a mutual force along a line connecting the charges. $$F = \frac{kq_1q_2}{r^2}$$ k = 9E9
+Electric field (intensity): This is said to exist wherever an electric force acts on an electric charge. This is the force per unit positive charge placed there. It is a vector quantity. Its direction is the direction of the force on a small positive test charge; if this is to the right, the direction of the field intensity at that point is to the right. If we use a negative test charge, the direction of the force on it is opposite to the direction of the field intensity. $$E = \frac{F}{q}$$ in N/C. For point charges and metallic spheres, the electric intensity varies inversely as the square of the distances from their centers. The field intensity around a long charged rod varies inversely as the distance from the rod. The field between two oppositely charged parallel metallic plates is uniform.
+Electric potential difference: This is measured in volts - $$V = \frac{J}{C}$$
+Electric potential: This is the work required to bring a unit positive charge from infinity to that point.
+Capacitor: This is what is created when two parallel metallic plates of the same size are connected to two terminals of a battery that are oppositely charged. The two plates will acquire equal and opposite charges.
+Potential gradient: This is the local rate of change of the potential with respect to displacement. $$E = \frac{V}{d}$$ 1 newton/coulomb = 1 volt/meter. It is another form of electric field intensity.
+Electromotive force (emf): This is the potential difference between the terminals of the source when no current flows. When current flows, as when a lamp is connected to a battery, the potential difference between the terminals of the battery is sometimes significantly less than its emf because of the battery's internal resistance.
+Current: This is the rate of flow of electric charge. It's measured in amps (A)
+Resistance: This is the opposition to the flow of electric charges, converting electrical energy to heat because of this opposition. It's measured in ohms. Resistance increases most of the time in metallic conductors when its temperature rises. Its resistance is directly proportional to its length and inversely proportional to its cross-sectional area, at constant temperature. $$R = \frac{kL}{A}$$ where L = length in meters, R = resistance in ohms, A = cross-sectional area in square meters, and k = a constant for the material called resistivity; unit is ohm-meter.
+Conductivity: This is the reciprocal of resistivity. The resistivity of good conductors is low; their conductivity is high.
+Superconductivity: These are conductors whose resistivities become zero or nearly so at extremely low temperatures. Once current is started in a loop made with this, it will continue indefinitely without a potential difference being applied to the circuit.
+Conductance: This is the reciprocal of resistance, and its unit is mho/siemens (S). The higher the resistance, the lower or poorer the conductance.
+Ohm's law: This law says that the current in a circuit(I) is directly proportional to the potential difference applied to the circuit (V) and inversely proportional to the resistance of the circuit (R). $$I_T = \frac{V_T}{R_T}$$. For capacitors it also says that $$q = CV$$
+Equation for total voltage: $$V_T = emf - Ir$$ where I is the total current and r is the internal resistance of the source of electrical energy.
+Line drop: This is the voltage across wires connecting the source to the devices receiving energy. This voltage may be negligible; if not, it can be represented and treated similarly to a series resistance.
+Short circuit: This is a low-resistance path between two points where there is normally a relatively high resistance. This may result in an excessive current, known as an overload. If the circuit is overloaded, a fuse properly placed in the circuit will burn out.
+Joule's Law: This law says that the heat produced by current in a given resistor is proportional to the square of the current through the resistor, the resistance, and the time that the current flows through the resistors. $$Q = I^2Rt$$ where Q = heat in joules, I = current in amperes, R = resistance in ohms, and t = time in seconds.
+Equation for power in electric circuits: $$P = IV, P = I^2R, P = \frac{V^2}{R}$$ where P = power in watts, V = potential difference across resistor in volts, I = current through the resistor in amperes, and R = resistance in ohms.
+Kirchhoff's First Law: This law says that the sum of all currents entering a junction point must be equal to the sum of all currents leaving that junction point.
+Kirchhoff's Second Law: This law says that the sum of the voltage drops (or rises) across all elements around any closed loop must equal zero.
+
+~~ Chapter 16: Magnetism
+
+Ferromagnetic substances: These are substances strongly attracted by a magnet (iron, nickel, cobalt, and alnico).
+Paramagnetic substances: These are substances attracted feebly by a magnet.
+Diamagnetic substances: These are substances reflected feebly by a magnet.
+Magnetized substances: These are substances that are ferromagnetic substances that have been made into a magnet.
+Magnetic pole: This is the region of a magnet where its strength is concentrated; every magnet has at least two poles. The north pole of a suspended magnet points toward Earth's magnetic pole in the Northern Hemisphere.
+Lodestone: This is a natural magnet.
+
+Law of magnets: This law says that like poles repel and unlike poles attract. If the poles are concentrated at points, this force between two poles is proportional to the product of their strengths and varies inversely as the square of the distance between them.
+Molecular theory of magnetism: This theory says that every molecule of a magnetic substance is a magnet with a north and a south pole. When the substance is fully magnetized, all the like poles face in the same direction. When it is not magnetized, the molecules are arranged in helter-skelter fashion.
+
+Magnetic field: This is the region around the magnet where its influence can be detected as a force on another magnet. The direction of the field at any point is the direction in which the north pole of a compass would point.
+Lines of flux: These are lines that represent a magnetic field. They are closed curves, leave the magnet at a north pole and enter at a south pole, never cross each other, and more crowded at the poles. In general, the greater the crowding, the greater is the force on the pole located at that point.
+Permeable substances: These are substances that magnetic lines of force go through readily. An example is soft iron. A representation of a magnetic field can be obtained by sprinkling iron filings on a horizontal surface in the field.
+Angle of declination / compass variation: This is the angle between the direction of the compass needle at a particular location and the direction to geographic north / true north.
+Isogonic line: This is an irregular line drawn through locations having the same angle of declination.
+Agonic line: This is an isogonic line drawn through points having zero declination.
+Dipping needle: This is a compass needle mounted on a horizontal axis. It measures the angle of dip or angle of inclination at a given place. At the magnetic poles the angle of dip is 90 degrees. The magnetic equator is the line drawn through points of zero dip.
+Isoclinic lines: These are lines drawn through points having the same dip.
+Right-hand rule: This rule is used to determine the direction of magnetic lines of flux, which are concentric circles (in the plane perpendicular to the wire) with the wire at the center. 1. Grasp the wire with the right hand so that the thumb will point in the direction of electron flow. 2. The fingers will then circle the wire in the direction of the lines of flux. If looking at a solenoid, the thumb will point to the north pole.
+Magnetic flux density / magnetic induction: This is the number of flux lines perpendicular to a unit area. The SI unit for this is tesla, and flux lines are measured in webers / meters squared. $$1T = 1\frac{Wb}{m^2} = 1\frac{N}{Am}$$. The symbol B is used to denote magnetic induction. Note that the term magnetic field intensity cannot be used here
+Solenoid: This is a long, spiral coil carrying electric current. it produces a magnetic field similar to that of a bar magnet, and has a north and south pole. Its strength is increased by the use of a permeable core such as soft iron.
+Electromagnet: This is a solenoid with a permeable core such as soft iron. The strength of this depends on the number of turns in the coil, the current through the coil, and the nature of the core. The first two factors are combined in the concept of ampere-turn, which is the product of the number of turns and the number of amperes of current through the wire. The strength of this is proportional to the number of its ampere-turns, which is affected by the nature of the core.
+
+Magnitude of force on a current-carrying conductor: This force is dependent on the direction of the wire in the magnetic field. It is maximum when the wire is at right angles to the field and zero when the wire is parallel to it. It is proportional to the current and the strength of the magnetic field. When the wire is at right angles to the field, the force on the wire is given by the following $$F = ILB$$ where I is the current, L is the length of the wire in the magnetic field, and B is flux density.
+Magnitude of force on parallel current carrying conductors: This force occurs when two parallel wires carry current. The reason for this is that each wire is in the magnetic field produced by the other. When the two currents are in the same direction, the two wires attract each other. When the currents are in opposite directions, the wires repel each other. The force is proportional to the product of the two currents and inversely proportional to the distance between them $$F = \frac{I_1I_2}{d}$$
+Equation for magnitude of force acted upon a moving charge: The direction of the force is perpendicular to the field and the velocity. If the moving charge is positive, the direction will be opposite to the direction predicted by the right-hand rule. The force is at a maximum when the charge's velocity is at right angles to the flux. $$F = qvB$$ where q is the magnitude of the charge (coulombs), v the velocity, B the flux density (teslas).
+
+Galvanometer: This instrument measures the relative strengths of small currents. The common ones are of the moving-coil type; a coil free to rotate is placed in the magnetic field provided by a permanent magnet. When current goes through the coil, the force on two sides of the coil produces a torque. A pointer attached to the coil rotates with it.
+Ammeter: This instrument measures current and usually consists of a galvanometer with low resistance in parallel with the moving coil; this resistance is called a shunt.
+Voltmeter: This instrument is calibrated to measure the potential difference connected to its terminals. It usually consists of a galvanometer with high resistance connected in series with it.
+Equation for ammeters and voltage drop: $$I_SR_S = I_CR_C$$
+Wattmeter: This instrument measures power consumption and is similar to the voltmeter except that the permanent magnet is replaced by an electromagnet; the current in the wattmeter coil is proportional to the current going through the device whose power consumption is being measured. Energy consumption is measured in kilowatt-hour meters.
+Induced electromotive force (emf): This is produced in a wire whenever there is relative motion between a wire and a magnetic field. If the wire is part of a complete conducting path, current flows in this circuit in accordance with Ohm's law; this current is referred to as induced current.
+Equation for induced emf: $$emf = LVB$$ The magnitude of the induced emf may be increased by increasing the length of the wire cutting the magnetic field, by increasing the relative speed of motion between the wire and the magnetic field, and/or by increasing the strength of the magnetic field.
+
+Lenz's law: This law says that the direction of the induced current is such as to produce a magnetic field that will hinder the motion that produced the current. For example, if a permanent magnet is moved away from a stationary coil, an emf is induced in the coil.
+Mutual induction: This occurs if an emf is induced in a coil because of current changes in a second coil. The current may be alternating or direct. As long as there is a change in the current, there will be a change in the magnetic field surrounding the coil. If this changing magnetic field cuts the second coil, an emf is induced in that coil.
+Equation for transformers and efficiency: $$\frac{\text{secondary emf}}{\text{primary emf}} = \frac{\text{number of turns on secondary}}{\text{number of turns on primary}} \text{ and } \text{power supplied by secondary coil = efficiency X power supplied to primary coil} \text{ and } V_sI_s = \frac{V_p}{I_p} * \text{efficiency}$$. When efficiency is 100%, $$V_sI_s = \frac{V_p}{I_p}$$
+
+~~ Chapter 17: Elements of Electronics
+
+Capacitor: This consists of two conductors separated by an insulator or dielectric. It was formerly called a condenser. Its function is to store an electric charge.$$q = CV$$ where q is the charge on either plate of the capacitor, C is the capacitance, and V is the voltage or potential difference. Capacitance is measured in farads (F) or microfarads (mu F) (10E-6 microfarads = 1 farad). It is proportional to the area of its plates. If we double the area of the plates, we provide twice as much space for storing electrons. The capacitance is inversely proportional to the distance between the plates; if we double the distance between the plates, we reduced the capacitance to one-half of its original value.
+Equation for electric potential energy of a capacitor: $$\frac{1}{2}CV^2 = \frac{1}{2}QV = \frac{1Q^2}{2C}$$. With two capacitors in series, $$\frac{1}{C_{eq}} = \frac{1}{C_1} + \frac{1}{C_2}$$ and with two capacitors in parallel $$C_{eq} = C_1 + C_2$$.
+Thermionic emission: This is the giving off of electrons by a heated metal. The higher the temperature of the metal, the greater is the electron emission.
+
+~~ Chapter 18: Quantum Theory and Nuclear Physics
+
+Photoelectric effect: This effect says that when high-frequency electromagnetic radiation hits metals, electrons are emitted. The electrons emitted are termed photoelectrons. 1. If the intensity of light is increased, the number of emitted electrons increases. 2. If the intensity of the light is increased, the speed of the emitted electrons does not increase. 3. If we decrease the frequency of the light gradually, we reach a frequency below which no electrons are omitted. This is known as the threshold frequency. No matter how much we increase the intensity of the radiation, if it is below the threshold frequency, no electrons will be emitted by the substance. 4. For each substance, the speed of the emitted electrons varies. The maximum speed and kinetic energy of the electrons increase with the frequency of the incident radiation. 5. Different substances have different threshold frequencies. 6. If the frequency that is used is above the threshold frequency, even the weakest radiation will result in the emission of electrons, and their maximum speed will be the same as that for very intense radiation of the same frequency.
+Quantum theory of light: This theory says that light is emitted and absorbed in little bundles of energy.
+Equation for electromagnetic energy / quantum: $$E = hf$$ where f is the frequency of the radiation, and h is planck's constant = 6.626E-34. All photons in a monochromatic radiation of a different frequency are the same, but they are different from the photons in radiation of a different frequency.
+Work function: This is the minimum amount of energy needed to remove an electron from the material.
+Equation for kinetic energy of an emitted electron: $$E_k = hf - \phi$$
+Equation for work function: $$\phi = hf_0$$. If we plot a graph of the kinetic energy of the fastest electrons against the frequency of radiation used, the result is a straight line with the work function being the y-intercept.
+Electron volt (eV): This is the energy that one electron acquires when it is accelerated through a difference of potential of 1 volt. $$1eV = 1.6 * 10^{-19}J$$
+
+Equation for momentum of photon: $$p = \frac{h}{\lambda} \text{ or } \lambda = \frac{h}{mv}$$
+Equation for mass-energy equivalence: $$E = mc^2$$
+Binding energy: This is the energy equivalence of the difference in mass between the nucleus and the sum of the masses of the nucleons; it is the energy that would have to be supplied to break the nucleus into its component protons and neutrons.
+Radiation molecules: Alpha = helium nuclei, beta = electron, gamma = electromagnetic waves similar to X-rays but of higher frequency.
+Transmutation: This is when an element changes into a different element and occurs when charged particle is emitted or absorbed by a nucleus.
+Half-life: This is the length of time required for one-half of a given mass of an element to transmute into a different element.
+Atomic mass unit (amu or u): This is equal to 1/12th of an atom of carbon-12. It equals about 1.66E-27 kilograms and is equal to about 931 million electron-volts.
+
+Quarks: These are particles with charge only 1/3 of an electron and it is believed that the proton and neutron contain three of these each.
+Mesons: This is a particle with mass intermediate between that of the electron and that of the proton. They are both positive and negative. The pi-meson or pion has a mass about 270 times that of the electron and is unstable. The breakdown of the pi-meson results in the production of a lighter particle, the muon.
+Upsilon: This is a particle 10 times heavier than a neutron.
+Antiparticles: These have the same mass as the corresponding particle but an opposite charge. The positron is this of the electron.
+Neutrino: This is a neutral particle with practically zero rest mass.
+
+Fission: This is the splitting of a massive nucleus into two large fragments with the simultaneous release of energy and some particles that can also produce fission.
+Fusion: This is when the nuclei of some light elements such as lithium and hydrogen combine. It requires a temperature of millions of degrees and is called a thermonuclear reaction and has been achieved in an uncontrollable way in the H-bomb.
+
+~~Chapter 19: Special Relativity
+
+Einstein's theory of special relativity: This theory says that 1. the laws of physics are the same for all frames of reference moving at constant velocity with respect to one another. 2. the velocity of light in a vacuum is the same for all observers regardless of their states of motion or the motion of the source of light. Special relativity means that we do not consider the effects of gravity on the motion of light and time.
+
+Length contraction: This is when the proper length $$L_0$$ is the length of a rod as measured by someone moving along with it an inertial frame of reference. The measurement of length is based on the observer's frame of reference; therefore, this measurement differs. To a fixed observer, the length of the rod appears to be contracted according to the formula $$L = L_0\sqrt{1 - \left(\frac{v^2}{c^2}\right)}$$
+Equation for time dilation: $$t = \frac{t_0}{\sqrt{1 - \left(\frac{v^2}{c^2}\right)}}$$
+
+Equation for relative mass: $$m = \frac{m_0}{\sqrt{1 - \frac{v^2}{c^2}}}$$ where m_0 is the rest mass. This explain why it is impossible for a mass to be accelerated to the velocity of light in a vacuum since if v = c, we get an undefined number.
+Equation for relativistic momentum: $$p = mv = \frac{m_0v}{\sqrt{1-\frac{v^2}{c^2}}}$$
+
