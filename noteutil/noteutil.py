@@ -21,7 +21,7 @@ class Note:
 
 
 def one(func):
-    def wrapper():
+    def wrapper(*args, **kwargs):
         sign = inspect.signature(func)
         params = sign.parameters
         for val in params.values():
@@ -29,6 +29,7 @@ def one(func):
                 break
         else:
             raise errors.NoArgsPassed
+        return func(*args, **kwargs)
     return wrapper
 
 
@@ -90,6 +91,7 @@ class NoteUtil:
 
         return self.separator.join(self.notes_list)
 
+    @one
     def nindex(self, *, content: str=None):
         if content is not None:
             for note in self.notes_list:
@@ -98,6 +100,7 @@ class NoteUtil:
             raise errors.NotesNotFound("No note was found to equal the content: {0}".format(content))
         raise errors.NoArgsPassed
 
+    @one
     def nindexes(self, *, content: str=None):
         nindexes = []
         if content is not None:
@@ -109,6 +112,7 @@ class NoteUtil:
             return nindexes
         raise errors.NoArgsPassed
 
+    @one
     def note(self, *, content: str=None, nindex: int=None):
         if nindex is not None:
             try:
@@ -122,6 +126,7 @@ class NoteUtil:
             raise errors.NotesNotFound("No note was found to equal content: {0}".format(content))
         raise errors.NoArgsPassed
 
+    @one
     def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
         if content is not None or nindexes is not None:
@@ -170,6 +175,7 @@ class LineNoteUtil(NoteUtil):
             self.notes_list[i] = Line(self.notes_list[i], i, i)
             self.lines_list.append(self.notes_list[i])
 
+    @one
     def nindex(self, *, content: str=None, lindex: int=None):
         if content is not None or lindex is not None:
             for note in self.notes_list:
@@ -184,6 +190,7 @@ class LineNoteUtil(NoteUtil):
                 "No note was found to equal the content: {0} or have the lindex: {1}".format(content, lindex))
         raise errors.NoArgsPassed
 
+    @one
     def nindexes(self, *, content: str=None, lindexes: list=None):
         nindexes = []
         if content is not None or lindexes is not None:
@@ -203,6 +210,7 @@ class LineNoteUtil(NoteUtil):
             return nindexes
         raise errors.NoArgsPassed
 
+    @one
     def lindex(self, *, content: str=None, nindex: int=None):
         if content is not None or nindex is not None:
             for line in self.lines_list:
@@ -216,6 +224,7 @@ class LineNoteUtil(NoteUtil):
                                        "have the nindex: {1}".format(content, nindex))
         raise errors.NoArgsPassed
 
+    @one
     def lindexes(self, *, content: str=None, nindex: int=None):
 
         lindexes = []
@@ -235,6 +244,7 @@ class LineNoteUtil(NoteUtil):
             return lindexes
         raise errors.NoArgsPassed
 
+    @one
     def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
         if nindex is not None:
             try:
@@ -256,6 +266,7 @@ class LineNoteUtil(NoteUtil):
             raise errors.NotesNotFound("No line was found to equal content: {0}".format(content))
         raise errors.NoArgsPassed
 
+    @one
     def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
         if content is not None or nindexes is not None or lindexes is not None:
