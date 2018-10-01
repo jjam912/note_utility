@@ -170,7 +170,8 @@ class LineNoteUtil(NoteUtil):
     @one
     def nindex(self, *, content: str=None, lindex: int=None):
         try:
-            return super().nindex(content=content)
+            if content is not None:
+                return super().nindex(content=content)
         except errors.NoteNotFound:
             if lindex is not None:
                 for line in self.lines_list:
@@ -184,7 +185,8 @@ class LineNoteUtil(NoteUtil):
         nindexes = []
         lindexes = set(lindexes)
         try:
-            nindexes = super().nindexes(content=content)
+            if content is not None:
+                nindexes = super().nindexes(content=content)
         except errors.NoteNotFound:
             pass
 
