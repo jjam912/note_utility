@@ -35,8 +35,12 @@ class LineExpected(NoteUtilError):
 
 
 class LineNotFound(NoteNotFound):
+    """This exception is thrown when no `Line`_ is found in the ``lines_list`` with the given arguments."""
+
     pass
 
 
 class LineIndexError(NoteIndexError):
+    """This exception is thrown when a ``lindex`` is passed that is out of range of the ``lines_list``."""
+
     pass

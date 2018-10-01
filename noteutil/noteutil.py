@@ -176,7 +176,7 @@ class LineNoteUtil(NoteUtil):
                 for line in self.lines_list:
                     if line.lindex == lindex:
                         return line.nindex
-                raise errors.NoteNotFound("No line was found to have the lindex: {0}".format(lindex))
+                raise errors.NoteNotFound("No note was found to have the lindex: {0}".format(lindex))
             raise
 
     @one
@@ -186,10 +186,12 @@ class LineNoteUtil(NoteUtil):
         try:
             nindexes = super().nindexes(content=content)
         except errors.NoteNotFound:
-            if lindexes is not None:
-                for line in self.lines_list:
-                    if line.lindex in lindexes:
-                        nindexes.append(line.nindex)
+            pass
+
+        if lindexes is not None:
+            for line in self.lines_list:
+                if line.lindex in lindexes and line.nindex not in nindexes:
+                    nindexes.append(line.nindex)
         if not nindexes:
             raise errors.NoteNotFound("No note was found containing the content: {0} or "
                                       "have any indexes in: {1}.".format(content, lindexes))
@@ -204,7 +206,7 @@ class LineNoteUtil(NoteUtil):
             if nindex is not None:
                 if line.nindex == nindex:
                     return line.lindex
-        raise errors.NoteNotFound("No line was found to equal the content: {0} or "
+        raise errors.LineNotFound("No line was found to equal the content: {0} or "
                                   "have the nindex: {1}".format(content, nindex))
 
     @one
@@ -222,7 +224,7 @@ class LineNoteUtil(NoteUtil):
                     lindexes.append(line.lindex)
                     continue
         if not lindexes:
-            raise errors.NoteNotFound("No line was found with the content: {0} or "
+            raise errors.LineNotFound("No line was found with the content: {0} or "
                                       "have any of the nindexes: [1}".format(content, nindexes))
         return lindexes
 
@@ -240,17 +242,19 @@ class LineNoteUtil(NoteUtil):
             try:
                 return self.lines_list[lindex]
             except IndexError:
-                raise errors.NoteIndexError("The line index: {0} was out of bounds of the lines_list.".format(lindex))
+                raise errors.LineIndexError("The line index: {0} was out of bounds of the lines_list.".format(lindex))
         if content is not None:
             for line in self.lines_list:
                 if line.content.lower() == content.lower():
                     return line
-            raise errors.NoteNotFound("No line was found to equal content: {0}".format(content))
+            raise errors.LineNotFound("No line was found to equal content: {0}".format(content))
 
     @one
     def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
+        nindexes = set(nindexes)
         lindexes = set(lindexes)
+
         for line in self.lines_list:
             if content is not None:
                 if content.lower() in line.content.lower():
@@ -265,19 +269,19 @@ class LineNoteUtil(NoteUtil):
                     lines.append(line)
                     continue
         if not lines:
-            raise errors.NoteNotFound(
+            raise errors.LineNotFound(
                 "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
         return lines
 
 
-# class Pair(Line):
-#     def __init__(self, content, nindex, lindex, pindex, term, definition):
-#         super().__init__(content, nindex, lindex)
-#         self.pindex = pindex
-#         self.term = term
-#         self.definition = definition
-#
-#
+class Pair(Line):
+    def __init__(self, content, nindex, lindex, pindex, term, definition):
+        super().__init__(content, nindex, lindex)
+        self.pindex = pindex
+        self.term = term
+        self.definition = definition
+
+
 # class PairedNoteUtil(LineNoteUtil):
 #     """
 #     Splits all lines_list in notes_list into key, value pairs known as terms and definitions.
