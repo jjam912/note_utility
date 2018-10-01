@@ -93,7 +93,7 @@ class NoteUtil:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
                     return note.nindex
-        raise errors.NoteNotFound("No note was found to equal the content: {0}".format(content))
+            raise errors.NoteNotFound("No note was found to equal the content: {0}".format(content))
 
     @one
     def nindexes(self, *, content: str=None):
@@ -104,7 +104,7 @@ class NoteUtil:
                     nindexes.append(note.nindex)
         if not nindexes:
             raise errors.NoteNotFound("No note was found containing the content: {0}.".format(content))
-        return nindexes
+        return sorted(set(nindexes))
 
     @one
     def note(self, *, content: str=None, nindex: int=None):
@@ -122,20 +122,21 @@ class NoteUtil:
     @one
     def notes(self, *, content: str=None, nindexes: list=None):
         notes = []
-        nindexes = set(nindexes)
         for note in self.notes_list:
             if content is not None:
                 if content.lower() in note.content.lower():
                     notes.append(note)
-                    continue
-            if nindexes is not None:
-                if note.nindex in nindexes:
-                    notes.append(note)
-                    continue
+        if nindexes is not None:
+            for nindex in nindexes:
+                try:
+                    notes.append(self.notes_list[nindex])
+                except IndexError:
+                    raise errors.NoteIndexError(
+                        "The note index: {0} was out of bounds of the notes_list".format(nindex))
         if not notes:
             raise errors.NoteNotFound(
                 "No note was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
-        return notes
+        return sorted(set(notes))
 
 
 class Line(Note):
@@ -169,62 +170,69 @@ class LineNoteUtil(NoteUtil):
 
     @one
     def nindex(self, *, content: str=None, lindex: int=None):
-        try:
-            if content is not None:
-                return super().nindex(content=content)
-        except errors.NoteNotFound:
-            if lindex is not None:
-                for line in self.lines_list:
-                    if line.lindex == lindex:
-                        return line.nindex
-                raise errors.NoteNotFound("No note was found to have the lindex: {0}".format(lindex))
-            raise
+        if lindex is not None:
+            try:
+                return self.lines_list[lindex].nindex
+            except IndexError:
+                raise errors.LineIndexError("The line index: {0} was out of bounds of the lines list.".format(lindex))
+        if content is not None:
+            return super().nindex(content=content)
 
     @one
     def nindexes(self, *, content: str=None, lindexes: list=None):
         nindexes = []
-        lindexes = set(lindexes)
-        try:
-            if content is not None:
-                nindexes = super().nindexes(content=content)
-        except errors.NoteNotFound:
-            pass
 
         if lindexes is not None:
-            for line in self.lines_list:
-                if line.lindex in lindexes and line.nindex not in nindexes:
-                    nindexes.append(line.nindex)
+            for lindex in lindexes:
+                try:
+                    nindexes.append(self.lines_list[lindex].nindex)
+                except IndexError:
+                    raise errors.LineIndexError(
+                        "The line index: {0} was out of bounds of the lines list.".format(lindex))
+        if content is not None:
+            try:
+                nindexes.extend(super().nindexes(content=content))
+            except errors.NoteNotFound:     # May have found a note in the lindexes.
+                pass
+
         if not nindexes:
             raise errors.NoteNotFound("No note was found containing the content: {0} or "
                                       "have any indexes in: {1}.".format(content, lindexes))
-        return nindexes
+        return sorted(set(nindexes))
 
     @one
     def lindex(self, *, content: str=None, nindex: int=None):
-        for line in self.lines_list:
-            if content is not None:
+        if content is not None:
+            for line in self.lines_list:
                 if content.lower() == line.content.lower():
                     return line.lindex
-            if nindex is not None:
-                if line.nindex == nindex:
-                    return line.lindex
-        raise errors.LineNotFound("No line was found to equal the content: {0} or "
-                                  "have the nindex: {1}".format(content, nindex))
+            raise errors.LineNotFound("No line was found to equal the content: {0}".format(content))
+        if nindex is not None:
+            try:
+                return self.notes_list[nindex].lindex
+            except IndexError:
+                raise errors.NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+            except AttributeError:
+                raise errors.LineExpected("The note at the note index: {0} was not a Line.".format(nindex))
 
     @one
     def lindexes(self, *, content: str=None, nindexes: list=None):
 
         lindexes = []
-        nindexes = set(nindexes)
         for line in self.lines_list:
             if content is not None:
                 if content.lower() in line.content.lower():
                     lindexes.append(line.lindex)
-                    continue
-            if nindexes is not None:
-                if line.nindex in nindexes:
-                    lindexes.append(line.lindex)
-                    continue
+        if nindexes is not None:
+            for nindex in nindexes:
+                try:
+                    lindexes.append(self.notes_list[nindex].lindex)
+                except IndexError:
+                    raise errors.NoteIndexError(
+                        "The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                except AttributeError:
+                    raise errors.LineExpected("The note at note index: {0} was not a Line.".format(nindex))
+
         if not lindexes:
             raise errors.LineNotFound("No line was found with the content: {0} or "
                                       "have any of the nindexes: [1}".format(content, nindexes))
@@ -254,22 +262,27 @@ class LineNoteUtil(NoteUtil):
     @one
     def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
         lines = []
-        nindexes = set(nindexes)
-        lindexes = set(lindexes)
 
         for line in self.lines_list:
             if content is not None:
                 if content.lower() in line.content.lower():
                     lines.append(line)
-                    continue
-            if nindexes is not None:
-                if line.nindex in nindexes:
-                    lines.append(line)
-                    continue
-            if lindexes is not None:
-                if line.lindex in lindexes:
-                    lines.append(line)
-                    continue
+        if nindexes is not None:
+            for nindex in nindexes:
+                try:
+                    if isinstance(self.notes_list[nindex], Line):
+                        lines.append(self.notes_list[nindex])
+                    else:
+                        raise errors.LineExpected("The note at note index: {0} was not a Line.".format(nindex))
+                except IndexError:
+                    raise errors.NoteIndexError("The note index: {0} was out of bounds of the notes_list".format(nindex))
+        if lindexes is not None:
+            for lindex in lindexes:
+                try:
+                    lines.append(self.lines_list[lindex])
+                except IndexError:
+                    raise errors.LineIndexError("The line index: {0} was out of bounds of the lines_list".format(lindex))
+
         if not lines:
             raise errors.LineNotFound(
                 "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
