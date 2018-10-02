@@ -23,7 +23,7 @@ print(nu.line(content="~~ Category 2 In category 1", nindex=6, lindex=6))
 print(nu.lines(content="9"))
 print(nu.lines(nindexes=[6, 7, 9]))
 print(nu.lines(lindexes=[1, 2, 5]))
-print(nu.lines(content="9", nindexes=[1, 2, 5], lindexes=[6, 7, 9]))
+print(nu.lines(content="9", nindexes=[1, 2, 5, 6, 7, 9], lindexes=[6, 7, 9]))
 
 # print(nu.nindex())
 # print(nu.nindex())
