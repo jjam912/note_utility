@@ -3,32 +3,26 @@ from noteutil.noteutil import errors
 
 class Note:
     """
-    Base class for all notes. All notes should have ``content`` (actual string) and a ``nindex`` (note index), 
-    which is the index of the note in the ``notes_list``.
+    Base class for all Notes. All Notes should have ``content`` (actual string) and a ``nindex`` (note index), 
+    which is the index of the Note in the ``notes_list``.
     
     Attributes
     ----------
-    content : :class:`str`
-        The actual content of the notes; all of the text that was found in between separators.
-    nindex : :class:`int`
-        The note index of the note. The index that corresponds to the ``notes_list``.
+    content: :class:`str`
+        The actual content of the Notes; all of the text that was found in between separators.
+    nindex: :class:`int`
+        The note index of the Note. The index that corresponds to the ``notes_list``.
         
     Special Methods
     ---------------
     __eq__
-        If the content of this note equals the other note's.
     __ne__
-        If the content of this note doesn't equal the other note's.
+        If the content of this note equals or doesn't equal the other note's.
     __lt__
-        If the note index of this note is less than the note index of the other note's.
     __gt__
-        If the note index of this note is greater than the note index of the other note's.
-    __hash__
-        Hashes the content of this note.
+        If the note index of this note is greater or less than the note index of the other note's.
     __str__
-        Returns the content of this note.
-    __repr__
-        Returns the code used to instantiate this note.
+        The content of this note.
     """
 
     def __init__(self, content, nindex):
@@ -67,6 +61,41 @@ def one(func):
 
 
 class NoteUtil:
+    """
+    Base class for all NoteUtils. This class reads the file and compiles it into NoteUtil formatted tokens.
+    Then it reads the contents and makes a list of `Note`s. The `Note`s can then be retrieved using various methods.
+    
+    Parameters
+    ----------
+    file_name : :class:`str`
+        The name of the file that has the raw notes. This file will be read and converted into a .nu file 
+        so that note errors will be easier to debug (line numbers will be more accurate).
+
+        .. warning::
+        
+            The file must be in the current working directory to be detected. 
+            
+    separator : Optional[:class:`str`]
+        The delimeter that distinguishes between each token. The file's contents will be split by this separator. 
+    comment : Optional[:class:`str`]
+        A prefix of a token in the file that will be ignored and not included in the formatted version (.nu) of the file.
+        
+    Attributes
+    ----------
+    notes_list: List[:class:`Note`]
+        A list of all `Note`s created from the .nu file.
+    file_name: :class:`str`
+        Name of the file without the .nu extension.
+    separator: :class:`str`
+        Delimeter that splits `Note` tokens.
+    comment: :class:`str`
+        Prefix of `Note` tokens that have been ignored.
+        
+    Special Methods
+    ---------------
+    __str__
+        All of the attributes of this class separated by new lines.
+    """
 
     def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
         self.notes_list = []
