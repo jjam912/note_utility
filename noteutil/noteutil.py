@@ -2,6 +2,34 @@ from noteutil.noteutil import errors
 
 
 class Note:
+    """
+    Base class for all notes. All notes should have ``content`` (actual string) and a ``nindex`` (note index), 
+    which is the index of the note in the ``notes_list``.
+    
+    Attributes
+    ----------
+    content : :class:`str`
+        The actual content of the notes; all of the text that was found in between separators.
+    nindex : :class:`int`
+        The note index of the note. The index that corresponds to the ``notes_list``.
+        
+    Special Methods
+    ---------------
+    __eq__
+        If the content of this note equals the other note's.
+    __ne__
+        If the content of this note doesn't equal the other note's.
+    __lt__
+        If the note index of this note is less than the note index of the other note's.
+    __gt__
+        If the note index of this note is greater than the note index of the other note's.
+    __hash__
+        Hashes the content of this note.
+    __str__
+        Returns the content of this note.
+    __repr__
+        Returns the code used to instantiate this note.
+    """
 
     def __init__(self, content, nindex):
         self.content = content
