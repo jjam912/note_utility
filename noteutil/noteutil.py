@@ -1,8 +1,8 @@
 from noteutil.noteutil import errors
-import typing
 
 
 class Note:
+
     def __init__(self, content, nindex):
         self.content = content
         self.nindex = nindex
@@ -12,6 +12,15 @@ class Note:
 
     def __ne__(self, other):
         return self.content != other.content
+
+    def __lt__(self, other):
+        return self.nindex < other.nindex
+
+    def __gt__(self, other):
+        return self.nindex > other.nindex
+
+    def __hash__(self):
+        return hash(self.content)
 
     def __str__(self):
         return self.content
@@ -140,6 +149,7 @@ class NoteUtil:
 
 
 class Line(Note):
+
     def __init__(self, content, nindex, lindex):
         super().__init__(content, nindex)
         self.lindex = lindex
@@ -236,7 +246,7 @@ class LineNoteUtil(NoteUtil):
         if not lindexes:
             raise errors.LineNotFound("No line was found with the content: {0} or "
                                       "have any of the nindexes: [1}".format(content, nindexes))
-        return lindexes
+        return sorted(lindexes)
 
     @one
     def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
@@ -275,18 +285,20 @@ class LineNoteUtil(NoteUtil):
                     else:
                         raise errors.LineExpected("The note at note index: {0} was not a Line.".format(nindex))
                 except IndexError:
-                    raise errors.NoteIndexError("The note index: {0} was out of bounds of the notes_list".format(nindex))
+                    raise errors.NoteIndexError(
+                        "The note index: {0} was out of bounds of the notes_list".format(nindex))
         if lindexes is not None:
             for lindex in lindexes:
                 try:
                     lines.append(self.lines_list[lindex])
                 except IndexError:
-                    raise errors.LineIndexError("The line index: {0} was out of bounds of the lines_list".format(lindex))
+                    raise errors.LineIndexError(
+                        "The line index: {0} was out of bounds of the lines_list".format(lindex))
 
         if not lines:
             raise errors.LineNotFound(
                 "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
-        return lines
+        return sorted(set(lines))
 
 
 class Pair(Line):
