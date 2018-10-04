@@ -2,8 +2,7 @@ from noteutil.noteutil import errors
 
 
 class Note:
-    """
-    Base class for all Notes. All Notes should have ``content`` (actual string) and a ``nindex`` (note index), 
+    """Base class for all Notes. All Notes should have ``content`` (actual string) and a ``nindex`` (note index), 
     which is the index of the Note in the ``notes_list``.
     
     Attributes
@@ -61,8 +60,7 @@ def one(func):
 
 
 class NoteUtil:
-    """
-    Base class for all NoteUtils. This class reads the file and compiles it into NoteUtil formatted tokens.
+    """Base class for all NoteUtils. This class reads the file and compiles it into NoteUtil formatted tokens.
     Then it reads the contents and makes a list of `Note`s. The `Note`s can then be retrieved using various methods.
     
     Parameters
@@ -120,6 +118,7 @@ class NoteUtil:
         return message
 
     def _compile_file(self):
+        """Strips the file of empty lines and comments. Writes the stripped contents into a .nu file."""
 
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for line in f.read().split(self.separator):
@@ -144,6 +143,7 @@ class NoteUtil:
             f.write(self.separator.join(self.notes_list))
 
     def _read_file(self):
+        """Splits the .nu file by the separator and appends all of the tokens to the ``notes_list``."""
 
         len_notes = len(self.notes_list)
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
@@ -151,11 +151,16 @@ class NoteUtil:
                 self.notes_list.append(Note(line, len_notes + i,))
 
     def format(self):
+        """Returns a formatted version of the notes. 
+        
+        This is just the ``separator`` joined with the ``notes_list``."""
 
         return self.separator.join(self.notes_list)
 
     @one
     def nindex(self, *, content: str=None):
+        """
+        """
         if content is not None:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
