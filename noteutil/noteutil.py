@@ -2,24 +2,23 @@ from noteutil.noteutil import errors
 
 
 class Note:
-    """Base class for all Notes. All Notes should have ``content`` (actual string) and a ``nindex`` (note index), 
-    which is the index of the Note in the ``notes_list``.
+    """Base class for all Notes, which are created when parsing the note file. 
     
     Attributes
     ----------
     content: :class:`str`
         The actual content of the Notes; all of the text that was found in between separators.
     nindex: :class:`int`
-        The note index of the Note. The index that corresponds to the ``notes_list``.
+        The note index of that corresponds to the :attr:`NoteUtil.notes_list`.
         
     Special Methods
     ---------------
     __eq__
     __ne__
-        If the content of this note equals or doesn't equal the other note's.
+        If the content of this note equals or doesn't equal the other Note's.
     __lt__
     __gt__
-        If the note index of this note is greater or less than the note index of the other note's.
+        If the note index of this note is greater or less than the note index of the other Note's.
     __str__
         The content of this note.
     """
@@ -60,8 +59,8 @@ def one(func):
 
 
 class NoteUtil:
-    """Base class for all NoteUtils. This class reads the file and compiles it into NoteUtil formatted tokens.
-    Then it reads the contents and makes a list of `Note`s. The `Note`s can then be retrieved using various methods.
+    """Base class for all NoteUtils. This class reads the note file and compiles it into formatted tokens.
+    Then it reads the contents and makes a list of `Note`s, which can then be retrieved using various methods.
     
     Parameters
     ----------
