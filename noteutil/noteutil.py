@@ -7,9 +7,9 @@ class Note:
     Attributes
     ----------
     content: :class:`str`
-        The actual content of the Notes; all of the text that was found in between separators.
+        The actual content of the notes; all of the text that was found in between separators.
     nindex: :class:`int`
-        The note index of that corresponds to the :attr:`NoteUtil.notes_list`.
+        The note index that corresponds to position in the :attr:`NoteUtil.notes_list`.
         
     Special Methods
     ---------------
@@ -59,30 +59,36 @@ def one(func):
 
 
 class NoteUtil:
-    """Base class for all NoteUtils. This class reads the note file and compiles it into formatted tokens.
-    Then it reads the contents and makes a list of `Note`s, which can then be retrieved using various methods.
+    """Base class for all NoteUtils. This class reads the note file and compiles it into separated tokens.
+    Then it reads the tokens and makes a list of `Note`s, which can then be retrieved using various methods.
+    
+    .. note::
+        
+        All comparisons using ``content`` will be case insensitive. When looking for a single `Note` with ``content``, it  
+        will look for an exact match, and when looking for multiple `Note`s with ``content``, it will look to see if the 
+        passed ``content`` arg is ``in`` any `Note`'s ``content``.
     
     Parameters
     ----------
     file_name : :class:`str`
-        The name of the file that has the raw notes. This file will be read and converted into a .nu file 
-        so that note errors will be easier to debug (line numbers will be more accurate).
+        The name of the file that has the raw notes. This file will be read and formatted into a .nu file 
+        that can be edited by the program.
 
         .. warning::
         
             The file must be in the current working directory to be detected. 
             
     separator : Optional[:class:`str`]
-        The delimeter that distinguishes between each token. The file's contents will be split by this separator. 
+        The delimeter that distinguishes between each token.
     comment : Optional[:class:`str`]
-        A prefix of a token in the file that will be ignored and not included in the formatted version (.nu) of the file.
+        A prefix of a token in the file that will cause it to be ignored and not included in the .nu file.
         
     Attributes
     ----------
     notes_list: List[:class:`Note`]
-        A list of all `Note`s created from the .nu file.
+        All `Note`s created from the .nu file.
     file_name: :class:`str`
-        Name of the file without the .nu extension.
+        Name of the file without the any file extensions.
     separator: :class:`str`
         Delimeter that splits `Note` tokens.
     comment: :class:`str`
@@ -91,7 +97,7 @@ class NoteUtil:
     Special Methods
     ---------------
     __str__
-        All of the attributes of this class separated by new lines.
+        All of the attributes of this class in the format ``name: value`` separated by new lines.
     """
 
     def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
@@ -117,7 +123,7 @@ class NoteUtil:
         return message
 
     def _compile_file(self):
-        """Strips the file of empty lines and comments. Writes the stripped contents into a .nu file."""
+        """Strips the file of white space, empty lines and comments. Writes the stripped contents into a .nu file."""
 
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for line in f.read().split(self.separator):
@@ -142,7 +148,7 @@ class NoteUtil:
             f.write(self.separator.join(self.notes_list))
 
     def _read_file(self):
-        """Splits the .nu file by the separator and appends all of the tokens to the ``notes_list``."""
+        """Splits the .nu file by the ``separator`` and appends all of the tokens to the ``notes_list``."""
 
         len_notes = len(self.notes_list)
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
@@ -152,14 +158,21 @@ class NoteUtil:
     def format(self):
         """Returns a formatted version of the notes. 
         
-        This is just the ``separator`` joined with the ``notes_list``."""
+        This is just the ``separator`` joined with the ``notes_list``.
+        """
 
         return self.separator.join(self.notes_list)
 
     @one
     def nindex(self, *, content: str=None):
+        """Finds the note index of a `Note` that has a certain attribute.
+        
+        Parameters
+        ----------
+        content : :class:`str`
+            The text that the `Note` equals.
         """
-        """
+        
         if content is not None:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
@@ -168,6 +181,14 @@ class NoteUtil:
 
     @one
     def nindexes(self, *, content: str=None):
+        """Finds all note indexes of `Note`s that have certain attributes.
+        
+        Parameters
+        ----------
+        content : :class:`str`
+            The text that the `Note` contains.
+        """
+        
         nindexes = []
         if content is not None:
             for note in self.notes_list:
@@ -179,6 +200,16 @@ class NoteUtil:
 
     @one
     def note(self, *, content: str=None, nindex: int=None):
+        """Finds the `Note` that has a certain attribute.
+        
+        Parameters
+        ----------
+        content : :class:`str`
+            The text that the `Note` content equals.
+        nindex : :class:`int`
+            The note index of the `Note`.
+        """
+        
         if nindex is not None:
             try:
                 return self.notes_list[nindex]
@@ -192,6 +223,16 @@ class NoteUtil:
 
     @one
     def notes(self, *, content: str=None, nindexes: list=None):
+        """Finds all `Note`s that have certain attributes.
+        
+        Parameters
+        ----------
+        content : :class:`str`
+            The text that the `Note` contains.
+        nindexes : List[:class:`int`]
+            The note indexes of any amount of `Note`s.
+        """
+        
         notes = []
         if nindexes is not None:
             for nindex in nindexes:
