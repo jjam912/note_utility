@@ -46,7 +46,7 @@ class Note:
         return self.content
 
     def __repr__(self):
-        return f"Note(\"{self.content}\"}, {self.nindex})"
+        return f"Note(\"{self.content}\", {self.nindex})"
 
 
 def one(func):
