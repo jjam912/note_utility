@@ -46,7 +46,7 @@ class Note:
         return self.content
 
     def __repr__(self):
-        return "Note(\"{0}\"}, {1})".format(self.content, self.nindex)
+        return f"Note(\"{self.content}\"}, {self.nindex})"
 
 
 def one(func):
@@ -116,10 +116,10 @@ class NoteUtil:
         message = ("NoteUtil:\n"
                    "---------\n")
 
-        message += "File name: " + repr(self.file_name) + "\n"
-        message += "Notes: " + repr(self.notes_list) + "\n"
-        message += "Separator: " + repr(self.separator) + "\n"
-        message += "Comment prefix: " + repr(self.comment) + "\n"
+        message += "file_name: " + repr(self.file_name) + "\n"
+        message += "notes_list: " + repr(self.notes_list) + "\n"
+        message += "separator: " + repr(self.separator) + "\n"
+        message += "comment: " + repr(self.comment) + "\n"
         return message
 
     def _compile_file(self):
@@ -177,7 +177,7 @@ class NoteUtil:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
                     return note.nindex
-            raise errors.NoteNotFound("No note was found to equal the content: {0}".format(content))
+            raise errors.NoteNotFound(f"No note was found to equal the content: {content}")
 
     @one
     def nindexes(self, *, content: str=None):
@@ -195,7 +195,7 @@ class NoteUtil:
                 if content.lower() in note.content.lower():
                     nindexes.append(note.nindex)
         if not nindexes:
-            raise errors.NoteNotFound("No note was found containing the content: {0}.".format(content))
+            raise errors.NoteNotFound(f"No note was found containing the content: {content}.")
         return sorted(set(nindexes))
 
     @one
@@ -214,12 +214,12 @@ class NoteUtil:
             try:
                 return self.notes_list[nindex]
             except IndexError:
-                raise errors.NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                raise errors.NoteIndexError(f"The note index: {nindex} was out of bounds of the notes_list.")
         if content is not None:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
                     return note
-            raise errors.NoteNotFound("No note was found to equal content: {0}".format(content))
+            raise errors.NoteNotFound(f"No note was found to equal content: {content}")
 
     @one
     def notes(self, *, content: str=None, nindexes: list=None):
@@ -239,15 +239,14 @@ class NoteUtil:
                 try:
                     notes.append(self.notes_list[nindex])
                 except IndexError:
-                    raise errors.NoteIndexError(
-                        "The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                    raise errors.NoteIndexError("The note index: {nindex} was out of bounds of the notes_list.")
         if content is not None:
             for note in self.notes_list:
                 if content.lower() in note.content.lower():
                     notes.append(note)
 
             if not notes:
-                raise errors.NoteNotFound("No note was found containing the content: {0}".format(content))
+                raise errors.NoteNotFound(f"No note was found containing the content: {content}")
         return sorted(set(notes))
 
 
