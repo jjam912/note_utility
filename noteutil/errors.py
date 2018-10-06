@@ -1,3 +1,20 @@
+class NoteError(Exception):
+    pass
+
+
+class LineError(NoteError):
+    pass
+
+
+class PairError(NoteError):
+    pass
+
+
+class SeparatorError(PairError):
+    pass
+
+
+
 class NoteUtilError(Exception):
     """Base exception for all ``noteutil`` modules."""
     
