@@ -2,7 +2,7 @@ from noteutil.noteutil import errors
 
 
 class Note:
-    """Base class for all Notes, which are created when parsing the note file. 
+    """Base class for all text Notes, which are created when parsing the note file.
     
     Attributes
     ----------
@@ -22,6 +22,9 @@ class Note:
 
     def __ne__(self, other):
         return self.content.lower() != other.content.lower()
+
+    def __contains__(self, item: str):
+        return item.lower() in self.content.lower()
 
     def __lt__(self, other):
         return self.nindex < other.nindex
@@ -47,6 +50,63 @@ class Line(Note):
 
     def __repr__(self):
         return "Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
+
+
+class Pair(Note):
+    def __init__(self, content, nindex, pindex, term, definition):
+        super().__init__(content, nindex)
+        self.pindex = pindex
+        self.term = term
+        self.definition = definition
+
+
+class CLine(Line):
+
+    def __init__(self, content, nindex, lindex, ):
+        super().__init__(content, nindex, lindex)
+
+
+class CPair(Pair):
+    def __init__(self, content, nindex, pindex, term, definition):
+        super().__init__(content, nindex, pindex, term, definition)
+
+
+class Pack(Note):
+    def __init__(self, content, nindex, *, parents: list=None, notes: list=None):
+        super().__init__(content, nindex)
+        self.parents = parents if parents is not None else []
+        self.notes = notes if notes is not None else []
+
+        self.tabs = "\t" * len(self.parents)
+        self.lines = []
+        self.pairs = []
+
+        for note in notes:
+            if isinstance(note, Line):
+                self.lines.append(note)
+            elif isinstance(note, Pair):
+                self.pairs.append(note)
+
+    def append(self, note):
+        if isinstance(note, Line):
+            self.lines.append(note)
+        elif isinstance(note, Pair):
+            self.pairs.append(note)
+
+
+class List(Pack):
+    def __init__(self, content, nindex, *, parents: list=None, notes: list=None):
+        super().__init__(content, nindex, parents=parents, notes=notes)
+
+
+class NumberList(List):
+    def __init__(self, content, nindex, *, parents: list=None, notes: list=None):
+        super().__init__(content, nindex, parents=parents, notes=notes)
+
+
+class BulletList(List):
+    def __init__(self, content, nindex, *, parents: list=None, notes: list=None):
+        super().__init__(content, nindex, parents=parents, notes=notes)
 
 
 def one(func):
@@ -435,12 +495,7 @@ class LineNoteUtil(NoteUtil):
         return sorted(set(lines))
 
 
-class Pair(Line):
-    def __init__(self, content, nindex, lindex, pindex, term, definition):
-        super().__init__(content, nindex, lindex)
-        self.pindex = pindex
-        self.term = term
-        self.definition = definition
+
 
 
 # class PairedNoteUtil(LineNoteUtil):
