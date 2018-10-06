@@ -28,7 +28,7 @@ class Note:
 
     def __gt__(self, other):
         return self.nindex > other.nindex
-jjjj
+
     def __hash__(self):
         return hash(self.content.lower())
 
@@ -50,6 +50,15 @@ class Line(Note):
 
 
 def one(func):
+    def wrapper(*args, **kwargs):
+        if len(locals()["kwargs"]) != 1:
+            raise errors.NoArgsPassed
+
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def some(func):
     def wrapper(*args, **kwargs):
         if len(locals()["kwargs"]) == 0:
             raise errors.NoArgsPassed
