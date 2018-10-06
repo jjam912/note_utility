@@ -49,15 +49,20 @@ class Line(Note):
         self.lindex = lindex
 
     def __repr__(self):
-        return "Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
+        return f"Line(\"{self.content}\", {self.nindex}, {self.lindex})"
 
 
 class Pair(Note):
-    def __init__(self, content, nindex, pindex, term, definition):
+    def __init__(self, content, nindex, pindex, separator):
         super().__init__(content, nindex)
         self.pindex = pindex
-        self.term = term
-        self.definition = definition
+        tokens = tuple(content.split(separator))
+        if len(tokens) != 2:
+            raise errors.SeparatorError
+        self.term, self.definition = tokens
+
+    def __repr__(self):
+        return f"Pair(\"{self.content}\", {self.nindex}, {self.pindex}, \"{self.term}\", \"{self.definition}\""
 
 
 class CLine(Line):
