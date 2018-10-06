@@ -18,25 +18,35 @@ class Note:
         self.nindex = nindex
 
     def __eq__(self, other):
-        return self.content == other.content
+        return self.content.lower() == other.content.lower()
 
     def __ne__(self, other):
-        return self.content != other.content
+        return self.content.lower() != other.content.lower()
 
     def __lt__(self, other):
         return self.nindex < other.nindex
 
     def __gt__(self, other):
         return self.nindex > other.nindex
-
+jjjj
     def __hash__(self):
-        return hash(self.content)
+        return hash(self.content.lower())
 
     def __str__(self):
         return self.content
 
     def __repr__(self):
         return f"Note(\"{self.content}\", {self.nindex})"
+
+
+class Line(Note):
+
+    def __init__(self, content, nindex, lindex):
+        super().__init__(content, nindex)
+        self.lindex = lindex
+
+    def __repr__(self):
+        return "Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
 
 
 def one(func):
@@ -235,14 +245,7 @@ class NoteUtil:
         return sorted(set(notes))
 
 
-class Line(Note):
 
-    def __init__(self, content, nindex, lindex):
-        super().__init__(content, nindex)
-        self.lindex = lindex
-
-    def __repr__(self):
-        return "Line(\"{0}\", {1}, {2})".format(self.content, self.nindex, self.lindex)
 
 
 class LineNoteUtil(NoteUtil):
