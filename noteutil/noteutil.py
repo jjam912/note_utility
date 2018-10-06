@@ -10,17 +10,7 @@ class Note:
         The actual content of the notes; all of the text that was found in between separators.
     nindex: :class:`int`
         The note index that corresponds to position in the :attr:`NoteUtil.notes_list`.
-        
-    Special Methods
-    ---------------
-    __eq__
-    __ne__
-        If the content of this note equals or doesn't equal the other Note's.
-    __lt__
-    __gt__
-        If the note index of this note is greater or less than the note index of the other Note's.
-    __str__
-        The content of this note.
+
     """
 
     def __init__(self, content, nindex):
@@ -64,9 +54,9 @@ class NoteUtil:
     
     .. note::
         
-        All comparisons using ``content`` will be case insensitive. When looking for a single `Note` with ``content``, it  
-        will look for an exact match, and when looking for multiple `Note`s with ``content``, it will look to see if the 
-        passed ``content`` arg is ``in`` any `Note`'s ``content``.
+        All comparisons using ``content`` will be case insensitive. When looking for a single `Note` with ``content``,
+        it  will look for an exact match, and when looking for multiple `Note`s with ``content``, it will look to see
+        if the passed ``content`` arg is ``in`` any `Note`'s ``content``.
     
     Parameters
     ----------
@@ -93,11 +83,6 @@ class NoteUtil:
         Delimeter that splits `Note` tokens.
     comment: :class:`str`
         Prefix of `Note` tokens that have been ignored.
-        
-    Special Methods
-    ---------------
-    __str__
-        All of the attributes of this class in the format ``name: value`` separated by new lines.
     """
 
     def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
@@ -111,7 +96,7 @@ class NoteUtil:
             self._compile_file()
             self._read_file()
 
-    def __str__(self):
+    def __repr__(self):
 
         message = ("NoteUtil:\n"
                    "---------\n")
