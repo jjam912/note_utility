@@ -65,15 +65,15 @@ class Pair(Note):
         return f"Pair(\"{self.content}\", {self.nindex}, {self.pindex}, \"{self.term}\", \"{self.definition}\""
 
 
-class CLine(Line):
+class ExtLine(Line):
 
-    def __init__(self, content, nindex, lindex, ):
+    def __init__(self, content, nindex, lindex, egroups):
         super().__init__(content, nindex, lindex)
 
 
-class CPair(Pair):
-    def __init__(self, content, nindex, pindex, term, definition):
-        super().__init__(content, nindex, pindex, term, definition)
+class ExtPair(Pair):
+    def __init__(self, content, nindex, pindex, separator, egroups):
+        super().__init__(content, nindex, pindex, separator)
 
 
 class Pack(Note):
@@ -112,6 +112,21 @@ class NumberList(List):
 class BulletList(List):
     def __init__(self, content, nindex, *, parents: list=None, notes: list=None):
         super().__init__(content, nindex, parents=parents, notes=notes)
+
+
+class Extension:
+    def __init__(self, name, content):
+        self.name = name
+        self.content = content
+
+
+class ExtensionGroup:
+    def __init__(self, name, lbound: str, rbound:str, placeholder: str=" "):
+        self.name = name
+        self.lbound = lbound
+        self.rbound = rbound
+        self.placeholder = placeholder
+        self.extensions = []
 
 
 def one(func):
