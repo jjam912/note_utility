@@ -14,6 +14,13 @@ class SeparatorError(PairError):
     pass
 
 
+class ExtensionError(NoteError):
+    pass
+
+
+class NoRightBound(ExtensionError):
+    pass
+
 
 class NoteUtilError(Exception):
     """Base exception for all ``noteutil`` modules."""
