@@ -1,4 +1,7 @@
-class Group:
+import abc
+
+
+class Group(abc.ABC):
     def __init__(self, name):
         self.name = name
 
@@ -6,34 +9,59 @@ class Group:
 class LineGroup(Group):
     def __init__(self, name, prefix):
         super().__init__(name)
-        self._prefix = prefix
+        self.prefix = prefix
         self.lines = []
 
 
 class PairGroup(Group):
     def __init__(self, name, prefix, separator):
         super().__init__(name)
-        self._prefix = prefix
+        self.prefix = prefix
         self.separator = separator
         self.pairs = []
 
 
-class ExtensionGroup(Group):
-    def __init__(self, name, lbound: str, rbound: str, placeholder: str =" "):
+class CategoryGroup(Group):
+    def __init__(self, name, prefix, *, categories: list = None):
         super().__init__(name)
-        self._lbound = lbound
-        self._rbound = rbound
-        self._placeholder = placeholder
+        self.prefix = prefix
+        self.categories = [] if categories is None else categories
         self.notes = []
 
-    def __repr__(self):
-        return (f"ExtensionGroup(\"{self.name}\", \"{self._lbound}\", \"{self._rbound}\", \"{self._placeholder}\", "
-                f"{self.notes})")
 
-
-class PackGroup(Group):
-    def __init__(self, name, prefix, *, packs: list =None):
+class ExtensionGroup(abc.ABC, Group):
+    def __init__(self, name, lbound: str, rbound: str, placeholder: str = " "):
         super().__init__(name)
-        self._prefix = prefix
-        self.packs = [] if packs is None else packs
+        self.lbound = lbound
+        self.rbound = rbound
+        self.placeholder = placeholder
         self.notes = []
+
+
+class LineExtensionGroup(ExtensionGroup):
+    def __init__(self, name: str, lbound: str, rbound: str, placeholder: str = " "):
+        super().__init__(name, lbound, rbound, placeholder)
+
+
+class PairExtensionGroup(ExtensionGroup):
+    def __init__(self, name: str, separator: str, lbound: str, rbound: str, placeholder: str = " "):
+        super().__init__(name, lbound, rbound, placeholder)
+        self.separator = separator
+
+
+class ListExtensionGroup(abc.ABC, ExtensionGroup):
+    def __init__(self, name: str, separators: list, lbound: str, rbound: str, placeholder: str = " "):
+        super().__init__(name, lbound, rbound, placeholder)
+        self.separators = separators
+
+
+class BulletListExtensionGroup(ListExtensionGroup):
+    def __init__(self, name: str, separators: list, bullets: list, lbound: str, rbound: str, placeholder: str = " "):
+        super().__init__(name, separators, lbound, rbound, placeholder)
+        self.bullets = bullets
+
+
+class NumberListExtensionGroup(ListExtensionGroup):
+    def __init__(self, name: str, separators: list, lbound: str, rbound: str, placeholder: str = " "):
+        super().__init__(name, separators, lbound, rbound, placeholder)
+
