@@ -1,62 +1,81 @@
 from .note import *
 from .errors import *
+from .group import *
+import abc
 
 
-class Extension(ABC):
-    def __init__(self, name: str, content: str, note: Note):
-        self.name = name
+class Extension(abc.ABC):
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: ExtensionGroup):
         self._rcontent = content
         self.content = content
+        self.cindex = cindex
         self.note = note
+        self.name = ext_group.name
+        self.lbound = ext_group.lbound
+        self.rbound = ext_group.rbound
+        self.placeholder = ext_group.placeholder
+        self.fmt = ext_group.fmt
+
+    @abc.abstractmethod
+    def __repr__(self):
+        pass
+
+    @abc.abstractmethod
+    def __str__(self):
+        pass
 
 
 class LineExtension(Extension):
-    def __init__(self, name: str, content: str, note: Note):
-        super().__init__(name, content, note)
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: LineExtensionGroup):
+        super().__init__(content, cindex, note, ext_group)
 
     def __repr__(self):
-        return f"LineExtension(\"{self.name}\", \"{self.content}\", {self.note})"
+        return f"{self.lbound}{self.content}{self.rbound}"
+
+    def __str__(self):
+        return self.fmt.format(self.name, self.content)
 
 
 class PairExtension(Extension):
-    def __init__(self, name: str, content: str, note: Note, separator: str):
-        super().__init__(name, content, note)
-        self.separator = separator
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: PairExtensionGroup):
+        super().__init__(content, cindex, note, ext_group)
+        self.separator = ext_group.separator
 
-        tokens = tuple(content.split(separator))
+        tokens = tuple(content.split(self.separator))
         if len(tokens) != 2:
             raise SeparatorError(f"There was either zero or more than one separator in the content: {content}")
 
         self.term, self.definition = tokens[0].strip(), tokens[1].strip()
 
     def __repr__(self):
-        return f"PairExtension(\"{self.name}\", \"{self.content}\", {self.note}, \"{self.separator}\")"
+        return f"{self.lbound}{self.term} {self.separator} {self.definition}{self.rbound}"
+
+    def __str__(self):
+        return self.fmt.format(self.name, self.content, self.term, self.separator, self.definition)
 
 
-class ListExtension(Extension, ABC):
-    def __init__(self, name: str, content: str, note: Note, separators: list):
-        super().__init__(name, content, note)
-        self.separators = separators
+class ListExtension(Extension, abc.ABC):
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: ListExtensionGroup):
+        super().__init__(content, cindex, note, ext_group)
+        self.separators = ext_group.separators
         self.elements = []
 
 
 class ListElement:
-    def __init__(self, list_ext: ListExtension, content: str, *, parents: list = None, children: list = None):
-        self.list_ext = list_ext
+    def __init__(self, content: str, list_ext: ListExtension, *, parents: list = None, children: list = None):
         self.content = content
+        self.list_ext = list_ext
         self.parents = parents
         self.children = children
 
 
 class BulletListExtension(ListExtension):
-    def __init__(self, name: str, content: str, note: Note, separators: list, bullets: list = None):
-        super().__init__(name, content, note, separators)
-        self.bullets = bullets
-        if self.bullets is None:
-            self.bullets = ["+ ", "- ", "* "]
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: ExtensionGroup):
+        super().__init__(content, cindex, note, ext_group)
+
 
 
 class NumberListExtension(ListExtension):
-    def __init__(self, name: str, content: str, note: Note, separators: list):
-        super().__init__(name, content, note, separators)
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: ExtensionGroup):
+        super().__init__(content, cindex, note, ext_group)
 
