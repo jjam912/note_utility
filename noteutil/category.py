@@ -1,13 +1,14 @@
 from abc import ABC
-from .note import *
+from .note import Note, Line, Pair
+from .errors import *
 
 
-class Pack(Note, ABC):
-    def __init__(self, content, nindex, *, extensions: list=None, packs: list=None, notes: list=None):
-        super().__init__(content, nindex, extensions=extensions, packs=packs)
+class Category(Note, ABC):
+    def __init__(self, content, nindex, *, extensions: list=None, categories: list=None, notes: list=None):
+        super().__init__(content, nindex, extensions=extensions, categories=categories)
         self.notes = [] if notes is None else notes
 
-        self.tabs = "\t" * len(self.packs)
+        self.tabs = "\t" * len(self.categories)
         self.lines = []
         self.pairs = []
 
@@ -45,7 +46,7 @@ class Pack(Note, ABC):
         return self.notes[item]
 
     def __missing__(self, key):
-        raise errors.NoteIndexError(key + " not in notes.")
+        raise NoteIndexError(key + " not in notes.")
 
     def __delitem__(self, key):
         del self.notes[self.notes.index(key)]
@@ -73,20 +74,20 @@ class Pack(Note, ABC):
         else:
             self.notes.insert(i, note)
 
-    def insert(self, pack):
+    def insert(self, category):
         # if pack.nindex < self.nindex:
         #     raise Something
 
-        i, j, k, n = 0, len(self.packs) // 2, len(self.packs), pack.nindex
+        i, j, k, n = 0, len(self.categories) // 2, len(self.categories), category.nindex
         while k - i > 1:
-            mid = self.packs[j].nindex
+            mid = self.categories[j].nindex
             if n > mid:
                 i = j
             else:
                 k = j
             j = (i + k) // 2
         if n > self.notes[j].nindex:
-            self.packs.insert(j, pack)
+            self.categories.insert(j, category)
         else:
-            self.packs.insert(i, pack)
+            self.categories.insert(i, category)
 
