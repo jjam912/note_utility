@@ -3,6 +3,7 @@ from .errors import *
 
 
 # TODO: __repr__ should be the function that is used to convert the Note back into something that can be read in .nu
+# TODO: Revisit __repr__ for extensions and categories
 class Note(abc.ABC):
     """Base class for all text Notes, which are created when parsing the note file.
 
@@ -37,6 +38,9 @@ class Note(abc.ABC):
     def __hash__(self):
         return hash(self._rcontent.lower())
 
+    def __str__(self):
+        return self.format()
+
     @abc.abstractmethod
     def __repr__(self):
         pass
@@ -45,12 +49,7 @@ class Note(abc.ABC):
     def format(self):
         pass
 
-    @abc.abstractmethod
-    def cformat(self):
-        pass
 
-
-# TODO: Revisit __repr__ for extensions and categories
 class Line(Note):
 
     def __init__(self, content: str, nindex: int, lindex: int, *, extensions: list = None, categories: list = None):
@@ -58,6 +57,16 @@ class Line(Note):
         self.lindex = lindex
 
     def __repr__(self):
+        rstring = ""
+        rstring += self.content
+        for ext in self.extensions:
+            rstring += repr(ext)
+        for cat in reversed(self.categories):
+            if isinstance(cat, GlobalCategory):
+                rstring = cat.prefix + rstring
+        return rstring
+
+    def format(self):
         return self.content
 
 
@@ -75,5 +84,17 @@ class Pair(Note):
         self.term, self.definition = tokens[0].strip(), tokens[1].strip()
 
     def __repr__(self):
+        rstring = ""
+        rstring += f"{self.term} {self.separator} {self.definition}"
+        for ext in self.extensions:
+            rstring += repr(ext)
+        for cat in reversed(self.categories):
+            if isinstance(cat, GlobalCategory):
+                rstring = cat.prefix + rstring
+        return rstring
+
+    def format(self):
         return f"{self.term} {self.separator} {self.definition}"
 
+
+from .categories import GlobalCategory
