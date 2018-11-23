@@ -1,7 +1,8 @@
-from .note import *
-from .errors import *
-from .group import *
 import abc
+from .notes import Note
+from .errors import *
+from .groups import (ExtensionGroup, LineExtensionGroup, PairExtensionGroup,
+                     ListExtensionGroup, NumberListExtensionGroup, BulletListExtensionGroup)
 
 
 class Extension(abc.ABC):
