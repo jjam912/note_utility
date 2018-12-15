@@ -1,5 +1,6 @@
 import abc
 from .errors import *
+from .groups import *
 
 
 # TODO: __repr__ should be the function that is used to convert the Note back into something that can be read in .nu
@@ -15,7 +16,8 @@ class Note(abc.ABC):
         The note index that corresponds to position in the :attr:`NoteUtil.notes_list`.
     """
 
-    def __init__(self, content: str, nindex: int, *, extensions: list = None, categories: list = None):
+    def __init__(self, content: str, nindex: int, ngroup: NoteGroup, *,
+                 extensions: dict = None, categories: list = None):
         super().__init__()
         self._rcontent = content
         self.content = content
