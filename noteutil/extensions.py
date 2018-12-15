@@ -5,6 +5,7 @@ from .groups import (ExtensionGroup, LineExtensionGroup, PairExtensionGroup,
                      ListExtensionGroup, NumberListExtensionGroup, BulletListExtensionGroup)
 
 
+# TODO: Replace fmt with a function
 class Extension(abc.ABC):
     def __init__(self, content: str, cindex: int, note: Note, ext_group: ExtensionGroup):
         self._rcontent = content
@@ -21,9 +22,8 @@ class Extension(abc.ABC):
     def __repr__(self):
         pass
 
-    @abc.abstractmethod
     def __str__(self):
-        pass
+        return self.fmt(self)
 
 
 class LineExtension(Extension):
@@ -32,9 +32,6 @@ class LineExtension(Extension):
 
     def __repr__(self):
         return f"{self.lbound}{self.content}{self.rbound}"
-
-    def __str__(self):
-        return self.fmt.format(self.name, self.content)
 
 
 class PairExtension(Extension):
@@ -50,9 +47,6 @@ class PairExtension(Extension):
 
     def __repr__(self):
         return f"{self.lbound}{self.term} {self.separator} {self.definition}{self.rbound}"
-
-    def __str__(self):
-        return self.fmt.format(self.name, self.content, self.term, self.separator, self.definition)
 
 
 class ListExtension(Extension, abc.ABC):
@@ -71,12 +65,17 @@ class ListElement:
 
 
 class BulletListExtension(ListExtension):
-    def __init__(self, content: str, cindex: int, note: Note, ext_group: ExtensionGroup):
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: BulletListExtensionGroup):
         super().__init__(content, cindex, note, ext_group)
 
+    def __repr__(self):
+        pass
 
 
 class NumberListExtension(ListExtension):
-    def __init__(self, content: str, cindex: int, note: Note, ext_group: ExtensionGroup):
+    def __init__(self, content: str, cindex: int, note: Note, ext_group: NumberListExtensionGroup):
         super().__init__(content, cindex, note, ext_group)
+
+    def __repr__(self):
+        pass
 
