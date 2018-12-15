@@ -1,8 +1,8 @@
 from .errors import *
-from .note import *
-from .extension import *
-from .group import *
-from .category import *
+from .notes import *
+from .extensions import *
+from .groups import *
+from .categories import *
 from .quiz import *
 
 
