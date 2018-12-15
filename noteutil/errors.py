@@ -1,3 +1,4 @@
+# Note Exceptions
 class NoteError(Exception):
     pass
 
@@ -22,9 +23,19 @@ class NoRightBound(ExtensionError):
     pass
 
 
+# Group Exceptions
+class GroupError(Exception):
+    pass
+
+
+class AbstractGroupError(GroupError):
+    pass
+
+
+# NoteUtil Exceptions
 class NoteUtilError(Exception):
-    """Base exception for all ``noteutil`` modules."""
-    
+    """Base exception for all ``NoteUtil`` errors."""
+
     pass
 
 
@@ -36,15 +47,6 @@ class NoteNotFound(NoteUtilError):
 
 class NoteIndexError(NoteUtilError):
     """This exception is thrown when a ``nindex`` is passed that is out of range of the ``notes_list``."""
-    
-    pass
-
-
-class NoArgsPassed(NoteUtilError):
-    """This exception is thrown when no arguments are passed into a function of any `NoteUtil`_ that needs at least one.
-    
-    If all of the arguments of a function are ``None``, this exception will be thrown.
-    """
     
     pass
 
@@ -67,4 +69,17 @@ class LineNotFound(NoteNotFound):
 class LineIndexError(NoteIndexError):
     """This exception is thrown when a ``lindex`` is passed that is out of range of the ``lines_list``."""
 
+    pass
+
+
+class NoArgsPassed(NoteUtilError):
+    """This exception is thrown when no arguments are passed into a function of any `NoteUtil`_ that needs at least one.
+
+    If all of the arguments of a function are ``None``, this exception will be thrown.
+    """
+
+    pass
+
+
+class MultipleArgsPassed(NoteUtilError):
     pass
