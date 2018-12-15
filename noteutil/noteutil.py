@@ -1,5 +1,5 @@
 from .errors import *
-from .note import *
+from .notes import Note, Line, Pair
 
 
 def one(func):
@@ -21,7 +21,7 @@ def some(func):
 
 
 class NoteUtil:
-    """Base class for all NoteUtils. This class reads the note file and compiles it into separated tokens.
+    """This class reads the note file and compiles it into separated tokens.
     Then it reads the tokens and makes a list of `Note`s, which can then be retrieved using various methods.
     
     .. note::
@@ -57,11 +57,14 @@ class NoteUtil:
         Prefix of `Note` tokens that have been ignored.
     """
 
-    def __init__(self, file_name: str, *, separator: str="\n", comment: str=None):
+    def __init__(self, file_name: str, groups: list, *, separator: str="\n", comment: str=None):
         self.notes_list = []
+        self.lines_list = []
+        self.pairs_list = []
         self.file_name = file_name
         self.separator = separator
         self.comment = comment
+        self.groups = groups
         if self.file_name.endswith(".nu"):
             self._read_file()
         else:
@@ -69,15 +72,7 @@ class NoteUtil:
             self._read_file()
 
     def __repr__(self):
-
-        message = ("NoteUtil:\n"
-                   "---------\n")
-
-        message += "file_name: " + repr(self.file_name) + "\n"
-        message += "notes_list: " + repr(self.notes_list) + "\n"
-        message += "separator: " + repr(self.separator) + "\n"
-        message += "comment: " + repr(self.comment) + "\n"
-        return message
+        pass
 
     def _compile_file(self):
         """Strips the file of white space, empty lines and comments. Writes the stripped contents into a .nu file."""
@@ -107,10 +102,28 @@ class NoteUtil:
     def _read_file(self):
         """Splits the .nu file by the ``separator`` and appends all of the tokens to the ``notes_list``."""
 
-        len_notes = len(self.notes_list)
         with open(self.file_name, mode="r", encoding="UTF-8") as f:
             for i, line in enumerate(f.read().split(self.separator)):
-                self.notes_list.append(Note(line, len_notes + i,))
+
+
+        # for eg in self._egroups:
+        #     if eg.name not in self.extensions:
+        #         self.extensions[eg.name] = []
+        #
+        #     while True:
+        #         try:
+        #             i = self.content.index(eg.lbound)
+        #         except IndexError:
+        #             break
+        #
+        #         try:
+        #             j = self.content.index(eg.rbound)
+        #         except IndexError:
+        #             raise NoRightBound
+        #
+        #         self.extensions[eg.name].append(Extension(eg, self.content[i + len(eg.lbound): j].strip(), self))
+        #         eg.notes.append(self)
+        #         self.content = self.content[:i].strip() + eg.placeholder + self.content[j + len(eg.rbound):].strip()
 
     def format(self):
         """Returns a formatted version of the notes. 
