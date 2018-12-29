@@ -41,7 +41,7 @@ class PairExtension(Extension):
 
         tokens = tuple(content.split(self.separator))
         if len(tokens) != 2:
-            raise SeparatorError(f"There was either zero or more than one separator in the content: {content}")
+            raise SeparatorError(content)
 
         self.term, self.definition = tokens[0].strip(), tokens[1].strip()
 
@@ -49,19 +49,36 @@ class PairExtension(Extension):
         return f"{self.lbound}{self.term} {self.separator} {self.definition}{self.rbound}"
 
 
-class ListExtension(Extension, abc.ABC):
+class ListExtension(Extension):
     def __init__(self, content: str, cindex: int, note: Note, ext_group: ListExtensionGroup):
         super().__init__(content, cindex, note, ext_group)
         self.separators = ext_group.separators
         self.elements = []
 
+    def __repr__(self):
+        rstring = ""
+        rstring += self.lbound
+
+        elements = self.separators[0].join(list(map(lambda x: x.content, self.elements)))
+        for i in range(len(elements)):
+            for j in range(1, self.elements[i].tabs + 1):
+                elements[i] = self.separators[j] + elements[i]
+
+        rstring += self.rbound
+        return rstring
+
 
 class ListElement:
-    def __init__(self, content: str, list_ext: ListExtension, *, parents: list = None, children: list = None):
+    def __init__(self, content: str, tabs: int, list_ext: ListExtension):
         self.content = content
+        self.tabs = tabs
         self.list_ext = list_ext
-        self.parents = parents
-        self.children = children
+        # I might implement this
+        # self.parents = []
+        # self.children = []
+
+    def __str__(self):
+        return ("\t" * self.tabs) + self.content
 
 
 class BulletListExtension(ListExtension):
@@ -69,7 +86,16 @@ class BulletListExtension(ListExtension):
         super().__init__(content, cindex, note, ext_group)
 
     def __repr__(self):
-        pass
+        rstring = ""
+        rstring += self.lbound
+
+        elements = self.separators[0].join(list(map(lambda x: x.content, self.elements)))
+        for i in range(len(elements)):
+            for j in range(1, self.elements[i].tabs + 1):
+                elements[i] = self.separators[j] + elements[i]
+
+        rstring += self.rbound
+        return rstring
 
 
 class NumberListExtension(ListExtension):
@@ -77,5 +103,14 @@ class NumberListExtension(ListExtension):
         super().__init__(content, cindex, note, ext_group)
 
     def __repr__(self):
-        pass
+        rstring = ""
+        rstring += self.lbound
+
+        elements = self.separators[0].join(list(map(lambda x: x.content, self.elements)))
+        for i in range(len(elements)):
+            for j in range(1, self.elements[i].tabs + 1):
+                elements[i] = self.separators[j] + elements[i]
+
+        rstring += self.rbound
+        return rstring
 
