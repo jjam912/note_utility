@@ -1,13 +1,18 @@
 from .errors import *
+from .notes import Line, Pair
+from .extensions import LineExtension, PairExtension, ListExtension, BulletListExtension, NumberListExtension
+import itertools
 
 
-# TODO: Replace fmt with a lambda function
+# TODO: Implement actual functions
+# Groups are meant to help NoteUtil initialize its Categories, Notes, and Extensions.
+# They should not be used after NoteUtil has been fully initialized.
 class Group:
     def __new__(cls, *args, **kwargs):
         if cls is Group:
-            raise AbstractGroupError("Group is an abstract class that cannot be implemented.")
+            raise AbstractGroupError(cls)
 
-    def __init__(self, name: str, *, fmt: function = lambda n: None):
+    def __init__(self, name: str, *, fmt=lambda n: None):
         self._name = name
         self.fmt = fmt
 
@@ -16,12 +21,13 @@ class Group:
         return self._name
 
 
+#######################
 class NoteGroup(Group):
     def __new__(cls, *args, **kwargs):
         if cls is NoteGroup:
-            raise AbstractGroupError("NoteGroup is an abstract class that cannot be implemented.")
+            raise AbstractGroupError(cls)
 
-    def __init__(self, name: str, prefix: str, *, fmt: function = lambda n: None):
+    def __init__(self, name: str, prefix: str, *, fmt=lambda n: None):
         super().__init__(name, fmt=fmt)
         self._prefix = prefix
 
@@ -30,24 +36,30 @@ class NoteGroup(Group):
         return self._prefix
 
 
+def line_fmt(line: Line):
+    return line.content
+
+
 class LineGroup(NoteGroup):
-    def __init__(self, name: str, prefix: str, *, fmt: function = lambda n: n.content):
+    def __init__(self, name: str, prefix: str, *, fmt=line_fmt):
         super().__init__(name, prefix, fmt=fmt)
-        self.lines = []
+
+
+def pair_fmt(pair: Pair):
+    return f"{pair.term} {pair.separator} {pair.definition}"
 
 
 class PairGroup(NoteGroup):
-    def __init__(self, name: str, prefix: str, separator: str, *,
-                 fmt: function = lambda n: f"{n.term} {n.separator} {n.definition}"):
+    def __init__(self, name: str, prefix: str, separator: str, *, fmt=pair_fmt):
         super().__init__(name, prefix, fmt=fmt)
         self.separator = separator
-        self.pairs = []
 
 
+###############################
 class CategoryGroup(NoteGroup):
     def __new__(cls, *args, **kwargs):
         if cls is CategoryGroup:
-            raise AbstractGroupError("CategoryGroup is an abstract class that cannot be implemented.")
+            raise AbstractGroupError(cls)
 
     def __init__(self, name: str, prefix: str):
         super().__init__(name, prefix)
@@ -56,28 +68,24 @@ class CategoryGroup(NoteGroup):
 class GlobalCategoryGroup(CategoryGroup):
     def __init__(self, name: str, prefix: str):
         super().__init__(name, prefix)
-        self.category = None
 
 
 class PositionalCategoryGroup(CategoryGroup):
     def __init__(self, name: str, prefix: str):
         super().__init__(name, prefix)
-        self.categories = []
 
 
+############################
 class ExtensionGroup(Group):
     def __new__(cls, *args, **kwargs):
         if cls is ExtensionGroup:
-            raise AbstractGroupError("ExtensionGroup is an abstract class that cannot be implemented.")
+            raise AbstractGroupError(cls)
 
-    def __init__(self, name: str, lbound: str, rbound: str, *, fmt: function = lambda e: None, placeholder: str = ""):
+    def __init__(self, name: str, lbound: str, rbound: str, *, fmt=lambda e: None, placeholder: str = ""):
         super().__init__(name, fmt=fmt)
         self._lbound = lbound
         self._rbound = rbound
         self._placeholder = placeholder
-        self.notes = []
-        self.lines = []
-        self.pairs = []
 
     @property
     def lbound(self):
@@ -92,15 +100,21 @@ class ExtensionGroup(Group):
         return self._placeholder
 
 
+def line_ext_fmt(line_ext):
+    return line_ext.content
+
+
 class LineExtensionGroup(ExtensionGroup):
-    def __init__(self, name: str, lbound: str, rbound: str, *,
-                 fmt: function = lambda e: e.content, placeholder: str = ""):
+    def __init__(self, name: str, lbound: str, rbound: str, *, fmt=line_ext_fmt, placeholder: str = ""):
         super().__init__(name, lbound, rbound, fmt=fmt, placeholder=placeholder)
 
 
+def pair_ext_fmt(pair_ext):
+    return f"{pair_ext.term} {pair_ext.separator} {pair_ext.definition}"
+
+
 class PairExtensionGroup(ExtensionGroup):
-    def __init__(self, name: str, separator: str, lbound: str, rbound: str, *,
-                 fmt: function = lambda e: f"{e.term} {e.separator} {e.definition}", placeholder: str = ""):
+    def __init__(self, name: str, separator: str, lbound: str, rbound: str, *, fmt=pair_ext_fmt, placeholder: str = ""):
         super().__init__(name, lbound, rbound, fmt=fmt, placeholder=placeholder)
         self._separator = separator
 
@@ -109,9 +123,13 @@ class PairExtensionGroup(ExtensionGroup):
         return self._separator
 
 
+def list_ext_fmt(list_ext):
+    fmt = ""
+
+
 class ListExtensionGroup(ExtensionGroup):
     def __init__(self, name: str, separators: list, lbound: str, rbound: str,
-                 *, fmt: function = lambda e: "\n".join(e.elements), placeholder: str = ""):
+                 *, fmt=list_ext_fmt, placeholder: str = ""):
         super().__init__(name, lbound, rbound, fmt=fmt, placeholder=placeholder)
         self._separators = separators
 
@@ -120,9 +138,14 @@ class ListExtensionGroup(ExtensionGroup):
         return self._separators
 
 
+def bullet_list_ext_fmt(bullet_list_ext):
+    fmt = ""
+
+
 class BulletListExtensionGroup(ListExtensionGroup):
-    def __init__(self, name: str, separators: list, bullets: list, lbound: str, rbound: str, placeholder: str = ""):
-        super().__init__(name, separators, lbound, rbound, placeholder)
+    def __init__(self, name: str, separators: list, bullets: list, lbound: str, rbound: str,
+                 *, fmt=bullet_list_ext_fmt, placeholder: str = ""):
+        super().__init__(name, separators, lbound, rbound, fmt=fmt, placeholder=placeholder)
         self._bullets = bullets
 
     @property
@@ -130,7 +153,12 @@ class BulletListExtensionGroup(ListExtensionGroup):
         return self._bullets
 
 
+def number_list_ext_fmt(number_list_ext):
+    fmt = ""
+
+
 class NumberListExtensionGroup(ListExtensionGroup):
-    def __init__(self, name: str, separators: list, lbound: str, rbound: str, placeholder: str = ""):
-        super().__init__(name, separators, lbound, rbound, placeholder)
+    def __init__(self, name: str, separators: list, lbound: str, rbound: str,
+                 *, fmt=number_list_ext_fmt, placeholder: str = ""):
+        super().__init__(name, separators, lbound, rbound, fmt=fmt, placeholder=placeholder)
 
