@@ -3,28 +3,20 @@ from .errors import *
 from .groups import *
 
 
-# TODO: __repr__ should be the function that is used to convert the Note back into something that can be read in .nu
-# TODO: Revisit __repr__ for extensions and categories
+# The plan is that we will create everything needed to pass into the Note's constructor
+# in the NoteUtil method and then just make the Note.
 class Note(abc.ABC):
-    """Base class for all text Notes, which are created when parsing the note file.
+    """Base class for all notes, which are created when parsing the note file."""
 
-    Attributes
-    ----------
-    content: :class:`str`
-        The actual content of the notes; all of the text that was found in between separators.
-    nindex: :class:`int`
-        The note index that corresponds to position in the :attr:`NoteUtil.notes_list`.
-    """
-
-    def __init__(self, content: str, nindex: int, tabs: int, ngroup: NoteGroup,
-                 *, extensions: dict = None, categories: list = None):
+    def __init__(self, rcontent: str, content: str, nindex: int, tabs: int, fmt, extensions: dict, categories: list):
         super().__init__()
-        self._rcontent = content
+        self._rcontent = rcontent
         self.content = content
         self.nindex = nindex
         self.tabs = tabs
-        self.extensions = {} if extensions is None else extensions
-        self.categories = [] if categories is None else categories
+        self._format = fmt
+        self.extensions = extensions
+        self.categories = categories
 
     def __eq__(self, other):
         return self.nindex == other.nindex
@@ -42,22 +34,35 @@ class Note(abc.ABC):
         return hash(self._rcontent.lower())
 
     def __str__(self):
-        return self.format()
+        return self._format()
 
     @abc.abstractmethod
     def __repr__(self):
         pass
 
-    @abc.abstractmethod
-    def format(self):
-        pass
-
 
 class Line(Note):
+    """A single token of notes.
 
-    def __init__(self, content: str, nindex: int, lindex: int, tabs: int, lgroup: LineGroup,
-                 *, extensions: list = None, categories: list = None):
-        super().__init__(content, nindex, tabs, lgroup, extensions=extensions, categories=categories)
+    Attributes
+    ----------
+    content: :class:`str`
+        The actual content of the Line; all of the text that was found in between separators.
+    nindex: :class:`int`
+        The `Note` index that corresponds to the position in the :attr:`NoteUtil.notes_list`.
+    lindex: :class:`int`
+        The `Line` index that corresponds to the position in the :attr:`NoteUtil.lines_list`.
+    tabs: :class:`int`
+        The number of tabs that indicates how nested this `Line` is (one per category).
+    extensions: List[:class:`Extension`]
+        An unsorted list of the extensions that this `Line` has.
+    categories: List[:class:`Category`]
+        An unsorted list of all of the categories this `Line` belongs to.
+    """
+
+    def __init__(self, rcontent: str, content: str, nindex: int, lindex: int,
+                 tabs: int, fmt, extensions: dict, categories: list):
+        super().__init__(rcontent, content, nindex, tabs, fmt, extensions, categories)
         self.lindex = lindex
 
     def __repr__(self):
@@ -70,14 +75,35 @@ class Line(Note):
                 rstring = cat.prefix + rstring
         return rstring
 
-    def format(self):
-        return self.content
-
 
 class Pair(Note):
-    def __init__(self, content: str, nindex: int, pindex: int, separator: str, tabs: int, pgroup: PairGroup,
-                 *, extensions: list = None, categories: list = None):
-        super().__init__(content, nindex, tabs, pgroup, extensions=extensions, categories=categories)
+    """A single token of notes with a separator that splits a term and a definition.
+
+    Attributes
+    ----------
+    content: :class:`str`
+        The actual content of the notes; all of the text that was found in between separators.
+    nindex: :class:`int`
+        The note index that corresponds to the position in the :attr:`NoteUtil.notes_list`.
+    pindex: :class:`int`
+        The pair index that corresponds to the position in the :attr:`NoteUtil.pairs_list`.
+    separator: :class:`str`
+        The string that separates the key and value (term and definition) of the notes token.
+    term: :class:`str`
+        The first part that came before the `Pair`'s separator.
+    definition :class:`str`
+        The second part that came after the `Pair`'s separator.
+    tabs: :class:`int`
+        The number of tabs that indicates how nested this note is (one per category).
+    extensions: List[:class:`Extension`]
+        An unsorted list of the extensions that this `Note` has.
+    categories: List[:class:`Category`]
+        An unsorted list of all of the categories this `Note` belongs to.
+    """
+
+    def __init__(self, rcontent: str, content: str, nindex: int, pindex: int, separator: str,
+                 tabs: int, fmt, extensions: dict, categories: list):
+        super().__init__(rcontent, content, nindex, tabs, fmt, extensions, categories)
         self.pindex = pindex
         self.separator = separator
 
@@ -96,9 +122,6 @@ class Pair(Note):
             if isinstance(cat, GlobalCategory):
                 rstring = cat.prefix + rstring
         return rstring
-
-    def format(self):
-        return f"{self.term} {self.separator} {self.definition}"
 
 
 from .categories import GlobalCategory
