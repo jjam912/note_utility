@@ -1,6 +1,5 @@
 import abc
 from .errors import *
-from .groups import *
 
 
 # The plan is that we will create everything needed to pass into the Note's constructor
@@ -41,6 +40,7 @@ class Note(abc.ABC):
         pass
 
 
+# A single token of notes refers to the string that is in between the NoteUtil's separators in the .nu file.
 class Line(Note):
     """A single token of notes.
 
@@ -76,6 +76,7 @@ class Line(Note):
         return rstring
 
 
+# A Note token will automatically become a Pair if its separator is in the rcontent.
 class Pair(Note):
     """A single token of notes with a separator that splits a term and a definition.
 
