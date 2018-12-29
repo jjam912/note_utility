@@ -7,15 +7,39 @@ from .errors import *
 class Note(abc.ABC):
     """Base class for all notes, which are created when parsing the note file."""
 
-    def __init__(self, rcontent: str, content: str, nindex: int, tabs: int, fmt, extensions: dict, categories: list):
+    # Order of constructor args: content, hidden content, outside content, outside hidden content.
+    def __init__(self, content: str, nindex: int, rcontent: str, prefix: str,
+                 extensions: dict, categories: list, tabs: int, fmt):
+        """
+        Parameters
+        ----------
+        content : :class:`str`
+            The content of the note excluding prefixes and extensions.
+        nindex : :class:`int`
+            The `Note` index that corresponds to the position in the :attr:`NoteUtil.notes_list`.
+        rcontent : :class:`str`
+            Raw content of the `Note`.
+        prefix : :class:`str`
+            Any prefixes this `Note` had to determine type of `Note` or `Category`.
+        extensions: Dict[:class:`str` : :class:`Extension`]
+            A dict of the extensions that this `Note` has with key: :attr:`Extension.name` and value :class:`Extension`.
+        categories: List[:class:`Category`]
+            An unsorted list of all of the categories this `Note` belongs to.
+        tabs: :class:`int`
+            The number of tabs that indicates how nested this `Note` is (one per category).
+        fmt: function
+            The function applied to a `Note` to give it its `str` value.
+            Must take a `Note` as a parameter.
+        """
         super().__init__()
-        self._rcontent = rcontent
         self.content = content
         self.nindex = nindex
-        self.tabs = tabs
-        self._format = fmt
+        self._rcontent = rcontent
+        self._prefix = prefix
         self.extensions = extensions
         self.categories = categories
+        self._tabs = tabs
+        self._format = fmt
 
     def __eq__(self, other):
         return self.nindex == other.nindex
@@ -33,7 +57,7 @@ class Note(abc.ABC):
         return hash(self._rcontent.lower())
 
     def __str__(self):
-        return self._format()
+        return self._format(self)
 
     @abc.abstractmethod
     def __repr__(self):
@@ -52,17 +76,15 @@ class Line(Note):
         The `Note` index that corresponds to the position in the :attr:`NoteUtil.notes_list`.
     lindex: :class:`int`
         The `Line` index that corresponds to the position in the :attr:`NoteUtil.lines_list`.
-    tabs: :class:`int`
-        The number of tabs that indicates how nested this `Line` is (one per category).
-    extensions: List[:class:`Extension`]
-        An unsorted list of the extensions that this `Line` has.
+    extensions: Dict[:class:`str` : :class:`Extension`]
+        A dict of the extensions that this `Line` has with key: :attr:`Extension.name` and value :class:`Extension`.
     categories: List[:class:`Category`]
         An unsorted list of all of the categories this `Line` belongs to.
     """
 
-    def __init__(self, rcontent: str, content: str, nindex: int, lindex: int,
-                 tabs: int, fmt, extensions: dict, categories: list):
-        super().__init__(rcontent, content, nindex, tabs, fmt, extensions, categories)
+    def __init__(self, content: str, nindex: int, lindex: int, rcontent: str, prefix: str,
+                 extensions: dict, categories: list, tabs, fmt):
+        super().__init__(content, nindex, rcontent, prefix, extensions, categories, tabs, fmt)
         self.lindex = lindex
 
     def __repr__(self):
@@ -76,7 +98,8 @@ class Line(Note):
         return rstring
 
 
-# A Note token will automatically become a Pair if its separator is in the rcontent.
+# A Note token will automatically become a Pair if its separator is in the rcontent
+# unless it has the prefix of a LineGroup.
 class Pair(Note):
     """A single token of notes with a separator that splits a term and a definition.
 
@@ -91,20 +114,18 @@ class Pair(Note):
     separator: :class:`str`
         The string that separates the key and value (term and definition) of the notes token.
     term: :class:`str`
-        The first part that came before the `Pair`'s separator.
-    definition :class:`str`
-        The second part that came after the `Pair`'s separator.
-    tabs: :class:`int`
-        The number of tabs that indicates how nested this note is (one per category).
-    extensions: List[:class:`Extension`]
-        An unsorted list of the extensions that this `Note` has.
+        The first part that came before the separator.
+    definition: :class:`str`
+        The second part that came after the separator.
+    extensions: Dict[:class:`str` : :class:`Extension`]
+        A dict of the extensions that this `Pair` has with key: :attr:`Extension.name` and value :class:`Extension`.
     categories: List[:class:`Category`]
         An unsorted list of all of the categories this `Note` belongs to.
     """
 
-    def __init__(self, rcontent: str, content: str, nindex: int, pindex: int, separator: str,
-                 tabs: int, fmt, extensions: dict, categories: list):
-        super().__init__(rcontent, content, nindex, tabs, fmt, extensions, categories)
+    def __init__(self, content: str, nindex: int, pindex: int, separator: str, rcontent: str, prefix: str,
+                 extensions: dict, categories: list, tabs, fmt):
+        super().__init__(content, nindex, rcontent, prefix, extensions, categories, tabs, fmt)
         self.pindex = pindex
         self.separator = separator
 
