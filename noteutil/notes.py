@@ -16,12 +16,13 @@ class Note(abc.ABC):
         The note index that corresponds to position in the :attr:`NoteUtil.notes_list`.
     """
 
-    def __init__(self, content: str, nindex: int, ngroup: NoteGroup, *,
-                 extensions: dict = None, categories: list = None):
+    def __init__(self, content: str, nindex: int, tabs: int, ngroup: NoteGroup,
+                 *, extensions: dict = None, categories: list = None):
         super().__init__()
         self._rcontent = content
         self.content = content
         self.nindex = nindex
+        self.tabs = tabs
         self.extensions = {} if extensions is None else extensions
         self.categories = [] if categories is None else categories
 
@@ -54,8 +55,9 @@ class Note(abc.ABC):
 
 class Line(Note):
 
-    def __init__(self, content: str, nindex: int, lindex: int, *, extensions: list = None, categories: list = None):
-        super().__init__(content, nindex, extensions=extensions, categories=categories)
+    def __init__(self, content: str, nindex: int, lindex: int, tabs: int, lgroup: LineGroup,
+                 *, extensions: list = None, categories: list = None):
+        super().__init__(content, nindex, tabs, lgroup, extensions=extensions, categories=categories)
         self.lindex = lindex
 
     def __repr__(self):
@@ -73,15 +75,15 @@ class Line(Note):
 
 
 class Pair(Note):
-    def __init__(self, content: str, nindex: int, pindex: int, separator: str,
+    def __init__(self, content: str, nindex: int, pindex: int, separator: str, tabs: int, pgroup: PairGroup,
                  *, extensions: list = None, categories: list = None):
-        super().__init__(content, nindex, extensions=extensions, categories=categories)
+        super().__init__(content, nindex, tabs, pgroup, extensions=extensions, categories=categories)
         self.pindex = pindex
         self.separator = separator
 
         tokens = tuple(content.split(separator))
         if len(tokens) != 2:
-            raise SeparatorError(f"There was either zero or more than one separator in the content: {content}")
+            raise SeparatorError(content)
 
         self.term, self.definition = tokens[0].strip(), tokens[1].strip()
 
