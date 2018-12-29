@@ -12,7 +12,8 @@ class PairError(NoteError):
 
 
 class SeparatorError(PairError):
-    pass
+    def __init__(self, content: str):
+        super().__init__(f"There was either zero or more than one separator in the content: {content}")
 
 
 class ExtensionError(NoteError):
@@ -29,7 +30,8 @@ class GroupError(Exception):
 
 
 class AbstractGroupError(GroupError):
-    pass
+    def __init__(self, cls):
+        super().__init__(f"{cls.__name__} is an abstract Group that cannot be implemented")
 
 
 # NoteUtil Exceptions
@@ -72,14 +74,28 @@ class LineIndexError(NoteIndexError):
     pass
 
 
+class PairExpected(NoteUtilError):
+    pass
+
+
+class PairNotFound(NoteNotFound):
+    pass
+
+
+class PairIndexError(NoteIndexError):
+    pass
+
+
 class NoArgsPassed(NoteUtilError):
     """This exception is thrown when no arguments are passed into a function of any `NoteUtil`_ that needs at least one.
 
     If all of the arguments of a function are ``None``, this exception will be thrown.
     """
 
-    pass
+    def __init__(self, func):
+        super().__init__(f"At least one argument must be passed to {func.__name__}")
 
 
-class MultipleArgsPassed(NoteUtilError):
-    pass
+class NeedOneArgPassed(NoteUtilError):
+    def __init__(self, func):
+        super().__init__(f"Only one argument may be passed to {func.__name__}")
