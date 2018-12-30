@@ -46,7 +46,7 @@ class LineGroup(NoteGroup):
 
 
 def pair_fmt(pair: Pair):
-    return f"{pair.term} {pair.separator} {pair.definition}"
+    return "{0} {1} {2}".format(pair.term, pair.separator, pair.definition)
 
 
 class PairGroup(NoteGroup):
@@ -110,7 +110,7 @@ class LineExtensionGroup(ExtensionGroup):
 
 
 def pair_ext_fmt(pair_ext):
-    return f"{pair_ext.term} {pair_ext.separator} {pair_ext.definition}"
+    return "{0} {1} {2}".format(pair_ext.term, pair_ext.separator, pair_ext.definition)
 
 
 class PairExtensionGroup(ExtensionGroup):

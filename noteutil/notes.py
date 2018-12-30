@@ -138,7 +138,7 @@ class Pair(Note):
 
     def __repr__(self):
         rstring = ""
-        rstring += f"{self.term} {self.separator} {self.definition}"
+        rstring += "{0} {1} {2}".format(self.term, self.separator, self.definition)
         for ext in self.extensions:
             rstring += repr(ext)
         for cat in reversed(self.categories):

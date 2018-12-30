@@ -77,7 +77,7 @@ class LineExtension(Extension):
         super().__init__(content, name, eindex, rcontent, cindex, note, placeholder, before, lbound, rbound, fmt)
 
     def __repr__(self):
-        return f"{self._lbound}{self.content}{self._rbound}"
+        return "{0}{1}{2}".format(self._lbound, self.content, self._rbound)
 
 
 class PairExtension(Extension):
@@ -115,7 +115,7 @@ class PairExtension(Extension):
         self.term, self.definition = tokens[0].strip(), tokens[1].strip()
 
     def __repr__(self):
-        return f"{self._lbound}{self.term} {self.separator} {self.definition}{self._rbound}"
+        return "{0}{1} {2} {3}{4}".format(self._lbound, self.term, self.separator, self.definition, self._rbound)
 
 
 class ListExtension(Extension):

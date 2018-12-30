@@ -3,7 +3,9 @@ from .notes import Note
 from .groups import CategoryGroup, GlobalCategoryGroup, PositionalCategoryGroup
 
 
+# The plan is to create GlobalCategories before creating notes, and then creating Positional Categories along the way
 class Category(abc.ABC):
+    # Order of constructor args: content, hidden content, outside content, outside hidden content.
     def __init__(self, cat_group: CategoryGroup):
         self.notes = []
         self.lines = []

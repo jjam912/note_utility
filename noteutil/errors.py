@@ -99,3 +99,5 @@ class NoArgsPassed(NoteUtilError):
 class NeedOneArgPassed(NoteUtilError):
     def __init__(self, func):
         super().__init__(f"Only one argument may be passed to {func.__name__}")
+
+

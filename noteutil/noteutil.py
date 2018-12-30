@@ -5,7 +5,7 @@ from .notes import Note, Line, Pair
 def one(func):
     def wrapper(*args, **kwargs):
         if len(locals()["kwargs"]) != 1:
-            raise NoArgsPassed
+            raise NeedOneArgPassed(func)
 
         return func(*args, **kwargs)
     return wrapper
@@ -14,7 +14,7 @@ def one(func):
 def some(func):
     def wrapper(*args, **kwargs):
         if len(locals()["kwargs"]) == 0:
-            raise NoArgsPassed
+            raise NoArgsPassed(func)
 
         return func(*args, **kwargs)
     return wrapper
@@ -27,7 +27,7 @@ class NoteUtil:
     .. note::
         
         All comparisons using ``content`` will be case insensitive. When looking for a single `Note` with ``content``,
-        it  will look for an exact match, and when looking for multiple `Note`s with ``content``, it will look to see
+        it will look for an exact match, and when looking for multiple `Note`s with ``content``, it will look to see
         if the passed ``content`` arg is ``in`` any `Note`'s ``content``.
     
     Parameters
@@ -41,7 +41,7 @@ class NoteUtil:
             The file must be in the current working directory to be detected. 
             
     separator : Optional[:class:`str`]
-        The delimeter that distinguishes between each token.
+        The delimiter that distinguishes between each token.
     comment : Optional[:class:`str`]
         A prefix of a token in the file that will cause it to be ignored and not included in the .nu file.
         
@@ -52,19 +52,21 @@ class NoteUtil:
     file_name: :class:`str`
         Name of the file without the any file extensions.
     separator: :class:`str`
-        Delimeter that splits `Note` tokens.
+        Delimiter that splits `Note` tokens.
     comment: :class:`str`
         Prefix of `Note` tokens that have been ignored.
     """
 
-    def __init__(self, file_name: str, groups: list, *, separator: str="\n", comment: str=None):
+    def __init__(self, file_name: str, category_groups: list, note_groups: list, extension_groups: list,
+                 *, separator: str="\n", comment: str=None):
         self.notes_list = []
         self.lines_list = []
         self.pairs_list = []
+        self.extensions_dict = {}
         self.file_name = file_name
         self.separator = separator
         self.comment = comment
-        self.groups = groups
+
         if self.file_name.endswith(".nu"):
             self._read_file()
         else:
@@ -102,8 +104,8 @@ class NoteUtil:
     def _read_file(self):
         """Splits the .nu file by the ``separator`` and appends all of the tokens to the ``notes_list``."""
 
-        with open(self.file_name, mode="r", encoding="UTF-8") as f:
-            for i, line in enumerate(f.read().split(self.separator)):
+        # with open(self.file_name, mode="r", encoding="UTF-8") as f:
+            # for i, line in enumerate(f.read().split(self.separator)):
 
 
         # for eg in self._egroups:
@@ -147,7 +149,7 @@ class NoteUtil:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
                     return note.nindex
-            raise NoteNotFound(f"No note was found to equal the content: {content}")
+            raise NoteNotFound("No note was found to equal the content: {0}".format(content))
 
     @one
     def nindexes(self, *, content: str=None):
@@ -165,7 +167,7 @@ class NoteUtil:
                 if content.lower() in note.content.lower():
                     nindexes.append(note.nindex)
         if not nindexes:
-            raise NoteNotFound(f"No note was found containing the content: {content}.")
+            raise NoteNotFound("No note was found containing the content: {0}".format(content))
         return sorted(set(nindexes))
 
     @one
@@ -184,12 +186,12 @@ class NoteUtil:
             try:
                 return self.notes_list[nindex]
             except IndexError:
-                raise NoteIndexError(f"The note index: {nindex} was out of bounds of the notes_list.")
+                raise NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
         if content is not None:
             for note in self.notes_list:
                 if content.lower() == note.content.lower():
                     return note
-            raise NoteNotFound(f"No note was found to equal content: {content}")
+            raise NoteNotFound("No note was found to equal content: {0}".format(content))
 
     @one
     def notes(self, *, content: str=None, nindexes: list=None):
@@ -216,7 +218,7 @@ class NoteUtil:
                     notes.append(note)
 
             if not notes:
-                raise NoteNotFound(f"No note was found containing the content: {content}")
+                raise NoteNotFound("No note was found containing the content: {0}".format(content))
         return sorted(set(notes))
 
     @one
