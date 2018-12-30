@@ -108,6 +108,8 @@ class PairExtension(Extension):
         self._separate()
 
     def _separate(self):
+        """Splits the content into term and definition."""
+
         tokens = tuple(self.content.split(self.separator))
         if len(tokens) != 2:
             raise SeparatorError(self.content)
@@ -123,13 +125,16 @@ class ListExtension(Extension):
     Attributes
     ----------
     content: str
-        The content of the `Extension` excluding bounds.
+        The content of the `ListExtension` excluding bounds.
+        Any separators beyond the first one are removed.
+        The content then becomes similar to delimiter-separated values with the first separator.
     name: str
-        The name assigned to this `Extension`, used as a key in `NoteUtil.extension_dict`.
+        The name assigned to this `ListExtension`, used as a key in `NoteUtil.extension_dict`.
     eindex: int
         The `Extension` index that corresponds to the position in the list
         found with `NoteUtil.extension_dict[Extension.name]`
     separators: list of str
+        All of the delimiters to indicate how nested each `ListElement` is.
         # TODO: This should be in Groups
         The first string separates each `ListElement`.
         Any later strings indicate the prefix needed to nest the `ListElement` a certain number of tabs.
@@ -148,17 +153,27 @@ class ListExtension(Extension):
         self._separate()
 
     def _separate(self):
+        """Splits the content into elements."""
+
         self.elements = []
+        contents = self.content.split(self.separators[0])
+        new_content = []
+        tabs = 0
+        for content in contents:
+            rcontent = self.separators[0] + content
+            for j in range(1, len(self.separators)):
+                if content.startswith(self.separators[j]):
+                    tabs += 1
+                    content = content[len(self.separators[j]):]
+            new_content.append(content)
+            self.elements.append(ListElement(content, content, rcontent, self, tabs))
+        self.content = (self.separators[0] + " ").join(new_content)
 
     def __repr__(self):
         rstring = ""
         rstring += self._lbound
-
-        elements = self.separators[0].join(list(map(lambda x: x.content, self.elements)))
-        for i in range(len(elements)):
-            for j in range(1, self.elements[i].tabs + 1):
-                elements[i] = self.separators[j] + elements[i]
-
+        for element in self.elements:
+            rstring += element._rcontent
         rstring += self._rbound
         return rstring
 
@@ -167,16 +182,17 @@ class ListElement:
     """
     Attributes
     ----------
-    rcontent: str
-        Raw content, what the content was before any additional formatting.
     content: str
-        The content of the `ListElement`, including any prefixes or other modifications.
+        The content of the `ListElement`, before any additional formatting and without any prefixes.
+    mcontent: str
+        The modified content; the content with any additional formatting.
     list_ext: `ListExtension`
         The `ListExtension` that this `ListElement` belongs to.
     """
-    def __init__(self, rcontent, content, list_ext, tabs: int):
-        self.rcontent = rcontent
+    def __init__(self, content, mcontent, rcontent: str, list_ext, tabs: int):
         self.content = content
+        self.mcontent = mcontent
+        self._rcontent = rcontent
         self.list_ext = list_ext
         self._tabs = tabs
         # I might implement this
@@ -185,7 +201,10 @@ class ListElement:
         # self.children = []
 
     def __str__(self):
-        return ("\t" * self._tabs) + self.content
+        return self.tabs() + self.content
+
+    def tabs(self):
+        return "\t" * self._tabs
 
 
 class BulletListExtension(ListExtension):
@@ -193,13 +212,16 @@ class BulletListExtension(ListExtension):
     Attributes
     ----------
     content: str
-        The content of the `Extension` excluding bounds.
+        The content of the `ListExtension` excluding bounds.
+        Any separators beyond the first one are removed.
+        The content then becomes similar to delimiter-separated values with the first separator.
     name: str
-        The name assigned to this `Extension`, used as a key in `NoteUtil.extension_dict`.
+        The name assigned to this `ListExtension`, used as a key in `NoteUtil.extension_dict`.
     eindex: int
         The `Extension` index that corresponds to the position in the list
         found with `NoteUtil.extension_dict[Extension.name]`
     separators: list of str
+        All of the delimiters to indicate how nested each `ListElement` is.
         The first string separates each `ListElement`.
         Any later strings indicate the prefix needed to nest the `ListElement` a certain number of tabs.
         There must be at least one `separator` in `separators`.
@@ -215,7 +237,7 @@ class BulletListExtension(ListExtension):
     elements : list of `ListElement`
         All elements created from the tokens between the `separators`.
     note: `Note`
-        The `Note` that this `Extension` was found in.
+        The `Note` that this `ListExtension` was found in.
     """
 
     def __init__(self, content, name, eindex, separators, bullets, spaces,
@@ -228,17 +250,29 @@ class BulletListExtension(ListExtension):
         self._separate()
 
     def _separate(self):
+        """Splits the content into elements."""
+
         self.elements = []
+        contents = self.content.split(self.separators[0])
+        new_content = []
+        tabs = 0
+        for content in contents:
+            rcontent = self.separators[0] + content
+            for j in range(1, len(self.separators)):
+                if content.startswith(self.separators[j]):
+                    tabs += 1
+                    content = content[len(self.separators[j]):]
+            new_content.append(content)
+            mcontent = self.bullets[tabs % len(self.bullets)] + self.spaces + content
+
+            self.elements.append(ListElement(content, mcontent, rcontent, self, tabs))
+        self.content = (self.separators[0] + " ").join(new_content)
 
     def __repr__(self):
         rstring = ""
         rstring += self._lbound
-
-        elements = self.separators[0].join(list(map(lambda x: x.content, self.elements)))
-        for i in range(len(elements)):
-            for j in range(1, self.elements[i].tabs + 1):
-                elements[i] = self.separators[j] + elements[i]
-
+        for element in self.elements:
+            rstring += element._rcontent
         rstring += self._rbound
         return rstring
 
@@ -255,6 +289,7 @@ class NumberListExtension(ListExtension):
         The `Extension` index that corresponds to the position in the list
         found with `NoteUtil.extension_dict[Extension.name]`
     separators: list of str
+        All of the delimiters to indicate how nested each `ListElement` is.
         The first string separates each `ListElement`.
         Any later strings indicate the prefix needed to nest the `ListElement` a certain number of tabs.
         There must be at least one `separator` in `separators`.
@@ -275,17 +310,36 @@ class NumberListExtension(ListExtension):
         self._separate()
 
     def _separate(self):
+        """Splits the content into elements."""
+
         self.elements = []
+        contents = self.content.split(self.separators[0])
+        new_content = []
+        tabs = 0
+        for content in contents:
+            rcontent = self.separators[0] + content
+            for j in range(1, len(self.separators)):
+                if content.startswith(self.separators[j]):
+                    tabs += 1
+                    content = content[len(self.separators[j]):]
+            new_content.append(content)
+
+            count = 1
+            for j in range(len(self.elements) - 1, -1, -1):
+                if self.elements[j]._tabs == tabs:
+                    count += 1
+                else:
+                    break
+            mcontent = "{0}. {1}".format(count, content)
+
+            self.elements.append(ListElement(content, mcontent, rcontent, self, tabs))
+        self.content = (self.separators[0] + " ").join(new_content)
 
     def __repr__(self):
         rstring = ""
         rstring += self._lbound
-
-        elements = self.separators[0].join(list(map(lambda x: x.content, self.elements)))
-        for i in range(len(elements)):
-            for j in range(1, self.elements[i].tabs + 1):
-                elements[i] = self.separators[j] + elements[i]
-
+        for element in self.elements:
+            rstring += element._rcontent
         rstring += self._rbound
         return rstring
 
