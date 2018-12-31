@@ -5,6 +5,20 @@ from .groups import CategoryGroup, GlobalCategoryGroup, PositionalCategoryGroup
 
 # The plan is to create GlobalCategories before creating notes, and then creating Positional Categories along the way
 class Category(abc.ABC):
+    """A `Category` is a tag that belongs to a `Note`.
+
+    An example of a `Category` could be Chapters, such as Chapter 1, 2, 3, etc.
+
+    Parameters
+    ----------
+    name : str
+        The name assigned to this `Category`, used as a key in `NoteUtil.categories`.
+    prefix : str
+        The prefix used to determine that a `Note` would be of this `Category`.
+    fmt : function
+        The function applied to a `Category` to give it its `str` value.
+    """
+
     # Order of constructor args: content, hidden content, outside content, outside hidden content.
     def __init__(self, cat_group: CategoryGroup):
         self.notes = []
@@ -19,15 +33,65 @@ class Category(abc.ABC):
 
 
 class GlobalCategory(Category):
-    def __init__(self, cat_group: GlobalCategoryGroup):
-        super().__init__(cat_group)
+    """A `GlobalCategory` is a `Category` that is not affected by the position of a `Note`.
+
+    An example of a `GlobalCategory` would be People, such as different important people throughout history.
+    There could be important people several time periods, so it's illogical to separate them and group them together.
+
+    Attributes
+    ----------
+    name : str
+        The name assigned to this `Category`, used as a key in `NoteUtil.categories`.
+    removed : bool
+        Whether `Notes` of this `Category` were removed from the `NoteUtil.notes`.
+    notes : list of `Note`
+        A sorted list of all of the `Notes` that belong to this `Category`.
+    lines : list of `Line`
+        A sorted list of all of the `Lines` that belong to this `Category`.
+    pairs : list of `Pair`
+        A sorted list of all of the `Pairs` that belong to this `Category`.
+    """
+
+    def __init__(self, name, removed, prefix, fmt):
+        super().__init__(name, prefix, fmt)
+        self.removed = removed
 
 
 class PositionalCategory(Note, Category):
-    def __init__(self, content: str, nindex: int, cat_group: PositionalCategoryGroup,
-                 *, extensions: list = None, categories: list = None):
-        super().__init__(content, nindex, extensions=extensions, categories=categories)
-        super().__init__(cat_group)
+    def __init__(self, content, nindex, pindex, name, rcontent, prefix, extensions, categories, tabs, fmt):
+        """A `PositionalCategory` is a `Category` whose position is important to the classification of its `Notes`.
+
+        An example would be if your notes are in chronological order and
+            all notes that follow a `Category` belong to that `Category`.
+        This class acts similar to a `Line`.
+
+        Attributes
+        ----------
+        content : str
+            The content of the `Category` excluding `prefixes` and `Extensions`.
+        nindex : int
+            The `Note` index that corresponds to the position in the `NoteUtil.notes`.
+        pindex : int
+            The `Positional` index that corresponds to the position in the `NoteUtil.positionals`.
+        name : str
+            The name assigned to this `Category`, used as a key in `NoteUtil.categories`.
+        removed : bool
+            Whether `Notes` of this `Category` were removed from the `NoteUtil.notes`.
+        notes : list of `Note`
+            A sorted list of all of the `Notes` that belong to this `Category`.
+        lines : list of `Line`
+            A sorted list of all of the `Lines` that belong to this `Category`.
+        pairs : list of `Pair`
+            A sorted list of all of the `Pairs` that belong to this `Category`.
+        extensions : dict of {str : `Extension`}
+            A dict of the `Extensions` that this `Line` has with key: `Extension.name` and value `Extension`.
+        categories : list of `Category`
+            A sorted list of all of the `Categories` this `Line` belongs to.
+        """
+
+        super().__init__(content, nindex, rcontent, prefix, extensions, categories, tabs, fmt)
+        super().__init__(name, prefix, fmt)     # The format of the `Note` will be overridden by the `Category` one.
+        self.pindex = pindex
 
     def __repr__(self):
         rstring = ""
@@ -40,38 +104,3 @@ class PositionalCategory(Note, Category):
             if isinstance(cat, GlobalCategory):
                 rstring = cat.prefix + rstring
         return rstring
-
-    def format(self):
-        return self.content
-
-    # def append(self, note):
-    #     i, j, k, n = 0, len(self.notes) // 2, len(self.notes), note.nindex
-    #     while k - i > 1:
-    #         mid = self.notes[j].nindex
-    #         if n > mid:
-    #             i = j
-    #         else:
-    #             k = j
-    #         j = (i + k) // 2
-    #     if n > self.notes[j].nindex:
-    #         self.notes.insert(j, note)
-    #     else:
-    #         self.notes.insert(i, note)
-    #
-    # def insert(self, category):
-    #     # if pack.nindex < self.nindex:
-    #     #     raise Something
-    #
-    #     i, j, k, n = 0, len(self.categories) // 2, len(self.categories), category.nindex
-    #     while k - i > 1:
-    #         mid = self.categories[j].nindex
-    #         if n > mid:
-    #             i = j
-    #         else:
-    #             k = j
-    #         j = (i + k) // 2
-    #     if n > self.notes[j].nindex:
-    #         self.categories.insert(j, category)
-    #     else:
-    #         self.categories.insert(i, category)
-
