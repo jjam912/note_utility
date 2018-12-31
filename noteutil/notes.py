@@ -132,13 +132,16 @@ class Pair(Note):
 
     def __repr__(self):
         rstring = ""
-        rstring += "{0} {1} {2}".format(self.term, self.separator, self.definition)
-        for ext in self.extensions:
-            rstring += repr(ext)
-        for cat in reversed(self.categories):
-            if isinstance(cat, GlobalCategory):
-                rstring = cat.prefix + rstring
+        rstring += self._prefix
+        rstring += self.term
+        for extension in self.extensions:
+            if extension._before is True:
+                rstring += repr(extension)
+        rstring += self.separator + self.definition
+        for extension in self.extensions:
+            if not extension._before:
+                rstring += repr(extension)
+
+        for category in self.categories[::-1]:
+            rstring = category._prefix + rstring
         return rstring
-
-
-from .categories import GlobalCategory
