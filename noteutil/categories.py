@@ -1,6 +1,5 @@
 import abc
 from .notes import Note
-from .groups import CategoryGroup, GlobalCategoryGroup, PositionalCategoryGroup
 
 
 # The plan is to create GlobalCategories before creating notes, and then creating Positional Categories along the way
@@ -20,13 +19,14 @@ class Category(abc.ABC):
     """
 
     # Order of constructor args: content, hidden content, outside content, outside hidden content.
-    def __init__(self, cat_group: CategoryGroup):
+    def __init__(self, name, prefix, fmt):
         self.notes = []
         self.lines = []
         self.pairs = []
 
-        self.name = cat_group.name
-        self.prefix = cat_group.prefix
+        self.name = name
+        self._prefix = prefix
+        self._format = fmt
 
     def __contains__(self, note: Note):
         return note in self.notes
@@ -95,12 +95,10 @@ class PositionalCategory(Note, Category):
 
     def __repr__(self):
         rstring = ""
+        rstring += self._prefix
         rstring += self.content
-
-        for ext in self.extensions:
-            rstring += repr(ext)
-        rstring = self.prefix + rstring
-        for cat in reversed(self.categories):
-            if isinstance(cat, GlobalCategory):
-                rstring = cat.prefix + rstring
+        for extension in self.extensions:
+            rstring += repr(extension)
+        for category in self.categories[::-1]:
+            rstring = category._prefix + rstring
         return rstring
