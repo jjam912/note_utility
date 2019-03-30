@@ -1,5 +1,5 @@
 class Note:
-    """A `Note` is the text found in the notes_list file. It contains the actual notes_list.
+    """A `Note` is the text found in the notes_list file. It contains the actual notes from each line of text.
 
         Parameters
         ----------
@@ -39,4 +39,11 @@ class Note:
         return string
 
     def is_pair(self):
+        """Returns whether the `Note` has the parameters of a pair (`term`, `definition`, and `separator`).
+
+        Returns
+        -------
+        bool
+        """
+
         return self.term is not None and self.definition is not None and self.separator is not None
