@@ -7,7 +7,7 @@ class Note:
             The content of the `Note` excluding `prefixes` and `Extensions`.
         nindex : int
             The `Note` index that corresponds to the position in the `NoteUtil.notes_list`.
-        kwargs : dict
+        kwargs
             Any other parameters that extend the `Note`.
 
         Other Parameters
