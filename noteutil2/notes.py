@@ -33,11 +33,6 @@ class Note:
         self.definition = kwargs.get("definition", None)
         self.separator = kwargs.get("separator", None)
 
-    def __str__(self):
-        string = ("Content: {0} \t\t Note Index: {1} \t\t Term: {2} \t\t Definition: {3} \t\t Separator: {4}"
-                  .format(self.content, self.nindex, self.term, self.definition, self.separator))
-        return string
-
     def is_pair(self):
         """Returns whether the `Note` has the parameters of a pair (`term`, `definition`, and `separator`).
 
