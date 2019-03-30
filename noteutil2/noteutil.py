@@ -44,6 +44,7 @@ class NoteUtil:
 
     def __init__(self, config_file: str):
         self.notes_list = []
+        self.pairs_list = []
         self.config_file = config_file
         self._parse_config()
         self._read_config()
@@ -118,6 +119,8 @@ class NoteUtil:
                     note = Note(line, nindex)
 
                 self.notes_list.append(note)
+                if note.is_pair():
+                    self.pairs_list.append(note)
 
     def get(self, **kwargs):
         """Retrieves a `Note` with attributes equal to passed keyword args.
@@ -135,9 +138,8 @@ class NoteUtil:
 
         Returns
         -------
-        `Note`
+        `Note` or None
             If a `Note` is found to have the passed attributes.
-        None
             If no `Note` is found.
         """
 
@@ -170,9 +172,8 @@ class NoteUtil:
 
         Returns
         -------
-        List[`Note`]
+        List[`Note`] or None
             If a `Note`s are found to have the passed attributes.
-        None
             If no `Note`s are found.
         """
 
@@ -190,19 +191,7 @@ class NoteUtil:
                     notes.append(note)
         return notes if notes else None
 
-    def __str__(self):
-        string = "NoteUtil" + "\n"
-        string += "--------" + "\n"
-        string += "Note File: " + str(self.note_file) + "\n"
-        string += "NoteUtil File: " + str(self.nu_file) + "\n"
-        string += "Comments: " + str(self.comments) + "\n"
-        string += "Separator: " + str(self.separator) + "\n"
-        string += "Notes List" + "\n"
-        string += "----------" + "\n"
-        for note in self.notes_list:
-            string += "\t" + str(note) + "\n"
-        string += "----------" + "\n"
-        return string
+
 
 
 
