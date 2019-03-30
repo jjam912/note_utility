@@ -1,6 +1,7 @@
 from .notes import Note
 from .errors import *
 
+
 def readlines(f):
     """Splits a file into lines without the "\n" suffixes.
 
@@ -117,6 +118,77 @@ class NoteUtil:
                     note = Note(line, nindex)
 
                 self.notes_list.append(note)
+
+    def get(self, **kwargs):
+        """Retrieves a `Note` with attributes equal to passed keyword args.
+
+        Parameters
+        ----------
+        kwargs
+            Keys are attribute names and Values are values of those attributes.
+
+        Other Parameters
+        ----------------
+        compare
+            If one of the keys of kwargs is `compare`, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: `Note`, **kwargs
+
+        Returns
+        -------
+        `Note`
+            If a `Note` is found to have the passed attributes.
+        None
+            If no `Note` is found.
+        """
+
+        compare = None
+        if kwargs.get("compare", False):
+            compare = kwargs.pop("compare")
+
+        for note in self.notes_list:
+            if compare:
+                if compare(note, **kwargs):
+                    return note
+            else:
+                if all(getattr(note, attr) is not None and val == getattr(note, attr) for attr, val in kwargs.items()):
+                    return note
+        return None
+
+    def get_list(self, **kwargs):
+        """Retrieves all `Note`s with attributes equal to passed keyword args and stores them in a List.
+
+        Parameters
+        ----------
+        kwargs
+            Keys are attribute names and Values are values of those attributes.
+
+        Other Parameters
+        ----------------
+        compare
+            If one of the keys of kwargs is `compare`, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: `Note`, **kwargs
+
+        Returns
+        -------
+        List[`Note`]
+            If a `Note`s are found to have the passed attributes.
+        None
+            If no `Note`s are found.
+        """
+
+        notes = []
+        compare = None
+        if kwargs.get("compare", False):
+            compare = kwargs.pop("compare")
+
+        for note in self.notes_list:
+            if compare:
+                if compare(note, **kwargs):
+                    notes.append(note)
+            else:
+                if all(getattr(note, attr) is not None and val in getattr(note, attr) for attr, val in kwargs.items()):
+                    notes.append(note)
+        return notes if notes else None
 
     def __str__(self):
         string = "NoteUtil" + "\n"
