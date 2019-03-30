@@ -34,7 +34,7 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
     def __str__(self):
-        string = ("Content: {0} ||||| Note Index: {1} ||||| Term: {2} ||||| Definition: {3} ||||| Separator: {4}"
+        string = ("Content: {0} \t\t Note Index: {1} \t\t Term: {2} \t\t Definition: {3} \t\t Separator: {4}"
                   .format(self.content, self.nindex, self.term, self.definition, self.separator))
         return string
 
