@@ -32,13 +32,5 @@ def test_note_list(note_list):
     return "\t\t".join((list(map(test_note, note_list))))
 
 
-noteutil = NoteUtil("basic_config.txt")
+noteutil = NoteUtil("heading_config.txt")
 print(test_noteutil(noteutil))
-print(test_note(noteutil.get(content="Line 1", nindex=0)))
-
-print(test_note_list(noteutil.get_list(content="Line 5", compare=is_equal)))
-print(test_note_list(noteutil.get_list(content="Pair", compare=is_in)))
-print(test_note_list(noteutil.get_list(definition="pair", compare=is_similar)))
-print(test_note_list(noteutil.get_list(content="line", compare=is_in_similar)))
-print(test_note_list(noteutil.get_list(content="Line", definition="pair", compare=is_in)))
-
