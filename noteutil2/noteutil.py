@@ -1,5 +1,5 @@
 from .notes import Note
-
+from .errors import *
 
 def readlines(f):
     """Splits a file into lines without the "\n" suffixes.
@@ -101,8 +101,14 @@ class NoteUtil:
 
                 if self.separator is not None:
                     if self.separator in line:      # Line is a pair, add additional parameters
+                        if len(line.split(self.separator)) > 2:
+                            raise ExtraSeparator(line)
+
                         kwargs["term"] = line.split(self.separator)[0].strip()
                         kwargs["definition"] = line.split(self.separator)[1].strip()
+                        if kwargs["definition"] == "":
+                            raise NoDefinition(line)
+
                         kwargs["separator"] = self.separator
                         note = Note(line, nindex, **kwargs)
                     else:
