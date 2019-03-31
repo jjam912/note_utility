@@ -1,20 +1,26 @@
-# Welcome to NoteUtil's configuration file!
-#
-# Enter in the following configurations in the lines without a "#".
-# Any lines with a "#" will be ignored.
-# Any optional configurations should be left blank to be left out.
-#
-# I recommend copy and pasting this file's contents and creating your own config file and keeping this as a template.
-#
-# [Required] Text file name (include .txt ending) - To detect your notes file.
+>>> Welcome to NoteUtil's configuration file!
+>>>
+>>> Enter in the following configurations in the lines without a ">>>".
+>>> Any lines with a ">>>" will be ignored.
+>>> Any optional configurations should be left blank to be left out. Make sure there are no two consecutive blank lines anywhere.
+>>>
+>>> I recommend copying and pasting this file's contents and creating your own config file and keeping this as a template.
+>>>
+>>> ----------------------
+>>> NOTEUTIL CONFIGURATION
+>>> ----------------------
+>>>
+>>> [Required] File name (include . ending) - To detect your notes file.
 basic_notes.txt
-# [Optional] Comments - Prefix a line with this to ignore it while your notes are being read. Cannot be "#"
+>>> [Optional] Comments (cannot be >>>) - Prefix a line with this to ignore it while your notes are being read.
 !
-# [Optional] Separator - For the creation of Pairs.
+>>> [Optional] Separator - For the creation of Pairs.
 :
-#
-#
-#
-#
-#
-#
+>>> [Optional] Heading character - To indicate a headings hierarchy.
+>>> [Required if character given] Indicate a general name for each heading separated by newlines.
+
+>>>
+>>>
+>>>
+>>>
+>>>
