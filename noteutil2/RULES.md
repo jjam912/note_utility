@@ -12,17 +12,16 @@ The following rules dictate a few requirements for your notes:
 Your notes are read from the beginning of the file to the end, so order will matter, especially if you use headings.
 
 ## Headings:
-When you want to structure your notes into a hierarchy, you use headings. In Markdown, one "#" indicates the highest 
-heading, while six "#"s indicate the lowest heading. You must construct your notes in this way too, repeating one 
-character at the start of a line, if you want to use 
-headings in your notes.
+When you want to structure your notes into a hierarchy, you use *headings*. In Markdown, one "#" indicates the highest 
+level heading, while six "#"s indicate the lowest level heading. You must construct your notes in this way too, 
+repeating one character at the start of a line, if you want to use headings in your notes.
 
 Example:
 ```
 # Chapter 1
 ## Unit 1
 ### Section 1
-Here you would write your regular notes: or include a separator (:) to make it a pair
+Here you would write your regular notes: Without the heading character prefix.
 ```
 
 If you use Google Docs, a fantastic add-on is [Docs to Markdown](https://chrome.google.com/webstore/detail/docs-to-markdown/igffnbdfnodiaphfmfaiiaegmoljbghf?hl=en-US),
@@ -38,6 +37,16 @@ Rules for using headings:
     You cannot go from a level 1 heading to a level 3 heading.
 3. Going back up a level of heading (level 3 to 2) to the previous heading is not allowed. 
     Either type the notes that are intended for the 2nd level heading immediately after it, or create a new 2nd level heading.
-4. Headings are considered notes too, and thus must also comply with the note rules.
+4. Do not use the heading character within the first n characters of your notes, with n being the number of headings.
+5. Headings are considered notes too, and thus must also comply with the note rules.
 
 ## Custom Comparisons:
+
+## Order of Conversion:
+The order of conversion is the order in which NoteUtil creates its notes. Here is the order:
+
+1. Headings
+2. Pairs
+3. Content
+
+This means that anything lower in the creation hierarchy should not interfere with anything higher in the creation hierarchy.
