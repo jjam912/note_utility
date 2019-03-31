@@ -1,38 +1,37 @@
 class Note:
     """A `Note` is the text found in the notes file. It contains the actual notes from each line of text.
 
-        Parameters
-        ----------
-        content : str
-            The content of the `Note` excluding `prefixes` and `Extensions`.
-        nindex : int
-            The `Note` index that corresponds to the position in the `NoteUtil.notes`.
-        kwargs
-            Any other parameters that extend the `Note`.
+    Parameters
+    ----------
+    content : str
+        The content of the `Note` excluding `prefixes` and `Extensions`.
+    nindex : int
+        The `Note` index that corresponds to the position in the `NoteUtil.notes`.
+    kwargs
+        Any other parameters that extend the `Note`.
 
-        Other Parameters
-        ----------------
-        If the `Note` is a `Pair`:
-            term : str
-                The first part of text that came before the `separator`.
-            definition : str
-                The second part of text that came after the `separator`.
-            separator : str
-                The string that separates the `term` and `definition` of this `Note`.
-        If the `Note` is a `Heading`:
-            heading_char : str
-                The character used as to indicate this `Note` is a heading.
-            level : int
-                The depth of heading hierarchy of this `Note`.
-            heading : str
-                The prefix of the content that was removed and the actual heading string.
-            begin_nindex : int
-                The beginning note index for this heading.
-            end_nindex : int
-                The ending note index for this heading.
-            notes : List[`Note`]
-                All notes starting from the `begin_nindex` to the `end_nindex` like a range.
-
+    Other Parameters
+    ----------------
+    If the `Note` is a `Pair`:
+        term : str
+            The first part of text that came before the `separator`.
+        definition : str
+            The second part of text that came after the `separator`.
+        separator : str
+            The string that separates the `term` and `definition` of this `Note`.
+    If the `Note` is a `Heading`:
+        heading_char : str
+            The character used as to indicate this `Note` is a heading.
+        level : int
+            The depth of heading hierarchy of this `Note`.
+        heading : str
+            The prefix of the content that was removed and the actual heading string.
+        begin_nindex : int
+            The beginning note index for this heading.
+        end_nindex : int
+            The ending note index for this heading.
+        notes : List[`Note`]
+            All notes starting from the `begin_nindex` to the `end_nindex` like a range.
     """
 
     def __init__(self, content, nindex, **kwargs):
