@@ -15,6 +15,11 @@ class ExtraSeparator(NoteError):
         super().__init__("There was more than one separator in the line content: {0}".format(content))
 
 
+class DuplicateTerm(NoteError):
+    def __init__(self, term):
+        super().__init__("There was already a term of the name: {0}".format(term))
+
+
 class NoDefinition(NoteError):
     def __init__(self, content):
         super().__init__("There was no text after the separator in the line content: {0}".format(content))
