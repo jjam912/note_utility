@@ -1,12 +1,12 @@
 class Note:
-    """A `Note` is the text found in the notes_list file. It contains the actual notes from each line of text.
+    """A `Note` is the text found in the notes file. It contains the actual notes from each line of text.
 
         Parameters
         ----------
         content : str
             The content of the `Note` excluding `prefixes` and `Extensions`.
         nindex : int
-            The `Note` index that corresponds to the position in the `NoteUtil.notes_list`.
+            The `Note` index that corresponds to the position in the `NoteUtil.notes`.
         kwargs
             Any other parameters that extend the `Note`.
 
@@ -19,26 +19,71 @@ class Note:
                 The second part of text that came after the `separator`.
             separator : str
                 The string that separates the `term` and `definition` of this `Note`.
+        If the `Note` is a `Heading`:
+            heading_char : str
+                The character used as to indicate this `Note` is a heading.
+            level : int
+                The depth of heading hierarchy of this `Note`.
+            heading : str
+                The prefix of the content that was removed and the actual heading string.
+            begin_nindex : int
+                The beginning note index for this heading.
+            end_nindex : int
+                The ending note index for this heading.
+            notes : List[`Note`]
+                All notes starting from the `begin_nindex` to the `end_nindex` like a range.
 
     """
 
     def __init__(self, content, nindex, **kwargs):
-        # Basics of all notes_list
+        # Basics of all notes
         self._rcontent = content
         self.content = content
         self.nindex = nindex
+
+        # Heading parameters
+        self.heading_char = kwargs.get("heading_char", None)
+        self.level = kwargs.get("level", None)
+        self.heading = kwargs.get("heading", None)
+        self.heading_name = kwargs.get("heading_name", None)
+
+        self.begin_nindex = kwargs.get("begin_nindex", None)
+        self.end_nindex = kwargs.get("end_nindex", None)
+        self.notes = kwargs.get("notes", None)
 
         # Pair parameters
         self.term = kwargs.get("term", None)
         self.definition = kwargs.get("definition", None)
         self.separator = kwargs.get("separator", None)
 
+    def __eq__(self, other):
+        return self.nindex == other.nindex
+
+    def __ne__(self, other):
+        return self.nindex != other.nindex
+
+    def __lt__(self, other):
+        return self.nindex < other.nindex
+
+    def __gt__(self, other):
+        return self.nindex > other.nindex
+
     def is_pair(self):
-        """Returns whether the `Note` has the parameters of a pair (`term`, `definition`, and `separator`).
+        """Returns whether the `Note` should have the parameters of a pair.
 
         Returns
         -------
         bool
         """
 
-        return self.term is not None and self.definition is not None and self.separator is not None
+        return self.separator is not None
+
+    def is_heading(self):
+        """Returns whether the `Note` should have the parameters of a heading.
+
+        Returns
+        -------
+        bool
+        """
+
+        return self.heading_char is not None
