@@ -63,12 +63,14 @@ def test_note_list(note_list):
 noteutil = NoteUtil("heading_config.txt")
 print(test_noteutil(noteutil))
 
-# print(test_note(noteutil.get(heading_name="1.1", compare=CompareOptions.IN)))
-# print(test_note(noteutil.get(heading_name="2", compare=CompareOptions.IN)))
-# print(test_note(noteutil.get(begin_nindex=16)))
-# print(test_note(noteutil.get(end_nindex=11)))
-# print(test_note(noteutil.get(heading="##")))
-# print(test_note(noteutil.get(level=3)))
+print(test_note(noteutil.get(heading_name="1.1", compare=CompareOptions.IN)))
+print(test_note(noteutil.get(heading_name="2", compare=CompareOptions.IN)))
+print(test_note(noteutil.get(begin_nindex=16)))
+print(test_note(noteutil.get(end_nindex=11)))
+print(test_note(noteutil.get(heading="##")))
+print(test_note(noteutil.get(level=3)))
+
+print("\n")
 
 print(test_note_list(noteutil.get_list(level=3)))
 print(test_note_list(noteutil.get_list(heading_char="#")))
