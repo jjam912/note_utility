@@ -58,11 +58,16 @@ class NoteUtil:
         self.pairs = []
         self.headings = {}
         self.config_file = config_file
+        self.warnings = []
         self._parse_config()
         self._read_config()
         # if not os.path.exists(self.nu_file):
         self._parse_notes()
         self._read_notes()
+        print("Warnings\n"
+              "--------\n"
+              "\t{0}\n"
+              "--------".format("\n\t".join(self.warnings)))
 
     def _parse_config(self):
         with open(self.config_file, mode="r") as f:
@@ -147,12 +152,19 @@ class NoteUtil:
                 if self.separator is not None:
                     if self.separator in line:      # Line is a pair, add additional parameters
                         if len(line.split(self.separator)) > 2:
-                            raise ExtraSeparator(line)
+                            self.warnings.append("Extra Separator - Line content: {0}".format(line))
+                            # raise ExtraSeparator(line)
 
                         kwargs["term"] = line.split(self.separator)[0].strip()
+                        if kwargs["term"] in map(lambda n: n.term, self.pairs):
+                            self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
+                            # raise DuplicateTerm(kwargs["term"])
+
                         kwargs["definition"] = line.split(self.separator)[1].strip()
                         if kwargs["definition"] == "":
-                            raise NoDefinition(line)
+                            self.warnings.append("No Definition - Line content: {0}".format(line))
+                            # raise NoDefinition(line)
+
                         kwargs["separator"] = self.separator
                 # End Pair Detection
 
@@ -160,13 +172,15 @@ class NoteUtil:
 
                 # Add the note to NoteUtil's data structures.
                 self.notes.append(note)
-                if note.is_pair():
-                    self.pairs.append(note)
                 if note.is_heading():
                     self.headings[list(self.headings.keys())[kwargs["level"] - 1]].append(note)
                     self.heading_order.append(note)
 
-            # Headings are still missing their end_nindex and notes: Complete Headings
+                if note.is_pair():
+                    self.pairs.append(note)
+
+            # Headings are still missing their end_nindex and notes:
+            # Complete Headings
             headings_list = list(self.headings.values())
             for headings in headings_list:
                 for i in range(len(headings)):
@@ -195,15 +209,6 @@ class NoteUtil:
                     heading.end_nindex = end_nindex
                     heading.notes = self.notes[heading.begin_nindex: heading.end_nindex]
             # End Complete Headings
-
-    def _detect_headings(self, current_level, **kwargs):
-        pass
-
-    def _detect_pairs(self, **kwargs):
-        pass
-
-    def _complete_headings(self):
-        pass
 
     def get(self, **kwargs):
         """Retrieves a `Note` with attributes equal to passed keyword args.
