@@ -50,7 +50,7 @@
 #         random : bool
 #             Whether to return random lines or chronological ones.
 #         all_lists : dict of {str: list}
-#             notes_list : list of str
+#             notes : list of str
 #                 The notes list from noteutil.
 #             correct_list : list of str
 #                 Subset of notes that contain questions the user answered correctly.
@@ -89,7 +89,7 @@
 #         self.noteutil = noteutil
 #
 #         self.all_indexes = {self.KEY_NOTES + self.CHRONOLOGICAL_SUFFIX: 0,
-#                             self.KEY_NOTES + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes_list))],
+#                             self.KEY_NOTES + self.RANDOM_SUFFIX: [x for x in range(len(self.noteutil.notes))],
 #                             self.KEY_CORRECT + self.CHRONOLOGICAL_SUFFIX: 0,
 #                             self.KEY_CORRECT + self.RANDOM_SUFFIX: [],
 #                             self.KEY_INCORRECT + self.CHRONOLOGICAL_SUFFIX: 0,
@@ -98,7 +98,7 @@
 #
 #         random.shuffle(self.all_indexes[self.KEY_NOTES + self.RANDOM_SUFFIX])
 #
-#         self.all_lists = {self.KEY_NOTES + self.LIST_SUFFIX: self.noteutil.notes_list,
+#         self.all_lists = {self.KEY_NOTES + self.LIST_SUFFIX: self.noteutil.notes,
 #                           self.KEY_CORRECT + self.LIST_SUFFIX: [],
 #                           self.KEY_INCORRECT + self.LIST_SUFFIX: []}
 #
@@ -203,27 +203,27 @@
 #         repeat = False
 #         if notes_key is None:
 #             notes_key = self.current_notes
-#         notes_list = self.all_lists[notes_key + self.LIST_SUFFIX]
+#         notes = self.all_lists[notes_key + self.LIST_SUFFIX]
 #         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
 #         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 #
 #         if self.random:
 #             rand_index = rand_list.pop()
-#             line = notes_list[rand_index]
+#             line = notes[rand_index]
 #             self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.line_index(name=line)
 #
 #             if not rand_list:
-#                 self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(notes_list))]
+#                 self.all_indexes[notes_key + self.RANDOM_SUFFIX] = [x for x in range(len(notes))]
 #                 random.shuffle(self.all_indexes[notes_key + self.RANDOM_SUFFIX])
 #                 repeat = True
 #
 #         else:
-#             line = notes_list[chrono_index]
+#             line = notes[chrono_index]
 #             self.all_indexes[self.KEY_LAST_INDEX] = self.noteutil.line_index(name=line)
 #
 #             self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] += 1
 #
-#             if self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] == len(notes_list):
+#             if self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] == len(notes):
 #                 self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] = 0
 #                 repeat = True
 #
@@ -241,7 +241,7 @@
 #         last : bool, optional if one of the other two is provided.
 #             Add the line that corresponds to the last index used.
 #         index : int, optional if one of the other two is provided.
-#             Add the line that corresponds to the provided index in notes_list.
+#             Add the line that corresponds to the provided index in notes.
 #         name : str, optional if one of the other two is provided.
 #             Part of or the entire line of notes, must be unique to that notes line. Add the line found.
 #         func : function, Optional
@@ -269,37 +269,37 @@
 #         if notes_key == self.KEY_NOTES:
 #             raise errors.ForbiddenEdit
 #
-#         notes_list = self.all_lists[notes_key + self.LIST_SUFFIX]
+#         notes = self.all_lists[notes_key + self.LIST_SUFFIX]
 #         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
 #
 #         if last:
 #             last_index = self.all_indexes[self.KEY_LAST_INDEX]
 #
-#             if self.noteutil.line(index=last_index) in notes_list:
+#             if self.noteutil.line(index=last_index) in notes:
 #                 raise errors.DuplicateError
 #             else:
-#                 notes_list.append(self.noteutil.line(index=last_index))
+#                 notes.append(self.noteutil.line(index=last_index))
 #
-#             rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
+#             rand_list.insert(random.randint(0, len(notes)), len(notes) - 1)
 #             return
 #
 #         if index is not None:
-#             if self.noteutil.line(index=index) in notes_list:
+#             if self.noteutil.line(index=index) in notes:
 #                 raise errors.DuplicateError
 #             else:
-#                 notes_list.append(self.noteutil.line(index=index))
+#                 notes.append(self.noteutil.line(index=index))
 #
-#             rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
+#             rand_list.insert(random.randint(0, len(notes)), len(notes) - 1)
 #             return
 #
 #         if name is not None:
 #             try:
 #                 line = self.noteutil.line(name=name, func=func)
 #
-#                 if line in notes_list:
+#                 if line in notes:
 #                     raise errors.DuplicateError
-#                 notes_list.append(line)
-#                 rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
+#                 notes.append(line)
+#                 rand_list.insert(random.randint(0, len(notes)), len(notes) - 1)
 #                 return
 #
 #             except errors.NotesNotFoundError:  # Try again with the lines method.
@@ -311,11 +311,11 @@
 #
 #             line = lines[0]
 #
-#             if line in notes_list:
+#             if line in notes:
 #                 raise errors.DuplicateError
 #             else:
-#                 notes_list.append(line)
-#                 rand_list.insert(random.randint(0, len(notes_list)), len(notes_list) - 1)
+#                 notes.append(line)
+#                 rand_list.insert(random.randint(0, len(notes)), len(notes) - 1)
 #
 #     def remove_line(self, *, notes_key: str=None,
 #                     last: bool=False, index: int=None, name: str=None, func=lambda x: x.lower()):
@@ -329,7 +329,7 @@
 #         last : bool, optional if one of the other two is provided.
 #             Add the line that corresponds to the last index used.
 #         index : int, optional if one of the other two is provided.
-#             Add the line that corresponds to the provided index in notes_list.
+#             Add the line that corresponds to the provided index in notes.
 #         name : str, optional if one of the other two is provided.
 #             Part of or the entire line of notes, must be unique to that notes line. Add the line found.
 #         func : function, Optional
@@ -356,16 +356,16 @@
 #         if notes_key == self.KEY_NOTES:
 #             raise errors.ForbiddenEdit
 #
-#         notes_list = self.all_lists[notes_key + self.LIST_SUFFIX]
+#         notes = self.all_lists[notes_key + self.LIST_SUFFIX]
 #         rand_list = self.all_indexes[notes_key + self.RANDOM_SUFFIX]
 #         chrono_index = self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX]
 #
 #         if last:
 #             last_index = self.all_indexes[self.KEY_LAST_INDEX]
 #             line = self.noteutil.line(index=last_index)
-#             line_index = notes_list.index(line)
+#             line_index = notes.index(line)
 #
-#             if line in notes_list:
+#             if line in notes:
 #
 #                 if line_index <= chrono_index:
 #                     self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] -= 1
@@ -375,16 +375,16 @@
 #                     elif rand_list[i] == line_index:
 #                         del rand_list[i]
 #
-#                 del notes_list[line_index]
+#                 del notes[line_index]
 #             else:
 #                 raise errors.NotesNotFoundError
 #             return
 #
 #         if index is not None:
 #             line = self.noteutil.line(index=index)
-#             line_index = notes_list.index(line)
+#             line_index = notes.index(line)
 #
-#             if line in notes_list:
+#             if line in notes:
 #                 if line_index <= chrono_index:
 #                     self.all_indexes[notes_key + self.CHRONOLOGICAL_SUFFIX] -= 1
 #                 for i in range(len(rand_list) - 1, -1, -1):
@@ -393,7 +393,7 @@
 #                     elif rand_list[i] == line_index:
 #                         del rand_list[i]
 #
-#                 del notes_list[line_index]
+#                 del notes[line_index]
 #             else:
 #                 raise errors.NotesNotFoundError
 #             return
@@ -402,9 +402,9 @@
 #
 #             try:
 #                 line = self.noteutil.line(name=name, func=func)
-#                 line_index = notes_list.index(line)
+#                 line_index = notes.index(line)
 #
-#                 if line not in notes_list:
+#                 if line not in notes:
 #                     raise errors.NotesNotFoundError
 #
 #                 if line_index <= chrono_index:
@@ -416,7 +416,7 @@
 #                     elif rand_list[i] == line_index:
 #                         del rand_list[i]
 #
-#                 del notes_list[line_index]
+#                 del notes[line_index]
 #
 #             except errors.NotesNotFoundError:  # Try again with the lines method.
 #                 pass
@@ -427,9 +427,9 @@
 #                 raise errors.MultipleFoundError
 #
 #             line = lines[0]
-#             line_index = notes_list.index(line)
+#             line_index = notes.index(line)
 #
-#             if line not in notes_list:
+#             if line not in notes:
 #                 raise errors.NotesNotFoundError
 #
 #             if line_index <= chrono_index:
@@ -441,7 +441,7 @@
 #                 elif rand_list[i] == line_index:
 #                     del rand_list[i]
 #
-#             del notes_list[line_index]
+#             del notes[line_index]
 #
 #     def lookup_lines(self, *, indexes: list=None, name: str=None, func=lambda x: x.lower()):
 #         """
@@ -450,7 +450,7 @@
 #         Parameters
 #         ----------
 #         indexes : list of int
-#             Specific indexes in the noteutil notes_list to add.
+#             Specific indexes in the noteutil notes to add.
 #         name : str
 #             A string that occurs in lines of notes. Any line that has this name in it will be added.
 #         func : function, Optional
@@ -1379,7 +1379,7 @@
 #
 #         super().__init__(noteutil)
 #
-#         extensions = self.noteutil.extension_dict
+#         extensions = self.noteutil.extensions
 #         generics = self.noteutil.generic_dict
 #         categorized = self.noteutil.notes_categorized
 #

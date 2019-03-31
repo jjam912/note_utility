@@ -22,13 +22,13 @@ class Note(abc.ABC):
     categories: list of `Category`
         A sorted list of all of the `Categories` this `Note` belongs to.
     tabs: int
-        The number of tabs that indicates how nested this `Note` is (one per `Category`).
+        The number of tabs that indicates how nested this `Note` is (one per `PositionalCategory`).
     fmt: function
         The function applied to a `Note` to give it its `str` value.
     """
 
     # Order of constructor args: content, hidden content, outside content, outside hidden content.
-    def __init__(self, content, nindex, rcontent, prefix, extensions, categories, tabs, fmt):
+    def __init__(self, content, nindex, rcontent, prefix, extensions, categories, ntabs, fmt):
         super().__init__()
         self.content = content
         self.nindex = nindex
@@ -36,7 +36,7 @@ class Note(abc.ABC):
         self._prefix = prefix
         self.extensions = extensions
         self.categories = categories
-        self._tabs = tabs
+        self._tabs = ntabs
         self._format = fmt
 
     def __eq__(self, other):
@@ -61,6 +61,9 @@ class Note(abc.ABC):
     def __repr__(self):
         pass
 
+    def tabs(self):
+        return self._tabs * "\t"
+
 
 class Line(Note):
     """A single token of text.
@@ -81,8 +84,8 @@ class Line(Note):
         A sorted list of all of the `Categories` this `Line` belongs to.
     """
 
-    def __init__(self, content, nindex, lindex, rcontent, prefix, extensions, categories, tabs, fmt):
-        super().__init__(content, nindex, rcontent, prefix, extensions, categories, tabs, fmt)
+    def __init__(self, content, nindex, lindex, rcontent, prefix, extensions, categories, ntabs, fmt):
+        super().__init__(content, nindex, rcontent, prefix, extensions, categories, ntabs, fmt)
         self.lindex = lindex
 
     def __repr__(self):
@@ -119,8 +122,8 @@ class Pair(Note):
         A sorted list of all of the `Categories` this `Pair` belongs to.
     """
 
-    def __init__(self, content, nindex, pindex, separator, rcontent, prefix, extensions, categories, tabs, fmt):
-        super().__init__(content, nindex, rcontent, prefix, extensions, categories, tabs, fmt)
+    def __init__(self, content, nindex, pindex, separator, rcontent, prefix, extensions, categories, ntabs, fmt):
+        super().__init__(content, nindex, rcontent, prefix, extensions, categories, ntabs, fmt)
         self.pindex = pindex
         self.separator = separator
 

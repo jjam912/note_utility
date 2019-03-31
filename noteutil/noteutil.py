@@ -5,7 +5,7 @@ from .notes import Note, Line, Pair
 def one(func):
     def wrapper(*args, **kwargs):
         if len(locals()["kwargs"]) != 1:
-            raise NeedOneArgPassed(func)
+            raise NeedOneArg(func)
 
         return func(*args, **kwargs)
     return wrapper
@@ -14,7 +14,7 @@ def one(func):
 def some(func):
     def wrapper(*args, **kwargs):
         if len(locals()["kwargs"]) == 0:
-            raise NoArgsPassed(func)
+            raise NoArgs(func)
 
         return func(*args, **kwargs)
     return wrapper
@@ -33,7 +33,7 @@ class NoteUtil:
     Parameters
     ----------
     file_name : :class:`str`
-        The name of the file that has the raw notes. This file will be read and formatted into a .nu file 
+        The name of the file that has the raw notes. This file will be read and formatted into a .nu file
         that can be edited by the program.
 
         .. warning::
@@ -47,7 +47,7 @@ class NoteUtil:
         
     Attributes
     ----------
-    notes_list: List[:class:`Note`]
+    notes: List[:class:`Note`]
         All `Note`s created from the .nu file.
     file_name: :class:`str`
         Name of the file without the any file extensions.
@@ -59,10 +59,13 @@ class NoteUtil:
 
     def __init__(self, file_name: str, category_groups: list, note_groups: list, extension_groups: list,
                  *, separator: str="\n", comment: str=None):
-        self.notes_list = []
-        self.lines_list = []
-        self.pairs_list = []
-        self.extensions_dict = {}
+        self.notes = []
+        self.lines = []
+        self.pairs = []
+        self.positionals = []
+        self.extensions = {}
+        self.categories = {}
+
         self.file_name = file_name
         self.separator = separator
         self.comment = comment
@@ -94,17 +97,17 @@ class NoteUtil:
                 if line == "":
                     continue
 
-                if line not in self.notes_list:
-                    self.notes_list.append(line)
+                if line not in self.notes:
+                    self.notes.append(line)
 
         self.file_name = self.file_name.split(".")[0] + ".nu"
         with open(self.file_name, mode="w", encoding="UTF-8") as f:
-            f.write(self.separator.join(self.notes_list))
+            f.write(self.separator.join(self.notes))
 
     def _read_file(self):
-        """Splits the .nu file by the ``separator`` and appends all of the tokens to the ``notes_list``."""
+        """Splits the .nu file by the ``separator`` and appends all of the tokens to the ``notes``."""
 
-        # with open(self.file_name, mode="r", encoding="UTF-8") as f:
+        # with open(self.note_file, mode="r", encoding="UTF-8") as f:
             # for i, line in enumerate(f.read().split(self.separator)):
 
 
@@ -128,12 +131,12 @@ class NoteUtil:
         #         self.content = self.content[:i].strip() + eg.placeholder + self.content[j + len(eg.rbound):].strip()
 
     def format(self):
-        """Returns a formatted version of the notes. 
+        """Returns a formatted version of the notes.
         
-        This is just the ``separator`` joined with the ``notes_list``.
+        This is just the ``separator`` joined with the ``notes``.
         """
 
-        return self.separator.join(self.notes_list)
+        return self.separator.join(self.notes)
 
     @one
     def nindex(self, *, content: str=None):
@@ -146,7 +149,7 @@ class NoteUtil:
         """
         
         if content is not None:
-            for note in self.notes_list:
+            for note in self.notes:
                 if content.lower() == note.content.lower():
                     return note.nindex
             raise NoteNotFound("No note was found to equal the content: {0}".format(content))
@@ -163,7 +166,7 @@ class NoteUtil:
         
         nindexes = []
         if content is not None:
-            for note in self.notes_list:
+            for note in self.notes:
                 if content.lower() in note.content.lower():
                     nindexes.append(note.nindex)
         if not nindexes:
@@ -184,11 +187,11 @@ class NoteUtil:
         
         if nindex is not None:
             try:
-                return self.notes_list[nindex]
+                return self.notes[nindex]
             except IndexError:
-                raise NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
         if content is not None:
-            for note in self.notes_list:
+            for note in self.notes:
                 if content.lower() == note.content.lower():
                     return note
             raise NoteNotFound("No note was found to equal content: {0}".format(content))
@@ -209,11 +212,11 @@ class NoteUtil:
         if nindexes is not None:
             for nindex in nindexes:
                 try:
-                    notes.append(self.notes_list[nindex])
+                    notes.append(self.notes[nindex])
                 except IndexError:
-                    raise NoteIndexError("The note index: {nindex} was out of bounds of the notes_list.")
+                    raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
         if content is not None:
-            for note in self.notes_list:
+            for note in self.notes:
                 if content.lower() in note.content.lower():
                     notes.append(note)
 
@@ -225,14 +228,14 @@ class NoteUtil:
     def lindex(self, *, content: str=None, nindex: int=None):
         if nindex is not None:
             try:
-                return self.notes_list[nindex].lindex
+                return self.notes[nindex].lindex
             except IndexError:
-                raise NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
             except AttributeError:
                 raise LineExpected("The note at the note index: {0} was not a Line.".format(nindex))
 
         if content is not None:
-            for line in self.lines_list:
+            for line in self.lines:
                 if content.lower() == line.content.lower():
                     return line.lindex
             raise LineNotFound("No line was found to equal the content: {0}".format(content))
@@ -242,17 +245,17 @@ class NoteUtil:
 
         lindexes = []
         if content is not None:
-            for line in self.lines_list:
+            for line in self.lines:
                 if content.lower() in line.content.lower():
                     lindexes.append(line.lindex)
 
         if nindexes is not None:
             for nindex in nindexes:
                 try:
-                    lindexes.append(self.notes_list[nindex].lindex)
+                    lindexes.append(self.notes[nindex].lindex)
                 except IndexError:
                     raise NoteIndexError(
-                        "The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                        "The note index: {0} was out of bounds of the notes.".format(nindex))
                 except AttributeError:
                     raise LineExpected("The note at note index: {0} was not a Line.".format(nindex))
 
@@ -265,19 +268,19 @@ class NoteUtil:
     def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
         if nindex is not None:
             try:
-                if isinstance(self.notes_list[nindex], Line):
-                    return self.notes_list[nindex]
+                if isinstance(self.notes[nindex], Line):
+                    return self.notes[nindex]
                 else:
                     raise LineExpected("The note at note index: {0} was not a Line".format(nindex))
             except IndexError:
-                raise NoteIndexError("The note index: {0} was out of bounds of the notes_list.".format(nindex))
+                raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
         if lindex is not None:
             try:
-                return self.lines_list[lindex]
+                return self.lines[lindex]
             except IndexError:
-                raise LineIndexError("The line index: {0} was out of bounds of the lines_list.".format(lindex))
+                raise LineIndexError("The line index: {0} was out of bounds of the lines.".format(lindex))
         if content is not None:
-            for line in self.lines_list:
+            for line in self.lines:
                 if line.content.lower() == content.lower():
                     return line
             raise LineNotFound("No line was found to equal content: {0}".format(content))
@@ -287,26 +290,26 @@ class NoteUtil:
         lines = []
 
         if content is not None:
-            for line in self.lines_list:
+            for line in self.lines:
                 if content.lower() in line.content.lower():
                     lines.append(line)
         if nindexes is not None:
             for nindex in nindexes:
                 try:
-                    if isinstance(self.notes_list[nindex], Line):
-                        lines.append(self.notes_list[nindex])
+                    if isinstance(self.notes[nindex], Line):
+                        lines.append(self.notes[nindex])
                     else:
                         raise LineExpected("The note at note index: {0} was not a Line.".format(nindex))
                 except IndexError:
                     raise NoteIndexError(
-                        "The note index: {0} was out of bounds of the notes_list".format(nindex))
+                        "The note index: {0} was out of bounds of the notes".format(nindex))
         if lindexes is not None:
             for lindex in lindexes:
                 try:
-                    lines.append(self.lines_list[lindex])
+                    lines.append(self.lines[lindex])
                 except IndexError:
                     raise LineIndexError(
-                        "The line index: {0} was out of bounds of the lines_list".format(lindex))
+                        "The line index: {0} was out of bounds of the lines".format(lindex))
 
         if not lines:
             raise LineNotFound(

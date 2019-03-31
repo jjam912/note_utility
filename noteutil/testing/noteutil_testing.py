@@ -1,7 +1,7 @@
 from noteutil.noteutil import noteutil
 
 nu = noteutil.NoteUtil("test1.txt", comment="#")
-print("\n".join(map(str, nu.notes_list)))
+print("\n".join(map(str, nu.notes)))
 # print(nu)
 
 # print(nu.nindex(lindex=0))

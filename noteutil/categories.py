@@ -47,8 +47,6 @@ class PositionalCategory(Note, Category):
         The `Positional` index that corresponds to the position in the `NoteUtil.positionals`.
     name : str
         The name assigned to this `Category`, used as a key in `NoteUtil.categories`.
-    removed : bool
-        Whether `Notes` of this `Category` were removed from the `NoteUtil.notes`.
     notes : list of `Note`
         A sorted list of all of the `Notes` that belong to this `Category`.
     lines : list of `Line`
@@ -61,8 +59,8 @@ class PositionalCategory(Note, Category):
         A sorted list of all of the `Categories` this `Line` belongs to.
     """
 
-    def __init__(self, content, nindex, pindex, name, rcontent, prefix, extensions, categories, tabs, fmt):
-        super().__init__(content, nindex, rcontent, prefix, extensions, categories, tabs, fmt)
+    def __init__(self, content, nindex, pindex, name, rcontent, prefix, extensions, categories, ntabs, fmt):
+        super().__init__(content, nindex, rcontent, prefix, extensions, categories, ntabs, fmt)
         super().__init__(name, prefix, fmt)     # The format of the `Note` will be overridden by the `Category` one.
         self.pindex = pindex
 
@@ -84,8 +82,6 @@ class GlobalCategory(Category):
     ----------
     name : str
         The name assigned to this `Category`, used as a key in `NoteUtil.categories`.
-    removed : bool
-        Whether `Notes` of this `Category` were removed from the `NoteUtil.notes`.
     notes : list of `Note`
         A sorted list of all of the `Notes` that belong to this `Category`.
     lines : list of `Line`
@@ -94,6 +90,5 @@ class GlobalCategory(Category):
         A sorted list of all of the `Pairs` that belong to this `Category`.
     """
 
-    def __init__(self, name, removed, prefix, fmt):
+    def __init__(self, name, prefix, fmt):
         super().__init__(name, prefix, fmt)
-        self.removed = removed

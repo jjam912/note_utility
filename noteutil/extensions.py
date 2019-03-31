@@ -52,9 +52,8 @@ class Extension(abc.ABC):
         self._rbound = rbound
         self._format = fmt
 
-    @abc.abstractmethod
     def __repr__(self):
-        pass
+        return "{0}{1}{2}".format(self._lbound, self._rcontent, self._rbound)
 
     def __str__(self):
         return self._format(self)
@@ -78,9 +77,6 @@ class LineExtension(Extension):
 
     def __init__(self, content, name, eindex, rcontent, cindex, note, placeholder, before, lbound, rbound, fmt):
         super().__init__(content, name, eindex, rcontent, cindex, note, placeholder, before, lbound, rbound, fmt)
-
-    def __repr__(self):
-        return "{0}{1}{2}".format(self._lbound, self.content, self._rbound)
 
 
 class PairExtension(Extension):
@@ -119,9 +115,6 @@ class PairExtension(Extension):
             raise SeparatorError(self.content)
 
         self.term, self.definition = tokens[0].strip(), tokens[1].strip()
-
-    def __repr__(self):
-        return "{0}{1} {2} {3}{4}".format(self._lbound, self.term, self.separator, self.definition, self._rbound)
 
 
 class ListExtension(Extension):
@@ -175,14 +168,6 @@ class ListExtension(Extension):
             self.elements.append(ListElement(content, content, rcontent, self, tabs))
         self.content = (self.separators[0] + " ").join(new_content)
 
-    def __repr__(self):
-        rstring = ""
-        rstring += self._lbound
-        for element in self.elements:
-            rstring += element._rcontent
-        rstring += self._rbound
-        return rstring
-
 
 class ListElement:
     """An element of a `ListElement`.
@@ -196,12 +181,12 @@ class ListElement:
     list_ext: `ListExtension`
         The `ListExtension` that this `ListElement` belongs to.
     """
-    def __init__(self, content, mcontent, rcontent: str, list_ext, tabs: int):
+    def __init__(self, content, mcontent, rcontent: str, list_ext, ntabs: int):
         self.content = content
         self.mcontent = mcontent
         self._rcontent = rcontent
         self.list_ext = list_ext
-        self._tabs = tabs
+        self._ntabs = ntabs
         # I might implement this
         # self.parents = []
         # self.siblings = []
@@ -211,7 +196,7 @@ class ListElement:
         return self.tabs() + self.content
 
     def tabs(self):
-        return "\t" * self._tabs
+        return "\t" * self._ntabs
 
 
 class BulletListExtension(ListExtension):
@@ -233,13 +218,11 @@ class BulletListExtension(ListExtension):
         The first string separates each `ListElement`.
         Any later strings indicate the prefix needed to nest the `ListElement` a certain number of tabs.
         There must be at least one `separator` in `separators`.
-
     bullets: list of str
         The bullets that will be used to prefix each `ListElement`.
         The first string will be the bullet of the `ListElement` with no tabs, second with one tab, etc.
         If there are fewer `bullets` than `separators`, the `bullets` will repeat starting from the beginning.
         There must be at least one `bullet` in `bullets`.
-
     spaces: int
         The number of spaces between the `bullet` and the `content` of the `ListElement`.
     elements : list of `ListElement`
@@ -277,14 +260,6 @@ class BulletListExtension(ListExtension):
             self.elements.append(ListElement(content, mcontent, rcontent, self, tabs))
         self.content = (self.separators[0] + " ").join(new_content)
 
-    def __repr__(self):
-        rstring = ""
-        rstring += self._lbound
-        for element in self.elements:
-            rstring += element._rcontent
-        rstring += self._rbound
-        return rstring
-
 
 class NumberListExtension(ListExtension):
     """An `Extension` with multiple items with each element having a number before it, in chronological order.
@@ -303,7 +278,6 @@ class NumberListExtension(ListExtension):
         The first string separates each `ListElement`.
         Any later strings indicate the prefix needed to nest the `ListElement` a certain number of tabs.
         There must be at least one `separator` in `separators`.
-
     continuous: bool
         Whether to continue the number sequence if the next `ListElement` has a different number of tabs.
     elements : list of `ListElement`
@@ -336,7 +310,7 @@ class NumberListExtension(ListExtension):
 
             count = 1
             for j in range(len(self.elements) - 1, -1, -1):
-                if self.elements[j]._tabs == tabs:
+                if self.elements[j]._ntabs == tabs:
                     count += 1
                 else:
                     break
@@ -344,12 +318,4 @@ class NumberListExtension(ListExtension):
 
             self.elements.append(ListElement(content, mcontent, rcontent, self, tabs))
         self.content = (self.separators[0] + " ").join(new_content)
-
-    def __repr__(self):
-        rstring = ""
-        rstring += self._lbound
-        for element in self.elements:
-            rstring += element._rcontent
-        rstring += self._rbound
-        return rstring
 
