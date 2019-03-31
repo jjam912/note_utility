@@ -1,5 +1,5 @@
 from noteutil2.noteutil import NoteUtil
-from noteutil2.comparisons import is_equal, is_in, is_similar, is_in_similar
+from noteutil2.comparisons import CompareOptions
 
 
 def test_noteutil(noteutil):
@@ -23,9 +23,9 @@ def test_noteutil(noteutil):
 
     string += "Heading Character: " + noteutil.heading_char + "\n"
     string += "Levels: " + str(noteutil.levels) + "\n"
-    string += "Headings" + "\n"
+    string += "Heading Level" + "\n"
     string += "--------" + "\n"
-    for gname, anames in noteutil.headings.items():     # General name, Actual names
+    for gname, anames in noteutil.heading_level.items():     # General name, Actual names
         string += "\t" + gname + ": " + str(list(map(lambda x: x.heading_name, anames))) + "\n"
     string += "--------" + "\n"
     string += "Heading Order" + "\n"
@@ -62,3 +62,17 @@ def test_note_list(note_list):
 
 noteutil = NoteUtil("heading_config.txt")
 print(test_noteutil(noteutil))
+
+# print(test_note(noteutil.get(heading_name="1.1", compare=CompareOptions.IN)))
+# print(test_note(noteutil.get(heading_name="2", compare=CompareOptions.IN)))
+# print(test_note(noteutil.get(begin_nindex=16)))
+# print(test_note(noteutil.get(end_nindex=11)))
+# print(test_note(noteutil.get(heading="##")))
+# print(test_note(noteutil.get(level=3)))
+
+print(test_note_list(noteutil.get_list(level=3)))
+print(test_note_list(noteutil.get_list(heading_char="#")))
+print(test_note_list(noteutil.get_list(heading="##", compare=CompareOptions.IN)))
+print(test_note_list(noteutil.get_list(heading_name="1.", compare=CompareOptions.IN)))
+print(test_note_list(noteutil.get_list(end_nindex=28)))
+print(test_note_list(noteutil.get_list(notes=None)))
