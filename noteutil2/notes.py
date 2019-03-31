@@ -12,13 +12,6 @@ class Note:
 
     Other Parameters
     ----------------
-    If the `Note` is a `Pair`:
-        term : str
-            The first part of text that came before the `separator`.
-        definition : str
-            The second part of text that came after the `separator`.
-        separator : str
-            The string that separates the `term` and `definition` of this `Note`.
     If the `Note` is a `Heading`:
         heading_char : str
             The character used as to indicate this `Note` is a heading.
@@ -26,12 +19,21 @@ class Note:
             The depth of heading hierarchy of this `Note`.
         heading : str
             The prefix of the content that was removed and the actual heading string.
+        heading_name : str
+            The content of the `Note` without the `heading`.
         begin_nindex : int
             The beginning note index for this heading.
         end_nindex : int
             The ending note index for this heading.
         notes : List[`Note`]
             All notes starting from the `begin_nindex` to the `end_nindex` like a range.
+    If the `Note` is a `Pair`:
+        term : str
+            The first part of text that came before the `separator`.
+        definition : str
+            The second part of text that came after the `separator`.
+        separator : str
+            The string that separates the `term` and `definition` of this `Note`.
     """
 
     def __init__(self, content, nindex, **kwargs):
