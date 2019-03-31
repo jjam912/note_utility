@@ -1,4 +1,5 @@
 from .notes import Note
+from .comparisons import CompareOptions
 from .errors import *
 import os.path
 
@@ -47,16 +48,19 @@ class NoteUtil:
         If a `Note` is a heading, its content will start with this character.
     levels : int
         The number of headings.
-    headings : dict {str: List[`Note`]}
+    heading_level : dict {str: List[`Note`]}
         Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[str]
         Chronological list of notes that are headings.
+    warnings : List[str]
+        List of all of the warnings that occurred during the `Note` creation process.
     """
 
     def __init__(self, config_file: str):
         self.notes = []
         self.pairs = []
-        self.headings = {}
+        self.heading_level = {}
+        self.heading_order = []
         self.config_file = config_file
         self.warnings = []
         self._parse_config()
@@ -97,8 +101,7 @@ class NoteUtil:
             if self.heading_char is not None:
                 self.levels = int(next(lines))
                 for _ in range(self.levels):
-                    self.headings[next(lines)] = []
-            self.heading_order = []
+                    self.heading_level[next(lines)] = []
 
     def _parse_notes(self):
         with open(self.note_file, mode="r") as f:
@@ -140,7 +143,7 @@ class NoteUtil:
                         previous_level = current_level
                         kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
                         if current_level - previous_level > 1:
-                            raise HeadingJump(previous_level, current_level)
+                            raise HeadingJump(line, previous_level, current_level)
                         kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
                         line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
                         kwargs["heading_name"] = line
@@ -173,7 +176,7 @@ class NoteUtil:
                 # Add the note to NoteUtil's data structures.
                 self.notes.append(note)
                 if note.is_heading():
-                    self.headings[list(self.headings.keys())[kwargs["level"] - 1]].append(note)
+                    self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
                     self.heading_order.append(note)
 
                 if note.is_pair():
@@ -181,7 +184,7 @@ class NoteUtil:
 
             # Headings are still missing their end_nindex and notes:
             # Complete Headings
-            headings_list = list(self.headings.values())
+            headings_list = list(self.heading_level.values())
             for headings in headings_list:
                 for i in range(len(headings)):
                     heading = headings[i]
@@ -231,17 +234,14 @@ class NoteUtil:
             If no `Note` is found.
         """
 
-        compare = None
-        if kwargs.get("compare", False):
-            compare = kwargs.pop("compare")
+        if not kwargs:
+            return None
+
+        compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
 
         for note in self.notes:
-            if compare:
-                if compare(note, **kwargs):
-                    return note
-            else:
-                if all(getattr(note, attr) is not None and val == getattr(note, attr) for attr, val in kwargs.items()):
-                    return note
+            if compare(note, **kwargs):
+                return note
         return None
 
     def get_list(self, **kwargs):
@@ -265,18 +265,15 @@ class NoteUtil:
             If no `Note`s are found.
         """
 
+        if not kwargs:
+            return None
+
         notes = []
-        compare = None
-        if kwargs.get("compare", False):
-            compare = kwargs.pop("compare")
+        compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
 
         for note in self.notes:
-            if compare:
-                if compare(note, **kwargs):
-                    notes.append(note)
-            else:
-                if all(getattr(note, attr) is not None and val in getattr(note, attr) for attr, val in kwargs.items()):
-                    notes.append(note)
+            if compare(note, **kwargs):
+                notes.append(note)
         return notes if notes else None
 
 
