@@ -4,6 +4,17 @@ class NoteUtilError(Exception):
     pass
 
 
+class ConfigError(NoteUtilError):
+    """Superclass for exceptions raised during the `Config` parsing process."""
+
+    pass
+
+
+class ExtraLine(ConfigError):
+    def __init__(self, index):
+        super().__init__("There are two or more blank lines at Line {0}".format(index + 1))
+
+
 class NoteError(NoteUtilError):
     """Superclass for exceptions raised during the `Note` creating process."""
 

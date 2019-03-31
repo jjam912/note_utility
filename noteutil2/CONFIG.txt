@@ -1,6 +1,6 @@
 >>> Welcome to NoteUtil's configuration file!
 >>>
->>> Enter in the following configurations in the lines without a ">>>".
+>>> Enter in the following configurations in the lines without a ">>>". There must not be any blank lines surrounding what you enter.
 >>> Any lines with a ">>>" will be ignored.
 >>> Any optional configurations should be left blank to be left out. Make sure there are no two consecutive blank lines anywhere.
 >>>

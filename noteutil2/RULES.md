@@ -50,3 +50,8 @@ The order of conversion is the order in which NoteUtil creates its notes. Here i
 3. Content
 
 This means that anything lower in the creation hierarchy should not interfere with anything higher in the creation hierarchy.
+
+## Debugging:
+1. Error in `self._read_config()`
+    * You probably have a mistake in the config file somewhere. 
+        Make sure that each option has no blank lines surrounding it.

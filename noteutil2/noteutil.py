@@ -87,6 +87,8 @@ class NoteUtil:
 
         with open("temp.cfg", mode="w") as f:
             f.write(raw_config)
+            if "\n\n\n" in raw_config:
+                raise ExtraLine(raw_config.index("\n\n\n"))
 
     def _read_config(self):
         with open("temp.cfg", mode="r") as f:
