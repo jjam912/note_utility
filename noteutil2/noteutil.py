@@ -1,5 +1,6 @@
 from .notes import Note
 from .errors import *
+import os.path
 
 
 def readlines(f):
@@ -16,7 +17,7 @@ def readlines(f):
 
     lines = f.read().split("\n")
     for line in lines:
-        yield line
+        yield line.strip()
 
 
 class NoteUtil:
@@ -38,16 +39,28 @@ class NoteUtil:
         The prefix of lines that should be ignored in the note file.
     separator: str
         A delimiter used to split `Note` lines into terms and definitions.
-    notes_list : List[`Note`]
+    notes : List[`Note`]
         All `Note`s created from the .nu file.
+    pairs : List[`Note`]
+        All `Note`s that have terms and definitions.
+    heading_char : str
+        If a `Note` is a heading, its content will start with this character.
+    levels : int
+        The number of headings.
+    headings : dict {str: List[`Note`]}
+        Mapped general names of headings to a list of notes that are headings that belong to that name.
+    heading_order : List[str]
+        Chronological list of notes that are headings.
     """
 
     def __init__(self, config_file: str):
-        self.notes_list = []
-        self.pairs_list = []
+        self.notes = []
+        self.pairs = []
+        self.headings = {}
         self.config_file = config_file
         self._parse_config()
         self._read_config()
+        # if not os.path.exists(self.nu_file):
         self._parse_notes()
         self._read_notes()
 
@@ -58,7 +71,7 @@ class NoteUtil:
                 line = line.strip()
 
                 # Remove any comments and leave only intended lines
-                if line.startswith("#"):
+                if line.startswith(">>>"):
                     continue
                 else:
                     raw_config += line + "\n"
@@ -75,12 +88,21 @@ class NoteUtil:
             self.nu_file = self.note_file.split(".")[0] + ".nu"
             self.comments = next(lines) or None
             self.separator = next(lines) or None
+            self.heading_char = next(lines) or None
+            if self.heading_char is not None:
+                self.levels = int(next(lines))
+                for _ in range(self.levels):
+                    self.headings[next(lines)] = []
+            self.heading_order = []
 
     def _parse_notes(self):
         with open(self.note_file, mode="r") as f:
             raw_notes = ""
             for line in f.readlines():
                 line = line.strip()
+
+                if line.startswith('<span style="text-decoration:underline;">'):
+                    line = "__" + line[41:-7] + "__"
 
                 # Check for comments or empty line
                 if self.comments is not None:
@@ -97,10 +119,31 @@ class NoteUtil:
 
     def _read_notes(self):
         with open(self.nu_file, mode="r") as f:
+
+            if self.heading_char is not None:
+                current_level = 0
+
             for nindex, line in enumerate(f.readlines()):
                 kwargs = {}
                 line = line.strip()
 
+                # Heading Detection
+                if self.heading_char is not None:
+                    if line.startswith(self.heading_char):
+                        kwargs["heading_char"] = self.heading_char
+
+                        previous_level = current_level
+                        kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
+                        if current_level - previous_level > 1:
+                            raise HeadingJump(previous_level, current_level)
+                        kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
+                        line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
+                        kwargs["heading_name"] = line
+
+                        kwargs["begin_nindex"] = nindex
+                # End Heading Detection
+
+                # Pair Detection
                 if self.separator is not None:
                     if self.separator in line:      # Line is a pair, add additional parameters
                         if len(line.split(self.separator)) > 2:
@@ -110,17 +153,57 @@ class NoteUtil:
                         kwargs["definition"] = line.split(self.separator)[1].strip()
                         if kwargs["definition"] == "":
                             raise NoDefinition(line)
-
                         kwargs["separator"] = self.separator
-                        note = Note(line, nindex, **kwargs)
-                    else:
-                        note = Note(line, nindex)
-                else:
-                    note = Note(line, nindex)
+                # End Pair Detection
 
-                self.notes_list.append(note)
+                note = Note(line, nindex, **kwargs)
+
+                # Add the note to NoteUtil's data structures.
+                self.notes.append(note)
                 if note.is_pair():
-                    self.pairs_list.append(note)
+                    self.pairs.append(note)
+                if note.is_heading():
+                    self.headings[list(self.headings.keys())[kwargs["level"] - 1]].append(note)
+                    self.heading_order.append(note)
+
+            # Headings are still missing their end_nindex and notes: Complete Headings
+            headings_list = list(self.headings.values())
+            for headings in headings_list:
+                for i in range(len(headings)):
+                    heading = headings[i]
+                    level_index = i + 1     # The next heading index at the same level
+                    order_index = self.heading_order.index(heading) + 1     # The next heading index in heading order
+
+                    while order_index != len(self.heading_order) and \
+                            self.heading_order[order_index].level > heading.level:
+                        order_index += 1
+
+                    if level_index == len(headings):
+                        level_begin_nindex = len(self.notes)
+                    else:
+                        level_begin_nindex = headings[level_index].begin_nindex
+                    if order_index == len(self.heading_order):
+                        order_begin_nindex = len(self.notes)
+                    else:
+                        order_begin_nindex = self.heading_order[order_index].begin_nindex
+
+                    if level_begin_nindex < order_begin_nindex:
+                        end_nindex = level_begin_nindex
+                    else:
+                        end_nindex = order_begin_nindex
+
+                    heading.end_nindex = end_nindex
+                    heading.notes = self.notes[heading.begin_nindex: heading.end_nindex]
+            # End Complete Headings
+
+    def _detect_headings(self, current_level, **kwargs):
+        pass
+
+    def _detect_pairs(self, **kwargs):
+        pass
+
+    def _complete_headings(self):
+        pass
 
     def get(self, **kwargs):
         """Retrieves a `Note` with attributes equal to passed keyword args.
@@ -147,7 +230,7 @@ class NoteUtil:
         if kwargs.get("compare", False):
             compare = kwargs.pop("compare")
 
-        for note in self.notes_list:
+        for note in self.notes:
             if compare:
                 if compare(note, **kwargs):
                     return note
@@ -182,7 +265,7 @@ class NoteUtil:
         if kwargs.get("compare", False):
             compare = kwargs.pop("compare")
 
-        for note in self.notes_list:
+        for note in self.notes:
             if compare:
                 if compare(note, **kwargs):
                     notes.append(note)
