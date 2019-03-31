@@ -10,7 +10,7 @@ def is_equal(note, **kwargs):
     bool
     """
 
-    return all(getattr(note, attr) is not None and val == getattr(note, attr) for attr, val in kwargs.items())
+    return all(val == getattr(note, attr) for attr, val in kwargs.items())
 
 
 def is_similar(note, **kwargs):
