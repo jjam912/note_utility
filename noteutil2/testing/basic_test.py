@@ -14,7 +14,13 @@ def test_noteutil(noteutil):
     for note in noteutil.notes_list:
         string += "\t" + test_note(note) + "\n"
     string += "----------" + "\n"
-    string += "Pairs List Length: " + str(len(noteutil.pairs_list)) + "\n"
+
+    string += "Pairs List Terms" + "\n"
+    string += "----------------" + "\n"
+    for pair in noteutil.pairs:
+        string += "\t" + pair.term + "\n"
+    string += "----------------" + "\n"
+
     return string
 
 
