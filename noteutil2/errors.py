@@ -26,9 +26,9 @@ class NoDefinition(NoteError):
 
 
 class HeadingJump(NoteError):
-    def __init__(self, previous_level, current_level):
-        super().__init__("The heading level jumped down 2 or more levels: From level {0} to {1}".
-                         format(previous_level, current_level))
+    def __init__(self, content, previous_level, current_level):
+        super().__init__("The heading level jumped down 2 or more levels: From level {0} to {1} in content: {2}".
+                         format(previous_level, current_level, content))
 
 
 
