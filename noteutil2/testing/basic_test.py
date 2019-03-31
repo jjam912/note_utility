@@ -1,5 +1,5 @@
-from noteutil.noteutil2.noteutil import NoteUtil
-from noteutil.noteutil2.comparisons import is_equal, is_in, is_similar, is_in_similar
+from noteutil2.noteutil import NoteUtil
+from noteutil2.comparisons import CompareOptions
 
 
 def test_noteutil(noteutil):
@@ -11,7 +11,7 @@ def test_noteutil(noteutil):
     string += "Separator: " + str(noteutil.separator) + "\n"
     string += "Notes List" + "\n"
     string += "----------" + "\n"
-    for note in noteutil.notes_list:
+    for note in noteutil.notes:
         string += "\t" + test_note(note) + "\n"
     string += "----------" + "\n"
 
@@ -42,9 +42,9 @@ noteutil = NoteUtil("basic_config.txt")
 print(test_noteutil(noteutil))
 print(test_note(noteutil.get(content="Line 1", nindex=0)))
 
-print(test_note_list(noteutil.get_list(content="Line 5", compare=is_equal)))
-print(test_note_list(noteutil.get_list(content="Pair", compare=is_in)))
-print(test_note_list(noteutil.get_list(definition="pair", compare=is_similar)))
-print(test_note_list(noteutil.get_list(content="line", compare=is_in_similar)))
-print(test_note_list(noteutil.get_list(content="Line", definition="pair", compare=is_in)))
+print(test_note_list(noteutil.get_list(content="Line 5", compare=CompareOptions.EQUALS)))
+print(test_note_list(noteutil.get_list(content="Pair", compare=CompareOptions.IN)))
+print(test_note_list(noteutil.get_list(definition="pair", compare=CompareOptions.SIMILAR)))
+print(test_note_list(noteutil.get_list(content="line", compare=CompareOptions.SIN)))
+print(test_note_list(noteutil.get_list(content="Line", definition="pair", compare=CompareOptions.IN)))
 
