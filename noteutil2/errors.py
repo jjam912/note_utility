@@ -10,6 +10,11 @@ class ConfigError(NoteUtilError):
     pass
 
 
+class UnexpectedLine(ConfigError):
+    def __init__(self, index):
+        super().__init__("There was an unexpected line after an option at Line {0}".format(index + 1))
+
+
 class ExtraLine(ConfigError):
     def __init__(self, index):
         super().__init__("There are two or more blank lines at Line {0}".format(index + 1))
