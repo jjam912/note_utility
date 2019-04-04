@@ -76,19 +76,26 @@ class NoteUtil:
     def _parse_config(self):
         with open(self.config_file, mode="r") as f:
             raw_config = ""
-            for line in f.readlines():
+            lines = f.readlines()
+            for index, line in enumerate(lines):
+                # If this line and the last line are blank, that means there are two blank lines.
+                if line.startswith("\n") and index != 0 and lines[index - 1].startswith("\n"):
+                    raise ExtraLine(index)
+                # If this line is a blank line and the previous one was not a comment, there's an unexpected line.
+                if line.startswith("\n") and index != 0 and lines[index - 1].startswith(">>>") is False:
+                    raise UnexpectedLine(index)
+
                 line = line.strip()
 
                 # Remove any comments and leave only intended lines
                 if line.startswith(">>>"):
                     continue
+
                 else:
                     raw_config += line + "\n"
 
         with open("temp.cfg", mode="w") as f:
             f.write(raw_config)
-            if "\n\n\n" in raw_config:
-                raise ExtraLine(raw_config.index("\n\n\n"))
 
     def _read_config(self):
         with open("temp.cfg", mode="r") as f:
