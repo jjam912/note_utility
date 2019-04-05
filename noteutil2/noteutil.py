@@ -285,19 +285,45 @@ class NoteUtil:
                 notes.append(note)
         return notes if notes else None
 
-    def edit(self, note, **kwargs):
-        """Given a `Note`, edit its attributes.
+    def edit(self, note, content: str):
+        """Given a `Note`, edit its content.
+        This can have many side effects:
+            1. Changes to heading_name.
+            2. Changes to whether the `Note` is a pair.
+            3. Changes to term, definition, and separator
 
         Parameters
         ----------
         note : `Note`
             A `Note` that you want to modify.
-        kwargs
-            Keys are attribute names and Values are new values for those attributes.
+        content : str
+            The new content that the `Note` should have.
+
+        Returns
+        -------
+        None
         """
 
-        for name, nval in kwargs.items():   # Name and New Value
-            setattr(note, name, nval)
+        note.content = content
+        note.heading_name = content
+
+        if self.separator is not None:
+            if self.separator in content:
+                if len(content.split(self.separator)) > 2:
+                    raise ExtraSeparator(content)
+
+                term = content.split(self.separator)[0].strip()
+                if term in map(lambda n: n.term, self.pairs):
+                    raise DuplicateTerm(term)
+
+                definition = content.split(self.separator)[1].strip()
+                if definition == "":
+                    raise NoDefinition(content)
+            else:
+                note.term = None
+                note.definition = None
+                note.separator = None
+
         self.notes[note.nindex] = note
 
     def reformat(self, file_name=None):
