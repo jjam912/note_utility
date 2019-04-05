@@ -82,7 +82,7 @@ class NoteUtil:
                 if line.startswith("\n") and index != 0 and lines[index - 1].startswith("\n"):
                     raise ExtraLine(index)
                 # If this line is a blank line and the previous one was not a comment, there's an unexpected line.
-                if line.startswith("\n") and index != 0 and lines[index - 1].startswith(">>>") is False:
+                if line.startswith("\n") and index != 0 and lines[index - 1].strip().startswith(">>>") is False:
                     raise UnexpectedLine(index)
 
                 line = line.strip()
