@@ -21,7 +21,7 @@ Example:
 # Chapter 1
 ## Unit 1
 ### Section 1
-Here you would write your regular notes: Without the heading character prefix.
+Here you would write your regular notes without the heading character prefix.
 ```
 
 If you use Google Docs, a fantastic add-on is [Docs to Markdown](https://chrome.google.com/webstore/detail/docs-to-markdown/igffnbdfnodiaphfmfaiiaegmoljbghf?hl=en-US),
@@ -40,8 +40,6 @@ Rules for using headings:
 4. Do not use the heading character within the first n characters of your notes, with n being the number of headings.
 5. Headings are considered notes too, and thus must also comply with the note rules.
 
-## Custom Comparisons:
-
 ## Order of Conversion:
 The order of conversion is the order in which NoteUtil creates its notes. Here is the order:
 
@@ -51,7 +49,17 @@ The order of conversion is the order in which NoteUtil creates its notes. Here i
 
 This means that anything lower in the creation hierarchy should not interfere with anything higher in the creation hierarchy.
 
-## Debugging:
-1. Error in `self._read_config()`
-    * You probably have a mistake in the config file somewhere. 
-        Make sure that each option has no blank lines surrounding it.
+## Editing Notes:
+You can edit your notes directly through NoteUtil, without needing to touch your original note file.
+All changes to notes will be saved in the file of the same name as your notes, but with a .nu extension, leaving your
+    original note file unchanged. 
+    
+You are able to:
+
+1. Change the content of your notes.
+    * This will directly affect several other parts of your notes, such as whether your note is a pair.
+2. ~~Add and remove notes.~~
+    * ~~If you remove a heading, it will also delete every other note and  headings that were under that heading.~~
+3. ~~Append notes by parsing new content.~~
+
+Too hard to implement; just copy your .nu file to your original note file, and then add/remove what you need.
