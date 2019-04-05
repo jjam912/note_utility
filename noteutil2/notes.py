@@ -38,7 +38,6 @@ class Note:
 
     def __init__(self, content, nindex, **kwargs):
         # Basics of all notes
-        self._rcontent = content
         self.content = content
         self.nindex = nindex
 
@@ -68,6 +67,15 @@ class Note:
 
     def __gt__(self, other):
         return self.nindex > other.nindex
+
+    def __repr__(self):
+        """What a `Note` looked like before parsing it."""
+
+        rcontent = ""
+        if self.is_heading():
+            rcontent += self.heading
+        rcontent += self.content
+        return rcontent
 
     def is_pair(self):
         """Returns whether the `Note` should have the parameters of a pair.
