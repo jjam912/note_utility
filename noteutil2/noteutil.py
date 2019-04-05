@@ -65,8 +65,8 @@ class NoteUtil:
         self.warnings = []
         self._parse_config()
         self._read_config()
-        # if not os.path.exists(self.nu_file):
-        self._parse_notes()
+        if not os.path.exists(self.nu_file):
+            self._parse_notes()
         self._read_notes()
         print("Warnings\n"
               "--------\n"
@@ -228,7 +228,7 @@ class NoteUtil:
         Parameters
         ----------
         kwargs
-            Keys are attribute names and Values are values of those attributes.
+            Keys are attribute names and Values are values you are looking for in those attributes.
 
         Other Parameters
         ----------------
@@ -259,7 +259,7 @@ class NoteUtil:
         Parameters
         ----------
         kwargs
-            Keys are attribute names and Values are values of those attributes.
+            Keys are attribute names and Values are values you are looking for in those attributes.
 
         Other Parameters
         ----------------
@@ -284,6 +284,21 @@ class NoteUtil:
             if compare(note, **kwargs):
                 notes.append(note)
         return notes if notes else None
+
+    def edit(self, note, **kwargs):
+        """Given a `Note`, edit its attributes.
+
+        Parameters
+        ----------
+        note : `Note`
+            A `Note` that you want to modify.
+        kwargs
+            Keys are attribute names and Values are new values for those attributes.
+        """
+
+        for name, nval in kwargs.items():   # Name and New Value
+            setattr(note, name, nval)
+            self.notes[note.nindex] = note
 
     def reformat(self, file_name=None):
         """Writes all of the `Note`s back into what they were when they were being parsed into a .nu file.
