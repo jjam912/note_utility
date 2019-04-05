@@ -298,7 +298,7 @@ class NoteUtil:
 
         for name, nval in kwargs.items():   # Name and New Value
             setattr(note, name, nval)
-            self.notes[note.nindex] = note
+        self.notes[note.nindex] = note
 
     def reformat(self, file_name=None):
         """Writes all of the `Note`s back into what they were when they were being parsed into a .nu file.
@@ -315,8 +315,9 @@ class NoteUtil:
         -------
         None
         """
+
         if file_name is None:
-            file_name = self.note_file
+            file_name = self.nu_file
 
         raw_notes = "\n".join(list(map(lambda n: repr(n), self.notes)))
         with open(file_name, mode="w") as f:
