@@ -326,27 +326,18 @@ class NoteUtil:
 
         self.notes[note.nindex] = note
 
-    def reformat(self, file_name=None):
+    def reformat(self):
         """Writes all of the `Note`s back into what they were when they were being parsed into a .nu file.
 
         If any changes to the `Note`s were made, they will be written here as well.
-
-        Parameters
-        ----------
-        file_name : str
-            Optional new file name for where to output the reformatted `Note`s.
-            If left as None, it will use and overwrite the .nu file that was created when the notes were parsed.
 
         Returns
         -------
         None
         """
 
-        if file_name is None:
-            file_name = self.nu_file
-
         raw_notes = "\n".join(list(map(lambda n: repr(n), self.notes)))
-        with open(file_name, mode="w") as f:
+        with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
 
 
