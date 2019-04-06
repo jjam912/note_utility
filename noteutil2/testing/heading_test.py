@@ -1,5 +1,6 @@
 from noteutil2.noteutil import NoteUtil
 from noteutil2.comparisons import CompareOptions
+import os
 
 
 def test_noteutil(noteutil):
@@ -60,6 +61,8 @@ def test_note_list(note_list):
     return "\t\t".join((list(map(test_note, note_list))))
 
 
+if os.path.exists("edit_notes.nu"):
+    os.remove("edit_notes.nu")
 noteutil = NoteUtil("heading_config.txt")
 print(test_noteutil(noteutil))
 
