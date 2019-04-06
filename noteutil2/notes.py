@@ -25,8 +25,8 @@ class Note:
             The beginning note index for this heading.
         end_nindex : int
             The ending note index for this heading.
-        notes : List[`Note`]
-            All notes starting from the `begin_nindex` to the `end_nindex` like a range.
+        nindexes : List[int]
+            List of indexes starting from the `begin_nindex` to the `end_nindex` like a range.
     If the `Note` is a `Pair`:
         term : str
             The first part of text that came before the `separator`.
