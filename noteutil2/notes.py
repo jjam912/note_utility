@@ -57,10 +57,10 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
     def __eq__(self, other):
-        return self.nindex == other.nindex
+        return repr(self) == repr(other)
 
     def __ne__(self, other):
-        return self.nindex != other.nindex
+        return repr(self) != repr(other)
 
     def __lt__(self, other):
         return self.nindex < other.nindex
