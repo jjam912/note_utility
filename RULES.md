@@ -63,3 +63,29 @@ You are able to:
 3. ~~Append notes by parsing new content.~~
 
 Too hard to implement; just copy your .nu file to your original note file, and then add/remove what you need.
+
+# Quiz Rules:
+
+## Terms and Definitions:
+
+The quiz revolves around notes that are pairs - those who have a separator that distinguish between term and definition.
+Any notes that are not pairs have no use in the quiz module, aside from headings. With your terms and definitions, 
+you can tell the quiz to either ask you to define the term, or to guess the term given its definition.
+Once the quiz gives you the answer (definition or term), you can mark the term as correct or incorrect, which you can later review.
+
+A standard procedure of quizzing is to cycle through all of the terms, marking each one of them correct or incorrect 
+as you answer them, and then reviewing all of the ones you got incorrect until you memorize them. 
+
+## Use of Headings in Quiz:
+
+Headings help you decide which group of notes you want to study. If you only want to study a single chapter out of many,
+then you can simply select that chapter to quiz yourself on without worrying about the other notes. 
+
+## Options:
+
+Several options are available to help you customize your quizzing session. Among them include:
+
+* Randomization
+* Custom formatting of question and answer
+* Selecting specific headings to study from
+* Tracking of correct and incorrect answers
