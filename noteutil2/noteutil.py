@@ -2,7 +2,6 @@ from .notes import Note
 from .comparisons import CompareOptions
 from .errors import *
 import os.path
-import bisect
 
 
 def readlines(f):
@@ -59,7 +58,6 @@ class NoteUtil:
 
     def __init__(self, config_file: str):
         self.notes = []
-        self.pairs = []
         self.heading_level = {}
         self.heading_order = []
         self.config_file = config_file
@@ -73,6 +71,10 @@ class NoteUtil:
               "--------\n"
               "\t{0}\n"
               "--------".format("\n\t".join(self.warnings)))
+
+    @property
+    def pairs(self):
+        return filter(lambda n: n.is_pair(), self.notes)
 
     def _parse_config(self):
         with open(self.config_file, mode="r") as f:
@@ -188,8 +190,6 @@ class NoteUtil:
                 if note.is_heading():
                     self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
                     self.heading_order.append(note)
-                if note.is_pair():
-                    self.pairs.append(note)
 
             # Headings are still missing their end_nindex and notes:
             # Complete Headings
@@ -319,16 +319,10 @@ class NoteUtil:
                 definition = content.split(self.separator)[1].strip()
                 if definition == "":
                     raise NoDefinition(content)
-
-                if note not in self.pairs:
-                    bisect.insort(self.pairs, note)
             else:
                 note.term = None
                 note.definition = None
                 note.separator = None
-
-                if note in self.pairs:
-                    del self.pairs[bisect.bisect_left(self.pairs, note)]
 
         self.notes[note.nindex] = note
 
