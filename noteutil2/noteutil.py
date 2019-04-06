@@ -48,6 +48,8 @@ class NoteUtil:
         If a `Note` is a heading, its content will start with this character.
     levels : int
         The number of headings.
+    level_names : List[str]
+        The general name of each group of headings.
     heading_level : dict {str: List[`Note`]}
         Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[`Note`]
@@ -58,8 +60,6 @@ class NoteUtil:
 
     def __init__(self, config_file: str):
         self.notes = []
-        self.heading_level = {}
-        self.heading_order = []
         self.config_file = config_file
         self.warnings = []
         self._parse_config()
@@ -74,7 +74,22 @@ class NoteUtil:
 
     @property
     def pairs(self):
-        return filter(lambda n: n.is_pair(), self.notes)
+        return list(filter(lambda n: n.is_pair(), self.notes))
+
+    @property
+    def heading_level(self):
+        heading_level = {}
+        for level_name in self.level_names:
+            heading_level[level_name] = []
+
+        for note in self.heading_order:
+            level_name = self.level_names[note.level - 1]
+            heading_level[level_name].append(note)
+        return heading_level
+
+    @property
+    def heading_order(self):
+        return list(filter(lambda n: n.is_heading(), self.notes))
 
     def _parse_config(self):
         with open(self.config_file, mode="r") as f:
@@ -112,8 +127,9 @@ class NoteUtil:
             self.heading_char = next(lines) or None
             if self.heading_char is not None:
                 self.levels = int(next(lines))
+                self.level_names = []
                 for _ in range(self.levels):
-                    self.heading_level[next(lines)] = []
+                    self.level_names.append(next(lines))
 
     def _parse_notes(self):
         with open(self.note_file, mode="r") as f:
@@ -191,7 +207,7 @@ class NoteUtil:
                     self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
                     self.heading_order.append(note)
 
-            # Headings are still missing their end_nindex and notes:
+            # Headings are still missing their end_nindex and nindexes:
             # Complete Headings
             headings_list = list(self.heading_level.values())
             for headings in headings_list:
