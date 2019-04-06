@@ -48,8 +48,8 @@ class Note:
         self.heading_name = kwargs.get("heading_name", None)
 
         self.begin_nindex = kwargs.get("begin_nindex", None)
-        self.end_nindex = kwargs.get("end_nindex", None)
-        self.notes = kwargs.get("notes", None)
+        self.end_nindex = None      # Later assigned
+        self.nindexes = None
 
         # Pair parameters
         self.term = kwargs.get("term", None)

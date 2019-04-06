@@ -219,7 +219,7 @@ class NoteUtil:
                         end_nindex = order_begin_nindex
 
                     heading.end_nindex = end_nindex
-                    heading.notes = self.notes[heading.begin_nindex: heading.end_nindex]
+                    heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
             # End Complete Headings
 
     def get(self, **kwargs):
