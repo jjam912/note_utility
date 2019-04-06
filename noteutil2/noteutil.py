@@ -209,33 +209,34 @@ class NoteUtil:
 
             # Headings are still missing their end_nindex and nindexes:
             # Complete Headings
-            headings_list = list(self.heading_level.values())
-            for headings in headings_list:
-                for i in range(len(headings)):
-                    heading = headings[i]
-                    level_index = i + 1     # The next heading index at the same level
-                    order_index = self.heading_order.index(heading) + 1     # The next heading index in heading order
+            if self.heading_char is not None:
+                headings_list = list(self.heading_level.values())
+                for headings in headings_list:
+                    for i in range(len(headings)):
+                        heading = headings[i]
+                        level_index = i + 1     # The next heading index at the same level
+                        order_index = self.heading_order.index(heading) + 1    # The next heading index in heading order
 
-                    while order_index != len(self.heading_order) and \
-                            self.heading_order[order_index].level > heading.level:
-                        order_index += 1
+                        while order_index != len(self.heading_order) and \
+                                self.heading_order[order_index].level > heading.level:
+                            order_index += 1
 
-                    if level_index == len(headings):
-                        level_begin_nindex = len(self.notes)
-                    else:
-                        level_begin_nindex = headings[level_index].begin_nindex
-                    if order_index == len(self.heading_order):
-                        order_begin_nindex = len(self.notes)
-                    else:
-                        order_begin_nindex = self.heading_order[order_index].begin_nindex
+                        if level_index == len(headings):
+                            level_begin_nindex = len(self.notes)
+                        else:
+                            level_begin_nindex = headings[level_index].begin_nindex
+                        if order_index == len(self.heading_order):
+                            order_begin_nindex = len(self.notes)
+                        else:
+                            order_begin_nindex = self.heading_order[order_index].begin_nindex
 
-                    if level_begin_nindex < order_begin_nindex:
-                        end_nindex = level_begin_nindex
-                    else:
-                        end_nindex = order_begin_nindex
+                        if level_begin_nindex < order_begin_nindex:
+                            end_nindex = level_begin_nindex
+                        else:
+                            end_nindex = order_begin_nindex
 
-                    heading.end_nindex = end_nindex
-                    heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
+                        heading.end_nindex = end_nindex
+                        heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
             # End Complete Headings
 
     def get(self, **kwargs):
