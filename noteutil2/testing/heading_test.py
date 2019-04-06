@@ -50,15 +50,16 @@ def test_note(note):
     string += "Heading Name: {!s:<10}\t\t".format(note.heading_name[:10] if note.heading_name else None)
     string += "Beginning Note Index: {!s:<5}\t\t".format(note.begin_nindex)
     string += "Ending Note Index: {!s:<5}\t\t".format(note.end_nindex)
-    if note.notes:
-        string += "Notes List: " + str(list(map(lambda x: x.nindex, note.notes)))
+    if note.nindexes:
+        string += "Notes Indexes: " + str(note.nindexes)
     else:
-        string += "Notes List: None"
+        string += "Notes Indexes: None"
     return string
 
 
 def test_note_list(note_list):
-    return "\t\t".join((list(map(test_note, note_list))))
+    print()
+    return "\t\n".join((list(map(test_note, note_list))))
 
 
 if os.path.exists("heading_notes.nu"):
@@ -75,11 +76,11 @@ print(test_note(noteutil.get(end_nindex=11)))
 print(test_note(noteutil.get(heading="##")))
 print(test_note(noteutil.get(level=3)))
 
-print("\n")
+print()
 
 print(test_note_list(noteutil.get_list(level=3)))
 print(test_note_list(noteutil.get_list(heading_char="#")))
 print(test_note_list(noteutil.get_list(heading="##", compare=CompareOptions.IN)))
 print(test_note_list(noteutil.get_list(heading_name="1.", compare=CompareOptions.IN)))
 print(test_note_list(noteutil.get_list(end_nindex=28)))
-print(test_note_list(noteutil.get_list(notes=None)))
+print(test_note_list(noteutil.get_list(nindexes=None)))
