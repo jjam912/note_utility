@@ -36,7 +36,8 @@ def test_note(note):
 
 
 def test_note_list(note_list):
-    return "\t\t".join((list(map(test_note, note_list))))
+    print()
+    return "\t\n".join((list(map(test_note, note_list))))
 
 
 if os.path.exists("basic_notes.nu"):
