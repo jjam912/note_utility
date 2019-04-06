@@ -1,5 +1,6 @@
 from noteutil2.noteutil import NoteUtil
 from noteutil2.comparisons import CompareOptions
+import os
 
 
 def test_noteutil(noteutil):
