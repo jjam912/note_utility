@@ -47,4 +47,15 @@ class HeadingJump(NoteError):
                          format(previous_level, current_level, content))
 
 
+class QuizError(Exception):
+    """Superclass for all `Quiz` exceptions."""
+
+    pass
+
+
+class HeadingExpected(QuizError):
+    def __init__(self, note):
+        super().__init__("The note was expected to be a heading, but wasn't: {0}".format(repr(note)))
+
+
 
