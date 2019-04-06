@@ -61,8 +61,10 @@ def test_note_list(note_list):
     return "\t\t".join((list(map(test_note, note_list))))
 
 
-if os.path.exists("edit_notes.nu"):
-    os.remove("edit_notes.nu")
+if os.path.exists("heading_notes.nu"):
+    os.remove("heading_notes.nu")
+if os.path.exists("heading_notes2.nu"):
+    os.remove("heading_notes2.nu")
 noteutil = NoteUtil("heading_config.txt")
 print(test_noteutil(noteutil))
 

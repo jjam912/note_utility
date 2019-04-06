@@ -38,8 +38,8 @@ def test_note_list(note_list):
     return "\t\t".join((list(map(test_note, note_list))))
 
 
-if os.path.exists("edit_notes.nu"):
-    os.remove("edit_notes.nu")
+if os.path.exists("basic_notes.nu"):
+    os.remove("basic_notes.nu")
 noteutil = NoteUtil("basic_config.txt")
 print(test_noteutil(noteutil))
 print(test_note(noteutil.get(content="Line 1", nindex=0)))
