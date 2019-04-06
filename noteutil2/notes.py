@@ -59,6 +59,9 @@ class Note:
     def __eq__(self, other):
         return repr(self) == repr(other)
 
+    def __hash__(self):
+        return hash(repr(self))
+
     def __ne__(self, other):
         return repr(self) != repr(other)
 
