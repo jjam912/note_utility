@@ -22,9 +22,9 @@ class Quiz:
     noteutil : `NoteUtil`
     last_nindex : int
         The `nindex` of the last `Note` generated.
-    correct : Set[`Note`]
+    correct : List[`Note`]
         All `Note`s marked as correct.
-    incorrect : Set[`Note`]
+    incorrect : List[`Note`]
         All `Note`s marked as incorrect.
     randomize : bool
         Whether to generate `Note`s randomly (T) or chronologically (F).
@@ -39,8 +39,8 @@ class Quiz:
     def __init__(self, noteutil):
         self.noteutil = noteutil
         self.last_nindex = 0
-        self.correct = set()
-        self.incorrect = set()
+        self.correct = list()
+        self.incorrect = list()
 
         # Options
         self.randomize = True
@@ -50,7 +50,7 @@ class Quiz:
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
-    def generate(self) -> Generator[str, None, None]:
+    def generate(self) -> Generator[Note, None, None]:
         """A generator that yields `Note`s, either chronologically or randomly.
         Once a generator is created, it is "frozen in time," and isn't affected by any changes to `Quiz`.
         However, `Quiz` keeps track of the last index used, which changes every time this generator is activated.
@@ -77,15 +77,15 @@ class Quiz:
                 index += 1
 
     def append(self, pair, correct: bool) -> None:
-        """Adds a pair to one of the correct or incorrect sets.
-        It will also remove it from the other set if it's in that one.
+        """Adds a pair to one of the correct or incorrect lists.
+        It will also remove it from the other list if it's in that one.
 
         Parameters
         ----------
         pair : `Note`
-            The pair to add to either the correct set or the incorrect set.
+            The pair to add to either the correct list or the incorrect list.
         correct : bool
-            Whether to add to the correct set (T) or the incorrect set (F).
+            Whether to add to the correct list (T) or the incorrect list (F).
 
         Returns
         -------
@@ -93,21 +93,27 @@ class Quiz:
         """
 
         if correct:
-            self.correct.add(pair)
-            self.incorrect.discard(pair)
+            self.correct.append(pair)
+            try:
+                self.incorrect.remove(pair)
+            except ValueError:
+                pass
         else:
-            self.incorrect.add(pair)
-            self.correct.discard(pair)
+            self.incorrect.append(pair)
+            try:
+                self.correct.remove(pair)
+            except ValueError:
+                pass
 
     def remove(self, pair, correct: bool) -> None:
-        """Removes a pair from one of the correct or incorrect sets.
+        """Removes a pair from one of the correct or incorrect lists.
 
         Parameters
         ----------
         pair : `Note`
-            The pair to remove from either the correct set or the incorrect set.
+            The pair to remove from either the correct list or the incorrect list.
         correct : bool
-            Whether to remove from the correct set (T) or the incorrect set (F).
+            Whether to remove from the correct list (T) or the incorrect list (F).
 
         Returns
         -------
@@ -115,12 +121,18 @@ class Quiz:
         """
 
         if correct:
-            self.correct.discard(pair)
+            try:
+                self.correct.remove(pair)
+            except ValueError:
+                pass
         else:
-            self.incorrect.discard(pair)
+            try:
+                self.incorrect.remove(pair)
+            except ValueError:
+                pass
 
     def clear(self) -> None:
-        """Empties the correct and incorrect sets.
+        """Empties the correct and incorrect lists.
 
         Returns
         -------
