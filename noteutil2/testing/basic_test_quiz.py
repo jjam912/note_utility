@@ -118,3 +118,11 @@ print("Clear quiz:")
 quiz.clear()
 print(test_quiz(quiz))
 
+print("Generate notes into list:")
+print("Random: False")
+quiz.randomize = False
+print(test_note_list(list(quiz.generate())))
+print("Random: True")
+quiz.randomize = True
+print(test_note_list(list(quiz.generate())))
+
