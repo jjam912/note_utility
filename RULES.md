@@ -79,13 +79,16 @@ as you answer them, and then reviewing all of the ones you got incorrect until y
 ## Use of Headings in Quiz:
 
 Headings help you decide which group of notes you want to study. If you only want to study a single chapter out of many,
-then you can simply select that chapter to quiz yourself on without worrying about the other notes. 
+then you can simply select that chapter (heading) to quiz yourself on without worrying about the other notes. 
+
+In this case, Notes that you marked as correct or incorrect are kind of like their own heading - if you want to quiz 
+only on the terms that you marked as incorrect, you can select that "heading."
 
 ## Options:
 
 Several options are available to help you customize your quizzing session. Among them include:
 
-* Randomization
+* Randomization or chronological order
 * Custom formatting of question and answer
 * Selecting specific headings to study from
 * Tracking of correct and incorrect answers
