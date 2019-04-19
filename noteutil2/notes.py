@@ -72,8 +72,21 @@ class Note:
         return self.nindex > other.nindex
 
     def __repr__(self):
-        """What a `Note` looked like before parsing it."""
+        rstring = "Note("
+        rstring += "content='{0}', nindex={1}".format(self.content, self.nindex)
+        if self.is_heading():
+            rstring += (", heading_char='{0}', level={1}, heading='{2}', heading_name='{3}', begin_nindex={4}, "
+                        "end_nindex={5}, nindexes={6}".format(self.heading_char, self.level, self.heading,
+                                                              self.heading_name, self.begin_nindex, self.end_nindex,
+                                                              self.nindexes))
+        if self.is_pair():
+            rstring += (", term='{0}', definition='{1}', separator='{2}'".format(self.term, self.definition,
+                                                                                 self.separator))
+        rstring += ")"
+        return rstring
 
+    def raw(self):
+        """What a `Note` looked like before parsing it."""
         rcontent = ""
         if self.is_heading():
             rcontent += self.heading
