@@ -2,7 +2,7 @@
 import enum
 
 
-def is_equal(note, **kwargs):
+def is_equal(note, **kwargs) -> bool:
     """Is True when all of the `kwargs` values are exactly equal to the `Note`'s attributes.
 
     Returns
@@ -13,7 +13,7 @@ def is_equal(note, **kwargs):
     return all(val == getattr(note, attr) for attr, val in kwargs.items())
 
 
-def is_similar(note, **kwargs):
+def is_similar(note, **kwargs) -> bool:
     """Is True when all of the `kwargs` values are equal ignoring case to the `Note`'s attributes.
 
     Returns
@@ -24,7 +24,7 @@ def is_similar(note, **kwargs):
     return all(getattr(note, attr) is not None and val.lower() == getattr(note, attr).lower() for attr, val in kwargs.items())
 
 
-def is_in(note, **kwargs):
+def is_in(note, **kwargs) -> bool:
     """Is True when all of the `kwargs` values are "in" the `Note`'s attributes.
 
     Returns
@@ -35,7 +35,7 @@ def is_in(note, **kwargs):
     return all(getattr(note, attr) is not None and val in getattr(note, attr) for attr, val in kwargs.items())
 
 
-def is_similar_in(note, **kwargs):
+def is_similar_in(note, **kwargs) -> bool:
     """Is True when all of the `kwargs` values are "in" ignoring case to the `Note`'s attributes.
 
     Returns
