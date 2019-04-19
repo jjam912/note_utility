@@ -53,7 +53,7 @@ class NoteUtil:
         The general name of each group of headings.
     heading_names : List[str]
         The list of all heading names in chronological order.
-    heading_level : dict {str: List[`Note`]}
+    heading_level : Dict[str, List[`Note`]]
         Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[`Note`]
         Chronological list of notes that are headings.
