@@ -50,6 +50,8 @@ class NoteUtil:
         The number of headings.
     level_names : List[str]
         The general name of each group of headings.
+    heading_names : List[str]
+        The list of all heading names in chronological order.
     heading_level : dict {str: List[`Note`]}
         Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[`Note`]
@@ -67,14 +69,18 @@ class NoteUtil:
         if not os.path.exists(self.nu_file):
             self._parse_notes()
         self._read_notes()
-        print("Warnings\n"
-              "--------\n"
-              "\t{0}\n"
-              "--------".format("\n\t".join(self.warnings)))
+        assert self.warnings == [], ("Warnings\n"
+                                     "--------\n"
+                                     "\t{0}\n"
+                                     "--------".format("\n\t".join(self.warnings)))
 
     @property
     def pairs(self):
         return list(filter(lambda n: n.is_pair(), self.notes))
+
+    @property
+    def heading_names(self):
+        return list(map(lambda n: n.heading_name, self.heading_order))
 
     @property
     def heading_level(self):
