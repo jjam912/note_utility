@@ -57,13 +57,13 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
     def __eq__(self, other):
-        return self.raw() == other.raw()
+        return self.rcontent == other.rcontent
 
     def __hash__(self):
-        return hash(self.raw())
+        return hash(self.rcontent)
 
     def __ne__(self, other):
-        return self.raw() != other.raw()
+        return self.rcontent != other.rcontent
 
     def __lt__(self, other):
         return self.nindex < other.nindex
@@ -85,7 +85,8 @@ class Note:
         rstring += ")"
         return rstring
 
-    def raw(self):
+    @property
+    def rcontent(self):
         """What a `Note` looked like before parsing it."""
         rcontent = ""
         if self.is_heading():
