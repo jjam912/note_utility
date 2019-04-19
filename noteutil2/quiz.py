@@ -1,8 +1,10 @@
 from .comparisons import CompareOptions
 from .errors import *
+from .notes import Note
 import random
 import os.path
 import copy
+from typing import Union, Generator
 
 
 class Quiz:
@@ -16,7 +18,7 @@ class Quiz:
 
     Attributes
     ----------
-    noteutil
+    noteutil : `NoteUtil`
     last_nindex : int
         The `nindex` of the last `Note` generated.
     correct : Set[`Note`]
@@ -42,12 +44,12 @@ class Quiz:
         # Options
         self.randomize = True
         self.pairs = self.noteutil.pairs
-        # self.heading = None
+        self.heading = None
 
         # Saving
         # self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
-    def generate(self):
+    def generate(self) -> Generator[str, None, None]:
         """A generator that yields `Note`s, either chronologically or randomly.
         Once a generator is created, it is "frozen in time," and isn't affected by any changes to `Quiz`.
         However, `Quiz` keeps track of the last index used, which changes every time this generator is activated.
@@ -58,7 +60,7 @@ class Quiz:
             A pair that is either random or in chronological order.
         """
 
-        pairs = copy.deepcopy(self.pairs)
+        pairs = copy.deepcopy(self.pairs)       # This could be changed to use indices
         if self.randomize:
             random.shuffle(pairs)
             while pairs:
@@ -73,7 +75,7 @@ class Quiz:
                 yield note
                 index += 1
 
-    def append(self, pair, correct: bool):
+    def append(self, pair, correct: bool) -> None:
         """Adds a pair to one of the correct or incorrect sets.
         It will also remove it from the other set if it's in that one.
 
@@ -96,7 +98,7 @@ class Quiz:
             self.incorrect.add(pair)
             self.correct.discard(pair)
 
-    def remove(self, pair, correct: bool):
+    def remove(self, pair, correct: bool) -> None:
         """Removes a pair from one of the correct or incorrect sets.
 
         Parameters
@@ -108,50 +110,62 @@ class Quiz:
 
         Returns
         -------
-
+        None
         """
+
         if correct:
             self.correct.discard(pair)
         else:
             self.incorrect.discard(pair)
 
-    def clear(self):
+    def clear(self) -> None:
         """Empties the correct and incorrect sets.
 
         Returns
         -------
         None
         """
+
         self.correct.clear()
         self.incorrect.clear()
 
-    # def select_heading(self, heading_name: str):
-    #     """Changes the current heading and pairs to match the pairs in the given heading.
-    #
-    #     Parameters
-    #     ----------
-    #     heading_name : str
-    #         The heading whose pairs should be used.
-    #         If left as None, all pairs in `NoteUtil` will be used.
-    #
-    #     Returns
-    #     -------
-    #     None
-    #
-    #     Raises
-    #     ------
-    #     HeadingExpected
-    #         If the `Note` provided is not None and isn't a heading.
-    #     """
-    #
-    #     if note is None:
-    #         self.current_heading = None
-    #         self.current_pairs = self.noteutil.pairs
-    #     elif note.is_heading():
-    #         self.current_heading = note.heading_name
-    #         self.current_pairs = list(filter(lambda n: n.is_pair(), self.noteutil.notes[note.nindexes]))
-    #     else:
-    #         raise HeadingExpected(note)
+    def select_heading(self, heading: Union[None, str, Note]) -> None:
+        """Changes the current heading and pairs to match the pairs in the given heading.
+
+        Parameters
+        ----------
+        heading : None or `Note` or str
+            The `Note` or heading name whose pairs should be used.
+            If left as None, all pairs in `NoteUtil` will be used.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        HeadingExpected
+            If the `Note` provided is not None and isn't a heading.
+        HeadingNotFound
+            If the str provided is not None and it isn't a recognized heading name.
+        """
+
+        if heading is None:
+            self.heading = None
+            self.pairs = self.noteutil.pairs
+            return
+
+        if isinstance(heading, Note):
+            if not heading.is_heading():
+                raise HeadingExpected(heading)
+            self.heading = heading
+        elif heading in self.noteutil.heading_names:
+            self.heading = self.noteutil.get(heading_name=heading)
+        else:
+            raise HeadingNotFound(heading)
+
+        self.pairs = list(filter(lambda n: n.is_pair(),
+                                 self.noteutil.notes[self.heading.begin_nindex: self.heading.end_nindex]))
 
     # def save(self):
     #     pass
