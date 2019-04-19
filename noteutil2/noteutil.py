@@ -2,9 +2,10 @@ from .notes import Note
 from .comparisons import CompareOptions
 from .errors import *
 import os.path
+from typing import Any, List, Dict, Generator, Union
 
 
-def readlines(f):
+def readlines(f) -> Generator[str, None, None]:
     """Splits a file into lines without the "\n" suffixes.
 
     Parameters
@@ -75,15 +76,15 @@ class NoteUtil:
                                      "--------".format("\n\t".join(self.warnings)))
 
     @property
-    def pairs(self):
+    def pairs(self) -> List[Note]:
         return list(filter(lambda n: n.is_pair(), self.notes))
 
     @property
-    def heading_names(self):
+    def heading_names(self) -> List[str]:
         return list(map(lambda n: n.heading_name, self.heading_order))
 
     @property
-    def heading_level(self):
+    def heading_level(self) -> Dict[str, List[Note]]:
         heading_level = {}
         for level_name in self.level_names:
             heading_level[level_name] = []
@@ -94,10 +95,10 @@ class NoteUtil:
         return heading_level
 
     @property
-    def heading_order(self):
+    def heading_order(self) -> List[Note]:
         return list(filter(lambda n: n.is_heading(), self.notes))
 
-    def _parse_config(self):
+    def _parse_config(self) -> None:
         with open(self.config_file, mode="r") as f:
             raw_config = ""
             lines = f.readlines()
@@ -121,7 +122,7 @@ class NoteUtil:
         with open("temp.cfg", mode="w") as f:
             f.write(raw_config)
 
-    def _read_config(self):
+    def _read_config(self) -> None:
         with open("temp.cfg", mode="r") as f:
             lines = readlines(f)
 
@@ -137,7 +138,7 @@ class NoteUtil:
                 for _ in range(self.levels):
                     self.level_names.append(next(lines))
 
-    def _parse_notes(self):
+    def _parse_notes(self) -> None:
         with open(self.note_file, mode="r") as f:
             raw_notes = ""
             for line in f.readlines():
@@ -159,7 +160,7 @@ class NoteUtil:
         with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
 
-    def _read_notes(self):
+    def _read_notes(self) -> None:
         with open(self.nu_file, mode="r") as f:
 
             if self.heading_char is not None:
@@ -245,7 +246,7 @@ class NoteUtil:
                         heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
             # End Complete Headings
 
-    def get(self, **kwargs):
+    def get(self, **kwargs: Dict[str, Any]) -> Union[None, Note]:
         """Retrieves a `Note` with attributes equal to passed keyword args.
 
         Parameters
@@ -276,7 +277,7 @@ class NoteUtil:
                 return note
         return None
 
-    def get_list(self, **kwargs):
+    def get_list(self, **kwargs: Dict[str, Any]) -> Union[None, List[Note]]:
         """Retrieves all `Note`s with attributes equal to passed keyword args and stores them in a List.
 
         Parameters
@@ -308,7 +309,7 @@ class NoteUtil:
                 notes.append(note)
         return notes if notes else None
 
-    def edit(self, note, content: str):
+    def edit(self, note: Note, content: str) -> None:
         """Given a `Note`, edit its content.
         This can have many side effects:
             1. Changes to heading_name.
@@ -349,7 +350,7 @@ class NoteUtil:
 
         self.notes[note.nindex] = note
 
-    def reformat(self):
+    def reformat(self) -> None:
         """Writes all of the `Note`s back into what they were when they were being parsed into a .nu file.
 
         If any changes to the `Note`s were made, they will be written here as well.
