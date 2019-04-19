@@ -5,6 +5,7 @@ import random
 import os.path
 import copy
 from typing import Union, Generator
+import json
 
 
 class Quiz:
@@ -47,7 +48,7 @@ class Quiz:
         self.heading = None
 
         # Saving
-        # self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
+        self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
     def generate(self) -> Generator[str, None, None]:
         """A generator that yields `Note`s, either chronologically or randomly.
@@ -167,13 +168,87 @@ class Quiz:
         self.pairs = list(filter(lambda n: n.is_pair(),
                                  self.noteutil.notes[self.heading.begin_nindex: self.heading.end_nindex]))
 
-    # def save(self):
-    #     pass
-    #
-    # def load(self):
-    #     pass
-    #
-    # def refresh(self, noteutil):
-    #     pass
+    def save(self) -> None:
+        """Writes correct and incorrect terms to a .qz file.
+
+        Returns
+        -------
+        None
+        """
+
+        kwargs = dict()
+        kwargs["correct"] = list(map(lambda p: p.rcontent, self.correct))
+        kwargs["incorrect"] = list(map(lambda p: p.rcontent, self.incorrect))
+        with open(self.qz_file, mode="w") as f:
+            f.write(json.dumps(kwargs))
+
+    def load(self) -> None:
+        """Loads correct and incorrect terms to a .qz file.
+
+        Returns
+        -------
+        None
+        """
+
+        kwargs = dict()
+        with open(self.qz_file, mode="r") as f:
+            try:
+                kwargs = json.loads(f.read())
+            except json.decoder.JSONDecodeError:
+                pass
+
+        for rcontent in kwargs.get("correct", []):
+            for note in self.noteutil.notes:
+                if rcontent == note.rcontent:
+                    self.append(note, True)
+
+        for rcontent in kwargs.get("incorrect", []):
+            for note in self.noteutil.notes:
+                if rcontent == note.rcontent:
+                    self.append(note, False)
+                    
+    def reset(self) -> None:
+        """Resets the state of the `Quiz` to as if it had just been initialized except for `randomize`.
+        
+        Returns
+        -------
+        None
+        """
+        
+        self.last_nindex = 0
+        self.clear()
+        self.pairs = self.noteutil.pairs
+        self.heading = None
+
+    # This function seemingly has no purpose because when I edit notes with `NoteUtil`, they get edited in `Quiz` too.
+    def refresh(self, noteutil) -> None:
+        """Resets the state of the `Quiz` to match a new `NoteUtil`.
+        This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.
+        As such, only identical `Note`s from both `NoteUtil`s are kept.
+
+        Returns
+        -------
+        None
+        """
+
+        self.noteutil = noteutil
+
+        for old_note in self.correct.copy():
+            self.remove(old_note, True)
+            for new_note in self.noteutil.notes:
+                if old_note.rcontent == new_note.rcontent:
+                    self.append(new_note, True)
+
+        for old_note in self.incorrect.copy():
+            self.remove(old_note, False)
+            for new_note in self.noteutil.notes:
+                if old_note.rcontent == new_note.rcontent:
+                    self.append(new_note, False)
+
+        self.last_nindex = 0
+        self.pairs = self.noteutil.pairs
+        self.heading = None
+        self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
+
 
 
