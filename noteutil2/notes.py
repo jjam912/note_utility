@@ -57,13 +57,13 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
     def __eq__(self, other):
-        return repr(self) == repr(other)
+        return self.raw() == other.raw()
 
     def __hash__(self):
-        return hash(repr(self))
+        return hash(self.raw())
 
     def __ne__(self, other):
-        return repr(self) != repr(other)
+        return self.raw() != other.raw()
 
     def __lt__(self, other):
         return self.nindex < other.nindex
