@@ -55,7 +55,12 @@ class QuizError(Exception):
 
 class HeadingExpected(QuizError):
     def __init__(self, note):
-        super().__init__("The note was expected to be a heading, but wasn't: {0}".format(repr(note)))
+        super().__init__("The note was expected to be a heading, but wasn't: {0}".format(note.raw()))
+
+
+class HeadingNotFound(QuizError):
+    def __init__(self, heading_name):
+        super().__init__("The heading name wasn't found: {0}".format(heading_name))
 
 
 
