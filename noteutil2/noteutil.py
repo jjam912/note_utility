@@ -2,7 +2,7 @@ from .notes import Note
 from .comparisons import CompareOptions
 from .errors import *
 import os.path
-from typing import Any, List, Dict, Generator, Union
+from typing import List, Dict, Generator, Union
 
 
 def readlines(f) -> Generator[str, None, None]:
@@ -328,25 +328,29 @@ class NoteUtil:
         None
         """
 
-        note.content = content
-        note.heading_name = content
-
         if self.separator is not None:
             if self.separator in content:
                 if len(content.split(self.separator)) > 2:
                     raise ExtraSeparator(content)
 
                 term = content.split(self.separator)[0].strip()
-                if term in map(lambda n: n.term, self.pairs):
+                if note.term != term and term in map(lambda n: n.term, self.pairs):
                     raise DuplicateTerm(term)
 
                 definition = content.split(self.separator)[1].strip()
                 if definition == "":
                     raise NoDefinition(content)
+                note.term = term
+                note.definition = definition
+                note.separator = self.separator
             else:
                 note.term = None
                 note.definition = None
                 note.separator = None
+
+        note.content = content
+        if note.is_heading():
+            note.heading_name = content
 
         self.notes[note.nindex] = note
 
