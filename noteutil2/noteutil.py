@@ -246,7 +246,7 @@ class NoteUtil:
                         heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
             # End Complete Headings
 
-    def get(self, **kwargs: Dict[str, Any]) -> Union[None, Note]:
+    def get(self, **kwargs) -> Union[None, Note]:
         """Retrieves a `Note` with attributes equal to passed keyword args.
 
         Parameters
@@ -277,7 +277,7 @@ class NoteUtil:
                 return note
         return None
 
-    def get_list(self, **kwargs: Dict[str, Any]) -> Union[None, List[Note]]:
+    def get_list(self, **kwargs) -> Union[None, List[Note]]:
         """Retrieves all `Note`s with attributes equal to passed keyword args and stores them in a List.
 
         Parameters
