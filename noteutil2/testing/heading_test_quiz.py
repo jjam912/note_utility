@@ -78,6 +78,84 @@ def test_quiz(quiz):
     return string
 
 
+def test_quiz_save(noteutil, quiz):
+    string = ""
+    string += "=====================" + "\n"
+    string += "Testing Save and Load" + "\n"
+    string += "=====================" + "\n"
+
+    string += "Add 5 random pairs to correct and incorrect" + "\n"
+    quiz.randomize = True
+    for note in list(quiz.generate())[:5]:
+        quiz.append(note, True)
+    # Some Notes might be taken away from the correct set when other Notes are added to the incorrect set
+
+    for note in list(quiz.generate())[:5]:
+        quiz.append(note, False)
+
+    string += "Correct Set:" + "\n"
+    string += "------------" + "\n"
+    string += "\t" + "\n\t".join(map(lambda p: p.content, quiz.correct)) + "\n"
+    string += "------------" + "\n"
+
+    string += "Incorrect Set:" + "\n"
+    string += "--------------" + "\n"
+    string += "\t" + "\n\t".join(map(lambda p: p.content, quiz.incorrect)) + "\n"
+    string += "--------------" + "\n"
+
+    quiz.save()
+    with open(quiz.qz_file, mode="r") as f:
+        string += f.read() + "\n"
+
+    # Edit all incorrect terms, therefore no incorrect terms should load.
+    for note in quiz.incorrect:
+        noteutil.edit(note, content=note.content + " Yee")
+    quiz.clear()
+
+    quiz.load()
+
+    string += test_quiz(quiz) + "\n"
+    return string
+
+
+def test_quiz_refresh(noteutil, quiz):
+    string = ""
+    string += "===============" + "\n"
+    string += "Testing Refresh" + "\n"
+    string += "===============" + "\n"
+
+    string += "Add 5 random pairs to correct and incorrect" + "\n"
+    quiz.randomize = True
+    for note in list(quiz.generate())[:5]:
+        quiz.append(note, True)
+    # Some Notes might be taken away from the correct set when other Notes are added to the incorrect set
+
+    for note in list(quiz.generate())[:5]:
+        quiz.append(note, False)
+
+    string += "Correct Set:" + "\n"
+    string += "------------" + "\n"
+    string += "\t" + "\n\t".join(map(lambda p: p.content, quiz.correct)) + "\n"
+    string += "------------" + "\n"
+
+    string += "Incorrect Set:" + "\n"
+    string += "--------------" + "\n"
+    string += "\t" + "\n\t".join(map(lambda p: p.content, quiz.incorrect)) + "\n"
+    string += "--------------" + "\n"
+
+    # Edit all incorrect terms, therefore no incorrect terms should remain after refreshing.
+    for note in quiz.incorrect:
+        noteutil.edit(note, content=note.content + " Yeet")
+
+    string += "=======" + "\n"
+    string += "Refresh" + "\n"
+    string += "=======" + "\n"
+    quiz.refresh(noteutil)
+
+    string += test_quiz(quiz) + "\n"
+    return string
+
+
 def test_note(note):
     string = "Note: \t"
     string += "Content: {!s:<20}\t\t".format(note.content[:20])
@@ -105,6 +183,9 @@ def test_note_list(note_list) -> str:
 
 if os.path.exists("heading_notes.nu"):
     os.remove("heading_notes.nu")
+if os.path.exists("heading_notes.qz"):
+    os.remove("heading_notes.qz")
+
 noteutil = NoteUtil("heading_config.txt")
 quiz = Quiz(noteutil)
 print(test_noteutil(noteutil))
@@ -117,6 +198,14 @@ print(test_quiz(quiz))
 print("Change back to all pairs")
 quiz.select_heading(None)
 print(test_quiz(quiz))
+
+print(test_quiz_save(noteutil, quiz))
+print(test_noteutil(noteutil))
+quiz.reset()
+print(test_quiz_refresh(noteutil, quiz))
+print(test_noteutil(noteutil))
+
+
 
 
 
