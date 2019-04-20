@@ -89,6 +89,17 @@ only on the terms that you marked as incorrect, you can select that "heading."
 Several options are available to help you customize your quizzing session. Among them include:
 
 * Randomization or chronological order
-* Custom formatting of question and answer
 * Selecting specific headings to study from
 * Tracking of correct and incorrect answers
+* Selecting terms that you haven't marked as correct or incorrect
+
+## Saving, Loading, and Refreshing:
+
+Once you are done quizzing, you can save the terms that you marked as correct and incorrect in a .qz file. 
+However, be aware that if you decide to change your notes and then try to load your save progress, the quiz will only
+keep the terms that have not changed at all. If there is any difference, it will not be loaded. This was done to avoid
+any problems between old and new notes. 
+
+An alternative to saving and loading while using the program is to refresh the quiz. If you have updated your notes
+and have another NoteUtil, you can update the quiz with your new notes. Again, the quiz will discard any old notes that
+do not match exactly with any of the new notes.
