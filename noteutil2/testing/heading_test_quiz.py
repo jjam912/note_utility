@@ -83,11 +83,11 @@ def test_quiz_save(noteutil, quiz):
 
     string += "Add 5 random pairs to correct and incorrect" + "\n"
     for note in list(quiz.generate(randomize=True))[:5]:
-        quiz.append(note, True)
+        quiz.append(note, correct=True)
     # Some Notes might be taken away from the correct set when other Notes are added to the incorrect set
 
     for note in list(quiz.generate(randomize=True))[:5]:
-        quiz.append(note, False)
+        quiz.append(note, correct=False)
 
     string += "Correct Set:" + "\n"
     string += "------------" + "\n"
@@ -122,11 +122,11 @@ def test_quiz_refresh(noteutil, quiz):
 
     string += "Add 5 random pairs to correct and incorrect" + "\n"
     for note in list(quiz.generate(randomize=True))[:5]:
-        quiz.append(note, True)
+        quiz.append(note, correct=True)
     # Some Notes might be taken away from the correct set when other Notes are added to the incorrect set
 
     for note in list(quiz.generate(randomize=True))[:5]:
-        quiz.append(note, False)
+        quiz.append(note, correct=False)
 
     string += "Correct Set:" + "\n"
     string += "------------" + "\n"
@@ -207,7 +207,7 @@ print()
 pairs = quiz.generate(randomize=True)
 print("Add random five to correct")
 for _ in range(5):
-    quiz.append(next(pairs), True)
+    quiz.append(next(pairs), correct=True)
 print("Generate unmarked terms and print them out in chronological order:")
 pairs = quiz.generate(randomize=False, unmarked=True)
 print(test_note_list(list(pairs)))
