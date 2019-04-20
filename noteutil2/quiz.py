@@ -1,12 +1,11 @@
-from .comparisons import CompareOptions
 from .errors import *
 from .notes import Note
+from .noteutil import NoteUtil
 import random
-import os.path
+from itertools import filterfalse
 import copy
 from typing import Union, Generator
 import json
-from itertools import filterfalse
 
 
 class Quiz:
@@ -32,10 +31,7 @@ class Quiz:
         This can either be all pairs in `NoteUtil`, or only pairs inside a specific heading.
     """
 
-    QUESTION_FORMAT = ""
-    ANSWER_FORMAT = ""
-
-    def __init__(self, noteutil):
+    def __init__(self, noteutil: NoteUtil):
         self.noteutil = noteutil
         self.last_nindex = 0
         self.correct = list()
@@ -85,7 +81,7 @@ class Quiz:
                 yield note
                 index += 1
 
-    def append(self, pair, correct: bool) -> None:
+    def append(self, pair: Note, correct: bool) -> None:
         """Adds a pair to one of the correct or incorrect lists.
         It will also remove it from the other list if it's in that one.
 
@@ -114,7 +110,7 @@ class Quiz:
             except ValueError:
                 pass
 
-    def remove(self, pair, correct: bool) -> None:
+    def remove(self, pair: Note, correct: bool) -> None:
         """Removes a pair from one of the correct or incorrect lists.
 
         Parameters
@@ -241,7 +237,7 @@ class Quiz:
         self.pairs = self.noteutil.pairs
         self.heading = None
 
-    def refresh(self, noteutil) -> None:
+    def refresh(self, noteutil: NoteUtil) -> None:
         """Resets the state of the `Quiz` to match a new `NoteUtil`.
         This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.
         As such, only identical `Note`s from both `NoteUtil`s are kept.
