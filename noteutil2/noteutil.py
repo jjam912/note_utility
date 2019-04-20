@@ -70,10 +70,11 @@ class NoteUtil:
         if not os.path.exists(self.nu_file):
             self._parse_notes()
         self._read_notes()
-        assert self.warnings == [], ("Warnings\n"
-                                     "--------\n"
-                                     "\t{0}\n"
-                                     "--------".format("\n\t".join(self.warnings)))
+        if self.warnings:
+            raise NoteError("Warnings\n"
+                            "--------\n"
+                            "\t{0}\n"
+                            "--------".format("\n\t".join(self.warnings)))
 
     @property
     def pairs(self) -> List[Note]:
