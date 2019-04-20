@@ -81,7 +81,7 @@ class Quiz:
                 yield note
                 index += 1
 
-    def append(self, pair: Note, correct: bool) -> None:
+    def append(self, pair: Note, *, correct: bool) -> None:
         """Adds a pair to one of the correct or incorrect lists.
         It will also remove it from the other list if it's in that one.
 
@@ -110,7 +110,7 @@ class Quiz:
             except ValueError:
                 pass
 
-    def remove(self, pair: Note, correct: bool) -> None:
+    def remove(self, pair: Note, *, correct: bool) -> None:
         """Removes a pair from one of the correct or incorrect lists.
 
         Parameters
@@ -217,12 +217,12 @@ class Quiz:
         for rcontent in kwargs.get("correct", []):
             for note in self.noteutil.notes:
                 if rcontent == note.rcontent:
-                    self.append(note, True)
+                    self.append(note, correct=True)
 
         for rcontent in kwargs.get("incorrect", []):
             for note in self.noteutil.notes:
                 if rcontent == note.rcontent:
-                    self.append(note, False)
+                    self.append(note, correct=False)
                     
     def reset(self) -> None:
         """Resets the state of the `Quiz` to as if it had just been initialized except for `randomize`.
@@ -250,16 +250,16 @@ class Quiz:
         self.noteutil = noteutil
 
         for old_note in self.correct.copy():
-            self.remove(old_note, True)
+            self.remove(old_note, correct=True)
             for new_note in self.noteutil.notes:
                 if old_note.rcontent == new_note.rcontent:
-                    self.append(new_note, True)
+                    self.append(new_note, correct=True)
 
         for old_note in self.incorrect.copy():
-            self.remove(old_note, False)
+            self.remove(old_note, correct=False)
             for new_note in self.noteutil.notes:
                 if old_note.rcontent == new_note.rcontent:
-                    self.append(new_note, False)
+                    self.append(new_note, correct=False)
 
         self.last_nindex = 0
         self.pairs = self.noteutil.pairs
