@@ -31,7 +31,6 @@ def test_quiz(quiz):
     string += "----" + "\n"
 
     string += "Last Note Index: " + str(quiz.last_nindex) + "\n"
-    string += "Randomize: " + str(quiz.randomize) + "\n"
 
     string += "Correct Set:\n"
     string += "----------\n"
@@ -71,20 +70,17 @@ print(test_quiz(quiz))
 
 print("Generate all in order:")
 print("----------------------")
-quiz.randomize = False
-for note in quiz.generate():
+for note in quiz.generate(randomize=False):
     print("\t" + test_note(note) + "")
 print("----------------------")
 
 print("Generate all randomly:")
 print("----------------------")
-quiz.randomize = True
-for note in quiz.generate():
+for note in quiz.generate(randomize=True):
     print("\t" + test_note(note) + "")
 print("----------------------")
 
-quiz.randomize = False
-pairs = quiz.generate()
+pairs = quiz.generate(randomize=False)
 print("Add first two to correct:")
 quiz.append(next(pairs), correct=True)
 quiz.append(next(pairs), correct=True)
@@ -102,8 +98,7 @@ quiz.clear()
 print(test_quiz(quiz))
 print("-----------")
 
-quiz.randomize = True
-pairs = quiz.generate()
+pairs = quiz.generate(randomize=True)
 print("Add random two to correct:")
 quiz.append(next(pairs), correct=True)
 quiz.append(next(pairs), correct=True)
@@ -120,9 +115,21 @@ print(test_quiz(quiz))
 
 print("Generate notes into list:")
 print("Random: False")
-quiz.randomize = False
-print(test_note_list(list(quiz.generate())))
+print(test_note_list(list(quiz.generate(randomize=False))))
 print("Random: True")
-quiz.randomize = True
-print(test_note_list(list(quiz.generate())))
+print(test_note_list(list(quiz.generate(randomize=True))))
+
+print()
+
+pairs = quiz.generate(randomize=True)
+print("Add random two to correct")
+quiz.append(next(pairs), True)
+quiz.append(next(pairs), True)
+print("Generate unmarked terms and print them out in chronological order:")
+pairs = quiz.generate(randomize=False, unmarked=True)
+print(test_note_list(list(pairs)))
+print("Generate unmarked terms and print them out in random order:")
+pairs = quiz.generate(randomize=True, unmarked=True)
+print(test_note_list(list(pairs)))
+
 

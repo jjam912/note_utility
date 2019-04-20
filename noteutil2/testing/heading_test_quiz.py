@@ -47,7 +47,6 @@ def test_quiz(quiz):
     string += "----" + "\n"
 
     string += "Last Note Index: " + str(quiz.last_nindex) + "\n"
-    string += "Randomize: " + str(quiz.randomize) + "\n"
 
     string += "Correct Set:\n"
     string += "----------\n"
@@ -63,15 +62,13 @@ def test_quiz(quiz):
 
     string += "Generate all in order:" + "\n"
     string += "----------------------" + "\n"
-    quiz.randomize = False
-    for note in quiz.generate():
+    for note in quiz.generate(randomize=False):
         string += "\t" + test_note(note) + "\n"
     string += "----------------------" + "\n"
 
     string += "Generate all randomly:" + "\n"
     string += "----------------------" + "\n"
-    quiz.randomize = True
-    for note in quiz.generate():
+    for note in quiz.generate(randomize=True):
         string += "\t" + test_note(note) + "" + "\n"
     string += "----------------------" + "\n"
 
@@ -85,12 +82,11 @@ def test_quiz_save(noteutil, quiz):
     string += "=====================" + "\n"
 
     string += "Add 5 random pairs to correct and incorrect" + "\n"
-    quiz.randomize = True
-    for note in list(quiz.generate())[:5]:
+    for note in list(quiz.generate(randomize=True))[:5]:
         quiz.append(note, True)
     # Some Notes might be taken away from the correct set when other Notes are added to the incorrect set
 
-    for note in list(quiz.generate())[:5]:
+    for note in list(quiz.generate(randomize=True))[:5]:
         quiz.append(note, False)
 
     string += "Correct Set:" + "\n"
@@ -125,12 +121,11 @@ def test_quiz_refresh(noteutil, quiz):
     string += "===============" + "\n"
 
     string += "Add 5 random pairs to correct and incorrect" + "\n"
-    quiz.randomize = True
-    for note in list(quiz.generate())[:5]:
+    for note in list(quiz.generate(randomize=True))[:5]:
         quiz.append(note, True)
     # Some Notes might be taken away from the correct set when other Notes are added to the incorrect set
 
-    for note in list(quiz.generate())[:5]:
+    for note in list(quiz.generate(randomize=True))[:5]:
         quiz.append(note, False)
 
     string += "Correct Set:" + "\n"
@@ -146,11 +141,13 @@ def test_quiz_refresh(noteutil, quiz):
     # Edit all incorrect terms, therefore no incorrect terms should remain after refreshing.
     for note in quiz.incorrect:
         noteutil.edit(note, content=note.content + " Yeet")
+    # Create a fresh new NoteUtil so that the new incorrect terms aren't found in the original
+    noteutil2 = NoteUtil("heading_config.txt")
 
     string += "=======" + "\n"
     string += "Refresh" + "\n"
     string += "=======" + "\n"
-    quiz.refresh(noteutil)
+    quiz.refresh(noteutil2)
 
     string += test_quiz(quiz) + "\n"
     return string
@@ -204,6 +201,20 @@ print(test_noteutil(noteutil))
 quiz.reset()
 print(test_quiz_refresh(noteutil, quiz))
 print(test_noteutil(noteutil))
+
+print()
+
+pairs = quiz.generate(randomize=True)
+print("Add random five to correct")
+for _ in range(5):
+    quiz.append(next(pairs), True)
+print("Generate unmarked terms and print them out in chronological order:")
+pairs = quiz.generate(randomize=False, unmarked=True)
+print(test_note_list(list(pairs)))
+print("Generate unmarked terms and print them out in random order:")
+pairs = quiz.generate(randomize=True, unmarked=True)
+print(test_note_list(list(pairs)))
+
 
 
 
