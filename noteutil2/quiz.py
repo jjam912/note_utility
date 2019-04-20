@@ -6,6 +6,7 @@ import os.path
 import copy
 from typing import Union, Generator
 import json
+from itertools import filterfalse
 
 
 class Quiz:
@@ -26,8 +27,6 @@ class Quiz:
         All `Note`s marked as correct.
     incorrect : List[`Note`]
         All `Note`s marked as incorrect.
-    randomize : bool
-        Whether to generate `Note`s randomly (T) or chronologically (F).
     pairs : List[`Note`]
         List of all `Note`s that are pairs that the `Quiz` is generating from.
         This can either be all pairs in `NoteUtil`, or only pairs inside a specific heading.
@@ -43,26 +42,36 @@ class Quiz:
         self.incorrect = list()
 
         # Options
-        self.randomize = True
         self.pairs = self.noteutil.pairs
         self.heading = None
 
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
-    def generate(self) -> Generator[Note, None, None]:
+    def generate(self, *, randomize: bool, unmarked: bool = False) -> Generator[Note, None, None]:
         """A generator that yields `Note`s, either chronologically or randomly.
         Once a generator is created, it is "frozen in time," and isn't affected by any changes to `Quiz`.
         However, `Quiz` keeps track of the last index used, which changes every time this generator is activated.
 
+        Parameters
+        ----------
+        randomize : bool
+            Whether to generate a random term from the list of pairs.
+        unmarked : bool
+            Whether to only generate terms that have not been marked as correct/incorrect.
+
         Yields
         ------
         `Note`
-            A pair that is either random or in chronological order.
+            A pair that is either in random or chronological order.
         """
 
-        pairs = copy.deepcopy(self.pairs)       # This could be changed to use indices
-        if self.randomize:
+        if unmarked:
+            pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, copy.deepcopy(self.pairs)))
+        else:
+            pairs = copy.deepcopy(self.pairs)       # This could be changed to use indices
+
+        if randomize:
             random.shuffle(pairs)
             while pairs:
                 note = pairs.pop()
@@ -232,7 +241,6 @@ class Quiz:
         self.pairs = self.noteutil.pairs
         self.heading = None
 
-    # This function seemingly has no purpose because when I edit notes with `NoteUtil`, they get edited in `Quiz` too.
     def refresh(self, noteutil) -> None:
         """Resets the state of the `Quiz` to match a new `NoteUtil`.
         This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.
