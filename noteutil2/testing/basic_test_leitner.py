@@ -103,3 +103,36 @@ leitner.refresh(noteutil)
 leitner.load()
 print(test_leitner(leitner))
 
+leitner.reset()
+print("==============")
+print("Remove 3 boxes")
+print("==============")
+for _ in range(3):
+    leitner.pop_box()
+print(test_leitner(leitner))
+
+for _ in range(10):
+    for pair in leitner.generate():
+        if random.choice([0, 1]):
+            leitner.correct(pair)
+        else:
+            leitner.incorrect(pair)
+print(test_leitner(leitner))
+
+print("===========")
+print("Add 3 boxes")
+print("===========")
+leitner.add_box(6)
+leitner.add_box(7)
+leitner.add_box(8)
+
+for _ in range(25):
+    for pair in leitner.generate():
+        if random.choice([0, 1]):
+            leitner.correct(pair)
+        else:
+            leitner.incorrect(pair)
+print(test_leitner(leitner))
+for _ in range(10):
+    leitner.pop_box()
+
