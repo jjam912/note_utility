@@ -383,6 +383,41 @@ class Leitner:
             self.boxes[1].append(pair)
             pair.box = 1
 
+    def add_box(self, time: int) -> None:
+        """Adds an additional box to store pairs in.
+
+        Parameters
+        ----------
+        time : int
+            The time period for the box to be added.
+            Must be greater than the time period of the last box before this one.
+
+        Returns
+        -------
+        None
+        """
+
+        if time <= self.times[len(self.times)]:
+            raise TimeTooShort(self.times[len(self.boxes)])
+
+        self.boxes[len(self.boxes) + 1] = []
+        self.times[len(self.times) + 1] = time
+
+    def pop_box(self):
+        """Pops the last box and moves the lost pairs to the box before the one just popped.
+
+        Returns
+        -------
+        None
+        """
+
+        if len(self.boxes) == 1:
+            raise LastBox
+
+        pairs = self.boxes.pop(len(self.boxes))
+        self.times.pop(len(self.times))
+        self.boxes[len(self.boxes)].extend(pairs)
+
     def save(self) -> None:
         """Writes Leitner state to a .lt file.
 
