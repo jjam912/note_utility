@@ -289,6 +289,25 @@ class Leitner:
     If we model a pair as a flashcard (term and definition), then we can also use the Leitner system.
     We use seven "boxes" numbered 1-7, and every time our session is divisible by the box number, we review that box.
     Any terms that we mark as correct will advance to the next box number (+1), and incorrect ones will reset to box 1.
+
+    Parameters
+    ----------
+    noteutil : NoteUtil
+        The `NoteUtil` that has terms an definitions to be used in this `Leitner`.
+
+    Attributes
+    ----------
+    noteutil : NoteUtil
+    last_nindex : int
+        The note index of the last `Note` generated.
+    boxes : Dict[int, List[`Note`]]
+        A dictionary where each box number (key) maps to the list of `Note`s inside of it (value).
+    times : Dict[int, int]
+        A dictionary where each box number (key) maps to the time period before review (# of sessions) (value).
+    session : int
+        The session number that determines which boxes will be reviewed.
+    lt_file : str
+        The name of the .lt file that will save `Leitner`'s boxes.
     """
 
     def __init__(self, noteutil: NoteUtil):
@@ -340,7 +359,7 @@ class Leitner:
         None
         """
 
-        if pair.box != 7:
+        if pair.box != len(self.boxes):
             self.boxes[pair.box].remove(pair)
             self.boxes[pair.box + 1].append(pair)
             pair.box += 1
