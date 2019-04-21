@@ -62,9 +62,6 @@ class Note:
         else:
             return False
 
-    def __hash__(self):
-        return hash(self.rcontent)
-
     def __ne__(self, other):
         return self.rcontent != other.rcontent
 
