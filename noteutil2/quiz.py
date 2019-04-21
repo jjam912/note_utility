@@ -282,4 +282,168 @@ class Quiz:
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
 
+# 1, 2, 3, 5, 11, 19, 29
+class Leitner:
+    """The Leitner system is a method of spaced repetition where cards are reviewed at increasing intervals.
+
+    If we model a pair as a flashcard (term and definition), then we can also use the Leitner system.
+    We use seven "boxes" numbered 1-7, and every time our session is divisible by the box number, we review that box.
+    Any terms that we mark as correct will advance to the next box number (+1), and incorrect ones will reset to box 1.
+    """
+
+    def __init__(self, noteutil: NoteUtil):
+        self.noteutil = noteutil
+        self.last_nindex = 0
+        self.boxes = dict(zip([x + 1 for x in range(7)], [[] for _ in range(7)]))
+        for pair in self.noteutil.pairs:
+            pair.box = 1
+            self.boxes[1].append(pair)
+
+        self.times = {1: 1, 2: 2, 3: 3, 4: 5, 5: 11, 6: 19, 7: 29}
+        self.session = 1
+
+        # Saving
+        self.lt_file = self.noteutil.note_file.split(".")[0] + ".lt"
+
+    def generate(self) -> Generator[Note, None, None]:
+        """A generator that yields `Note`s according to the session number.
+        If the session number is divisible by the time on a box, then we review that box.
+
+        Yields
+        ------
+        `Note`
+            A randomly selected pair from all of the pairs we are reviewing in this session.
+        """
+
+        pairs = []
+        for number, box in self.boxes.items():
+            if self.session % self.times[number] == 0:
+                pairs.extend(self.boxes[number])
+
+        self.session += 1       # Not sure if this is the right place for it to go
+        random.shuffle(pairs)
+        for pair in pairs:
+            self.last_nindex = pair.nindex
+            yield pair
+
+    def correct(self, pair: Note) -> None:
+        """Handles the pair if it was answered correctly.
+        Removes it from its current box and then moves it to the next box.
+
+        Parameters
+        ----------
+        pair : `Note`
+            The pair that was answered correctly.
+
+        Returns
+        -------
+        None
+        """
+
+        if pair.box != 7:
+            self.boxes[pair.box].remove(pair)
+            self.boxes[pair.box + 1].append(pair)
+            pair.box += 1
+
+    def incorrect(self, pair: Note) -> None:
+        """Handles the pair if it was answered correctly.
+        Removes it from its current box and then moves it to the next box.
+
+        Parameters
+        ----------
+        pair : `Note`
+            The pair that was answered incorrectly.
+
+        Returns
+        -------
+        None
+        """
+
+        if pair.box != 0:
+            self.boxes[pair.box].remove(pair)
+            self.boxes[1].append(pair)
+            pair.box = 1
+
+    def save(self) -> None:
+        """Writes Leitner state to a .lt file.
+
+        Returns
+        -------
+        None
+        """
+
+        kwargs = dict()
+        boxes = self.boxes
+        for box_number, pairs in boxes.items():
+            boxes[box_number] = list(map(lambda p: p.rcontent, pairs))
+
+        kwargs["boxes"] = boxes
+        kwargs["times"] = self.times
+        kwargs["session"] = self.session
+
+        with open(self.lt_file, mode="w") as f:
+            f.write(json.dumps(kwargs))
+
+    def load(self) -> None:
+        """Loads a Leitner state from a .lt file.
+
+        Returns
+        -------
+        None
+        """
+
+        self.reset()
+        kwargs = dict()
+        with open(self.lt_file, mode="r") as f:
+            try:
+                kwargs = json.loads(f.read())
+            except json.JSONDecodeError:
+                pass
+
+        boxes = kwargs.get("boxes", {})
+        for box_number, rcontents in boxes.items():
+            box_number = int(box_number)
+            for rcontent in rcontents:
+                for pair in self.boxes[1].copy():
+                    if rcontent == pair.rcontent:
+                        self.boxes[1].remove(pair)
+                        pair.box = box_number
+                        self.boxes[box_number].append(pair)
+
+        for box_number, time_period in kwargs.get("times", self.times).items():
+            self.times[int(box_number)] = time_period
+        self.session = kwargs.get("session", self.session)
+
+    def reset(self) -> None:
+        self.__init__(self.noteutil)
+
+    def refresh(self, noteutil: NoteUtil) -> None:
+        """Resets the state of the `Leitner` to match a new `NoteUtil`.
+        This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.
+        As such, only identical `Note`s from both `NoteUtil`s are kept.
+
+        Returns
+        -------
+        None
+        """
+
+        self.noteutil = noteutil
+
+        new_pairs = copy.deepcopy(self.noteutil.pairs)
+        for box_number, pairs in self.boxes.items():
+            for old_note in pairs.copy():
+                pairs.remove(old_note)
+                for new_note in new_pairs:
+                    if old_note.rcontent == new_note.rcontent:
+                        new_pairs.remove(new_note)
+                        self.boxes[box_number].append(new_note)
+                        new_note.box = box_number
+                        break
+        for pair in new_pairs:
+            pair.box = 1
+            self.boxes[1].append(pair)
+
+        self.last_nindex = 0
+        self.session = 1
+        self.lt_file = self.noteutil.note_file.split(".")[0] + ".lt"
 
