@@ -222,11 +222,12 @@ class Quiz:
         None
         """
 
+        self.reset()
         kwargs = dict()
         with open(self.qz_file, mode="r") as f:
             try:
                 kwargs = json.loads(f.read())
-            except json.decoder.JSONDecodeError:
+            except json.JSONDecodeError:
                 pass
 
         for rcontent in kwargs.get("correct", []):
@@ -240,17 +241,14 @@ class Quiz:
                     self.append(note, correct=False)
                     
     def reset(self) -> None:
-        """Resets the state of the `Quiz` to as if it had just been initialized except for `randomize`.
+        """Resets the state of the `Quiz` to as if it had just been initialized.
         
         Returns
         -------
         None
         """
         
-        self.last_nindex = 0
-        self.clear()
-        self.pairs = self.noteutil.pairs
-        self.heading = None
+        self.__init__(self.noteutil)
 
     def refresh(self, noteutil: NoteUtil) -> None:
         """Resets the state of the `Quiz` to match a new `NoteUtil`.
@@ -266,15 +264,17 @@ class Quiz:
 
         for old_note in self.correct.copy():
             self.remove(old_note, correct=True)
-            for new_note in self.noteutil.notes:
+            for new_note in self.noteutil.pairs:
                 if old_note.rcontent == new_note.rcontent:
                     self.append(new_note, correct=True)
+                    break
 
         for old_note in self.incorrect.copy():
             self.remove(old_note, correct=False)
-            for new_note in self.noteutil.notes:
+            for new_note in self.noteutil.pairs:
                 if old_note.rcontent == new_note.rcontent:
                     self.append(new_note, correct=False)
+                    break
 
         self.last_nindex = 0
         self.pairs = self.noteutil.pairs
