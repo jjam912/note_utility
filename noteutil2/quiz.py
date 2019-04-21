@@ -415,6 +415,13 @@ class Leitner:
         self.session = kwargs.get("session", self.session)
 
     def reset(self) -> None:
+        """Resets the state of the `Leitner` to as if it had just been initialized.
+
+        Returns
+        -------
+        None
+        """
+
         self.__init__(self.noteutil)
 
     def refresh(self, noteutil: NoteUtil) -> None:
