@@ -57,7 +57,10 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
     def __eq__(self, other):
-        return self.rcontent == other.rcontent
+        if isinstance(other, Note):
+            return self.rcontent == other.rcontent
+        else:
+            return False
 
     def __hash__(self):
         return hash(self.rcontent)
