@@ -63,4 +63,18 @@ class HeadingNotFound(QuizError):
         super().__init__("The heading name wasn't found: {0}".format(heading_name))
 
 
+class LeitnerError(Exception):
+    """Superclass for all `Leitner` exceptions."""
+
+    pass
+
+
+class TimeTooShort(LeitnerError):
+    def __init__(self, time):
+        super().__init__("The time period for the added box must be longer than the last box: (> {0})".format(time))
+
+
+class LastBox(LeitnerError):
+    def __init__(self):
+        super().__init__("The number of boxes are not allowed to be less than 1.")
 
