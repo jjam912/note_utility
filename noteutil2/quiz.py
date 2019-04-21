@@ -9,7 +9,7 @@ import json
 
 
 class Quiz:
-    """Quiz takes terms and definitions of `Note`s and forms questions and answers from them.
+    """Quiz takes terms and definitions of `Note`s and generates them in useful sequences.
     It keeps track of which terms were marked correct and which terms were marked incorrect.
 
     Parameters
@@ -29,6 +29,11 @@ class Quiz:
     pairs : List[`Note`]
         List of all `Note`s that are pairs that the `Quiz` is generating from.
         This can either be all pairs in `NoteUtil`, or only pairs inside a specific heading.
+    heading : None or `Note`
+        The heading whose pairs are being used.
+        It is None if pairs are being used from all of NoteUtil's pairs, or the correct/incorrect list.
+    qz_file : str
+        File name for the .qz file to save the Quiz's correct and incorrect lists.
     """
 
     def __init__(self, noteutil: NoteUtil):
@@ -154,6 +159,7 @@ class Quiz:
         ----------
         heading : None or `Note` or str
             The `Note` or heading name whose pairs should be used.
+            If the heading name is "correct" or "incorrect", the pairs in the corresponding list will be used.
             If left as None, all pairs in `NoteUtil` will be used.
 
         Returns
@@ -171,6 +177,15 @@ class Quiz:
         if heading is None:
             self.heading = None
             self.pairs = self.noteutil.pairs
+            return
+
+        if heading == "correct":
+            self.heading = None
+            self.pairs = self.correct
+            return
+        elif heading == "incorrect":
+            self.heading = None
+            self.pairs = self.incorrect
             return
 
         if isinstance(heading, Note):
