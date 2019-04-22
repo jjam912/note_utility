@@ -63,7 +63,10 @@ class Note:
             return False
 
     def __ne__(self, other):
-        return self.rcontent != other.rcontent
+        if isinstance(other, Note):
+            return self.rcontent != other.rcontent
+        else:
+            return False
 
     def __lt__(self, other):
         return self.nindex < other.nindex
