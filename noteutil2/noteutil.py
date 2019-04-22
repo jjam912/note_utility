@@ -436,7 +436,7 @@ class NoteUtil:
         None
         """
 
-        raw_notes = "\n".join(list(map(lambda n: n.raw(), self.notes)))
+        raw_notes = "\n".join(list(map(lambda n: n.rcontent, self.notes)))
         with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
 
