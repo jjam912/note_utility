@@ -56,6 +56,9 @@ class Note:
         self.definition = kwargs.get("definition", None)
         self.separator = kwargs.get("separator", None)
 
+        # Extension parameters
+        self.extensions = kwargs.get("extensions", None)
+
     def __eq__(self, other):
         if isinstance(other, Note):
             return self.rcontent == other.rcontent
@@ -95,6 +98,8 @@ class Note:
         if self.is_heading():
             rcontent += self.heading
         rcontent += self.content
+        for ext in self.extensions:
+            rcontent += ext.rcontent
         return rcontent
 
     def is_pair(self):
@@ -116,3 +121,70 @@ class Note:
         """
 
         return self.heading_char is not None
+
+    def has_extensions(self):
+        """Returns whether the `Note` has any extensions.
+
+        Returns
+        -------
+        bool
+        """
+
+        return not not self.extensions
+
+
+class Extension:
+    """An `Extension` is additional text added on to a `Note`.
+    All Extensions have a corresponding name and bounded characters to distinguish it from the content of a `Note`.
+    The `Extension` is taken out of the content of a `Note` and lives in a `Note`'s `extensions` List.
+
+    Parameters
+    ----------
+    content : str
+        The actual notes of the `Extension` without any bounds.
+    name : str
+        The general name associated with the `Extension`/What it falls under.
+    lbound : str
+        The string that bounds the left side of the `Extension`.
+    rbound : str
+        The string that bounds the right side of the `Extension`.
+
+    Attributes
+    ----------
+    content : str
+    name : str
+    lbound : str
+    rbound : str
+    """
+
+    def __init__(self, content: str, name: str, lbound: str, rbound: str):
+        self.content = content
+        self.name = name
+        self.lbound = lbound
+        self.rbound = rbound
+
+    @property
+    def rcontent(self):
+        return self.lbound + self.content + self.rbound
+
+    def __eq__(self, other):
+        if isinstance(other, Extension):
+            return self.rcontent == other.rcontent
+        else:
+            return False
+
+    def __ne__(self, other):
+        if isinstance(other, Extension):
+            return self.rcontent != other.rcontent
+        else:
+            return False
+
+    def __repr__(self):
+        rstring = "Extension("
+        rstring += "content='{0}', name={1}, lbound={2}, rbound={3}".format(
+            self.content, self.name, self.lbound, self.rbound)
+        rstring += ")"
+        return rstring
+
+
+
