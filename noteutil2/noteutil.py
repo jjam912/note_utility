@@ -61,22 +61,35 @@ class NoteUtil:
         All `Note`s that have terms and definitions.
     warnings : List[str]
         List of all of the warnings that occurred during the `Note` creation process.
+    errors : List[str]
+        List of all of the errors that occurred during the `Note` creation process.
+
+    Raises
+    ------
+    NoteError
+        If there were any severe problems during the `Note` creation process.
     """
 
     def __init__(self, config_file: str):
         self.notes = []
         self.config_file = config_file
         self.warnings = []
+        self.errors = []
         self._parse_config()
         self._read_config()
         if not os.path.exists(self.nu_file):
             self._parse_notes()
         self._read_notes()
         if self.warnings:
-            raise NoteError("Warnings\n"
-                            "--------\n"
+            print("Warnings\n"
+                  "--------\n"
+                  "\t{0}\n"
+                  "--------".format("\n\t".join(self.warnings)))
+        if self.errors:
+            raise NoteError("Errors\n"
+                            "------\n"
                             "\t{0}\n"
-                            "--------".format("\n\t".join(self.warnings)))
+                            "------".format("\n\t".join(self.errors)))
 
     @property
     def pairs(self) -> List[Note]:
@@ -197,7 +210,8 @@ class NoteUtil:
                         previous_level = current_level
                         kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
                         if current_level - previous_level > 1:
-                            raise HeadingJump(line, previous_level, current_level)
+                            self.errors.append("Heading Jump - Line content: {0}".format(line))
+                            # raise HeadingJump(line, previous_level, current_level)
                         kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
                         line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
                         kwargs["heading_name"] = line
@@ -217,8 +231,10 @@ class NoteUtil:
                                 kwargs["extensions"].append(
                                     Extension(line[lindex:rindex].strip(), name, lbound, rbound))
                                 line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
+                                line = line.strip()
                             else:
-                                raise MissingBound(line, lbound, rbound)
+                                self.warnings.append("Missing Bound - Line content: {0}".format(line))
+                                # raise MissingBound(line, lbound, rbound)
 
                 # End Extension Detection
 
@@ -345,7 +361,7 @@ class NoteUtil:
                 notes.append(note)
         return notes if notes else None
 
-    def edit(self, note: Note, content: str) -> None:
+    def edit(self, note: Note, content: str, override: bool = False) -> None:
         """Given a `Note`, edit its content.
         This can have many side effects:
             1. Changes to heading_name.
@@ -358,24 +374,35 @@ class NoteUtil:
             A `Note` that you want to modify.
         content : str
             The new content that the `Note` should have.
+        override : bool
+            Whether to override the warning when editing the content.
 
         Returns
         -------
         None
+
+        Raises
+        ------
+        ExtraSeparator
+        DuplicateTerm
+        NoDefinition
         """
 
         if self.separator is not None:
             if self.separator in content:
                 if len(content.split(self.separator)) > 2:
-                    raise ExtraSeparator(content)
+                    if not override:
+                        raise ExtraSeparator(content)
 
                 term = content.split(self.separator)[0].strip()
                 if note.term != term and term in map(lambda n: n.term, self.pairs):
-                    raise DuplicateTerm(term)
+                    if not override:
+                        raise DuplicateTerm(term)
 
                 definition = content.split(self.separator)[1].strip()
                 if definition == "":
-                    raise NoDefinition(content)
+                    if not override:
+                        raise NoDefinition(content)
                 note.term = term
                 note.definition = definition
                 note.separator = self.separator
