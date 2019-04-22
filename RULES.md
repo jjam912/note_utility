@@ -5,7 +5,7 @@ When typing your notes, it is essential that you follow these guidelines so that
     with as few bugs as possible. 
 The following rules dictate a few requirements for your notes:
 
-1. Each intended *note* and *pair* must be separated by a newline (what you get by pressing enter).
+1. Each intended *note* must be separated by a newline (what you get by pressing enter).
 2. If you intend for a *note* to become a *pair*, it must have only one *separator*.
 3. If you want a *note* to be ignored, you must start the line with whatever you put for *Comments* in the Config file.
 
@@ -37,15 +37,39 @@ Rules for using headings:
     You cannot go from a level 1 heading to a level 3 heading.
 3. Going back up a level of heading (level 3 to 2) to the previous heading is not allowed. 
     Either type the notes that are intended for the 2nd level heading immediately after it, or create a new 2nd level heading.
-4. Do not use the heading character within the first n characters of your notes, with n being the number of headings.
+4. Do not use the heading character within the first n characters of your notes when starting a new line, with n being the number of headings.
 5. Headings are considered notes too, and thus must also comply with the note rules.
+
+## Extensions:
+Extensions are an additional piece of text that you want to separate from either the main content of the *Note*. 
+They are created by surrounding your notes with a specific string (bounds) and are useful for adding information to a *Note* that's not required.
+
+Example (The note is spread through multiple lines for convenience):
+```
+The Bosnian Crisis (1908): This occurred when Austria-Hungary said that they're officially going to annex Bosnia 
+(already under the Habsburgs influence, but Bosnia is independent, technically). {Serbia wanted to create a unified 
+slavic kingdom under the Serbian monarchy (super Balkan state), but Austria tried to derail Serbian aspirations to unify
+the area.} Following this, Serbia said to Russia that they're going to go to war against Austria, and asked them for help. 
+Russia agreed to back them up, but Wilhelm told Nicholas that he doesn't want that because then Germany will back 
+Austria-Hungary. Nicholas decided he couldn't afford a war since his people weren't behind him, leading to Russia 
+backing out, swearing that they would never bow to Austria again.
+```
+Notice that there is a little bit of historical context bounded in between the `{` and `}` characters. This part of the note would
+be taken out of the regular content of the *note* and placed in the extensions dictionary under the name "Historical Context".
+
+
+Rules for using extensions:
+1. Extensions must have a name, left bound string, and right bound string.
+2. If your note is a pair, that does not affect how your extension is made, but you should be careful for conflicts between the separators and the extension's bounds.
+3. Extensions are an addition to a *note*, so it must be included in the content of a *note*. Otherwise it just becomes a note.
 
 ## Order of Conversion:
 The order of conversion is the order in which NoteUtil creates its notes. Here is the order:
 
 1. Headings
-2. Pairs
-3. Content
+2. Extensions
+3. Pairs
+4. Content
 
 This means that anything lower in the creation hierarchy should not interfere with anything higher in the creation hierarchy.
 

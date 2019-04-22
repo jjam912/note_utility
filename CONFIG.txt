@@ -16,13 +16,20 @@
 
 >>> [Recommended] Separator - For the creation of Pairs.
 
->>> [Recommended] Heading character - To indicate a headings hierarchy.
+>>> [Recommended] Heading character - To indicate a Headings hierarchy.
 
-    >>> [Required if heading character given, otherwise leave blank.]
-    >>> Number of headings - To tell how many levels of headings there are.
+    >>> [Required if Heading character given, otherwise leave blank.]
+    >>> Number of Headings - To tell how many levels of Headings there are.
 
-    >>> A name for each heading separated by newlines - To give each level of heading a general name to refer to.
-    >>> The number of names should match the number of headings.
+    >>> A name for each Heading separated by newlines - To give each level of Heading a general name to refer to.
+    >>> The number of names should match the number of Headings.
+
+>>> [Optional] Number of Extensions - To know how many different types of Extensions will be created.
+
+    >>> [Required if Number of Extensions given, otherwise leave blank.]
+    >>> A name for each extension separated by newlines - To give each Extension a general name to refer to.
+
+    >>> For each name, enter the 1. left bound, and 2. right bound separated by a space.
 
 >>>
 >>>
