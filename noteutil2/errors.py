@@ -47,6 +47,12 @@ class HeadingJump(NoteError):
                          format(previous_level, current_level, content))
 
 
+class MissingBound(NoteError):
+    def __init__(self, content, lbound, rbound):
+        super().__init__("The left bound: {0} was found, but there was no right bound: {1} in content: {2}".format(
+            lbound, rbound, content))
+
+
 class QuizError(Exception):
     """Superclass for all `Quiz` exceptions."""
 
