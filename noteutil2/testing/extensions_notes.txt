@@ -2,6 +2,6 @@ Power Series: Any series that be written in the form the sum from n=0 to infinit
 Convergence for Power Series: If a - R < x < a + R.
 Divergence for Power Series: If x < a - R and x > a + R.
 Power Series if x = a: it equals c_0. $$\sum_{n=0}^\infty c_n (a - a)^n = c_0$$
-Determine the radius of convergence and interval of convergence for ${\sum_{n=1}^\infty \frac{\left(-1\right)^n n}{4^n} (x + 3)^n}$: A$$ -7 < x < 1 $$
+Determine the radius of convergence and interval of convergence for ${\sum_{n=1}^\infty \frac{\left(-1\right)^n n}{4^n} (x + 3)^n}$: $$ -7 < x < 1 $$
 I give up ${ something }$: and other thing $$ ayy $$.......
-a${aoseutn}$:$$anoetuh$$b
+${aoseutn}$:$$anoetuh$$
