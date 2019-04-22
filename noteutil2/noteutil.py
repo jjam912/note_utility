@@ -170,12 +170,14 @@ class NoteUtil:
             extension_number = next(lines) or None
             if extension_number:
                 self.extension_names = list()
+                self.extension_bounds = list()
                 for _ in range(int(extension_number)):
                     self.extension_names.append(next(lines))
-                self.extension_bounds = list()
                 for _ in range(int(extension_number)):
                     self.extension_bounds.append(tuple(next(lines).split()))
             else:
+                self.extension_names = None
+                self.extension_bounds = None
                 next(lines)
                 next(lines)
 
