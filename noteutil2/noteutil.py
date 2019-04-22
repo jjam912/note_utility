@@ -1,8 +1,8 @@
-from .notes import Note
+from .notes import Note, Extension
 from .comparisons import CompareOptions
 from .errors import *
 import os.path
-from typing import List, Dict, Generator, Union
+from typing import List, Dict, Generator, Union, Tuple
 
 
 def readlines(f) -> Generator[str, None, None]:
@@ -43,8 +43,6 @@ class NoteUtil:
         A delimiter used to split `Note` lines into terms and definitions.
     notes : List[`Note`]
         All `Note`s created from the .nu file.
-    pairs : List[`Note`]
-        All `Note`s that have terms and definitions.
     heading_char : str
         If a `Note` is a heading, its content will start with this character.
     levels : int
@@ -57,6 +55,10 @@ class NoteUtil:
         Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[`Note`]
         Chronological list of notes that are headings.
+    extension_names : List[str]
+    extension_bounds : List[Tuple[str, str]]
+    pairs : List[`Note`]
+        All `Note`s that have terms and definitions.
     warnings : List[str]
         List of all of the warnings that occurred during the `Note` creation process.
     """
@@ -132,12 +134,28 @@ class NoteUtil:
             self.nu_file = self.note_file.split(".")[0] + ".nu"
             self.comments = next(lines) or None
             self.separator = next(lines) or None
+
             self.heading_char = next(lines) or None
             if self.heading_char is not None:
                 self.levels = int(next(lines))
                 self.level_names = []
                 for _ in range(self.levels):
                     self.level_names.append(next(lines))
+            else:
+                next(lines)
+                next(lines)
+
+            extension_number = next(lines) or None
+            if extension_number:
+                self.extension_names = list()
+                for _ in range(int(extension_number)):
+                    self.extension_names.append(next(lines))
+                self.extension_bounds = list()
+                for _ in range(int(extension_number)):
+                    self.extension_bounds.append(tuple(next(lines).split()))
+            else:
+                next(lines)
+                next(lines)
 
     def _parse_notes(self) -> None:
         with open(self.note_file, mode="r") as f:
@@ -186,6 +204,23 @@ class NoteUtil:
 
                         kwargs["begin_nindex"] = nindex
                 # End Heading Detection
+
+                # Extension Detection
+                if self.extension_names is not None and self.extension_bounds is not None:
+                    kwargs["extensions"] = []
+                    for name, bounds in zip(self.extension_names, self.extension_bounds):
+                        lbound, rbound = bounds
+                        while lbound in line:
+                            if rbound in line:
+                                lindex = line.index(lbound) + len(lbound)
+                                rindex = line.index(rbound, lindex)
+                                kwargs["extensions"].append(
+                                    Extension(line[lindex:rindex].strip(), name, lbound, rbound))
+                                line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
+                            else:
+                                raise MissingBound(line, lbound, rbound)
+
+                # End Extension Detection
 
                 # Pair Detection
                 if self.separator is not None:
