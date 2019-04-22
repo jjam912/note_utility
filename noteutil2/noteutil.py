@@ -56,7 +56,12 @@ class NoteUtil:
     heading_order : List[`Note`]
         Chronological list of notes that are headings.
     extension_names : List[str]
+        List of all generic names of the extensions.
     extension_bounds : List[Tuple[str, str]]
+        List of all (left bound, right bound) tuples that correspond to the extension names.
+        `zip(extension_names, extension_bounds)` gives correctly corresponding names and bounds.
+    extensions : List[`Note`]
+        All `Note`s that have extensions.
     pairs : List[`Note`]
         All `Note`s that have terms and definitions.
     warnings : List[str]
@@ -113,6 +118,10 @@ class NoteUtil:
     @property
     def heading_order(self) -> List[Note]:
         return list(filter(lambda n: n.is_heading(), self.notes))
+
+    @property
+    def extensions(self) -> List[Note]:
+        return list(filter(lambda n: n.has_extensions(), self.notes))
 
     def _parse_config(self) -> None:
         with open(self.config_file, mode="r") as f:
