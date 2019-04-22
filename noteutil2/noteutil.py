@@ -2,7 +2,7 @@ from .notes import Note, Extension
 from .comparisons import CompareOptions
 from .errors import *
 import os.path
-from typing import List, Dict, Generator, Union, Tuple
+from typing import List, Dict, Generator, Union, Tuple, overload
 
 
 def readlines(f) -> Generator[str, None, None]:
@@ -231,6 +231,7 @@ class NoteUtil:
                 # Extension Detection
                 if self.extension_names is not None and self.extension_bounds is not None:
                     kwargs["extensions"] = []
+                    kwargs["extension_names"] = []
                     for name, bounds in zip(self.extension_names, self.extension_bounds):
                         lbound, rbound = bounds
                         while lbound in line:
@@ -239,6 +240,8 @@ class NoteUtil:
                                 rindex = line.index(rbound, lindex)
                                 kwargs["extensions"].append(
                                     Extension(line[lindex:rindex].strip(), name, lbound, rbound))
+                                kwargs["extension_names"].append(name)
+
                                 line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
                                 line = line.strip()
                             else:

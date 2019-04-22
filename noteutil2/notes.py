@@ -49,7 +49,7 @@ class Note:
 
         self.begin_nindex = kwargs.get("begin_nindex", None)
         self.end_nindex = None      # Later assigned
-        self.nindexes = None
+        self.nindexes = []          # Later assigned
 
         # Pair parameters
         self.term = kwargs.get("term", None)
@@ -57,7 +57,8 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
         # Extension parameters
-        self.extensions = kwargs.get("extensions", None)
+        self.extension_names = kwargs.get("extension_names", [])
+        self.extensions = kwargs.get("extensions", [])
 
     def __eq__(self, other):
         if isinstance(other, Note):
