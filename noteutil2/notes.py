@@ -92,7 +92,7 @@ class Note:
         return rstring
 
     @property
-    def rcontent(self):
+    def rcontent(self) -> str:
         """What a `Note` looked like before parsing it."""
         rcontent = ""
         if self.is_heading():
@@ -102,7 +102,7 @@ class Note:
             rcontent += ext.rcontent
         return rcontent
 
-    def is_pair(self):
+    def is_pair(self) -> bool:
         """Returns whether the `Note` should have the parameters of a pair.
 
         Returns
@@ -112,7 +112,7 @@ class Note:
 
         return self.separator is not None
 
-    def is_heading(self):
+    def is_heading(self) -> bool:
         """Returns whether the `Note` should have the parameters of a heading.
 
         Returns
@@ -122,7 +122,7 @@ class Note:
 
         return self.heading_char is not None
 
-    def has_extensions(self):
+    def has_extensions(self) -> bool:
         """Returns whether the `Note` has any extensions.
 
         Returns
@@ -164,7 +164,7 @@ class Extension:
         self.rbound = rbound
 
     @property
-    def rcontent(self):
+    def rcontent(self) -> str:
         return self.lbound + self.content + self.rbound
 
     def __eq__(self, other):
