@@ -377,8 +377,9 @@ class NoteUtil:
         """Given a `Note`, edit its content.
         This can have many side effects:
             1. Changes to heading_name.
-            2. Changes to whether the `Note` is a pair.
-            3. Changes to term, definition, and separator
+            2. Changes to extensions.
+            3. Changes to whether the `Note` is a pair.
+            4. Changes to term, definition, and separator
 
         Parameters
         ----------
@@ -395,12 +396,34 @@ class NoteUtil:
 
         Raises
         ------
+        MissingBound
         ExtraSeparator
         DuplicateTerm
         NoDefinition
         """
 
+        if self.extension_names is not None and self.extension_bounds is not None:
+            note.extensions = []
+            note.extension_names = []
+            for name, bounds in zip(self.extension_names, self.extension_bounds):
+                lbound, rbound = bounds
+                while lbound in content:
+                    if rbound in content:
+                        lindex = content.index(lbound) + len(lbound)
+                        rindex = content.index(rbound, lindex)
+                        note.extensions.append(Extension(content[lindex:rindex].strip(), name, lbound, rbound))
+                        note.extension_names.append(name)
+
+                        content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
+                        content = content.strip()
+                    else:
+                        if not override:
+                            raise MissingBound(content, lbound, rbound)
+
         if self.separator is not None:
+            note.term = None
+            note.definition = None
+            note.separator = None
             if self.separator in content:
                 if len(content.split(self.separator)) > 2:
                     if not override:
@@ -418,10 +441,6 @@ class NoteUtil:
                 note.term = term
                 note.definition = definition
                 note.separator = self.separator
-            else:
-                note.term = None
-                note.definition = None
-                note.separator = None
 
         note.content = content
         if note.is_heading():
