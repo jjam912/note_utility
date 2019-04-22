@@ -27,7 +27,10 @@ edit_notes.txt
     Chapter
     Subunit
 >>>
+1
 >>>
+Cool beans
 >>>
+%% %%
 >>>
 >>>
