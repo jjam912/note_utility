@@ -80,4 +80,6 @@ print(test_noteutil(noteutil))
 
 noteutil.reformat()
 
+print(noteutil.get(extension_names="Cool beans", compare=CompareOptions.IN))
+
 
