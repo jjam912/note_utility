@@ -1,11 +1,11 @@
 class NoteUtilError(Exception):
-    """Superclass for all `NoteUtil` exceptions."""
+    """Superclass for all NoteUtil exceptions."""
 
     pass
 
 
 class ConfigError(NoteUtilError):
-    """Superclass for exceptions raised during the `Config` parsing process."""
+    """Superclass for exceptions raised during the Config parsing process."""
 
     pass
 
@@ -21,7 +21,7 @@ class ExtraLine(ConfigError):
 
 
 class NoteError(NoteUtilError):
-    """Superclass for exceptions raised during the `Note` creating process."""
+    """Superclass for exceptions raised during the Note creating process."""
 
     pass
 
@@ -54,7 +54,7 @@ class MissingBound(NoteError):
 
 
 class QuizError(Exception):
-    """Superclass for all `Quiz` exceptions."""
+    """Superclass for all Quiz exceptions."""
 
     pass
 
@@ -70,7 +70,7 @@ class HeadingNotFound(QuizError):
 
 
 class LeitnerError(Exception):
-    """Superclass for all `Leitner` exceptions."""
+    """Superclass for all Leitner exceptions."""
 
     pass
 

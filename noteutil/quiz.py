@@ -9,27 +9,27 @@ import json
 
 
 class Quiz:
-    """Quiz takes terms and definitions of `Note`s and generates them in useful sequences.
+    """Quiz takes terms and definitions of Notes and generates them in useful sequences.
     It keeps track of which terms were marked correct and which terms were marked incorrect.
 
     Parameters
     ----------
-    noteutil : `NoteUtil`
-        The `NoteUtil` that has the terms and definitions to be used with this Quiz.
+    noteutil : NoteUtil
+        The NoteUtil that has the terms and definitions to be used with this Quiz.
 
     Attributes
     ----------
-    noteutil : `NoteUtil`
+    noteutil : NoteUtil
     last_nindex : int
-        The `nindex` of the last `Note` generated.
-    correct : List[`Note`]
-        All `Note`s marked as correct.
-    incorrect : List[`Note`]
-        All `Note`s marked as incorrect.
-    pairs : List[`Note`]
-        List of all `Note`s that are pairs that the `Quiz` is generating from.
-        This can either be all pairs in `NoteUtil`, or only pairs inside a specific heading.
-    heading : None or `Note`
+        The nindex of the last Note generated.
+    correct : List[Note]
+        All Notes marked as correct.
+    incorrect : List[Note]
+        All Notes marked as incorrect.
+    pairs : List[Note]
+        List of all Notes that are pairs that the Quiz is generating from.
+        This can either be all pairs in NoteUtil, or only pairs inside a specific heading.
+    heading : None or Note
         The heading whose pairs are being used.
         It is None if pairs are being used from all of NoteUtil's pairs, or the correct/incorrect list.
     qz_file : str
@@ -50,9 +50,9 @@ class Quiz:
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
     def generate(self, *, randomize: bool, unmarked: bool = False) -> Generator[Note, None, None]:
-        """A generator that yields `Note`s, either chronologically or randomly.
-        Once a generator is created, it is "frozen in time," and isn't affected by any changes to `Quiz`.
-        However, `Quiz` keeps track of the last index used, which changes every time this generator is activated.
+        """A generator that yields Notes, either chronologically or randomly.
+        Once a generator is created, it is "frozen in time," and isn't affected by any changes to Quiz.
+        However, Quiz keeps track of the last index used, which changes every time this generator is activated.
 
         Parameters
         ----------
@@ -63,7 +63,7 @@ class Quiz:
 
         Yields
         ------
-        `Note`
+        Note
             A pair that is either in random or chronological order.
         """
 
@@ -92,7 +92,7 @@ class Quiz:
 
         Parameters
         ----------
-        pair : `Note`
+        pair : Note
             The pair to add to either the correct list or the incorrect list.
         correct : bool
             Whether to add to the correct list (T) or the incorrect list (F).
@@ -120,7 +120,7 @@ class Quiz:
 
         Parameters
         ----------
-        pair : `Note`
+        pair : Note
             The pair to remove from either the correct list or the incorrect list.
         correct : bool
             Whether to remove from the correct list (T) or the incorrect list (F).
@@ -157,10 +157,10 @@ class Quiz:
 
         Parameters
         ----------
-        heading : None or `Note` or str
-            The `Note` or heading name whose pairs should be used.
+        heading : None or Note or str
+            The Note or heading name whose pairs should be used.
             If the heading name is "correct" or "incorrect", the pairs in the corresponding list will be used.
-            If left as None, all pairs in `NoteUtil` will be used.
+            If left as None, all pairs in NoteUtil will be used.
 
         Returns
         -------
@@ -169,7 +169,7 @@ class Quiz:
         Raises
         ------
         HeadingExpected
-            If the `Note` provided is not None and isn't a heading.
+            If the Note provided is not None and isn't a heading.
         HeadingNotFound
             If the str provided is not None and it isn't a recognized heading name.
         """
@@ -241,7 +241,7 @@ class Quiz:
                     self.append(note, correct=False)
                     
     def reset(self) -> None:
-        """Resets the state of the `Quiz` to as if it had just been initialized.
+        """Resets the state of the Quiz to as if it had just been initialized.
         
         Returns
         -------
@@ -251,9 +251,9 @@ class Quiz:
         self.__init__(self.noteutil)
 
     def refresh(self, noteutil: NoteUtil) -> None:
-        """Resets the state of the `Quiz` to match a new `NoteUtil`.
-        This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.
-        As such, only identical `Note`s from both `NoteUtil`s are kept.
+        """Resets the state of the Quiz to match a new NoteUtil.
+        This is the same as saving the NoteUtil and then loading it with a different NoteUtil.
+        As such, only identical Notes from both NoteUtils are kept.
 
         Returns
         -------
@@ -293,21 +293,21 @@ class Leitner:
     Parameters
     ----------
     noteutil : NoteUtil
-        The `NoteUtil` that has terms an definitions to be used in this `Leitner`.
+        The NoteUtil that has terms an definitions to be used in this Leitner.
 
     Attributes
     ----------
     noteutil : NoteUtil
     last_nindex : int
-        The note index of the last `Note` generated.
-    boxes : Dict[int, List[`Note`]]
-        A dictionary where each box number (key) maps to the list of `Note`s inside of it (value).
+        The note index of the last Note generated.
+    boxes : Dict[int, List[Note]]
+        A dictionary where each box number (key) maps to the list of Notes inside of it (value).
     times : Dict[int, int]
         A dictionary where each box number (key) maps to the time period before review (# of sessions) (value).
     session : int
         The session number that determines which boxes will be reviewed.
     lt_file : str
-        The name of the .lt file that will save `Leitner`'s boxes.
+        The name of the .lt file that will save Leitner's boxes.
     """
 
     def __init__(self, noteutil: NoteUtil):
@@ -325,12 +325,12 @@ class Leitner:
         self.lt_file = self.noteutil.note_file.split(".")[0] + ".lt"
 
     def generate(self) -> Generator[Note, None, None]:
-        """A generator that yields `Note`s according to the session number.
+        """A generator that yields Notes according to the session number.
         If the session number is divisible by the time on a box, then we review that box.
 
         Yields
         ------
-        `Note`
+        Note
             A randomly selected pair from all of the pairs we are reviewing in this session.
         """
 
@@ -351,7 +351,7 @@ class Leitner:
 
         Parameters
         ----------
-        pair : `Note`
+        pair : Note
             The pair that was answered correctly.
 
         Returns
@@ -370,7 +370,7 @@ class Leitner:
 
         Parameters
         ----------
-        pair : `Note`
+        pair : Note
             The pair that was answered incorrectly.
 
         Returns
@@ -469,7 +469,7 @@ class Leitner:
         self.session = kwargs.get("session", self.session)
 
     def reset(self) -> None:
-        """Resets the state of the `Leitner` to as if it had just been initialized.
+        """Resets the state of the Leitner to as if it had just been initialized.
 
         Returns
         -------
@@ -479,9 +479,9 @@ class Leitner:
         self.__init__(self.noteutil)
 
     def refresh(self, noteutil: NoteUtil) -> None:
-        """Resets the state of the `Leitner` to match a new `NoteUtil`.
-        This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.
-        As such, only identical `Note`s from both `NoteUtil`s are kept.
+        """Resets the state of the Leitner to match a new NoteUtil.
+        This is the same as saving the NoteUtil and then loading it with a different NoteUtil.
+        As such, only identical Notes from both NoteUtils are kept.
 
         Returns
         -------

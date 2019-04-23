@@ -1,9 +1,9 @@
-"""This module is for comparisons used when comparing `Note`s in `NoteUtil`."""
+"""This module is for comparisons used when comparing Notes in NoteUtil."""
 import enum
 
 
 def is_equal(note, **kwargs) -> bool:
-    """Is True when all of the `kwargs` values are exactly equal to the `Note`'s attributes.
+    """Is True when all of the kwargs values are exactly equal to the Note's attributes.
 
     Returns
     -------
@@ -14,7 +14,7 @@ def is_equal(note, **kwargs) -> bool:
 
 
 def is_similar(note, **kwargs) -> bool:
-    """Is True when all of the `kwargs` values are equal ignoring case to the `Note`'s attributes.
+    """Is True when all of the kwargs values are equal ignoring case to the Note's attributes.
 
     Returns
     -------
@@ -25,7 +25,7 @@ def is_similar(note, **kwargs) -> bool:
 
 
 def is_in(note, **kwargs) -> bool:
-    """Is True when all of the `kwargs` values are "in" the `Note`'s attributes.
+    """Is True when all of the kwargs values are "in" the Note's attributes.
 
     Returns
     -------
@@ -36,7 +36,7 @@ def is_in(note, **kwargs) -> bool:
 
 
 def is_similar_in(note, **kwargs) -> bool:
-    """Is True when all of the `kwargs` values are "in" ignoring case to the `Note`'s attributes.
+    """Is True when all of the kwargs values are "in" ignoring case to the Note's attributes.
 
     Returns
     -------
@@ -48,7 +48,7 @@ def is_similar_in(note, **kwargs) -> bool:
 
 class CompareOptions(enum.Enum):
     """Enum for selecting compare options for NoteUtil.get methods.
-    The Enums here are only a few of the possible comparing options for `Note`s.
+    The Enums here are only a few of the possible comparing options for Notes.
     You are encouraged to develop your own to suit your needs.
 
     Constants

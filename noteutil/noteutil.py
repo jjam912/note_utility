@@ -23,56 +23,56 @@ def readlines(f) -> Generator[str, None, None]:
 
 
 class NoteUtil:
-    """NoteUtil is used for retrieving and manipulating `Notes`.
+    """NoteUtil is used for retrieving and manipulating Notes.
     It must be configured with a config file.
 
     Parameters
     ----------
     config_file : str
-        The name of the config file that is used to set up this `NoteUtil`.
+        The name of the config file that is used to set up this NoteUtil.
 
     Attributes
     ----------
     note_file: str
         The name of the file with notes, likely a text file.
     nu_file: str
-        The same name of the file with notes, but with a .nu extension indicating `NoteUtil` modified.
+        The same name of the file with notes, but with a .nu extension indicating NoteUtil modified.
     comments: str
         The prefix of lines that should be ignored in the note file.
     separator: str
-        A delimiter used to split `Note` lines into pairs (terms and definitions).
-    notes : List[`Note`]
-        All `Note`s created from the .nu file.
+        A delimiter used to split Note lines into pairs (terms and definitions).
+    notes : List[Note]
+        All Notes created from the .nu file.
     heading_char : str
-        If a `Note` is a heading, its content will start with this character.
+        If a Note is a heading, its content will start with this character.
     levels : int
         The number of headings.
     level_names : List[str]
         The general name of each group of headings.
     heading_names : List[str]
         The list of all heading names in chronological order.
-    heading_level : Dict[str, List[`Note`]]
+    heading_level : Dict[str, List[Note]]
         Mapped general names of headings to a list of notes that are headings that belong to that name.
-    heading_order : List[`Note`]
+    heading_order : List[Note]
         Chronological list of notes that are headings.
     extension_names : List[str]
         List of all generic names of the extensions.
     extension_bounds : List[Tuple[str, str]]
         List of all (left bound, right bound) tuples that correspond to the extension names.
-        `zip(extension_names, extension_bounds)` gives correctly corresponding names and bounds.
-    extensions : List[`Note`]
-        All `Note`s that have extensions.
-    pairs : List[`Note`]
-        All `Note`s that have terms and definitions.
+        zip(extension_names, extension_bounds) gives correctly corresponding names and bounds.
+    extensions : List[Note]
+        All Notes that have extensions.
+    pairs : List[Note]
+        All Notes that have terms and definitions.
     warnings : List[str]
-        List of all of the warnings that occurred during the `Note` creation process.
+        List of all of the warnings that occurred during the Note creation process.
     errors : List[str]
-        List of all of the errors that occurred during the `Note` creation process.
+        List of all of the errors that occurred during the Note creation process.
 
     Raises
     ------
     NoteError
-        If there were any severe problems during the `Note` creation process.
+        If there were any severe problems during the Note creation process.
     """
 
     def __init__(self, config_file: str):
@@ -153,7 +153,7 @@ class NoteUtil:
             f.write(raw_config)
 
     def _read_config(self) -> None:
-        """Parses the config file into `NoteUtil` attributes."""
+        """Parses the config file into NoteUtil attributes."""
 
         with open("temp.cfg", mode="r") as f:
             lines = readlines(f)
@@ -215,7 +215,7 @@ class NoteUtil:
             f.write(raw_notes)
 
     def _read_notes(self) -> None:
-        """Parses the newly written .nu file and creates `Note`s in the order of Heading, Extensions, Pairs, and Notes.
+        """Parses the newly written .nu file and creates Notes in the order of Heading, Extensions, Pairs, and Notes.
         Adds all of the notes to self.notes.
         """
 
@@ -328,7 +328,7 @@ class NoteUtil:
             # End Complete Headings
 
     def get(self, **kwargs) -> Union[None, Note]:
-        """Retrieves a `Note` with attributes equal to passed keyword args.
+        """Retrieves a Note with attributes equal to passed keyword args.
 
         Parameters
         ----------
@@ -338,14 +338,14 @@ class NoteUtil:
         Other Parameters
         ----------------
         compare
-            If one of the keys of kwargs is `compare`, comparisons will be used with the value of this key.
-            The custom compare must accept the parameters: `Note`, **kwargs
+            If one of the keys of kwargs is compare, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: Note, **kwargs
 
         Returns
         -------
-        `Note` or None
-            If a `Note` is found to have the passed attributes.
-            If no `Note` is found.
+        Note or None
+            If a Note is found to have the passed attributes.
+            If no Note is found.
         """
 
         if not kwargs:
@@ -359,7 +359,7 @@ class NoteUtil:
         return None
 
     def get_list(self, **kwargs) -> Union[None, List[Note]]:
-        """Retrieves all `Note`s with attributes equal to passed keyword args and stores them in a List.
+        """Retrieves all Notes with attributes equal to passed keyword args and stores them in a List.
 
         Parameters
         ----------
@@ -369,14 +369,14 @@ class NoteUtil:
         Other Parameters
         ----------------
         compare
-            If one of the keys of kwargs is `compare`, comparisons will be used with the value of this key.
-            The custom compare must accept the parameters: `Note`, **kwargs
+            If one of the keys of kwargs is compare, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: Note, **kwargs
 
         Returns
         -------
-        List[`Note`] or None
-            If a `Note`s are found to have the passed attributes.
-            If no `Note`s are found.
+        List[Note] or None
+            If a Notes are found to have the passed attributes.
+            If no Notes are found.
         """
 
         if not kwargs:
@@ -391,19 +391,19 @@ class NoteUtil:
         return notes if notes else None
 
     def edit(self, note: Note, content: str, override: bool = False) -> None:
-        """Given a `Note`, edit its content.
+        """Given a Note, edit its content.
         This can have many side effects:
             1. Changes to heading_name.
             2. Changes to extensions.
-            3. Changes to whether the `Note` is a pair.
+            3. Changes to whether the Note is a pair.
             4. Changes to term, definition, and separator
 
         Parameters
         ----------
-        note : `Note`
-            A `Note` that you want to modify.
+        note : Note
+            A Note that you want to modify.
         content : str
-            The new content that the `Note` should have.
+            The new content that the Note should have.
         override : bool
             Whether to override the warning when editing the content.
 
@@ -466,9 +466,9 @@ class NoteUtil:
         self.notes[note.nindex] = note
 
     def reformat(self) -> None:
-        """Writes all of the `Note`s back into what they were when they were being parsed into a .nu file.
+        """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
 
-        If any changes to the `Note`s were made, they will be written here as well.
+        If any changes to the Notes were made, they will be written here as well.
 
         Returns
         -------

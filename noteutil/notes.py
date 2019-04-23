@@ -1,44 +1,44 @@
 class Note:
-    """A `Note` is the text found in the notes file. It contains the actual notes from each line of text.
-    They can be Headings, which means a group of notes that come after this `Note` belong to this `Note`.
-        Only notes that come directly after this heading and before the next heading will belong to this `Note`.
+    """A Note is the text found in the notes file. It contains the actual notes from each line of text.
+    They can be Headings, which means a group of notes that come after this Note belong to this Note.
+        Only notes that come directly after this heading and before the next heading will belong to this Note.
         It is impossible to go back to this heading after we have passed the next heading.
-    They can have Extensions, which are additional information added on separately from the content of this `Note`.
+    They can have Extensions, which are additional information added on separately from the content of this Note.
     They can be Pairs, which means it has a separator, term, and definition that can be used for quizzing.
 
     Parameters
     ----------
     content : str
-        The content of the `Note` excluding `prefixes` and `Extensions`.
+        The content of the Note excluding prefixes and Extensions.
     nindex : int
-        The `Note` index that corresponds to the position in the `NoteUtil.notes`.
+        The Note index that corresponds to the position in the NoteUtil.notes.
     **kwargs
-        Any other parameters that extend the `Note`.
+        Any other parameters that extend the Note.
 
     Other Parameters
     ----------------
-    If the `Note` is a `Heading`:
+    If the Note is a Heading:
         heading_char : str
-            The character used as to indicate this `Note` is a heading.
+            The character used as to indicate this Note is a heading.
         level : int
-            The depth of heading hierarchy of this `Note`.
+            The depth of heading hierarchy of this Note.
         heading : str
             The prefix of the content that was removed and the actual heading string.
         heading_name : str
-            The content of the `Note` without the `heading`.
+            The content of the Note without the heading.
         begin_nindex : int
             The beginning note index for this heading.
         end_nindex : int
             The ending note index for this heading.
         nindexes : List[int]
-            List of indexes starting from the `begin_nindex` to the `end_nindex` like a range.
-    If the `Note` is a `Pair`:
+            List of indexes starting from the begin_nindex to the end_nindex like a range.
+    If the Note is a Pair:
         term : str
-            The first part of text that came before the `separator`.
+            The first part of text that came before the separator.
         definition : str
-            The second part of text that came after the `separator`.
+            The second part of text that came after the separator.
         separator : str
-            The string that separates the `term` and `definition` of this `Note`.
+            The string that separates the term and definition of this Note.
     """
 
     def __init__(self, content, nindex, **kwargs):
@@ -105,7 +105,7 @@ class Note:
 
     @property
     def rcontent(self) -> str:
-        """What a `Note` looked like before parsing it."""
+        """What a Note looked like before parsing it."""
         rcontent = ""
         if self.is_heading():
             rcontent += self.heading
@@ -115,7 +115,7 @@ class Note:
         return rcontent
 
     def is_pair(self) -> bool:
-        """Returns whether the `Note` should have the parameters of a pair.
+        """Returns whether the Note should have the parameters of a pair.
 
         Returns
         -------
@@ -125,7 +125,7 @@ class Note:
         return self.separator is not None
 
     def is_heading(self) -> bool:
-        """Returns whether the `Note` should have the parameters of a heading.
+        """Returns whether the Note should have the parameters of a heading.
 
         Returns
         -------
@@ -135,7 +135,7 @@ class Note:
         return self.heading_char is not None
 
     def has_extensions(self) -> bool:
-        """Returns whether the `Note` has any extensions.
+        """Returns whether the Note has any extensions.
 
         Returns
         -------
@@ -146,20 +146,20 @@ class Note:
 
 
 class Extension:
-    """An `Extension` is additional text added on to a `Note`.
-    All Extensions have a corresponding name and bounded characters to distinguish it from the content of a `Note`.
-    The `Extension` is taken out of the content of a `Note` and lives in a `Note`'s `extensions` List.
+    """An Extension is additional text added on to a Note.
+    All Extensions have a corresponding name and bounded characters to distinguish it from the content of a Note.
+    The Extension is taken out of the content of a Note and lives in a Note's extensions List.
 
     Parameters
     ----------
     content : str
-        The actual notes of the `Extension` without any bounds.
+        The actual notes of the Extension without any bounds.
     name : str
-        The general name associated with the `Extension`/What it falls under.
+        The general name associated with the Extension/What it falls under.
     lbound : str
-        The string that bounds the left side of the `Extension`.
+        The string that bounds the left side of the Extension.
     rbound : str
-        The string that bounds the right side of the `Extension`.
+        The string that bounds the right side of the Extension.
 
     Attributes
     ----------
