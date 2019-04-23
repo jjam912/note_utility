@@ -1,5 +1,5 @@
-from noteutil2.noteutil import NoteUtil
-from noteutil2.comparisons import CompareOptions
+from noteutil.noteutil import NoteUtil
+from noteutil.comparisons import CompareOptions
 import os
 
 

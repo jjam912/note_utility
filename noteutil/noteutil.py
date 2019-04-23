@@ -1,318 +1,498 @@
+from .notes import Note, Extension
+from .comparisons import CompareOptions
 from .errors import *
-from .notes import Note, Line, Pair
+import os.path
+from typing import List, Dict, Generator, Union, Tuple
 
 
-def one(func):
-    def wrapper(*args, **kwargs):
-        if len(locals()["kwargs"]) != 1:
-            raise NeedOneArg(func)
+def readlines(f) -> Generator[str, None, None]:
+    """Splits a file into lines without the "\n" suffixes.
 
-        return func(*args, **kwargs)
-    return wrapper
+    Parameters
+    ----------
+    f : File
 
+    Yields
+    ------
+    str
+    """
 
-def some(func):
-    def wrapper(*args, **kwargs):
-        if len(locals()["kwargs"]) == 0:
-            raise NoArgs(func)
-
-        return func(*args, **kwargs)
-    return wrapper
+    lines = f.read().split("\n")
+    for line in lines:
+        yield line.strip()
 
 
 class NoteUtil:
-    """This class reads the note file and compiles it into separated tokens.
-    Then it reads the tokens and makes a list of `Note`s, which can then be retrieved using various methods.
-    
-    .. note::
-        
-        All comparisons using ``content`` will be case insensitive. When looking for a single `Note` with ``content``,
-        it will look for an exact match, and when looking for multiple `Note`s with ``content``, it will look to see
-        if the passed ``content`` arg is ``in`` any `Note`'s ``content``.
-    
+    """NoteUtil is used for retrieving and manipulating `Notes`.
+    It must be configured with a config file.
+
     Parameters
     ----------
-    file_name : :class:`str`
-        The name of the file that has the raw notes. This file will be read and formatted into a .nu file
-        that can be edited by the program.
+    config_file : str
+        The name of the config file that is used to set up this `NoteUtil`.
 
-        .. warning::
-        
-            The file must be in the current working directory to be detected. 
-            
-    separator : Optional[:class:`str`]
-        The delimiter that distinguishes between each token.
-    comment : Optional[:class:`str`]
-        A prefix of a token in the file that will cause it to be ignored and not included in the .nu file.
-        
     Attributes
     ----------
-    notes: List[:class:`Note`]
+    note_file: str
+        The name of the file with notes, likely a text file.
+    nu_file: str
+        The same name of the file with notes, but with a .nu extension indicating `NoteUtil` modified.
+    comments: str
+        The prefix of lines that should be ignored in the note file.
+    separator: str
+        A delimiter used to split `Note` lines into pairs (terms and definitions).
+    notes : List[`Note`]
         All `Note`s created from the .nu file.
-    file_name: :class:`str`
-        Name of the file without the any file extensions.
-    separator: :class:`str`
-        Delimiter that splits `Note` tokens.
-    comment: :class:`str`
-        Prefix of `Note` tokens that have been ignored.
+    heading_char : str
+        If a `Note` is a heading, its content will start with this character.
+    levels : int
+        The number of headings.
+    level_names : List[str]
+        The general name of each group of headings.
+    heading_names : List[str]
+        The list of all heading names in chronological order.
+    heading_level : Dict[str, List[`Note`]]
+        Mapped general names of headings to a list of notes that are headings that belong to that name.
+    heading_order : List[`Note`]
+        Chronological list of notes that are headings.
+    extension_names : List[str]
+        List of all generic names of the extensions.
+    extension_bounds : List[Tuple[str, str]]
+        List of all (left bound, right bound) tuples that correspond to the extension names.
+        `zip(extension_names, extension_bounds)` gives correctly corresponding names and bounds.
+    extensions : List[`Note`]
+        All `Note`s that have extensions.
+    pairs : List[`Note`]
+        All `Note`s that have terms and definitions.
+    warnings : List[str]
+        List of all of the warnings that occurred during the `Note` creation process.
+    errors : List[str]
+        List of all of the errors that occurred during the `Note` creation process.
+
+    Raises
+    ------
+    NoteError
+        If there were any severe problems during the `Note` creation process.
     """
 
-    def __init__(self, file_name: str, category_groups: list, note_groups: list, extension_groups: list,
-                 *, separator: str="\n", comment: str=None):
+    def __init__(self, config_file: str):
         self.notes = []
-        self.lines = []
-        self.pairs = []
-        self.positionals = []
-        self.extensions = {}
-        self.categories = {}
+        self.config_file = config_file
+        self.warnings = []
+        self.errors = []
+        self._parse_config()
+        self._read_config()
+        if not os.path.exists(self.nu_file):
+            self._parse_notes()
+        self._read_notes()
 
-        self.file_name = file_name
-        self.separator = separator
-        self.comment = comment
+        if self.warnings:
+            print("Warnings\n"
+                  "--------\n"
+                  "\t{0}\n"
+                  "--------".format("\n\t".join(self.warnings)))
+        if self.errors:
+            raise NoteError("Errors\n"
+                            "------\n"
+                            "\t{0}\n"
+                            "------".format("\n\t".join(self.errors)))
 
-        if self.file_name.endswith(".nu"):
-            self._read_file()
-        else:
-            self._compile_file()
-            self._read_file()
+    @property
+    def pairs(self) -> List[Note]:
+        return list(filter(lambda n: n.is_pair(), self.notes))
 
-    def __repr__(self):
-        pass
+    @property
+    def heading_names(self) -> List[str]:
+        return list(map(lambda n: n.heading_name, self.heading_order))
 
-    def _compile_file(self):
-        """Strips the file of white space, empty lines and comments. Writes the stripped contents into a .nu file."""
+    @property
+    def heading_level(self) -> Dict[str, List[Note]]:
+        heading_level = {}
+        for level_name in self.level_names:
+            heading_level[level_name] = []
 
-        with open(self.file_name, mode="r", encoding="UTF-8") as f:
-            for line in f.read().split(self.separator):
-                if self.comment is not None:
-                    if line.startswith(self.comment):
-                        continue
+        for note in self.heading_order:
+            level_name = self.level_names[note.level - 1]
+            heading_level[level_name].append(note)
+        return heading_level
+
+    @property
+    def heading_order(self) -> List[Note]:
+        return list(filter(lambda n: n.is_heading(), self.notes))
+
+    @property
+    def extensions(self) -> List[Note]:
+        return list(filter(lambda n: n.has_extensions(), self.notes))
+
+    def _parse_config(self) -> None:
+        """Strips the file of white space, empty lines, and comments.
+        Detects unusual spacing and writes contents into a temporary config file.
+        """
+
+        with open(self.config_file, mode="r") as f:
+            raw_config = ""
+            lines = f.readlines()
+            for index, line in enumerate(lines):
+                # If this line and the last line are blank, that means there are two blank lines.
+                if line.startswith("\n") and index != 0 and lines[index - 1].startswith("\n"):
+                    raise ExtraLine(index)
+                # If this line is a blank line and the previous one was not a comment, there's an unexpected line.
+                if line.startswith("\n") and index != 0 and lines[index - 1].strip().startswith(">>>") is False:
+                    raise UnexpectedLine(index)
 
                 line = line.strip()
 
-                if self.comment is not None:
-                    if line.startswith(self.comment):
-                        continue
+                # Remove any comments and leave only intended lines
+                if line.startswith(">>>"):
+                    continue
 
+                else:
+                    raw_config += line + "\n"
+
+        with open("temp.cfg", mode="w") as f:
+            f.write(raw_config)
+
+    def _read_config(self) -> None:
+        """Parses the config file into `NoteUtil` attributes."""
+
+        with open("temp.cfg", mode="r") as f:
+            lines = readlines(f)
+
+            # Read line by line to get each variable
+            self.note_file = next(lines)
+            self.nu_file = self.note_file.split(".")[0] + ".nu"
+            self.comments = next(lines) or None
+            self.separator = next(lines) or None
+
+            self.heading_char = next(lines) or None
+            if self.heading_char is not None:
+                self.levels = int(next(lines))
+                self.level_names = []
+                for _ in range(self.levels):
+                    self.level_names.append(next(lines))
+            else:
+                next(lines)
+                next(lines)
+
+            extension_number = next(lines) or None
+            if extension_number:
+                self.extension_names = list()
+                self.extension_bounds = list()
+                for _ in range(int(extension_number)):
+                    self.extension_names.append(next(lines))
+                for _ in range(int(extension_number)):
+                    self.extension_bounds.append(tuple(next(lines).split()))
+            else:
+                self.extension_names = None
+                self.extension_bounds = None
+                next(lines)
+                next(lines)
+
+    def _parse_notes(self) -> None:
+        """Strips the note file of whitespace, empty lines, and comments.
+        Removes the underline heading generated from Docs to Markdown and writes content to the .nu file.
+        """
+
+        with open(self.note_file, mode="r") as f:
+            raw_notes = ""
+            for line in f.readlines():
+                line = line.strip()
+
+                if line.startswith('<span style="text-decoration:underline;">'):
+                    line = "__" + line[41:-7] + "__"
+
+                # Check for comments or empty line
+                if self.comments is not None:
+                    if line.startswith(self.comments):
+                        continue
                 if line == "":
                     continue
 
-                if line not in self.notes:
-                    self.notes.append(line)
+                # Passed, add it to the raw notes
+                raw_notes += line + "\n"
 
-        self.file_name = self.file_name.split(".")[0] + ".nu"
-        with open(self.file_name, mode="w", encoding="UTF-8") as f:
-            f.write(self.separator.join(self.notes))
+        with open(self.nu_file, mode="w") as f:
+            f.write(raw_notes)
 
-    def _read_file(self):
-        """Splits the .nu file by the ``separator`` and appends all of the tokens to the ``notes``."""
-
-        # with open(self.note_file, mode="r", encoding="UTF-8") as f:
-            # for i, line in enumerate(f.read().split(self.separator)):
-
-
-        # for eg in self._egroups:
-        #     if eg.name not in self.extensions:
-        #         self.extensions[eg.name] = []
-        #
-        #     while True:
-        #         try:
-        #             i = self.content.index(eg.lbound)
-        #         except IndexError:
-        #             break
-        #
-        #         try:
-        #             j = self.content.index(eg.rbound)
-        #         except IndexError:
-        #             raise NoRightBound
-        #
-        #         self.extensions[eg.name].append(Extension(eg, self.content[i + len(eg.lbound): j].strip(), self))
-        #         eg.notes.append(self)
-        #         self.content = self.content[:i].strip() + eg.placeholder + self.content[j + len(eg.rbound):].strip()
-
-    def format(self):
-        """Returns a formatted version of the notes.
-        
-        This is just the ``separator`` joined with the ``notes``.
+    def _read_notes(self) -> None:
+        """Parses the newly written .nu file and creates `Note`s in the order of Heading, Extensions, Pairs, and Notes.
+        Adds all of the notes to self.notes.
         """
 
-        return self.separator.join(self.notes)
+        with open(self.nu_file, mode="r") as f:
 
-    @one
-    def nindex(self, *, content: str=None):
-        """Finds the note index of a `Note` that has a certain attribute.
-        
+            if self.heading_char is not None:
+                current_level = 0
+
+            for nindex, line in enumerate(f.readlines()):
+                kwargs = {}
+                line = line.strip()
+
+                # Heading Detection
+                if self.heading_char is not None:
+                    if line.startswith(self.heading_char):
+                        kwargs["heading_char"] = self.heading_char
+
+                        previous_level = current_level
+                        kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
+                        if current_level - previous_level > 1:
+                            self.errors.append("Heading Jump - Line content: {0}".format(line))
+                            # raise HeadingJump(line, previous_level, current_level)
+                        kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
+                        line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
+                        kwargs["heading_name"] = line
+
+                        kwargs["begin_nindex"] = nindex
+                # End Heading Detection
+
+                # Extension Detection
+                if self.extension_names is not None and self.extension_bounds is not None:
+                    kwargs["extensions"] = []
+                    kwargs["extension_names"] = []
+                    for name, bounds in zip(self.extension_names, self.extension_bounds):
+                        lbound, rbound = bounds
+                        while lbound in line:
+                            if rbound in line:
+                                lindex = line.index(lbound) + len(lbound)
+                                rindex = line.index(rbound, lindex)
+                                kwargs["extensions"].append(
+                                    Extension(line[lindex:rindex].strip(), name, lbound, rbound))
+                                kwargs["extension_names"].append(name)
+
+                                line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
+                                line = line.strip()
+                            else:
+                                self.warnings.append("Missing Bound - Line content: {0}".format(line))
+                                # raise MissingBound(line, lbound, rbound)
+
+                # End Extension Detection
+
+                # Pair Detection
+                if self.separator is not None:
+                    if self.separator in line:      # Line is a pair, add additional parameters
+                        if len(line.split(self.separator)) > 2:
+                            self.warnings.append("Extra Separator - Line content: {0}".format(line))
+                            # raise ExtraSeparator(line)
+
+                        kwargs["term"] = line.split(self.separator)[0].strip()
+                        if kwargs["term"] in map(lambda n: n.term, self.pairs):
+                            self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
+                            # raise DuplicateTerm(kwargs["term"])
+
+                        kwargs["definition"] = line.split(self.separator)[1].strip()
+                        if kwargs["definition"] == "":
+                            self.warnings.append("No Definition - Line content: {0}".format(line))
+                            # raise NoDefinition(line)
+
+                        kwargs["separator"] = self.separator
+                # End Pair Detection
+
+                note = Note(line, nindex, **kwargs)
+
+                # Add the note to NoteUtil's data structures.
+                self.notes.append(note)
+                if note.is_heading():
+                    self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
+                    self.heading_order.append(note)
+
+            # Headings are still missing their end_nindex and nindexes:
+            # Complete Headings
+            if self.heading_char is not None:
+                headings_list = list(self.heading_level.values())
+                for headings in headings_list:
+                    for i in range(len(headings)):
+                        heading = headings[i]
+                        level_index = i + 1     # The next heading index at the same level
+                        order_index = self.heading_order.index(heading) + 1    # The next heading index in heading order
+
+                        while order_index != len(self.heading_order) and \
+                                self.heading_order[order_index].level > heading.level:
+                            order_index += 1
+
+                        if level_index == len(headings):
+                            level_begin_nindex = len(self.notes)
+                        else:
+                            level_begin_nindex = headings[level_index].begin_nindex
+                        if order_index == len(self.heading_order):
+                            order_begin_nindex = len(self.notes)
+                        else:
+                            order_begin_nindex = self.heading_order[order_index].begin_nindex
+
+                        if level_begin_nindex < order_begin_nindex:
+                            end_nindex = level_begin_nindex
+                        else:
+                            end_nindex = order_begin_nindex
+
+                        heading.end_nindex = end_nindex
+                        heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
+            # End Complete Headings
+
+    def get(self, **kwargs) -> Union[None, Note]:
+        """Retrieves a `Note` with attributes equal to passed keyword args.
+
         Parameters
         ----------
-        content : :class:`str`
-            The text that the `Note` equals.
-        """
-        
-        if content is not None:
-            for note in self.notes:
-                if content.lower() == note.content.lower():
-                    return note.nindex
-            raise NoteNotFound("No note was found to equal the content: {0}".format(content))
+        kwargs
+            Keys are attribute names and Values are values you are looking for in those attributes.
 
-    @one
-    def nindexes(self, *, content: str=None):
-        """Finds all note indexes of `Note`s that have certain attributes.
-        
+        Other Parameters
+        ----------------
+        compare
+            If one of the keys of kwargs is `compare`, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: `Note`, **kwargs
+
+        Returns
+        -------
+        `Note` or None
+            If a `Note` is found to have the passed attributes.
+            If no `Note` is found.
+        """
+
+        if not kwargs:
+            return None
+
+        compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
+
+        for note in self.notes:
+            if compare(note, **kwargs):
+                return note
+        return None
+
+    def get_list(self, **kwargs) -> Union[None, List[Note]]:
+        """Retrieves all `Note`s with attributes equal to passed keyword args and stores them in a List.
+
         Parameters
         ----------
-        content : :class:`str`
-            The text that the `Note` contains.
-        """
-        
-        nindexes = []
-        if content is not None:
-            for note in self.notes:
-                if content.lower() in note.content.lower():
-                    nindexes.append(note.nindex)
-        if not nindexes:
-            raise NoteNotFound("No note was found containing the content: {0}".format(content))
-        return sorted(set(nindexes))
+        kwargs
+            Keys are attribute names and Values are values you are looking for in those attributes.
 
-    @one
-    def note(self, *, content: str=None, nindex: int=None):
-        """Finds the `Note` that has a certain attribute.
-        
-        Parameters
-        ----------
-        content : :class:`str`
-            The text that the `Note` content equals.
-        nindex : :class:`int`
-            The note index of the `Note`.
-        """
-        
-        if nindex is not None:
-            try:
-                return self.notes[nindex]
-            except IndexError:
-                raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
-        if content is not None:
-            for note in self.notes:
-                if content.lower() == note.content.lower():
-                    return note
-            raise NoteNotFound("No note was found to equal content: {0}".format(content))
+        Other Parameters
+        ----------------
+        compare
+            If one of the keys of kwargs is `compare`, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: `Note`, **kwargs
 
-    @one
-    def notes(self, *, content: str=None, nindexes: list=None):
-        """Finds all `Note`s that have certain attributes.
-        
-        Parameters
-        ----------
-        content : :class:`str`
-            The text that the `Note` contains.
-        nindexes : List[:class:`int`]
-            The note indexes of any amount of `Note`s.
+        Returns
+        -------
+        List[`Note`] or None
+            If a `Note`s are found to have the passed attributes.
+            If no `Note`s are found.
         """
-        
+
+        if not kwargs:
+            return None
+
         notes = []
-        if nindexes is not None:
-            for nindex in nindexes:
-                try:
-                    notes.append(self.notes[nindex])
-                except IndexError:
-                    raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
-        if content is not None:
-            for note in self.notes:
-                if content.lower() in note.content.lower():
-                    notes.append(note)
+        compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
 
-            if not notes:
-                raise NoteNotFound("No note was found containing the content: {0}".format(content))
-        return sorted(set(notes))
+        for note in self.notes:
+            if compare(note, **kwargs):
+                notes.append(note)
+        return notes if notes else None
 
-    @one
-    def lindex(self, *, content: str=None, nindex: int=None):
-        if nindex is not None:
-            try:
-                return self.notes[nindex].lindex
-            except IndexError:
-                raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
-            except AttributeError:
-                raise LineExpected("The note at the note index: {0} was not a Line.".format(nindex))
+    def edit(self, note: Note, content: str, override: bool = False) -> None:
+        """Given a `Note`, edit its content.
+        This can have many side effects:
+            1. Changes to heading_name.
+            2. Changes to extensions.
+            3. Changes to whether the `Note` is a pair.
+            4. Changes to term, definition, and separator
 
-        if content is not None:
-            for line in self.lines:
-                if content.lower() == line.content.lower():
-                    return line.lindex
-            raise LineNotFound("No line was found to equal the content: {0}".format(content))
+        Parameters
+        ----------
+        note : `Note`
+            A `Note` that you want to modify.
+        content : str
+            The new content that the `Note` should have.
+        override : bool
+            Whether to override the warning when editing the content.
 
-    @one
-    def lindexes(self, *, content: str=None, nindexes: list=None):
+        Returns
+        -------
+        None
 
-        lindexes = []
-        if content is not None:
-            for line in self.lines:
-                if content.lower() in line.content.lower():
-                    lindexes.append(line.lindex)
+        Raises
+        ------
+        MissingBound
+        ExtraSeparator
+        DuplicateTerm
+        NoDefinition
+        """
 
-        if nindexes is not None:
-            for nindex in nindexes:
-                try:
-                    lindexes.append(self.notes[nindex].lindex)
-                except IndexError:
-                    raise NoteIndexError(
-                        "The note index: {0} was out of bounds of the notes.".format(nindex))
-                except AttributeError:
-                    raise LineExpected("The note at note index: {0} was not a Line.".format(nindex))
+        if self.extension_names is not None and self.extension_bounds is not None:
+            note.extensions = []
+            note.extension_names = []
+            for name, bounds in zip(self.extension_names, self.extension_bounds):
+                lbound, rbound = bounds
+                while lbound in content:
+                    if rbound in content:
+                        lindex = content.index(lbound) + len(lbound)
+                        rindex = content.index(rbound, lindex)
+                        note.extensions.append(Extension(content[lindex:rindex].strip(), name, lbound, rbound))
+                        note.extension_names.append(name)
 
-        if not lindexes:
-            raise LineNotFound("No line was found with the content: {0} or "
-                                      "have any of the nindexes: [1}".format(content, nindexes))
-        return sorted(set(lindexes))
-
-    @one
-    def line(self, *, content: str=None, nindex: int=None, lindex: int=None):
-        if nindex is not None:
-            try:
-                if isinstance(self.notes[nindex], Line):
-                    return self.notes[nindex]
-                else:
-                    raise LineExpected("The note at note index: {0} was not a Line".format(nindex))
-            except IndexError:
-                raise NoteIndexError("The note index: {0} was out of bounds of the notes.".format(nindex))
-        if lindex is not None:
-            try:
-                return self.lines[lindex]
-            except IndexError:
-                raise LineIndexError("The line index: {0} was out of bounds of the lines.".format(lindex))
-        if content is not None:
-            for line in self.lines:
-                if line.content.lower() == content.lower():
-                    return line
-            raise LineNotFound("No line was found to equal content: {0}".format(content))
-
-    @one
-    def lines(self, *, content: str=None, nindexes: list=None, lindexes: list=None):
-        lines = []
-
-        if content is not None:
-            for line in self.lines:
-                if content.lower() in line.content.lower():
-                    lines.append(line)
-        if nindexes is not None:
-            for nindex in nindexes:
-                try:
-                    if isinstance(self.notes[nindex], Line):
-                        lines.append(self.notes[nindex])
+                        content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
+                        content = content.strip()
                     else:
-                        raise LineExpected("The note at note index: {0} was not a Line.".format(nindex))
-                except IndexError:
-                    raise NoteIndexError(
-                        "The note index: {0} was out of bounds of the notes".format(nindex))
-        if lindexes is not None:
-            for lindex in lindexes:
-                try:
-                    lines.append(self.lines[lindex])
-                except IndexError:
-                    raise LineIndexError(
-                        "The line index: {0} was out of bounds of the lines".format(lindex))
+                        if not override:
+                            raise MissingBound(content, lbound, rbound)
 
-        if not lines:
-            raise LineNotFound(
-                "No line was found to contain content: {0} or have any indexes in: {1}".format(content, nindexes))
-        return sorted(set(lines))
+        if self.separator is not None:
+            note.term = None
+            note.definition = None
+            note.separator = None
+            if self.separator in content:
+                if len(content.split(self.separator)) > 2:
+                    if not override:
+                        raise ExtraSeparator(content)
+
+                term = content.split(self.separator)[0].strip()
+                if note.term != term and term in map(lambda n: n.term, self.pairs):
+                    if not override:
+                        raise DuplicateTerm(term)
+
+                definition = content.split(self.separator)[1].strip()
+                if definition == "":
+                    if not override:
+                        raise NoDefinition(content)
+                note.term = term
+                note.definition = definition
+                note.separator = self.separator
+
+        note.content = content
+        if note.is_heading():
+            note.heading_name = content
+
+        self.notes[note.nindex] = note
+
+    def reformat(self) -> None:
+        """Writes all of the `Note`s back into what they were when they were being parsed into a .nu file.
+
+        If any changes to the `Note`s were made, they will be written here as well.
+
+        Returns
+        -------
+        None
+        """
+
+        raw_notes = "\n".join(list(map(lambda n: n.rcontent, self.notes)))
+        with open(self.nu_file, mode="w") as f:
+            f.write(raw_notes)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

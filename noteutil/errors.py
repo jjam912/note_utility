@@ -1,119 +1,86 @@
 class NoteUtilError(Exception):
-    """Base exception for all ``NoteUtil`` errors."""
+    """Superclass for all `NoteUtil` exceptions."""
 
     pass
 
 
-# Note Exceptions
-class NoteError(Exception):
+class ConfigError(NoteUtilError):
+    """Superclass for exceptions raised during the `Config` parsing process."""
+
     pass
 
 
-class LineError(NoteError):
+class UnexpectedLine(ConfigError):
+    def __init__(self, index):
+        super().__init__("There was an unexpected line after an option at Line {0}".format(index + 1))
+
+
+class ExtraLine(ConfigError):
+    def __init__(self, index):
+        super().__init__("There are two or more blank lines at Line {0}".format(index + 1))
+
+
+class NoteError(NoteUtilError):
+    """Superclass for exceptions raised during the `Note` creating process."""
+
     pass
 
 
-class PairError(NoteError):
+class ExtraSeparator(NoteError):
+    def __init__(self, content):
+        super().__init__("There was more than one separator in the line content: {0}".format(content))
+
+
+class DuplicateTerm(NoteError):
+    def __init__(self, term):
+        super().__init__("There was already a term of the name: {0}".format(term))
+
+
+class NoDefinition(NoteError):
+    def __init__(self, content):
+        super().__init__("There was no text after the separator in the line content: {0}".format(content))
+
+
+class HeadingJump(NoteError):
+    def __init__(self, content, previous_level, current_level):
+        super().__init__("The heading level jumped down 2 or more levels: From level {0} to {1} in content: {2}".
+                         format(previous_level, current_level, content))
+
+
+class MissingBound(NoteError):
+    def __init__(self, content, lbound, rbound):
+        super().__init__("The left bound: {0} was found, but there was no right bound: {1} in content: {2}".format(
+            lbound, rbound, content))
+
+
+class QuizError(Exception):
+    """Superclass for all `Quiz` exceptions."""
+
     pass
 
 
-class SeparatorError(PairError):
-    def __init__(self, content: str):
-        super().__init__("There was either zero or more than one separator in the content: {0}".format(content))
+class HeadingExpected(QuizError):
+    def __init__(self, note):
+        super().__init__("The note was expected to be a heading, but wasn't: {0}".format(note.raw()))
 
 
-# Extension Exceptions
-class ExtensionError(Exception):
+class HeadingNotFound(QuizError):
+    def __init__(self, heading_name):
+        super().__init__("The heading name wasn't found: {0}".format(heading_name))
+
+
+class LeitnerError(Exception):
+    """Superclass for all `Leitner` exceptions."""
+
     pass
 
 
-class NoRightBound(ExtensionError):
-    pass
+class TimeTooShort(LeitnerError):
+    def __init__(self, time):
+        super().__init__("The time period for the added box must be longer than the last box: (> {0})".format(time))
 
 
-class NoSeparators(ExtensionError):
+class LastBox(LeitnerError):
     def __init__(self):
-        super().__init__("There must be at least one `separator` in `separators`.")
-
-
-class NoBullets(ExtensionError):
-    def __init__(self):
-        super().__init__("There must be at least one `bullet` in `bullets`.")
-
-
-# Category Exceptions
-class CategoryError(Exception):
-    pass
-
-
-# Group Exceptions
-class GroupError(Exception):
-    pass
-
-
-class AbstractGroupError(GroupError):
-    def __init__(self, cls):
-        super().__init__(cls.__name__ + " is an abstract Group that cannot be implemented")
-
-
-# More general Note Exceptions
-class NoteNotFound(NoteUtilError):
-    """This exception is thrown when no `Note`_ is found in the ``notes`` with the given arguments."""
-
-    pass
-
-
-class NoteIndexError(NoteUtilError):
-    """This exception is thrown when a ``nindex`` is passed that is out of range of the ``notes``."""
-    
-    pass
-
-
-class LineExpected(NoteUtilError):
-    """This exception is thrown when a `Line`_ or subclass of `Line`_ was expected from the ``notes``.
-    
-    This should theoretically never happen because all `Note`_\ s automatically convert to `Line`_\ s.
-    """
-    
-    pass
-
-
-class LineNotFound(NoteNotFound):
-    """This exception is thrown when no `Line`_ is found in the ``lines`` with the given arguments."""
-
-    pass
-
-
-class LineIndexError(NoteIndexError):
-    """This exception is thrown when a ``lindex`` is passed that is out of range of the ``lines``."""
-
-    pass
-
-
-class PairExpected(NoteUtilError):
-    pass
-
-
-class PairNotFound(NoteNotFound):
-    pass
-
-
-class PairIndexError(NoteIndexError):
-    pass
-
-
-class NoArgs(NoteUtilError):
-    """This exception is thrown when no arguments are passed into a function of any `NoteUtil`_ that needs at least one.
-
-    If all of the arguments of a function are ``None``, this exception will be thrown.
-    """
-
-    def __init__(self, func):
-        super().__init__("At least one argument must be passed to " + func.__name__)
-
-
-class NeedOneArg(NoteUtilError):
-    def __init__(self, func):
-        super().__init__("Only one argument may be passed to " + func.__name__)
-
+        super().__init__("The number of boxes are not allowed to be less than 1.")
 

@@ -48,6 +48,8 @@ def is_similar_in(note, **kwargs) -> bool:
 
 class CompareOptions(enum.Enum):
     """Enum for selecting compare options for NoteUtil.get methods.
+    The Enums here are only a few of the possible comparing options for `Note`s.
+    You are encouraged to develop your own to suit your needs.
 
     Constants
     ---------

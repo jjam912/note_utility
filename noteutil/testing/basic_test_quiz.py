@@ -1,6 +1,6 @@
-from noteutil2.noteutil import NoteUtil
-from noteutil2.quiz import Quiz
-from noteutil2.comparisons import CompareOptions
+from noteutil.noteutil import NoteUtil
+from noteutil.quiz import Quiz
+from noteutil.comparisons import CompareOptions
 import os
 
 
