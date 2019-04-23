@@ -2,7 +2,7 @@ from .notes import Note, Extension
 from .comparisons import CompareOptions
 from .errors import *
 import os.path
-from typing import List, Dict, Generator, Union, Tuple, overload
+from typing import List, Dict, Generator, Union, Tuple
 
 
 def readlines(f) -> Generator[str, None, None]:
