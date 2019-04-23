@@ -1,0 +1,40 @@
+>>> Welcome to NoteUtil's configuration file!
+>>>
+>>> Enter in the following configurations in the lines without a ">>>". There must not be any blank lines surrounding what you enter.
+>>> Any lines with a ">>>" will be ignored.
+>>> Any optional configurations should be left blank to be left out. Make sure there are no two consecutive blank lines anywhere.
+>>>
+>>> I recommend copying and pasting this file's contents and creating your own config file and keeping this as a template.
+>>>
+>>> ----------------------
+>>> NOTEUTIL CONFIGURATION
+>>> ----------------------
+>>>
+>>> [Required] File name (include . ending) - To detect your notes file.
+extensions_notes.txt
+>>> [Optional] Comments (cannot be >>>) - Prefix a line in your notes with this so it is ignored while your notes are being read.
+
+>>> [Recommended] Separator - For the creation of Pairs.
+:
+>>> [Recommended] Heading character - To indicate a Headings hierarchy.
+
+    >>> [Required if Heading character given, otherwise leave blank.]
+    >>> Number of Headings - To tell how many levels of Headings there are.
+
+    >>> A name for each Heading separated by newlines - To give each level of Heading a general name to refer to.
+    >>> The number of names should match the number of Headings.
+
+>>> [Optional] Number of Extensions - To know how many different types of Extensions will be created.
+2
+    >>> [Required if Number of Extensions given, otherwise leave blank.]
+    >>> A name for each extension separated by newlines - To give each Extension a general name to refer to.
+    Solution
+    Question
+    >>> For each name, enter the 1. beginning character, 2. ending character, and [optional] 3. placeholder, separated by spaces.
+    $$ $$
+    ${ }$
+>>>
+>>>
+>>>
+>>>
+>>>
