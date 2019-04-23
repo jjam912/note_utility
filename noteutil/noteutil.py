@@ -257,7 +257,8 @@ class NoteUtil:
                                 rindex = line.index(rbound, lindex)
                                 kwargs["extensions"].append(
                                     Extension(line[lindex:rindex].strip(), name, lbound, rbound))
-                                kwargs["extension_names"].append(name)
+                                if name not in kwargs["extension_names"]:
+                                    kwargs["extension_names"].append(name)
 
                                 line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
                                 line = line.strip()
