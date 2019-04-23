@@ -86,6 +86,12 @@ class Note:
                         "end_nindex={5}, nindexes={6}".format(self.heading_char, self.level, self.heading,
                                                               self.heading_name, self.begin_nindex, self.end_nindex,
                                                               self.nindexes))
+        if self.has_extensions():
+            rstring += ", extension_names={0}".format(repr(self.extension_names))
+            rstring += ", extensions=["
+            for ext in self.extensions:
+                rstring += repr(ext)
+            rstring += "]"
         if self.is_pair():
             rstring += (", term='{0}', definition='{1}', separator='{2}'".format(self.term, self.definition,
                                                                                  self.separator))
