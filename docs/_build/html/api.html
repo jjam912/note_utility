@@ -1,0 +1,1472 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API Reference &#8212; noteutil 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to noteutil’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to noteutil’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">noteutil 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="noteutil">
+<h2>NoteUtil<a class="headerlink" href="#noteutil" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="noteutil.noteutil.NoteUtil">
+<em class="property">class </em><code class="descclassname">noteutil.noteutil.</code><code class="descname">NoteUtil</code><span class="sig-paren">(</span><em>config_file: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/noteutil.html#NoteUtil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.noteutil.NoteUtil" title="Permalink to this definition">¶</a></dt>
+<dd><p>NoteUtil is used for retrieving and manipulating <cite>Notes</cite>.
+It must be configured with a config file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The name of the config file that is used to set up this <cite>NoteUtil</cite>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.note_file">
+<code class="descname">note_file</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.note_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the file with notes, likely a text file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.nu_file">
+<code class="descname">nu_file</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.nu_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The same name of the file with notes, but with a .nu extension indicating <cite>NoteUtil</cite> modified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.comments">
+<code class="descname">comments</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>The prefix of lines that should be ignored in the note file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.separator">
+<code class="descname">separator</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>A delimiter used to split <cite>Note</cite> lines into pairs (terms and definitions).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.notes">
+<code class="descname">notes</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.notes" title="Permalink to this definition">¶</a></dt>
+<dd><p>All <a href="#id1"><span class="problematic" id="id2">`</span></a>Note`s created from the .nu file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.heading_char">
+<code class="descname">heading_char</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.heading_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a <cite>Note</cite> is a heading, its content will start with this character.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.levels">
+<code class="descname">levels</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.levels" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of headings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.level_names">
+<code class="descname">level_names</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.level_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>The general name of each group of headings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.heading_names">
+<code class="descname">heading_names</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.heading_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of all heading names in chronological order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.heading_level">
+<code class="descname">heading_level</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.heading_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mapped general names of headings to a list of notes that are headings that belong to that name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Dict[str, List[<cite>Note</cite>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.heading_order">
+<code class="descname">heading_order</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.heading_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chronological list of notes that are headings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.extension_names">
+<code class="descname">extension_names</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.extension_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all generic names of the extensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.extension_bounds">
+<code class="descname">extension_bounds</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.extension_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all (left bound, right bound) tuples that correspond to the extension names.
+<cite>zip(extension_names, extension_bounds)</cite> gives correctly corresponding names and bounds.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.extensions">
+<code class="descname">extensions</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.extensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>All <a href="#id3"><span class="problematic" id="id4">`</span></a>Note`s that have extensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.pairs">
+<code class="descname">pairs</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>All <a href="#id5"><span class="problematic" id="id6">`</span></a>Note`s that have terms and definitions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.warnings">
+<code class="descname">warnings</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.warnings" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all of the warnings that occurred during the <cite>Note</cite> creation process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.noteutil.NoteUtil.errors">
+<code class="descname">errors</code><a class="headerlink" href="#noteutil.noteutil.NoteUtil.errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all of the errors that occurred during the <cite>Note</cite> creation process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoteError</span></code> – If there were any severe problems during the <cite>Note</cite> creation process.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="noteutil.noteutil.NoteUtil.edit">
+<code class="descname">edit</code><span class="sig-paren">(</span><em>note: noteutil.notes.Note</em>, <em>content: str</em>, <em>override: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/noteutil.html#NoteUtil.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.noteutil.NoteUtil.edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a <cite>Note</cite>, edit its content.
+This can have many side effects:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Changes to heading_name.</li>
+<li>Changes to extensions.</li>
+<li>Changes to whether the <cite>Note</cite> is a pair.</li>
+<li>Changes to term, definition, and separator</li>
+</ol>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>note</strong> (<cite>Note</cite>) – A <cite>Note</cite> that you want to modify.</li>
+<li><strong>content</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The new content that the <cite>Note</cite> should have.</li>
+<li><strong>override</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to override the warning when editing the content.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MissingBound</span></code></li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">ExtraSeparator</span></code></li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">DuplicateTerm</span></code></li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoDefinition</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.noteutil.NoteUtil.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[None, noteutil.notes.Note]<a class="reference internal" href="_modules/noteutil/noteutil.html#NoteUtil.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.noteutil.NoteUtil.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a <cite>Note</cite> with attributes equal to passed keyword args.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> – Keys are attribute names and Values are values you are looking for in those attributes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>compare</strong> – If one of the keys of kwargs is <cite>compare</cite>, comparisons will be used with the value of this key.
+The custom compare must accept the parameters: <cite>Note</cite>, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If a <cite>Note</cite> is found to have the passed attributes.
+If no <cite>Note</cite> is found.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>Note</cite> or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.noteutil.NoteUtil.get_list">
+<code class="descname">get_list</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[None, List[noteutil.notes.Note]]<a class="reference internal" href="_modules/noteutil/noteutil.html#NoteUtil.get_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.noteutil.NoteUtil.get_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all <a href="#id9"><span class="problematic" id="id10">`</span></a>Note`s with attributes equal to passed keyword args and stores them in a List.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> – Keys are attribute names and Values are values you are looking for in those attributes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>compare</strong> – If one of the keys of kwargs is <cite>compare</cite>, comparisons will be used with the value of this key.
+The custom compare must accept the parameters: <cite>Note</cite>, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If a <a href="#id13"><span class="problematic" id="id14">`</span></a>Note`s are found to have the passed attributes.
+If no <a href="#id15"><span class="problematic" id="id16">`</span></a>Note`s are found.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List[<cite>Note</cite>] or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.noteutil.NoteUtil.reformat">
+<code class="descname">reformat</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/noteutil.html#NoteUtil.reformat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.noteutil.NoteUtil.reformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes all of the <a href="#id17"><span class="problematic" id="id18">`</span></a>Note`s back into what they were when they were being parsed into a .nu file.</p>
+<p>If any changes to the <a href="#id19"><span class="problematic" id="id20">`</span></a>Note`s were made, they will be written here as well.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="quiz">
+<h2>Quiz<a class="headerlink" href="#quiz" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="noteutil.quiz.Quiz">
+<em class="property">class </em><code class="descclassname">noteutil.quiz.</code><code class="descname">Quiz</code><span class="sig-paren">(</span><em>noteutil: noteutil.noteutil.NoteUtil</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/quiz.html#Quiz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiz takes terms and definitions of <a href="#id21"><span class="problematic" id="id22">`</span></a>Note`s and generates them in useful sequences.
+It keeps track of which terms were marked correct and which terms were marked incorrect.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>noteutil</strong> (<cite>NoteUtil</cite>) – The <cite>NoteUtil</cite> that has the terms and definitions to be used with this Quiz.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.noteutil">
+<code class="descname">noteutil</code><a class="headerlink" href="#noteutil.quiz.Quiz.noteutil" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><cite>NoteUtil</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.last_nindex">
+<code class="descname">last_nindex</code><a class="headerlink" href="#noteutil.quiz.Quiz.last_nindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <cite>nindex</cite> of the last <cite>Note</cite> generated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.correct">
+<code class="descname">correct</code><a class="headerlink" href="#noteutil.quiz.Quiz.correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>All <a href="#id23"><span class="problematic" id="id24">`</span></a>Note`s marked as correct.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.incorrect">
+<code class="descname">incorrect</code><a class="headerlink" href="#noteutil.quiz.Quiz.incorrect" title="Permalink to this definition">¶</a></dt>
+<dd><p>All <a href="#id25"><span class="problematic" id="id26">`</span></a>Note`s marked as incorrect.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.pairs">
+<code class="descname">pairs</code><a class="headerlink" href="#noteutil.quiz.Quiz.pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all <cite>Note`s that are pairs that the `Quiz</cite> is generating from.
+This can either be all pairs in <cite>NoteUtil</cite>, or only pairs inside a specific heading.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">List[<cite>Note</cite>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.heading">
+<code class="descname">heading</code><a class="headerlink" href="#noteutil.quiz.Quiz.heading" title="Permalink to this definition">¶</a></dt>
+<dd><p>The heading whose pairs are being used.
+It is None if pairs are being used from all of NoteUtil’s pairs, or the correct/incorrect list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">None or <cite>Note</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Quiz.qz_file">
+<code class="descname">qz_file</code><a class="headerlink" href="#noteutil.quiz.Quiz.qz_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>File name for the .qz file to save the Quiz’s correct and incorrect lists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>pair: noteutil.notes.Note</em>, <em>*</em>, <em>correct: bool</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a pair to one of the correct or incorrect lists.
+It will also remove it from the other list if it’s in that one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pair</strong> (<cite>Note</cite>) – The pair to add to either the correct list or the incorrect list.</li>
+<li><strong>correct</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to add to the correct list (T) or the incorrect list (F).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empties the correct and incorrect lists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>*</em>, <em>randomize: bool</em>, <em>unmarked: bool = False</em><span class="sig-paren">)</span> &#x2192; Generator[[noteutil.notes.Note, None], None]<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator that yields <cite>Note`s, either chronologically or randomly.
+Once a generator is created, it is “frozen in time,” and isn’t affected by any changes to `Quiz</cite>.
+However, <cite>Quiz</cite> keeps track of the last index used, which changes every time this generator is activated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>randomize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to generate a random term from the list of pairs.</li>
+<li><strong>unmarked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to only generate terms that have not been marked as correct/incorrect.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><cite>Note</cite> – A pair that is either in random or chronological order.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads correct and incorrect terms to a .qz file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><em>noteutil: noteutil.noteutil.NoteUtil</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the <cite>Quiz</cite> to match a new <cite>NoteUtil</cite>.
+This is the same as saving the NoteUtil and then loading it with a different <cite>NoteUtil</cite>.
+As such, only identical <a href="#id27"><span class="problematic" id="id28">`</span></a>Note`s from both <a href="#id29"><span class="problematic" id="id30">`</span></a>NoteUtil`s are kept.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>pair: noteutil.notes.Note</em>, <em>*</em>, <em>correct: bool</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a pair from one of the correct or incorrect lists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pair</strong> (<cite>Note</cite>) – The pair to remove from either the correct list or the incorrect list.</li>
+<li><strong>correct</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether to remove from the correct list (T) or the incorrect list (F).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the <cite>Quiz</cite> to as if it had just been initialized.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes correct and incorrect terms to a .qz file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Quiz.select_heading">
+<code class="descname">select_heading</code><span class="sig-paren">(</span><em>heading: Union[None, str, noteutil.notes.Note]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Quiz.select_heading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Quiz.select_heading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the current heading and pairs to match the pairs in the given heading.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>heading</strong> (None or <cite>Note</cite> or str) – The <cite>Note</cite> or heading name whose pairs should be used.
+If the heading name is “correct” or “incorrect”, the pairs in the corresponding list will be used.
+If left as None, all pairs in <cite>NoteUtil</cite> will be used.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">HeadingExpected</span></code> – If the <cite>Note</cite> provided is not None and isn’t a heading.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">HeadingNotFound</span></code> – If the str provided is not None and it isn’t a recognized heading name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="noteutil.quiz.Leitner">
+<em class="property">class </em><code class="descclassname">noteutil.quiz.</code><code class="descname">Leitner</code><span class="sig-paren">(</span><em>noteutil: noteutil.noteutil.NoteUtil</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/quiz.html#Leitner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Leitner system is a method of spaced repetition where cards are reviewed at increasing intervals.</p>
+<p>If we model a pair as a flashcard (term and definition), then we can also use the Leitner system.
+We use seven “boxes” numbered 1-7, and every time our session is divisible by the box number, we review that box.
+Any terms that we mark as correct will advance to the next box number (+1), and incorrect ones will reset to box 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>noteutil</strong> (<a class="reference internal" href="#noteutil.noteutil.NoteUtil" title="noteutil.noteutil.NoteUtil"><em>NoteUtil</em></a>) – The <cite>NoteUtil</cite> that has terms an definitions to be used in this <cite>Leitner</cite>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="noteutil.quiz.Leitner.noteutil">
+<code class="descname">noteutil</code><a class="headerlink" href="#noteutil.quiz.Leitner.noteutil" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="#noteutil.noteutil.NoteUtil" title="noteutil.noteutil.NoteUtil">NoteUtil</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Leitner.last_nindex">
+<code class="descname">last_nindex</code><a class="headerlink" href="#noteutil.quiz.Leitner.last_nindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>The note index of the last <cite>Note</cite> generated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Leitner.boxes">
+<code class="descname">boxes</code><a class="headerlink" href="#noteutil.quiz.Leitner.boxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary where each box number (key) maps to the list of <a href="#id31"><span class="problematic" id="id32">`</span></a>Note`s inside of it (value).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Dict[int, List[<cite>Note</cite>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Leitner.times">
+<code class="descname">times</code><a class="headerlink" href="#noteutil.quiz.Leitner.times" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary where each box number (key) maps to the time period before review (# of sessions) (value).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Dict[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Leitner.session">
+<code class="descname">session</code><a class="headerlink" href="#noteutil.quiz.Leitner.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The session number that determines which boxes will be reviewed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.quiz.Leitner.lt_file">
+<code class="descname">lt_file</code><a class="headerlink" href="#noteutil.quiz.Leitner.lt_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the .lt file that will save <cite>Leitner</cite>’s boxes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.add_box">
+<code class="descname">add_box</code><span class="sig-paren">(</span><em>time: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.add_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.add_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an additional box to store pairs in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The time period for the box to be added.
+Must be greater than the time period of the last box before this one.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.correct">
+<code class="descname">correct</code><span class="sig-paren">(</span><em>pair: noteutil.notes.Note</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.correct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the pair if it was answered correctly.
+Removes it from its current box and then moves it to the next box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pair</strong> (<cite>Note</cite>) – The pair that was answered correctly.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Generator[[noteutil.notes.Note, None], None]<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator that yields <a href="#id33"><span class="problematic" id="id34">`</span></a>Note`s according to the session number.
+If the session number is divisible by the time on a box, then we review that box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><cite>Note</cite> – A randomly selected pair from all of the pairs we are reviewing in this session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.incorrect">
+<code class="descname">incorrect</code><span class="sig-paren">(</span><em>pair: noteutil.notes.Note</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.incorrect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.incorrect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the pair if it was answered correctly.
+Removes it from its current box and then moves it to the next box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pair</strong> (<cite>Note</cite>) – The pair that was answered incorrectly.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a Leitner state from a .lt file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.pop_box">
+<code class="descname">pop_box</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.pop_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.pop_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pops the last box and moves the lost pairs to the box before the one just popped.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><em>noteutil: noteutil.noteutil.NoteUtil</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the <cite>Leitner</cite> to match a new <cite>NoteUtil</cite>.
+This is the same as saving the NoteUtil and then loading it with a different <cite>NoteUtil</cite>.
+As such, only identical <a href="#id35"><span class="problematic" id="id36">`</span></a>Note`s from both <a href="#id37"><span class="problematic" id="id38">`</span></a>NoteUtil`s are kept.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the <cite>Leitner</cite> to as if it had just been initialized.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.quiz.Leitner.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/noteutil/quiz.html#Leitner.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.quiz.Leitner.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes Leitner state to a .lt file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="noteutil.notes.Note">
+<em class="property">class </em><code class="descclassname">noteutil.notes.</code><code class="descname">Note</code><span class="sig-paren">(</span><em>content</em>, <em>nindex</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/notes.html#Note"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.notes.Note" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <cite>Note</cite> is the text found in the notes file. It contains the actual notes from each line of text.
+They can be Headings, which means a group of notes that come after this <cite>Note</cite> belong to this <cite>Note</cite>.</p>
+<blockquote>
+<div>Only notes that come directly after this heading and before the next heading will belong to this <cite>Note</cite>.
+It is impossible to go back to this heading after we have passed the next heading.</div></blockquote>
+<p>They can have Extensions, which are additional information added on separately from the content of this <cite>Note</cite>.
+They can be Pairs, which means it has a separator, term, and definition that can be used for quizzing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>content</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The content of the <cite>Note</cite> excluding <cite>prefixes</cite> and <cite>Extensions</cite>.</li>
+<li><strong>nindex</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The <cite>Note</cite> index that corresponds to the position in the <cite>NoteUtil.notes</cite>.</li>
+<li><strong>**kwargs</strong> – Any other parameters that extend the <cite>Note</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last">
+<li><p class="first"><strong>If the `Note` is a `Heading`</strong> –</p>
+<dl class="docutils">
+<dt>heading_char <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The character used as to indicate this <cite>Note</cite> is a heading.</p>
+</dd>
+<dt>level <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The depth of heading hierarchy of this <cite>Note</cite>.</p>
+</dd>
+<dt>heading <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The prefix of the content that was removed and the actual heading string.</p>
+</dd>
+<dt>heading_name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The content of the <cite>Note</cite> without the <cite>heading</cite>.</p>
+</dd>
+<dt>begin_nindex <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The beginning note index for this heading.</p>
+</dd>
+<dt>end_nindex <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The ending note index for this heading.</p>
+</dd>
+<dt>nindexes <span class="classifier-delimiter">:</span> <span class="classifier">List[int]</span></dt>
+<dd><p class="first last">List of indexes starting from the <cite>begin_nindex</cite> to the <cite>end_nindex</cite> like a range.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>If the `Note` is a `Pair`</strong> –</p>
+<dl class="docutils">
+<dt>term <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The first part of text that came before the <cite>separator</cite>.</p>
+</dd>
+<dt>definition <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The second part of text that came after the <cite>separator</cite>.</p>
+</dd>
+<dt>separator <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The string that separates the <cite>term</cite> and <cite>definition</cite> of this <cite>Note</cite>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="noteutil.notes.Note.has_extensions">
+<code class="descname">has_extensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/notes.html#Note.has_extensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.notes.Note.has_extensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the <cite>Note</cite> has any extensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.notes.Note.is_heading">
+<code class="descname">is_heading</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/notes.html#Note.is_heading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.notes.Note.is_heading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the <cite>Note</cite> should have the parameters of a heading.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.notes.Note.is_pair">
+<code class="descname">is_pair</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/notes.html#Note.is_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.notes.Note.is_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the <cite>Note</cite> should have the parameters of a pair.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.notes.Note.rcontent">
+<code class="descname">rcontent</code><a class="headerlink" href="#noteutil.notes.Note.rcontent" title="Permalink to this definition">¶</a></dt>
+<dd><p>What a <cite>Note</cite> looked like before parsing it.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="noteutil.notes.Extension">
+<em class="property">class </em><code class="descclassname">noteutil.notes.</code><code class="descname">Extension</code><span class="sig-paren">(</span><em>content: str</em>, <em>name: str</em>, <em>lbound: str</em>, <em>rbound: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/notes.html#Extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.notes.Extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <cite>Extension</cite> is additional text added on to a <cite>Note</cite>.
+All Extensions have a corresponding name and bounded characters to distinguish it from the content of a <cite>Note</cite>.
+The <cite>Extension</cite> is taken out of the content of a <cite>Note</cite> and lives in a <cite>Note</cite>’s <cite>extensions</cite> List.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>content</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The actual notes of the <cite>Extension</cite> without any bounds.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The general name associated with the <cite>Extension</cite>/What it falls under.</li>
+<li><strong>lbound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The string that bounds the left side of the <cite>Extension</cite>.</li>
+<li><strong>rbound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The string that bounds the right side of the <cite>Extension</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="noteutil.notes.Extension.content">
+<code class="descname">content</code><a class="headerlink" href="#noteutil.notes.Extension.content" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.notes.Extension.name">
+<code class="descname">name</code><a class="headerlink" href="#noteutil.notes.Extension.name" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.notes.Extension.lbound">
+<code class="descname">lbound</code><a class="headerlink" href="#noteutil.notes.Extension.lbound" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="noteutil.notes.Extension.rbound">
+<code class="descname">rbound</code><a class="headerlink" href="#noteutil.notes.Extension.rbound" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-noteutil.errors">
+<span id="errors"></span><h2>Errors<a class="headerlink" href="#module-noteutil.errors" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="noteutil.errors.ConfigError">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">ConfigError</code><a class="reference internal" href="_modules/noteutil/errors.html#ConfigError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.ConfigError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superclass for exceptions raised during the <cite>Config</cite> parsing process.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.DuplicateTerm">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">DuplicateTerm</code><span class="sig-paren">(</span><em>term</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#DuplicateTerm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.DuplicateTerm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.ExtraLine">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">ExtraLine</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#ExtraLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.ExtraLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.ExtraSeparator">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">ExtraSeparator</code><span class="sig-paren">(</span><em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#ExtraSeparator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.ExtraSeparator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.HeadingExpected">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">HeadingExpected</code><span class="sig-paren">(</span><em>note</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#HeadingExpected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.HeadingExpected" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.HeadingJump">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">HeadingJump</code><span class="sig-paren">(</span><em>content</em>, <em>previous_level</em>, <em>current_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#HeadingJump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.HeadingJump" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.HeadingNotFound">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">HeadingNotFound</code><span class="sig-paren">(</span><em>heading_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#HeadingNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.HeadingNotFound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.LastBox">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">LastBox</code><a class="reference internal" href="_modules/noteutil/errors.html#LastBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.LastBox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.LeitnerError">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">LeitnerError</code><a class="reference internal" href="_modules/noteutil/errors.html#LeitnerError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.LeitnerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superclass for all <cite>Leitner</cite> exceptions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.MissingBound">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">MissingBound</code><span class="sig-paren">(</span><em>content</em>, <em>lbound</em>, <em>rbound</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#MissingBound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.MissingBound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.NoDefinition">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">NoDefinition</code><span class="sig-paren">(</span><em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#NoDefinition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.NoDefinition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.NoteError">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">NoteError</code><a class="reference internal" href="_modules/noteutil/errors.html#NoteError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.NoteError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superclass for exceptions raised during the <cite>Note</cite> creating process.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.NoteUtilError">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">NoteUtilError</code><a class="reference internal" href="_modules/noteutil/errors.html#NoteUtilError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.NoteUtilError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superclass for all <cite>NoteUtil</cite> exceptions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.QuizError">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">QuizError</code><a class="reference internal" href="_modules/noteutil/errors.html#QuizError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.QuizError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superclass for all <cite>Quiz</cite> exceptions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.TimeTooShort">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">TimeTooShort</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#TimeTooShort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.TimeTooShort" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="noteutil.errors.UnexpectedLine">
+<em class="property">exception </em><code class="descclassname">noteutil.errors.</code><code class="descname">UnexpectedLine</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/noteutil/errors.html#UnexpectedLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.errors.UnexpectedLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-noteutil.comparisons">
+<span id="comparisons"></span><h2>Comparisons<a class="headerlink" href="#module-noteutil.comparisons" title="Permalink to this headline">¶</a></h2>
+<p>This module is for comparisons used when comparing <cite>Note`s in `NoteUtil</cite>.</p>
+<dl class="class">
+<dt id="noteutil.comparisons.CompareOptions">
+<em class="property">class </em><code class="descclassname">noteutil.comparisons.</code><code class="descname">CompareOptions</code><a class="reference internal" href="_modules/noteutil/comparisons.html#CompareOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.comparisons.CompareOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum for selecting compare options for NoteUtil.get methods.
+The Enums here are only a few of the possible comparing options for <a href="#id39"><span class="problematic" id="id40">`</span></a>Note`s.
+You are encouraged to develop your own to suit your needs.</p>
+<dl class="docutils">
+<dt>EQUALS <span class="classifier-delimiter">:</span> <span class="classifier">function</span></dt>
+<dd>Tests for equality. Use with ints, or when you want exact matching.</dd>
+<dt>SIMILAR <span class="classifier-delimiter">:</span> <span class="classifier">function</span></dt>
+<dd>Tests for equals ignore case. Use with strings when you want to match, but ignore case.</dd>
+<dt>IN <span class="classifier-delimiter">:</span> <span class="classifier">function</span></dt>
+<dd>Tests for “in”. Use with strings when you want to know if the exact value is in the attribute.</dd>
+<dt>SIN <span class="classifier-delimiter">:</span> <span class="classifier">function</span></dt>
+<dd>Tests for “in” and also ignores case. Use with strings when you want to know if the value is in the attribute.
+Stands for “Similar In”.</dd>
+</dl>
+<dl class="method">
+<dt id="noteutil.comparisons.CompareOptions.EQUALS">
+<code class="descname">EQUALS</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#noteutil.comparisons.CompareOptions.EQUALS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are exactly equal to the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.comparisons.CompareOptions.IN">
+<code class="descname">IN</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#noteutil.comparisons.CompareOptions.IN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are “in” the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.comparisons.CompareOptions.SIMILAR">
+<code class="descname">SIMILAR</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#noteutil.comparisons.CompareOptions.SIMILAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are equal ignoring case to the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="noteutil.comparisons.CompareOptions.SIN">
+<code class="descname">SIN</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#noteutil.comparisons.CompareOptions.SIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are “in” ignoring case to the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="noteutil.comparisons.is_equal">
+<code class="descclassname">noteutil.comparisons.</code><code class="descname">is_equal</code><span class="sig-paren">(</span><em>note</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/comparisons.html#is_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.comparisons.is_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are exactly equal to the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="noteutil.comparisons.is_in">
+<code class="descclassname">noteutil.comparisons.</code><code class="descname">is_in</code><span class="sig-paren">(</span><em>note</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/comparisons.html#is_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.comparisons.is_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are “in” the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="noteutil.comparisons.is_similar">
+<code class="descclassname">noteutil.comparisons.</code><code class="descname">is_similar</code><span class="sig-paren">(</span><em>note</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/comparisons.html#is_similar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.comparisons.is_similar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are equal ignoring case to the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="noteutil.comparisons.is_similar_in">
+<code class="descclassname">noteutil.comparisons.</code><code class="descname">is_similar_in</code><span class="sig-paren">(</span><em>note</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/noteutil/comparisons.html#is_similar_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#noteutil.comparisons.is_similar_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is True when all of the <cite>kwargs</cite> values are “in” ignoring case to the <cite>Note</cite>’s attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#noteutil">NoteUtil</a></li>
+<li><a class="reference internal" href="#quiz">Quiz</a></li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+<li><a class="reference internal" href="#module-noteutil.errors">Errors</a></li>
+<li><a class="reference internal" href="#module-noteutil.comparisons">Comparisons</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to noteutil’s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to noteutil’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">noteutil 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, James S. Wang.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>

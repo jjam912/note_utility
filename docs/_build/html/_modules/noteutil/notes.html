@@ -1,0 +1,283 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>noteutil.notes &#8212; noteutil 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">noteutil 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for noteutil.notes</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="Note"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.Note">[docs]</a><span></span><span class="k">class</span> <span class="nc">Note</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A `Note` is the text found in the notes file. It contains the actual notes from each line of text.</span>
+<span class="sd">    They can be Headings, which means a group of notes that come after this `Note` belong to this `Note`.</span>
+<span class="sd">        Only notes that come directly after this heading and before the next heading will belong to this `Note`.</span>
+<span class="sd">        It is impossible to go back to this heading after we have passed the next heading.</span>
+<span class="sd">    They can have Extensions, which are additional information added on separately from the content of this `Note`.</span>
+<span class="sd">    They can be Pairs, which means it has a separator, term, and definition that can be used for quizzing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    content : str</span>
+<span class="sd">        The content of the `Note` excluding `prefixes` and `Extensions`.</span>
+<span class="sd">    nindex : int</span>
+<span class="sd">        The `Note` index that corresponds to the position in the `NoteUtil.notes`.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Any other parameters that extend the `Note`.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    If the `Note` is a `Heading`:</span>
+<span class="sd">        heading_char : str</span>
+<span class="sd">            The character used as to indicate this `Note` is a heading.</span>
+<span class="sd">        level : int</span>
+<span class="sd">            The depth of heading hierarchy of this `Note`.</span>
+<span class="sd">        heading : str</span>
+<span class="sd">            The prefix of the content that was removed and the actual heading string.</span>
+<span class="sd">        heading_name : str</span>
+<span class="sd">            The content of the `Note` without the `heading`.</span>
+<span class="sd">        begin_nindex : int</span>
+<span class="sd">            The beginning note index for this heading.</span>
+<span class="sd">        end_nindex : int</span>
+<span class="sd">            The ending note index for this heading.</span>
+<span class="sd">        nindexes : List[int]</span>
+<span class="sd">            List of indexes starting from the `begin_nindex` to the `end_nindex` like a range.</span>
+<span class="sd">    If the `Note` is a `Pair`:</span>
+<span class="sd">        term : str</span>
+<span class="sd">            The first part of text that came before the `separator`.</span>
+<span class="sd">        definition : str</span>
+<span class="sd">            The second part of text that came after the `separator`.</span>
+<span class="sd">        separator : str</span>
+<span class="sd">            The string that separates the `term` and `definition` of this `Note`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">nindex</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Basics of all notes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nindex</span> <span class="o">=</span> <span class="n">nindex</span>
+
+        <span class="c1"># Heading parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heading_char</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;heading_char&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;level&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;heading&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heading_name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;heading_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_nindex</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_nindex&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_nindex</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># Later assigned</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nindexes</span> <span class="o">=</span> <span class="p">[]</span>          <span class="c1"># Later assigned</span>
+
+        <span class="c1"># Pair parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">term</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;definition&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Extension parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extension_names</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extension_names&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extensions&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Note</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcontent</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">rcontent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Note</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcontent</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">rcontent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nindex</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">nindex</span>
+
+    <span class="k">def</span> <span class="nf">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nindex</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">nindex</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;Note(&quot;</span>
+        <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;content=&#39;</span><span class="si">{0}</span><span class="s2">&#39;, nindex=</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nindex</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_heading</span><span class="p">():</span>
+            <span class="n">rstring</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;, heading_char=&#39;</span><span class="si">{0}</span><span class="s2">&#39;, level=</span><span class="si">{1}</span><span class="s2">, heading=&#39;</span><span class="si">{2}</span><span class="s2">&#39;, heading_name=&#39;</span><span class="si">{3}</span><span class="s2">&#39;, begin_nindex=</span><span class="si">{4}</span><span class="s2">, &quot;</span>
+                        <span class="s2">&quot;end_nindex=</span><span class="si">{5}</span><span class="s2">, nindexes=</span><span class="si">{6}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">heading_char</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">heading</span><span class="p">,</span>
+                                                              <span class="bp">self</span><span class="o">.</span><span class="n">heading_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">begin_nindex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_nindex</span><span class="p">,</span>
+                                                              <span class="bp">self</span><span class="o">.</span><span class="n">nindexes</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_extensions</span><span class="p">():</span>
+            <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;, extension_names=</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extension_names</span><span class="p">))</span>
+            <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;, extensions=[&quot;</span>
+            <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span><span class="p">:</span>
+                <span class="n">rstring</span> <span class="o">+=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+            <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pair</span><span class="p">():</span>
+            <span class="n">rstring</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;, term=&#39;</span><span class="si">{0}</span><span class="s2">&#39;, definition=&#39;</span><span class="si">{1}</span><span class="s2">&#39;, separator=&#39;</span><span class="si">{2}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">term</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">definition</span><span class="p">,</span>
+                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">))</span>
+        <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+        <span class="k">return</span> <span class="n">rstring</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rcontent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;What a `Note` looked like before parsing it.&quot;&quot;&quot;</span>
+        <span class="n">rcontent</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_heading</span><span class="p">():</span>
+            <span class="n">rcontent</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heading</span>
+        <span class="n">rcontent</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span><span class="p">:</span>
+            <span class="n">rcontent</span> <span class="o">+=</span> <span class="n">ext</span><span class="o">.</span><span class="n">rcontent</span>
+        <span class="k">return</span> <span class="n">rcontent</span>
+
+<div class="viewcode-block" id="Note.is_pair"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.Note.is_pair">[docs]</a>    <span class="k">def</span> <span class="nf">is_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns whether the `Note` should have the parameters of a pair.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Note.is_heading"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.Note.is_heading">[docs]</a>    <span class="k">def</span> <span class="nf">is_heading</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns whether the `Note` should have the parameters of a heading.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">heading_char</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Note.has_extensions"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.Note.has_extensions">[docs]</a>    <span class="k">def</span> <span class="nf">has_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns whether the `Note` has any extensions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="ow">not</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span></div></div>
+
+
+<div class="viewcode-block" id="Extension"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.Extension">[docs]</a><span class="k">class</span> <span class="nc">Extension</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An `Extension` is additional text added on to a `Note`.</span>
+<span class="sd">    All Extensions have a corresponding name and bounded characters to distinguish it from the content of a `Note`.</span>
+<span class="sd">    The `Extension` is taken out of the content of a `Note` and lives in a `Note`&#39;s `extensions` List.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    content : str</span>
+<span class="sd">        The actual notes of the `Extension` without any bounds.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The general name associated with the `Extension`/What it falls under.</span>
+<span class="sd">    lbound : str</span>
+<span class="sd">        The string that bounds the left side of the `Extension`.</span>
+<span class="sd">    rbound : str</span>
+<span class="sd">        The string that bounds the right side of the `Extension`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    content : str</span>
+<span class="sd">    name : str</span>
+<span class="sd">    lbound : str</span>
+<span class="sd">    rbound : str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lbound</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rbound</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lbound</span> <span class="o">=</span> <span class="n">lbound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbound</span> <span class="o">=</span> <span class="n">rbound</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rcontent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lbound</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbound</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Extension</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcontent</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">rcontent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Extension</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rcontent</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">rcontent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;Extension(&quot;</span>
+        <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;content=&#39;</span><span class="si">{0}</span><span class="s2">&#39;, name=</span><span class="si">{1}</span><span class="s2">, lbound=</span><span class="si">{2}</span><span class="s2">, rbound=</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lbound</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbound</span><span class="p">)</span>
+        <span class="n">rstring</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+        <span class="k">return</span> <span class="n">rstring</span></div>
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">noteutil 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, James S. Wang.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>

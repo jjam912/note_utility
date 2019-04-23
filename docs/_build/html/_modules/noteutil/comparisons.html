@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>noteutil.comparisons &#8212; noteutil 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">noteutil 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for noteutil.comparisons</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module is for comparisons used when comparing `Note`s in `NoteUtil`.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+
+
+<div class="viewcode-block" id="is_equal"><a class="viewcode-back" href="../../api.html#noteutil.comparisons.is_equal">[docs]</a><span class="k">def</span> <span class="nf">is_equal</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Is True when all of the `kwargs` values are exactly equal to the `Note`&#39;s attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">val</span> <span class="o">==</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="is_similar"><a class="viewcode-back" href="../../api.html#noteutil.comparisons.is_similar">[docs]</a><span class="k">def</span> <span class="nf">is_similar</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Is True when all of the `kwargs` values are equal ignoring case to the `Note`&#39;s attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="is_in"><a class="viewcode-back" href="../../api.html#noteutil.comparisons.is_in">[docs]</a><span class="k">def</span> <span class="nf">is_in</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Is True when all of the `kwargs` values are &quot;in&quot; the `Note`&#39;s attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="is_similar_in"><a class="viewcode-back" href="../../api.html#noteutil.comparisons.is_similar_in">[docs]</a><span class="k">def</span> <span class="nf">is_similar_in</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Is True when all of the `kwargs` values are &quot;in&quot; ignoring case to the `Note`&#39;s attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="CompareOptions"><a class="viewcode-back" href="../../api.html#noteutil.comparisons.CompareOptions">[docs]</a><span class="k">class</span> <span class="nc">CompareOptions</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for selecting compare options for NoteUtil.get methods.</span>
+<span class="sd">    The Enums here are only a few of the possible comparing options for `Note`s.</span>
+<span class="sd">    You are encouraged to develop your own to suit your needs.</span>
+
+<span class="sd">    Constants</span>
+<span class="sd">    ---------</span>
+<span class="sd">    EQUALS : function</span>
+<span class="sd">        Tests for equality. Use with ints, or when you want exact matching.</span>
+<span class="sd">    SIMILAR : function</span>
+<span class="sd">        Tests for equals ignore case. Use with strings when you want to match, but ignore case.</span>
+<span class="sd">    IN : function</span>
+<span class="sd">        Tests for &quot;in&quot;. Use with strings when you want to know if the exact value is in the attribute.</span>
+<span class="sd">    SIN : function</span>
+<span class="sd">        Tests for &quot;in&quot; and also ignores case. Use with strings when you want to know if the value is in the attribute.</span>
+<span class="sd">        Stands for &quot;Similar In&quot;.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EQUALS</span> <span class="o">=</span> <span class="n">is_equal</span>
+    <span class="n">SIMILAR</span> <span class="o">=</span> <span class="n">is_similar</span>
+    <span class="n">IN</span> <span class="o">=</span> <span class="n">is_in</span>
+    <span class="n">SIN</span> <span class="o">=</span> <span class="n">is_similar_in</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">noteutil 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, James S. Wang.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
+    </div>
+  </body>
+</html>
