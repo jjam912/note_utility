@@ -32,6 +32,11 @@ class Note:
             The ending note index for this heading.
         nindexes : List[int]
             List of indexes starting from the begin_nindex to the end_nindex like a range.
+    If the Note has Extensions:
+        extension_names : List[str]
+            A set of the generic names of the Extensions that this Note has.
+        extensions : List[Extension]
+            All of the Extensions that this Note has.
     If the Note is a Pair:
         term : str
             The first part of text that came before the separator.
