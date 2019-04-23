@@ -48,7 +48,7 @@ def test_note(note):
 
 
 def test_extension(ext):
-    string = "Extension: \t"
+    string = "Extension:\t"
     string += "Content: {0}\t\t".format(ext.content)
     string += "Name: {!s:<10}\t\t".format(ext.name[:10])
     string += "Left Bound: {!s:<10}\t\t".format(ext.lbound[:10])
