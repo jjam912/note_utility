@@ -1,14 +1,15 @@
 from noteutil import NoteUtil, Quiz, Leitner
 from noteutil.comparisons import CompareOptions
+from noteutil.errors import NoteError
 import os
-import sys
 from typing import List
 
 
 os.chdir(os.path.join(os.getcwd(), "notes"))
 # Construct and add your NoteUtils here::
 math = NoteUtil("heading_config.txt")
-noteutils = [math]
+euro = NoteUtil("euro_config.txt")
+noteutils = [math, euro]
 CANCEL = ["exit", "quit", "stop"]
 
 
@@ -25,7 +26,7 @@ def text_input(message: str):
     str or None
     """
 
-    input_ = input(message + "\n\tType 'exit', 'quit' or 'stop' to stop input.\n")
+    input_ = input(message + "\n\tType 'exit', 'quit' or 'stop' to leave the current action.\n")
 
     if input_.lower() in CANCEL:
         return None
@@ -64,7 +65,7 @@ def range_input(message: str, range_: range):
 
 def yn_input(message: str):
     while True:
-        input_ = text_input(message)
+        input_ = text_input(message + " (Y/N)")
         if input_ is None:
             return None
 
@@ -79,10 +80,10 @@ class Session:
     def __init__(self, noteutil: NoteUtil):
         self.noteutil = noteutil
         self.quiz = Quiz(noteutil)
-        if os.path.isfile(self.quiz.qz_file):
+        if os.path.exists(self.quiz.qz_file):
             self.quiz.load()
         self.leitner = Leitner(noteutil)
-        if os.path.isfile(self.leitner.lt_file):
+        if os.path.exists(self.leitner.lt_file):
             self.leitner.load()
 
         # Settings
@@ -111,6 +112,7 @@ class Commands:
             "commands": self.display,
             "select":   self.select,
             "search":   self.search,
+            "edit":     self.edit,
             "quiz":     self.quiz,
             "leitner":  self.leitner
         }
@@ -123,6 +125,7 @@ class Commands:
         commands    : Shows this.
         select      : Select a note file to use.
         search      : Search for a Note.
+        edit        : Edit the content of a Note.
         quiz        : Start a quiz.
         leitner     : Begin a Leitner review.
         """)
@@ -206,13 +209,16 @@ class Commands:
         for i, note in enumerate(note_list):
             print("\t{0}. {1}".format(i + 1, note.content))
 
-        define = yn_input("Would you like to look at a specific Note more in depth? (Y/N)")
+        define = yn_input("Would you like to look at a specific Note more in depth?")
         if define is None or define is False:
             return print("Canceled input. (6)")
 
-        nindex = range_input("Choose a Note from the found Note list", range(1, len(note_list) + 1))
-        if nindex is None:
-            return print("Canceled input. (7)")
+        if len(note_list) > 1:
+            nindex = range_input("Choose a Note from the found Note list", range(1, len(note_list) + 1))
+            if nindex is None:
+                return print("Canceled input. (7)")
+        else:
+            nindex = 1
         note = note_list[nindex - 1]
         define_type = range_input("Choose an attribute of the Note you want defined."
                                   "\n\t1. Content"
@@ -238,6 +244,50 @@ class Commands:
             extensions = note.extensions
             for i, ext in enumerate(extensions):
                 print("\t{0}. {1}".format(i + 1, ext.content))
+
+    def edit(self):
+        noteutil = self.current_session.noteutil
+
+        nindex = range_input("Enter the note index of the Note.", range(len(noteutil.notes)))
+        if nindex is None:
+            return print("Canceled input. (1)")
+        note = noteutil.notes[nindex]
+        print("The current content of this note is:")
+        print("\t" + note.content)
+        confirm = yn_input("Are you sure you want to edit this Note?"
+                           "\n\tEditing a Note's content can have several side effects, including:"
+                           "\n\t1. Changes to Heading name."
+                           "\n\t2. Changes to Extensions."
+                           "\n\t3. Changes to whether the Note is a pair."
+                           "\n\t4. Changes to term, definition, and separator.")
+        if confirm is None or confirm is False:
+            return print("Canceled input. (2)")
+
+        confirm = False
+        while not confirm:
+            content = text_input("Enter the new content of the Note.")
+            if content is None:
+                return print("Canceled input. (3)")
+            confirm = yn_input("The content of your Note is:"
+                               "\n\t{0}"
+                               "\nIs this your intended content?".format(content))
+            if confirm is None:
+                return print("Canceled input. (4)")
+
+        try:
+            noteutil.edit(note, content)
+        except NoteError as e:
+            confirm = yn_input("There was a warning associated with the content you assigned:"
+                               "\n\t{0}"
+                               "\nDo you want to override this warning?".format(e.args))
+            if confirm is None or confirm is False:
+                return print("Canceled input. (5)")
+
+        noteutil.edit(note, content, True)
+        confirm = yn_input("Would you like to save these changes in your .nu file?")
+        if confirm is None or confirm is False:
+            return print("Canceled input. (6)")
+        noteutil.reformat()
 
     def quiz(self):
         pass
