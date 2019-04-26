@@ -264,6 +264,7 @@ class NoteUtil:
                                 line = line.strip()
                             else:
                                 self.warnings.append("Missing Bound - Line content: {0}".format(line))
+                                break
                                 # raise MissingBound(line, lbound, rbound)
 
                 # End Extension Detection
