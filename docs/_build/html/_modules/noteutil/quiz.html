@@ -1,40 +1,145 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>noteutil.quiz &#8212; noteutil 1.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>noteutil.quiz &mdash; noteutil 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">noteutil 1.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> noteutil
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">noteutil</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>noteutil.quiz</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for noteutil.quiz</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">.errors</span> <span class="k">import</span> <span class="o">*</span>
@@ -48,27 +153,27 @@
 
 
 <div class="viewcode-block" id="Quiz"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Quiz">[docs]</a><span class="k">class</span> <span class="nc">Quiz</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Quiz takes terms and definitions of `Note`s and generates them in useful sequences.</span>
+    <span class="sd">&quot;&quot;&quot;Quiz takes terms and definitions of Notes and generates them in useful sequences.</span>
 <span class="sd">    It keeps track of which terms were marked correct and which terms were marked incorrect.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    noteutil : `NoteUtil`</span>
-<span class="sd">        The `NoteUtil` that has the terms and definitions to be used with this Quiz.</span>
+<span class="sd">    noteutil : NoteUtil</span>
+<span class="sd">        The NoteUtil that has the terms and definitions to be used with this Quiz.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    noteutil : `NoteUtil`</span>
+<span class="sd">    noteutil : NoteUtil</span>
 <span class="sd">    last_nindex : int</span>
-<span class="sd">        The `nindex` of the last `Note` generated.</span>
-<span class="sd">    correct : List[`Note`]</span>
-<span class="sd">        All `Note`s marked as correct.</span>
-<span class="sd">    incorrect : List[`Note`]</span>
-<span class="sd">        All `Note`s marked as incorrect.</span>
-<span class="sd">    pairs : List[`Note`]</span>
-<span class="sd">        List of all `Note`s that are pairs that the `Quiz` is generating from.</span>
-<span class="sd">        This can either be all pairs in `NoteUtil`, or only pairs inside a specific heading.</span>
-<span class="sd">    heading : None or `Note`</span>
+<span class="sd">        The nindex of the last Note generated.</span>
+<span class="sd">    correct : List[Note]</span>
+<span class="sd">        All Notes marked as correct.</span>
+<span class="sd">    incorrect : List[Note]</span>
+<span class="sd">        All Notes marked as incorrect.</span>
+<span class="sd">    pairs : List[Note]</span>
+<span class="sd">        List of all Notes that are pairs that the Quiz is generating from.</span>
+<span class="sd">        This can either be all pairs in NoteUtil, or only pairs inside a specific heading.</span>
+<span class="sd">    heading : None or Note</span>
 <span class="sd">        The heading whose pairs are being used.</span>
 <span class="sd">        It is None if pairs are being used from all of NoteUtil&#39;s pairs, or the correct/incorrect list.</span>
 <span class="sd">    qz_file : str</span>
@@ -89,9 +194,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">qz_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">note_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.qz&quot;</span>
 
 <div class="viewcode-block" id="Quiz.generate"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Quiz.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">unmarked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Note</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;A generator that yields `Note`s, either chronologically or randomly.</span>
-<span class="sd">        Once a generator is created, it is &quot;frozen in time,&quot; and isn&#39;t affected by any changes to `Quiz`.</span>
-<span class="sd">        However, `Quiz` keeps track of the last index used, which changes every time this generator is activated.</span>
+        <span class="sd">&quot;&quot;&quot;A generator that yields Notes, either chronologically or randomly.</span>
+<span class="sd">        Once a generator is created, it is &quot;frozen in time,&quot; and isn&#39;t affected by any changes to Quiz.</span>
+<span class="sd">        However, Quiz keeps track of the last index used, which changes every time this generator is activated.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -102,7 +207,7 @@
 
 <span class="sd">        Yields</span>
 <span class="sd">        ------</span>
-<span class="sd">        `Note`</span>
+<span class="sd">        Note</span>
 <span class="sd">            A pair that is either in random or chronological order.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -131,7 +236,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pair : `Note`</span>
+<span class="sd">        pair : Note</span>
 <span class="sd">            The pair to add to either the correct list or the incorrect list.</span>
 <span class="sd">        correct : bool</span>
 <span class="sd">            Whether to add to the correct list (T) or the incorrect list (F).</span>
@@ -159,7 +264,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pair : `Note`</span>
+<span class="sd">        pair : Note</span>
 <span class="sd">            The pair to remove from either the correct list or the incorrect list.</span>
 <span class="sd">        correct : bool</span>
 <span class="sd">            Whether to remove from the correct list (T) or the incorrect list (F).</span>
@@ -196,10 +301,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        heading : None or `Note` or str</span>
-<span class="sd">            The `Note` or heading name whose pairs should be used.</span>
+<span class="sd">        heading : None or Note or str</span>
+<span class="sd">            The Note or heading name whose pairs should be used.</span>
 <span class="sd">            If the heading name is &quot;correct&quot; or &quot;incorrect&quot;, the pairs in the corresponding list will be used.</span>
-<span class="sd">            If left as None, all pairs in `NoteUtil` will be used.</span>
+<span class="sd">            If left as None, all pairs in NoteUtil will be used.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -208,7 +313,7 @@
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        HeadingExpected</span>
-<span class="sd">            If the `Note` provided is not None and isn&#39;t a heading.</span>
+<span class="sd">            If the Note provided is not None and isn&#39;t a heading.</span>
 <span class="sd">        HeadingNotFound</span>
 <span class="sd">            If the str provided is not None and it isn&#39;t a recognized heading name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -280,7 +385,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">correct</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
                     
 <div class="viewcode-block" id="Quiz.reset"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Quiz.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resets the state of the `Quiz` to as if it had just been initialized.</span>
+        <span class="sd">&quot;&quot;&quot;Resets the state of the Quiz to as if it had just been initialized.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -290,9 +395,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Quiz.refresh"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Quiz.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">noteutil</span><span class="p">:</span> <span class="n">NoteUtil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resets the state of the `Quiz` to match a new `NoteUtil`.</span>
-<span class="sd">        This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.</span>
-<span class="sd">        As such, only identical `Note`s from both `NoteUtil`s are kept.</span>
+        <span class="sd">&quot;&quot;&quot;Resets the state of the Quiz to match a new NoteUtil.</span>
+<span class="sd">        This is the same as saving the NoteUtil and then loading it with a different NoteUtil.</span>
+<span class="sd">        As such, only identical Notes from both NoteUtils are kept.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -332,21 +437,21 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    noteutil : NoteUtil</span>
-<span class="sd">        The `NoteUtil` that has terms an definitions to be used in this `Leitner`.</span>
+<span class="sd">        The NoteUtil that has terms an definitions to be used in this Leitner.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    noteutil : NoteUtil</span>
 <span class="sd">    last_nindex : int</span>
-<span class="sd">        The note index of the last `Note` generated.</span>
-<span class="sd">    boxes : Dict[int, List[`Note`]]</span>
-<span class="sd">        A dictionary where each box number (key) maps to the list of `Note`s inside of it (value).</span>
+<span class="sd">        The note index of the last Note generated.</span>
+<span class="sd">    boxes : Dict[int, List[Note]]</span>
+<span class="sd">        A dictionary where each box number (key) maps to the list of Notes inside of it (value).</span>
 <span class="sd">    times : Dict[int, int]</span>
 <span class="sd">        A dictionary where each box number (key) maps to the time period before review (# of sessions) (value).</span>
 <span class="sd">    session : int</span>
 <span class="sd">        The session number that determines which boxes will be reviewed.</span>
 <span class="sd">    lt_file : str</span>
-<span class="sd">        The name of the .lt file that will save `Leitner`&#39;s boxes.</span>
+<span class="sd">        The name of the .lt file that will save Leitner&#39;s boxes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">noteutil</span><span class="p">:</span> <span class="n">NoteUtil</span><span class="p">):</span>
@@ -364,12 +469,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lt_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">note_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.lt&quot;</span>
 
 <div class="viewcode-block" id="Leitner.generate"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Leitner.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Note</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;A generator that yields `Note`s according to the session number.</span>
+        <span class="sd">&quot;&quot;&quot;A generator that yields Notes according to the session number.</span>
 <span class="sd">        If the session number is divisible by the time on a box, then we review that box.</span>
 
 <span class="sd">        Yields</span>
 <span class="sd">        ------</span>
-<span class="sd">        `Note`</span>
+<span class="sd">        Note</span>
 <span class="sd">            A randomly selected pair from all of the pairs we are reviewing in this session.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -390,7 +495,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pair : `Note`</span>
+<span class="sd">        pair : Note</span>
 <span class="sd">            The pair that was answered correctly.</span>
 
 <span class="sd">        Returns</span>
@@ -409,7 +514,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pair : `Note`</span>
+<span class="sd">        pair : Note</span>
 <span class="sd">            The pair that was answered incorrectly.</span>
 
 <span class="sd">        Returns</span>
@@ -508,7 +613,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;session&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Leitner.reset"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Leitner.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resets the state of the `Leitner` to as if it had just been initialized.</span>
+        <span class="sd">&quot;&quot;&quot;Resets the state of the Leitner to as if it had just been initialized.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -518,9 +623,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Leitner.refresh"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Leitner.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">noteutil</span><span class="p">:</span> <span class="n">NoteUtil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resets the state of the `Leitner` to match a new `NoteUtil`.</span>
-<span class="sd">        This is the same as saving the NoteUtil and then loading it with a different `NoteUtil`.</span>
-<span class="sd">        As such, only identical `Note`s from both `NoteUtil`s are kept.</span>
+        <span class="sd">&quot;&quot;&quot;Resets the state of the Leitner to match a new NoteUtil.</span>
+<span class="sd">        This is the same as saving the NoteUtil and then loading it with a different NoteUtil.</span>
+<span class="sd">        As such, only identical Notes from both NoteUtils are kept.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -549,43 +654,53 @@
 
 </pre></div>
 
+           </div>
+           
           </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, James S. Wang
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">noteutil 1.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, James S. Wang.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
