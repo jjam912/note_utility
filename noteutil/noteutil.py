@@ -440,9 +440,6 @@ class NoteUtil:
                             raise MissingBound(content, lbound, rbound)
 
         if self.separator is not None:
-            note.term = None
-            note.definition = None
-            note.separator = None
             if self.separator in content:
                 if len(content.split(self.separator)) > 2:
                     if not override:
@@ -460,6 +457,10 @@ class NoteUtil:
                 note.term = term
                 note.definition = definition
                 note.separator = self.separator
+            else:
+                note.term = None
+                note.definition = None
+                note.separator = None
 
         note.content = content
         if note.is_heading():
