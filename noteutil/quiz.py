@@ -5,6 +5,7 @@ import random
 from itertools import filterfalse
 import copy
 from typing import Union, Generator
+import os
 import json
 
 
@@ -48,6 +49,8 @@ class Quiz:
 
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
+        if not os.path.exists(self.qz_file):
+            open(self.qz_file, mode="w").close()
 
     def generate(self, *, randomize: bool) -> Generator[Note, None, None]:
         """A generator that yields Notes, either chronologically or randomly.
@@ -323,6 +326,8 @@ class Leitner:
 
         # Saving
         self.lt_file = self.noteutil.note_file.split(".")[0] + ".lt"
+        if not os.path.exists(self.lt_file):
+            open(self.lt_file, mode="w").close()
 
     def generate(self) -> Generator[Note, None, None]:
         """A generator that yields Notes according to the session number.
