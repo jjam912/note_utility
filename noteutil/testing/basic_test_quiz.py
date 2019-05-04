@@ -126,10 +126,11 @@ print("Add random two to correct")
 quiz.append(next(pairs), correct=True)
 quiz.append(next(pairs), correct=True)
 print("Generate unmarked terms and print them out in chronological order:")
-pairs = quiz.generate(randomize=False, unmarked=True)
+quiz.select_heading("unmarked")
+pairs = quiz.generate(randomize=False)
 print(test_note_list(list(pairs)))
 print("Generate unmarked terms and print them out in random order:")
-pairs = quiz.generate(randomize=True, unmarked=True)
+pairs = quiz.generate(randomize=True)
 print(test_note_list(list(pairs)))
 
 
