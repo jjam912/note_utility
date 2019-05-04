@@ -389,7 +389,27 @@ class Commands:
         noteutil.reformat()
 
     def quiz(self):
-        pass
+        print(
+            """Here are the Quiz commands:
+
+        quiz    : Shows this.
+        
+        Settings
+            quiz settings               : Displays your Quiz settings.
+            quiz settings order         : Toggles between term and definition being said first.
+            quiz settings random        : Toggles between chronological and random Note generation.
+            quiz settings heading       : Selects the heading that the Quiz should generate Notes from.
+            quiz settings extensions    : Sets up how extensions should be handled.
+        Quizzing
+            quiz generate       : 
+            quiz correct        :
+            quiz incorrect      :
+            quiz clear          : 
+            quiz save           :
+            quiz load           :
+            
+        
+        """)
 
     def leitner(self):
         pass
