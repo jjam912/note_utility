@@ -109,12 +109,14 @@ class Commands:
             self.sessions[nu.note_file] = Session(nu)
         self.current_session = None
         self.commands = {
-            "commands": self.display,
-            "select":   self.select,
-            "search":   self.search,
-            "edit":     self.edit,
-            "quiz":     self.quiz,
-            "leitner":  self.leitner
+            "commands":     self.display,
+            "select":       self.select,
+            "headings":     self.headings,
+            "extensions":   self.extensions,
+            "search":       self.search,
+            "edit":         self.edit,
+            "quiz":         self.quiz,
+            "leitner":      self.leitner
         }
 
     @staticmethod
@@ -124,6 +126,8 @@ class Commands:
             
         commands    : Shows this.
         select      : Select a note file to use.
+        headings    : Shows heading order and names.
+        extensions  : Shows extension names
         search      : Search for a Note.
         edit        : Edit the content of a Note.
         quiz        : Start a quiz.
@@ -141,6 +145,35 @@ class Commands:
 
         note_file = list(self.sessions.keys())[i_nu - 1]
         self.current_session = self.sessions[note_file]
+
+    def headings(self):
+        noteutil = self.current_session.noteutil
+
+        heading_description = ""
+        heading_description += "Heading Levels:" + "\n"
+
+        level = 1
+        for gname, anames in noteutil.heading_level.items():  # General name, Actual names
+            heading_description += "\tLevel " + str(level) + ". " + gname + ":" + "\n"
+            for aname in anames:
+                heading_description += "\t\t" + aname.heading_name + "\n"
+            level += 1
+
+        heading_description += "Heading Order:" + "\n"
+        for note in noteutil.heading_order:
+            for _ in range(note.level):
+                heading_description += "\t"
+            heading_description += note.heading_name + "\n"
+        print(heading_description)
+
+    def extensions(self):
+        noteutil = self.current_session.noteutil
+
+        print("Extensions:")
+        for name, bounds in zip(noteutil.extension_names, noteutil.extension_bounds):
+            print("\t" + name)
+            print("\t\tLeft bound: " + bounds[0])
+            print("\t\tRight bound: " + bounds[1])
 
     def search(self):
         noteutil = self.current_session.noteutil
@@ -214,7 +247,7 @@ class Commands:
             return print("Canceled input. (6)")
 
         if len(note_list) > 1:
-            nindex = range_input("Choose a Note from the found Note list", range(1, len(note_list) + 1))
+            nindex = range_input("Choose the number of a Note from the found Note list", range(1, len(note_list) + 1))
             if nindex is None:
                 return print("Canceled input. (7)")
         else:
@@ -304,10 +337,15 @@ Welcome to NoteUtil's command line implementation!
 
 Before we begin, you must first set up a few settings:""")
 
-    commands = Commands(noteutils)
-    commands.select()
-    Commands.display()
-    command_loop(commands)
+    try:
+        commands = Commands(noteutils)
+        commands.select()
+        Commands.display()
+        command_loop(commands)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("Bye!")
 
 
 def command_loop(commands: Commands):
