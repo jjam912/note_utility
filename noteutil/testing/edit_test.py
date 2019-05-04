@@ -33,7 +33,7 @@ def test_note(note):
     string += "Definition: {!s:<10}\t\t".format(note.definition[:10] if note.definition else None)
     string += "Separator: {!s:<5}\t\t".format(note.separator)
     if note.has_extensions():
-        string += "\t----------" + "\n"
+        string += "\n\t----------" + "\n"
         string += "\tExtensions" + "\n"
         string += "\t----------" + "\n"
         for ext in note.extensions:
@@ -78,8 +78,18 @@ before_after_edit(n2, "Eung Eung %% APink %%")
 
 print(test_noteutil(noteutil))
 
-noteutil.reformat()
-
+print("Save\n"
+      "----")
+noteutil.save()
 print(noteutil.get(extension_names="Cool beans", compare=CompareOptions.IN))
 
+before_after_edit(n2, "Eung Eung")
+print(noteutil.get(nindex=1))
+noteutil.load()
+print(noteutil.get(nindex=1))
+
+print("Refresh\n"
+      "-------")
+noteutil.refresh()
+print(noteutil.get(extension_names="Cool beans", compare=CompareOptions.IN))
 
