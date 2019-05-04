@@ -87,19 +87,36 @@ class Session:
             self.leitner.load()
 
         # Settings
-        self.settings = Settings(self)
+        self.noteutil_settings = NoteUtilSettings(self)
+        self.quiz_settings = QuizSettings(self)
+        self.leitner_settings = LeitnerSettings(self)
 
 
-class Settings:
+class NoteUtilSettings:
     def __init__(self, session: Session):
-        # TODO: Some of these probably have to be properties
         self.session = session
+        self.file = session.noteutil.note_file
+        self.simple_search = True
+        self.ask_define = False
+
+
+class QuizSettings:
+    def __init__(self, session: Session):
+        self.session = session
+        self.file = session.quiz.qz_file
         self.random = True
-        self.current_file = session.noteutil.note_file
-        self.current_heading = None
         self.term_first = True
         self.include_extensions = True
-        self.advanced_search = True
+
+    @property
+    def heading(self):
+        return self.session.quiz.heading
+
+
+class LeitnerSettings:
+    def __init__(self, session: Session):
+        self.session = session
+        self.file = session.leitner.lt_file
 
 
 class Commands:
@@ -111,10 +128,16 @@ class Commands:
         self.commands = {
             "commands":     self.display,
             "select":       self.select,
-            "headings":     self.headings,
-            "extensions":   self.extensions,
-            "search":       self.search,
-            "edit":         self.edit,
+
+            "noteutil":     self.noteutil,
+            "noteutil settings": self.noteutil_settings,
+            "noteutil settings search": self.noteutil_settings_search,
+            "noteutil settings define": self.noteutil_settings_define,
+            "noteutil headings":     self.noteutil_headings,
+            "noteutil extensions":   self.noteutil_extensions,
+            "noteutil search":       self.noteutil_search,
+            "noteutil edit":         self.noteutil_edit,
+
             "quiz":         self.quiz,
             "leitner":      self.leitner
         }
@@ -126,12 +149,9 @@ class Commands:
             
         commands    : Shows this.
         select      : Select a note file to use.
-        headings    : Shows heading order and names.
-        extensions  : Shows extension names
-        search      : Search for a Note.
-        edit        : Edit the content of a Note.
-        quiz        : Start a quiz.
-        leitner     : Begin a Leitner review.
+        noteutil    : Shows commands for NoteUtil.
+        quiz        : Shows commands for Quiz.
+        leitner     : Shows commands for Leitner.
         """)
 
     def select(self):
@@ -146,7 +166,40 @@ class Commands:
         note_file = list(self.sessions.keys())[i_nu - 1]
         self.current_session = self.sessions[note_file]
 
-    def headings(self):
+    def noteutil(self):
+        print(
+            """Here are the NoteUtil commands:
+
+        noteutil    : Shows this.
+        
+        Settings
+            noteutil settings   : Displays your NoteUtil settings.
+            noteutil settings search    : Toggles between simple and advanced search.
+            noteutil settings define    : Toggles between asking to define in depth and not
+        NoteUtil
+            noteutil headings       : Shows heading order and names.
+            noteutil extensions     : Shows extension names
+            noteutil search         : Search for a Note.
+            noteutil edit           : Edit the content of a Note.
+        """)
+
+    def noteutil_settings(self):
+        settings = self.current_session.noteutil_settings
+        print("Noteutil Settings:")
+        print("\tSimple Search: " + str(settings.simple_search))
+        print("\tAsk Define: " + str(settings.ask_define))
+
+    def noteutil_settings_search(self):
+        settings = self.current_session.noteutil_settings
+        settings.simple_search = not settings.simple_search
+        print("Simple Search set to: " + str(settings.simple_search))
+
+    def noteutil_settings_define(self):
+        settings = self.current_session.noteutil_settings
+        settings.ask_define = not settings.ask_define
+        print("Ask Define set to: " + str(settings.ask_define))
+
+    def noteutil_headings(self):
         noteutil = self.current_session.noteutil
 
         heading_description = ""
@@ -166,7 +219,7 @@ class Commands:
             heading_description += note.heading_name + "\n"
         print(heading_description)
 
-    def extensions(self):
+    def noteutil_extensions(self):
         noteutil = self.current_session.noteutil
 
         print("Extensions:")
@@ -175,110 +228,123 @@ class Commands:
             print("\t\tLeft bound: " + bounds[0])
             print("\t\tRight bound: " + bounds[1])
 
-    def search(self):
+    def noteutil_search(self):
         noteutil = self.current_session.noteutil
-        search_type = range_input("How do you want to search?"
-                                  "\n\t1. Content"
-                                  "\n\t2. Note index"
-                                  "\n\t3. Term"
-                                  "\n\t4. Definition"
-                                  "\n\t5. Heading level"
-                                  "\n\t6. Heading name"
-                                  "\n\t7. Extension name", range(8))
-        search_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
-                             5: "level", 6: "heading_name", 7: "extension_names"}
+        settings = self.current_session.noteutil_settings
 
-        if search_type is None:
-            return print("Canceled input. (1)")
-        if search_type in [0]:
-            kwargs = text_input("You've found the hidden eval search option!\n"
-                                "Complete the code: noteutil.get_list(<...>)")
-            if kwargs is None:
-                return print("Canceled input. (0)")
-            note_list = eval("noteutil.get_list(" + kwargs + ")")
-        elif search_type in [1, 3, 4, 6]:
-            compare_type = range_input("How do you want to compare?"
-                                       "\n\t1. Equals"
-                                       "\n\t2. Similarity"
-                                       "\n\t3. In"
-                                       "\n\t4. Similar & In", range(1, 5))
-            compare_conversion = {1: CompareOptions.EQUALS, 2: CompareOptions.SIMILAR,
-                                  3: CompareOptions.IN, 4: CompareOptions.SIN}
-            if compare_type is None:
-                return print("Canceled input. (2)")
-
+        if settings.simple_search:
             query = text_input("Enter the part of the Note you are searching for.")
             if query is None:
-                return print("Canceled input. (3)")
+                return print("Canceled input. (1)")
 
-            note_list = noteutil.get_list(**{search_conversion[search_type]: query,
-                                             "compare": compare_conversion[compare_type]})
+            note_list = noteutil.get_list(content=query, compare=CompareOptions.SIN)
             if not note_list:
                 return print("No Notes found. (1)")
 
-        elif search_type in [2, 5]:
-            if search_type == 2:
-                query = range_input("Enter the note index of the Note.", range(len(noteutil.notes)))
-            else:
-                query = range_input("Enter the level of the Heading.", range(1, noteutil.levels + 1))
-            if query is None:
-                return print("Canceled input. (4)")
-
-            note_list = noteutil.get_list(**{search_conversion[search_type]: query})
-            if not note_list:
-                return print("No Notes found. (2)")
-
-        elif search_type in [7]:
-            query = text_input("Enter the Extension name and make sure it matches exactly.")
-            if query is None:
-                return print("Canceled input. (5)")
-
-            note_list = noteutil.get_list(**{search_conversion[search_type]: query, "compare": CompareOptions.IN})
-            if not note_list:
-                return print("No Notes found. (3)")
         else:
-            return print("Error: Search type not in range.")
+            search_type = range_input("How do you want to search?"
+                                      "\n\t1. Content"
+                                      "\n\t2. Note index"
+                                      "\n\t3. Term"
+                                      "\n\t4. Definition"
+                                      "\n\t5. Heading level"
+                                      "\n\t6. Heading name"
+                                      "\n\t7. Extension name", range(8))
+            search_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
+                                 5: "level", 6: "heading_name", 7: "extension_names"}
+
+            if search_type is None:
+                return print("Canceled input. (1)")
+            if search_type in [0]:
+                kwargs = text_input("You've found the hidden eval search option!\n"
+                                    "Complete the code: noteutil.get_list(<...>)")
+                if kwargs is None:
+                    return print("Canceled input. (0)")
+                note_list = eval("noteutil.get_list(" + kwargs + ")")
+            elif search_type in [1, 3, 4, 6]:
+                compare_type = range_input("How do you want to compare?"
+                                           "\n\t1. Equals"
+                                           "\n\t2. Similarity"
+                                           "\n\t3. In"
+                                           "\n\t4. Similar & In", range(1, 5))
+                compare_conversion = {1: CompareOptions.EQUALS, 2: CompareOptions.SIMILAR,
+                                      3: CompareOptions.IN, 4: CompareOptions.SIN}
+                if compare_type is None:
+                    return print("Canceled input. (2)")
+
+                query = text_input("Enter the part of the Note you are searching for.")
+                if query is None:
+                    return print("Canceled input. (3)")
+
+                note_list = noteutil.get_list(**{search_conversion[search_type]: query,
+                                                 "compare": compare_conversion[compare_type]})
+                if not note_list:
+                    return print("No Notes found. (1)")
+
+            elif search_type in [2, 5]:
+                if search_type == 2:
+                    query = range_input("Enter the note index of the Note.", range(len(noteutil.notes)))
+                else:
+                    query = range_input("Enter the level of the Heading.", range(1, noteutil.levels + 1))
+                if query is None:
+                    return print("Canceled input. (4)")
+
+                note_list = noteutil.get_list(**{search_conversion[search_type]: query})
+                if not note_list:
+                    return print("No Notes found. (2)")
+
+            elif search_type in [7]:
+                query = text_input("Enter the Extension name and make sure it matches exactly.")
+                if query is None:
+                    return print("Canceled input. (5)")
+
+                note_list = noteutil.get_list(**{search_conversion[search_type]: query, "compare": CompareOptions.IN})
+                if not note_list:
+                    return print("No Notes found. (3)")
+            else:
+                return print("Error: Search type not in range.")
 
         for i, note in enumerate(note_list):
             print("\t{0}. {1}".format(i + 1, note.content))
 
-        define = yn_input("Would you like to look at a specific Note more in depth?")
-        if define is None or define is False:
-            return print("Canceled input. (6)")
+        if settings.ask_define:
+            define = yn_input("Would you like to look at a specific Note more in depth?")
+            if define is None or define is False:
+                return print("Canceled input. (6)")
 
-        if len(note_list) > 1:
-            nindex = range_input("Choose the number of a Note from the found Note list", range(1, len(note_list) + 1))
-            if nindex is None:
-                return print("Canceled input. (7)")
-        else:
-            nindex = 1
-        note = note_list[nindex - 1]
-        define_type = range_input("Choose an attribute of the Note you want defined."
-                                  "\n\t1. Content"
-                                  "\n\t2. Note index"
-                                  "\n\t3. Term"
-                                  "\n\t4. Definition"
-                                  "\n\t5. Heading level"
-                                  "\n\t6. Heading name"
-                                  "\n\t7. Notes"
-                                  "\n\t8. Extensions", range(1, 9))
-        if define_type is None:
-            return print("Canceled input. (8)")
-        define_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
-                             5: "level", 6: "heading_name", 7: "notes", 8: "extensions"}
-        if define_type in [1, 2, 3, 4, 5, 6]:
-            print(getattr(note, define_conversion[define_type]))
-        elif define_type in [7]:
-            notes = noteutil.notes[note.begin_nindex:note.end_nindex]
-            for i, note in enumerate(notes):
-                print("\t{0}. {1}".format(i + 1, note.content))
+            if len(note_list) > 1:
+                nindex = range_input("Choose the number of a Note from the found Note list", range(1, len(note_list) + 1))
+                if nindex is None:
+                    return print("Canceled input. (7)")
+            else:
+                nindex = 1
+            note = note_list[nindex - 1]
+            define_type = range_input("Choose an attribute of the Note you want defined."
+                                      "\n\t1. Content"
+                                      "\n\t2. Note index"
+                                      "\n\t3. Term"
+                                      "\n\t4. Definition"
+                                      "\n\t5. Heading level"
+                                      "\n\t6. Heading name"
+                                      "\n\t7. Notes"
+                                      "\n\t8. Extensions", range(1, 9))
+            if define_type is None:
+                return print("Canceled input. (8)")
+            define_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
+                                 5: "level", 6: "heading_name", 7: "notes", 8: "extensions"}
+            if define_type in [1, 2, 3, 4, 5, 6]:
+                print(getattr(note, define_conversion[define_type]))
+            elif define_type in [7]:
+                notes = noteutil.notes[note.begin_nindex:note.end_nindex]
+                for i, note in enumerate(notes):
+                    print("\t{0}. {1}".format(i + 1, note.content))
 
-        elif define_type in [8]:
-            extensions = note.extensions
-            for i, ext in enumerate(extensions):
-                print("\t{0}. {1}".format(i + 1, ext.content))
+            elif define_type in [8]:
+                extensions = note.extensions
+                for i, ext in enumerate(extensions):
+                    print("\t{0}. {1}".format(i + 1, ext.content))
 
-    def edit(self):
+    def noteutil_edit(self):
         noteutil = self.current_session.noteutil
 
         nindex = range_input("Enter the note index of the Note.", range(len(noteutil.notes)))
