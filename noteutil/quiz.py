@@ -49,7 +49,7 @@ class Quiz:
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
-    def generate(self, *, randomize: bool, unmarked: bool = False) -> Generator[Note, None, None]:
+    def generate(self, *, randomize: bool) -> Generator[Note, None, None]:
         """A generator that yields Notes, either chronologically or randomly.
         Once a generator is created, it is "frozen in time," and isn't affected by any changes to Quiz.
         However, Quiz keeps track of the last index used, which changes every time this generator is activated.
@@ -58,8 +58,6 @@ class Quiz:
         ----------
         randomize : bool
             Whether to generate a random term from the list of pairs.
-        unmarked : bool
-            Whether to only generate terms that have not been marked as correct/incorrect.
 
         Yields
         ------
@@ -67,10 +65,7 @@ class Quiz:
             A pair that is either in random or chronological order.
         """
 
-        if unmarked:
-            pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, copy.deepcopy(self.pairs)))
-        else:
-            pairs = copy.deepcopy(self.pairs)       # This could be changed to use indices
+        pairs = copy.deepcopy(self.pairs)       # This could be changed to use indices
 
         if randomize:
             random.shuffle(pairs)
@@ -160,6 +155,7 @@ class Quiz:
         heading : None or Note or str
             The Note or heading name whose pairs should be used.
             If the heading name is "correct" or "incorrect", the pairs in the corresponding list will be used.
+            If the heading name is "unmarked", the pairs that are not in the correct or incorrect list will be used.
             If left as None, all pairs in NoteUtil will be used.
 
         Returns
@@ -186,6 +182,10 @@ class Quiz:
         elif heading == "incorrect":
             self.heading = "incorrect"
             self.pairs = self.incorrect
+            return
+        elif heading == "unmarked":
+            self.heading = "unmarked"
+            self.pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, copy.deepcopy(self.pairs)))
             return
 
         if isinstance(heading, Note):
