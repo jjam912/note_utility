@@ -75,14 +75,14 @@ class NoteUtil:
         If there were any severe problems during the Note creation process.
     """
 
-    def __init__(self, config_file: str):
+    def __init__(self, config_file: str, refresh: bool = False):
         self.notes = []
         self.config_file = config_file
         self.warnings = []
         self.errors = []
         self._parse_config()
         self._read_config()
-        if not os.path.exists(self.nu_file):
+        if not os.path.exists(self.nu_file) or refresh:
             self._parse_notes()
         self._read_notes()
 
@@ -468,7 +468,7 @@ class NoteUtil:
 
         self.notes[note.nindex] = note
 
-    def reformat(self) -> None:
+    def save(self) -> None:
         """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
 
         If any changes to the Notes were made, they will be written here as well.
@@ -482,7 +482,26 @@ class NoteUtil:
         with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
 
+    def load(self) -> None:
+        """Re-parses the .nu file, reverting any changes that could have been made to NoteUtil during use.
 
+        Returns
+        -------
+        None
+        """
+
+        self.__init__(self.config_file)
+
+    def refresh(self) -> None:
+        """Re-initializes the NoteUtil from the note file instead of the .nu file.
+        This is used to match a new or updated note file.
+
+        Returns
+        -------
+        None
+        """
+
+        self.__init__(self.config_file, refresh=True)
 
 
 
