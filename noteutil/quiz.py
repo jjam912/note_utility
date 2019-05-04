@@ -180,11 +180,11 @@ class Quiz:
             return
 
         if heading == "correct":
-            self.heading = None
+            self.heading = "correct"
             self.pairs = self.correct
             return
         elif heading == "incorrect":
-            self.heading = None
+            self.heading = "incorrect"
             self.pairs = self.incorrect
             return
 
