@@ -87,10 +87,10 @@ class NoteUtil:
         self._read_notes()
 
         if self.warnings:
-            print("Warnings\n"
+            print("Warnings for {0}\n"
                   "--------\n"
-                  "\t{0}\n"
-                  "--------".format("\n\t".join(self.warnings)))
+                  "\t{1}\n"
+                  "--------".format(self.note_file, "\n\t".join(self.warnings)))
         if self.errors:
             raise NoteError("Errors\n"
                             "------\n"
