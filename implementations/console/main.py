@@ -1,4 +1,5 @@
 from noteutil import NoteUtil, Quiz, Leitner
+from noteutil.notes import Note
 from noteutil.comparisons import CompareOptions
 from noteutil.errors import NoteError
 import os
@@ -80,11 +81,9 @@ class Session:
     def __init__(self, noteutil: NoteUtil):
         self.noteutil = noteutil
         self.quiz = Quiz(noteutil)
-        if os.path.exists(self.quiz.qz_file):
-            self.quiz.load()
+        self.quiz.load()
         self.leitner = Leitner(noteutil)
-        if os.path.exists(self.leitner.lt_file):
-            self.leitner.load()
+        self.leitner.load()
 
         # Settings
         self.noteutil_settings = NoteUtilSettings(self)
@@ -104,13 +103,26 @@ class QuizSettings:
     def __init__(self, session: Session):
         self.session = session
         self.file = session.quiz.qz_file
+        self.term_format1 = r"Define the term: {0}"
+        self.definition_format2 = r"The definition is: {0}"
+        self.definition_format1 = r"Guess the term: {0}"
+        self.term_format2 = r"The term is: {0}"
+
         self.random = True
         self.term_first = True
         self.include_extensions = True
+        self.extension_format = r"\n{0}: {1}"
 
     @property
     def heading(self):
-        return self.session.quiz.heading
+        heading = self.session.quiz.heading
+        if heading is None:
+            return "None (All)"
+        elif isinstance(heading, str):
+            return heading.title()
+        elif isinstance(heading, Note):
+            return heading.heading_name
+        return "Error"
 
 
 class LeitnerSettings:
@@ -129,16 +141,23 @@ class Commands:
             "commands":     self.display,
             "select":       self.select,
 
-            "noteutil":     self.noteutil,
-            "noteutil settings": self.noteutil_settings,
-            "noteutil settings search": self.noteutil_settings_search,
-            "noteutil settings define": self.noteutil_settings_define,
-            "noteutil headings":     self.noteutil_headings,
-            "noteutil extensions":   self.noteutil_extensions,
-            "noteutil search":       self.noteutil_search,
-            "noteutil edit":         self.noteutil_edit,
+            "noteutil":                     self.noteutil,
+            "noteutil settings":            self.noteutil_settings,
+            "noteutil settings search":     self.noteutil_settings_search,
+            "noteutil settings define":     self.noteutil_settings_define,
+            "noteutil headings":            self.noteutil_headings,
+            "noteutil extensions":          self.noteutil_extensions,
+            "noteutil search":              self.noteutil_search,
+            "noteutil edit":                self.noteutil_edit,
 
-            "quiz":         self.quiz,
+            "quiz":                         self.quiz,
+            "quiz settings":                self.quiz_settings,
+            "quiz settings heading":        self.quiz_settings_heading,
+            "quiz settings format":         self.quiz_settings_format,
+            "quiz settings order":          self.quiz_settings_order,
+            "quiz settings random":         self.quiz_settings_random,
+            "quiz settings extensions":     self.quiz_settings_extensions,
+
             "leitner":      self.leitner
         }
 
@@ -225,7 +244,7 @@ class Commands:
         print("Extensions:")
         for name, bounds in zip(noteutil.extension_names, noteutil.extension_bounds):
             print("\t" + name)
-            print("\t\tLeft bound: " + bounds[0])
+            print("\t\tLeft bound:  " + bounds[0])
             print("\t\tRight bound: " + bounds[1])
 
     def noteutil_search(self):
@@ -396,20 +415,110 @@ class Commands:
         
         Settings
             quiz settings               : Displays your Quiz settings.
+            quiz settings format        : Sets up how term and definition should be formatted.
             quiz settings order         : Toggles between term and definition being said first.
             quiz settings random        : Toggles between chronological and random Note generation.
             quiz settings heading       : Selects the heading that the Quiz should generate Notes from.
             quiz settings extensions    : Sets up how extensions should be handled.
         Quizzing
-            quiz generate       : 
-            quiz correct        :
-            quiz incorrect      :
-            quiz clear          : 
-            quiz save           :
-            quiz load           :
-            
-        
+            quiz generate       : Generates and begins a quiz.
+            quiz correct        : Displays all correct pairs.
+            quiz incorrect      : Displays all incorrect pairs.
+            quiz clear          : Empties the correct and incorrect list.
+            quiz save           : Saves the correct and incorrect terms to the .qz file.
+            quiz load           : Loads the correct and incorrect terms from the .qz file.
         """)
+
+    def quiz_settings(self):
+        settings = self.current_session.quiz_settings
+        print("Quiz Settings:")
+        print("\tHeading: " + settings.heading)
+        print("\tTerm Format 1: " + settings.term_format1)
+        print("\tDefinition Format 2: " + settings.definition_format2)
+        print("\tDefinition Format 1: " + settings.definition_format1)
+        print("\tTerm Format 2: " + settings.term_format2)
+        print("\tRandom: " + str(settings.random))
+        print("\tTerm First: " + str(settings.term_first))
+        print("\tInclude Extensions: " + str(settings.include_extensions))
+        print("\tExtension Format: " + settings.extension_format)
+
+    def quiz_settings_format(self):
+        # TODO: After quiz_question
+        print("""
+        The difference between formats 1 and 2 depends on whether Term First is True.
+            1 means that the prompt for either the term or the definition is first. 
+            2 means that the answer for either the term or the definition is second.
+        When Term First is True, Term Format 1 and Definition Format 2 are used.
+            This is because the term is asked first and then the definition is revealed second.
+        When Term First is False, Definition Format 1 and Term Format 2 are used.
+            This is because the definition is asked first and then the term is revealed second.
+        """)
+
+        settings = self.current_session.quiz_settings
+        edit_tf1 = yn_input("Do you want to edit Term Format 1?")
+        if edit_tf1 is None:
+            return print("Canceled input. (1)")
+        if edit_tf1:
+            pass
+
+        edit_df2 = yn_input("Do you want to edit Definition Format 2?")
+        if edit_df2 is None:
+            return print("Canceled input. ( )")
+        if edit_df2:
+            pass
+
+        edit_df1 = yn_input("Do you want to edit Definition Format 1?")
+        if edit_df1 is None:
+            return print("Canceled input. ( )")
+        if edit_df1:
+            pass
+
+        edit_tf2 = yn_input("Do you want to edit Term Format 2?")
+        if edit_tf2 is None or not edit_tf2:
+            return print("Canceled input. ( )")
+
+        if edit_tf2:
+            pass
+
+    def quiz_settings_order(self):
+        settings = self.current_session.quiz_settings
+        settings.term_first = not settings.term_first
+        print("Term First set to: " + str(settings.term_first))
+
+    def quiz_settings_random(self):
+        settings = self.current_session.quiz_settings
+        settings.random = not settings.random
+        print("Random set to: " + str(settings.random))
+
+    def quiz_settings_heading(self):
+        settings = self.current_session.quiz_settings
+        headings = list(map(lambda n: n.heading_name, self.current_session.noteutil.heading_order))
+        headings.insert(0, "unmarked")
+        headings.insert(0, "correct")
+        headings.insert(0, "incorrect")
+        headings.insert(0, "none")
+
+        for i, heading in enumerate(headings):
+            print("\t{0}. {1}".format(i + 1, heading))
+        heading_choice = range_input("Select the number of the heading you want.", range(1, len(headings) + 1))
+        if heading_choice is None:
+            return print("Canceled input. (0)")
+        self.current_session.quiz.select_heading(headings[heading_choice - 1])
+        print("Quiz heading set to: " + settings.heading)
+
+    def quiz_settings_extensions(self):
+        settings = self.current_session.quiz_settings
+        edit_extensions = yn_input("Do you want to edit the Extension Format?")
+        if edit_extensions is None:
+            return print("Canceled input. (0)")
+        if edit_extensions:
+            pass
+
+        include_extensions = yn_input("Do you want to include extensions?")
+        if include_extensions is None:
+            return print("Canceled input. ( )")
+        settings.include_extensions = include_extensions
+        print("Include Extensions set to: " + str(settings.include_extensions))
 
     def leitner(self):
         pass
