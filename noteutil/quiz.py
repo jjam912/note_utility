@@ -188,7 +188,8 @@ class Quiz:
             return
         elif heading == "unmarked":
             self.heading = "unmarked"
-            self.pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, copy.deepcopy(self.pairs)))
+            self.pairs = list(filterfalse(
+                lambda p: p in self.incorrect or p in self.correct, self.noteutil.pairs))
             return
 
         if isinstance(heading, Note):
@@ -290,7 +291,7 @@ class Leitner:
     """The Leitner system is a method of spaced repetition where cards are reviewed at increasing intervals.
 
     If we model a pair as a flashcard (term and definition), then we can also use the Leitner system.
-    We use seven "boxes" numbered 1-7, and every time our session is divisible by the box number, we review that box.
+    We use seven "boxes" numbered 1-7, and every time our session is divisible by the box period, we review that box.
     Any terms that we mark as correct will advance to the next box number (+1), and incorrect ones will reset to box 1.
 
     Parameters
