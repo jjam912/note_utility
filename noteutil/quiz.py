@@ -173,9 +173,6 @@ class Quiz:
             If the str provided is not None and it isn't a recognized heading name.
         """
 
-        if isinstance(heading, str):
-            heading = heading.lower()
-
         if heading is None or heading == "none":
             self.heading = None
             self.pairs = self.noteutil.pairs
