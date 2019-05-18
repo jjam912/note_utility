@@ -4,6 +4,7 @@ from noteutil.comparisons import CompareOptions
 from noteutil.errors import NoteError
 import os
 from typing import List
+from itertools import filterfalse
 
 
 os.chdir(os.path.join(os.getcwd(), "notes"))
@@ -151,13 +152,22 @@ class Commands:
             "noteutil search":              self.noteutil_search,
             "noteutil edit":                self.noteutil_edit,
 
+            "study":                         self.study,
+            "study settings":                self.study_settings,
+            "study settings heading":        self.study_settings_heading,
+            "study settings format":         self.study_settings_format,
+            "study settings order":          self.study_settings_order,
+            "study settings random":         self.study_settings_random,
+            "study settings extensions":     self.study_settings_extensions,
+
             "quiz":                         self.quiz,
-            "quiz settings":                self.quiz_settings,
-            "quiz settings heading":        self.quiz_settings_heading,
-            "quiz settings format":         self.quiz_settings_format,
-            "quiz settings order":          self.quiz_settings_order,
-            "quiz settings random":         self.quiz_settings_random,
-            "quiz settings extensions":     self.quiz_settings_extensions,
+            "quiz generate":                self.quiz_generate,
+            "quiz correct":                 self.quiz_correct,
+            "quiz incorrect":               self.quiz_incorrect,
+            "quiz unmarked":                self.quiz_unmarked,
+            "quiz clear":                   self.quiz_clear,
+            "quiz save":                    self.quiz_save,
+            "quiz load":                    self.quiz_load,
 
             "leitner":      self.leitner
         }
@@ -409,43 +419,37 @@ class Commands:
             return print("Canceled input. (6)")
         noteutil.reformat()
 
-    def quiz(self):
+    def study(self):
         print(
             """Here are the Quiz commands:
 
-        quiz    : Shows this.
+        study    : Shows this.
         
-        Settings
-            quiz settings               : Displays your Quiz settings.
-            quiz settings format        : Sets up how term and definition should be formatted.
-            quiz settings order         : Toggles between term and definition being said first.
-            quiz settings random        : Toggles between chronological and random Note generation.
-            quiz settings heading       : Selects the heading that the Quiz should generate Notes from.
-            quiz settings extensions    : Sets up how extensions should be handled.
-        Quizzing
-            quiz generate       : Generates and begins a quiz.
-            quiz correct        : Displays all correct pairs.
-            quiz incorrect      : Displays all incorrect pairs.
-            quiz clear          : Empties the correct and incorrect list.
-            quiz save           : Saves the correct and incorrect terms to the .qz file.
-            quiz load           : Loads the correct and incorrect terms from the .qz file.
+        Study Settings
+            study settings               : Displays your Quiz settings.
+            study settings format        : Sets up how term and definition should be formatted.
+            study settings order         : Toggles between term and definition being said first.
+            study settings random        : Toggles between chronological and random Note generation.
+            study settings heading       : Selects the heading that the Quiz should generate Notes from.
+            study settings extensions    : Sets up how extensions should be handled.
+
         """)
 
-    def quiz_settings(self):
-        settings = self.current_session.quiz_settings
+    def study_settings(self):
+        settings = self.current_notebook.study_settings
         print("Quiz Settings:")
         print("\tHeading: " + settings.heading)
-        print("\tTerm Format 1: " + settings.term_format1)
-        print("\tDefinition Format 2: " + settings.definition_format2)
-        print("\tDefinition Format 1: " + settings.definition_format1)
-        print("\tTerm Format 2: " + settings.term_format2)
+        print("\tTerm Format 1: " + repr(settings.term_format1))
+        print("\tDefinition Format 2: " + repr(settings.definition_format2))
+        print("\tDefinition Format 1: " + repr(settings.definition_format1))
+        print("\tTerm Format 2: " + repr(settings.term_format2))
         print("\tRandom: " + str(settings.random))
         print("\tTerm First: " + str(settings.term_first))
         print("\tInclude Extensions: " + str(settings.include_extensions))
-        print("\tExtension Format: " + settings.extension_format)
+        print("\tExtension Format: " + repr(settings.extension_format))
+        print("\tExtension Term First: " + repr(settings.extension_term_first))
 
-    def quiz_settings_format(self):
-        # TODO: After quiz_question
+    def study_settings_format(self):
         print("""
         The difference between formats 1 and 2 depends on whether Term First is True.
             1 means that the prompt for either the term or the definition is first. 
@@ -454,47 +458,80 @@ class Commands:
             This is because the term is asked first and then the definition is revealed second.
         When Term First is False, Definition Format 1 and Term Format 2 are used.
             This is because the definition is asked first and then the term is revealed second.
+            
         """)
 
-        settings = self.current_session.quiz_settings
-        edit_tf1 = yn_input("Do you want to edit Term Format 1?")
+        settings = self.current_notebook.study_settings
+        edit_tf1 = yn_input("Do you want to edit Term Format 1?\n"
+                            "The current format is: " + repr(settings.term_format1))
         if edit_tf1 is None:
             return print("Canceled input. (1)")
         if edit_tf1:
-            pass
+            new_format = text_input(r"Use {0} for term, {1} for definition, {2} for separator, {3} for note index, "
+                                    r"\n for newline, and \t for tab")
+            if new_format is None:
+                print("Canceled input. (2)")
+            else:
+                new_format = new_format.replace("\\n", "\n")
+                new_format = new_format.replace("\\t", "\t")
+                settings.term_format1 = new_format
 
-        edit_df2 = yn_input("Do you want to edit Definition Format 2?")
+        edit_df2 = yn_input("Do you want to edit Definition Format 2?\n"
+                            "The current format is " + repr(settings.definition_format2))
         if edit_df2 is None:
-            return print("Canceled input. ( )")
+            return print("Canceled input. (3)")
         if edit_df2:
-            pass
+            new_format = text_input(r"Use {0} for term, {1} for definition, {2} for separator, {3} for note index, "
+                                    r"\n for newline, and \t for tab")
+            if new_format is None:
+                print("Canceled input. (4)")
+            else:
+                new_format = new_format.replace("\\n", "\n")
+                new_format = new_format.replace("\\t", "\t")
+                settings.definition_format2 = new_format
 
-        edit_df1 = yn_input("Do you want to edit Definition Format 1?")
+        edit_df1 = yn_input("Do you want to edit Definition Format 1?\n"
+                            "The current format is " + repr(settings.definition_format1))
         if edit_df1 is None:
-            return print("Canceled input. ( )")
+            return print("Canceled input. (5)")
         if edit_df1:
-            pass
+            new_format = text_input(r"Use {0} for term, {1} for definition, {2} for separator, {3} for note index, "
+                                    r"\n for newline, and \t for tab")
+            if new_format is None:
+                print("Canceled input. (6)")
+            else:
+                new_format = new_format.replace("\\n", "\n")
+                new_format = new_format.replace("\\t", "\t")
+                settings.definition_format1 = new_format
 
-        edit_tf2 = yn_input("Do you want to edit Term Format 2?")
+        edit_tf2 = yn_input("Do you want to edit Term Format 2?\n"
+                            "The current format is " + repr(settings.term_format2))
         if edit_tf2 is None or not edit_tf2:
-            return print("Canceled input. ( )")
+            return print("Canceled input. (7)")
 
         if edit_tf2:
-            pass
+            new_format = text_input(r"Use {0} for term, {1} for definition, {2} for separator, {3} for note index, "
+                                    r"\n for newline, and \t for tab")
+            if new_format is None:
+                print("Canceled input. (8)")
+            else:
+                new_format = new_format.replace("\\n", "\n")
+                new_format = new_format.replace("\\t", "\t")
+                settings.term_format2 = new_format
 
-    def quiz_settings_order(self):
-        settings = self.current_session.quiz_settings
+    def study_settings_order(self):
+        settings = self.current_notebook.study_settings
         settings.term_first = not settings.term_first
         print("Term First set to: " + str(settings.term_first))
 
-    def quiz_settings_random(self):
-        settings = self.current_session.quiz_settings
+    def study_settings_random(self):
+        settings = self.current_notebook.study_settings
         settings.random = not settings.random
         print("Random set to: " + str(settings.random))
 
-    def quiz_settings_heading(self):
-        settings = self.current_session.quiz_settings
-        headings = list(map(lambda n: n.heading_name, self.current_session.noteutil.heading_order))
+    def study_settings_heading(self):
+        settings = self.current_notebook.study_settings
+        headings = list(map(lambda n: n.heading_name, self.current_notebook.noteutil.heading_order))
         headings.insert(0, "unmarked")
         headings.insert(0, "correct")
         headings.insert(0, "incorrect")
@@ -505,22 +542,171 @@ class Commands:
         heading_choice = range_input("Select the number of the heading you want.", range(1, len(headings) + 1))
         if heading_choice is None:
             return print("Canceled input. (0)")
-        self.current_session.quiz.select_heading(headings[heading_choice - 1])
+        self.current_notebook.quiz.select_heading(headings[heading_choice - 1])
         print("Quiz heading set to: " + settings.heading)
 
-    def quiz_settings_extensions(self):
-        settings = self.current_session.quiz_settings
-        edit_extensions = yn_input("Do you want to edit the Extension Format?")
-        if edit_extensions is None:
-            return print("Canceled input. (0)")
-        if edit_extensions:
-            pass
+    def study_settings_extensions(self):
+        settings = self.current_notebook.study_settings
+        noteutil = self.current_notebook.noteutil
 
-        include_extensions = yn_input("Do you want to include extensions?")
+        include_extensions = yn_input("Would you like to include extensions?")
         if include_extensions is None:
-            return print("Canceled input. ( )")
+            return print("Canceled input. (0)")
         settings.include_extensions = include_extensions
-        print("Include Extensions set to: " + str(settings.include_extensions))
+
+        for ext_name in noteutil.extension_names:
+            edit_ext = yn_input("Do you want to edit the Extension \"{0}\"?".format(ext_name))
+            if edit_ext is None:
+                return print("Canceled input. (1)")
+            if edit_ext:
+                edit_format = yn_input("Do you want to edit the Extension format for this extension?\n"
+                                       "The current format is: " + repr(settings.extension_format[ext_name]))
+                if edit_format is None:
+                    return print("Canceled input. (2)")
+                if edit_format:
+                    new_format = text_input(r"Use {0} for name, {1} for content, \n for newline, and \t for tab")
+                    if new_format is None:
+                        return print("Canceled input. (3)")
+                    else:
+                        new_format = new_format.replace("\\n", "\n")
+                        new_format = new_format.replace("\\t", "\t")
+                        settings.extension_format[ext_name] = new_format
+
+                term_first = yn_input("Should this term appear with the term (Y) or with the definition (N)?")
+                if term_first is None:
+                    return print("Canceled input. (4)")
+                settings.extension_term_first[ext_name] = term_first
+    
+    def quiz(self):
+        print("""
+        quiz    : Shows this.
+        
+        Quizzing:
+            quiz generate       : Generates and begins a quiz.
+            quiz correct        : Displays all correct pairs.
+            quiz incorrect      : Displays all incorrect pairs.
+            quiz unmarked       : Displays all unmarked pairs.
+            quiz clear          : Empties the correct and incorrect list.
+            quiz save           : Saves the correct and incorrect terms to the .qz file.
+            quiz load           : Loads the correct and incorrect terms from the .qz file.
+            """)
+
+    def quiz_generate(self):
+        quiz = self.current_notebook.quiz
+        settings = self.current_notebook.study_settings
+
+        filter_notes = yn_input("Do you want to filter the current heading you are using more?")
+        if filter_notes is None:
+            return print("Canceled input. (0)")
+        if filter_notes:
+
+            remove_correct = yn_input("Would you like to remove terms marked correct?")
+            if remove_correct is None:
+                return print("Canceled input. (1)")
+            if remove_correct:
+                quiz.pairs = list(filterfalse(lambda p: p in quiz.correct, quiz.pairs))
+
+            remove_incorrect = yn_input("Would you like to remove terms marked incorrect?")
+            if remove_incorrect is None:
+                return print("Canceled input. (2)")
+            if remove_incorrect:
+                quiz.pairs = list(filterfalse(lambda p: p in quiz.incorrect, quiz.pairs))
+
+            remove_unmarked = yn_input("Would you like to remove terms that are unmarked?")
+            if remove_unmarked is None:
+                return print("Canceled input. (3)")
+            if remove_unmarked:
+                quiz.pairs = list(filter(lambda p: p in quiz.correct or p in quiz.incorrect, quiz.pairs))
+
+        session = list(quiz.generate(randomize=settings.random))
+        quiz.select_heading(settings.heading)
+        for note in session:
+            term, definition, separator, nindex = note.term, note.definition, note.separator, note.nindex
+            if settings.term_first:
+                question = settings.term_format1.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if settings.extension_term_first[extension.name]:
+                            question += settings.extension_format[extension.name].format(extension.name, extension.content)
+                input(question)
+                answer = settings.definition_format2.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if not settings.extension_term_first[extension.name]:
+                            answer += settings.extension_format[extension.name].format(extension.name, extension.content)
+                print(answer)
+            else:
+                question = settings.definition_format1.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if settings.extension_term_first[extension.name]:
+                            question += settings.extension_format[extension.name].format(extension.name, extension.content)
+                input(question)
+                answer = settings.term_format2.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if not settings.extension_term_first[extension.name]:
+                            answer += settings.extension_format[extension.name].format(extension.name, extension.content)
+                print(answer)
+
+            def quiz_options():
+                while True:
+                    option = text_input("Enter 'c' for correct or 'i' for incorrect.")
+                    if option is None:
+                        print("Canceled input. (1)")
+                        return False
+                    option = option.strip().lower()
+                    if option in ["c", "i"]:
+                        if option == "c":
+                            quiz.append(note, correct=True)
+                            print("Added {0} to correct list.".format(note.term))
+                            return True
+                        else:
+                            quiz.append(note, correct=False)
+                            print("Added {0} to incorrect list.".format(note.term))
+                            return True
+                    else:
+                        print("Input was not 'c' or 'i'. Try again.")
+
+            proceed = quiz_options()
+            if proceed is False:
+                return
+        print("All pairs have been cycled.")
+
+    def quiz_correct(self):
+        quiz = self.current_notebook.quiz
+        print("Correct Terms:")
+        for note in quiz.correct:
+            print("\t" + note.term)
+
+    def quiz_incorrect(self):
+        quiz = self.current_notebook.quiz
+        print("Incorrect Terms:")
+        for note in quiz.incorrect:
+            print("\t" + note.term)
+
+    def quiz_unmarked(self):
+        quiz = self.current_notebook.quiz
+        noteutil = self.current_notebook.noteutil
+        unmarked = list(filterfalse(lambda p: p in quiz.incorrect or p in quiz.correct, noteutil.pairs))
+        print("Unmarked Terms:")
+        for note in unmarked:
+            print("\t" + note.term)
+
+    def quiz_clear(self):
+        quiz = self.current_notebook.quiz
+        quiz.clear()
+        print("Correct and Incorrect lists cleared.")
+
+    def quiz_save(self):
+        quiz = self.current_notebook.quiz
+        quiz.save()
+        print("Quiz terms saved successfully.")
+
+    def quiz_load(self):
+        quiz = self.current_notebook.quiz
+        quiz.load()
+        print("Quiz terms loaded successfully.")
 
     def leitner(self):
         pass
