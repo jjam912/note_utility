@@ -363,15 +363,27 @@ class Commands:
         if settings.ask_define:
             define = yn_input("Would you like to look at a specific Note more in depth?")
             if define is None or define is False:
-                return print("Canceled input. (6)")
+                return print("Canceled input. (8)")
 
             if len(note_list) > 1:
-                nindex = range_input("Choose the number of a Note from the found Note list", range(1, len(note_list) + 1))
+                nindex = range_input("Choose the number of a Note from the Note list", range(1, len(note_list) + 1))
                 if nindex is None:
-                    return print("Canceled input. (7)")
+                    return print("Canceled input. (9)")
             else:
                 nindex = 1
             note = note_list[nindex - 1]
+            print("Content: {0}\n"
+                  "RContent: {1}\n"
+                  "Note Index: {2}\n"
+                  "Term: {3}\n"
+                  "Definition: {4}\n"
+                  "Heading level: {5}\n"
+                  "Heading name: {6}\n"
+                  "Note Range: {7}\n"
+                  "Extensions: {8}".format(note.content, note.rcontent, note.nindex, note.term, note.definition,
+                                           note.level, note.heading_name,
+                                           "range(" + str(note.begin_nindex) + ", " + str(note.end_nindex) + ")",
+                                           "\n\t".join(list(map(lambda e: e.name + ":" + e.content, note.extensions)))))
             define_type = range_input("Choose an attribute of the Note you want defined."
                                       "\n\t1. Content"
                                       "\n\t2. Note index"
@@ -382,7 +394,7 @@ class Commands:
                                       "\n\t7. Notes"
                                       "\n\t8. Extensions", range(1, 9))
             if define_type is None:
-                return print("Canceled input. (8)")
+                return print("Canceled input. (10)")
             define_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
                                  5: "level", 6: "heading_name", 7: "notes", 8: "extensions"}
             if define_type in [1, 2, 3, 4, 5, 6]:
