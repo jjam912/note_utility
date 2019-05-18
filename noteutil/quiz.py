@@ -101,13 +101,15 @@ class Quiz:
         """
 
         if correct:
-            self.correct.append(pair)
+            if pair not in self.correct:
+                self.correct.append(pair)
             try:
                 self.incorrect.remove(pair)
             except ValueError:
                 pass
         else:
-            self.incorrect.append(pair)
+            if pair not in self.incorrect:
+                self.incorrect.append(pair)
             try:
                 self.correct.remove(pair)
             except ValueError:
@@ -188,8 +190,7 @@ class Quiz:
             return
         elif heading == "unmarked":
             self.heading = "unmarked"
-            self.pairs = list(filterfalse(
-                lambda p: p in self.incorrect or p in self.correct, self.noteutil.pairs))
+            self.pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, self.noteutil.pairs))
             return
 
         if isinstance(heading, Note):
