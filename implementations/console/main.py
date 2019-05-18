@@ -77,7 +77,7 @@ def yn_input(message: str):
         print("Try again, input was not 'y' or 'n'.")
 
 
-class Session:
+class Notebook:
     def __init__(self, noteutil: NoteUtil):
         self.noteutil = noteutil
         self.quiz = Quiz(noteutil)
@@ -87,56 +87,57 @@ class Session:
 
         # Settings
         self.noteutil_settings = NoteUtilSettings(self)
-        self.quiz_settings = QuizSettings(self)
-        self.leitner_settings = LeitnerSettings(self)
+        self.study_settings = StudySettings(self)
 
 
 class NoteUtilSettings:
-    def __init__(self, session: Session):
-        self.session = session
-        self.file = session.noteutil.note_file
+    def __init__(self, notebook: Notebook):
+        self.notebook = notebook
+        self.file = notebook.noteutil.note_file
         self.simple_search = True
-        self.ask_define = False
+        self.ask_define = True
 
 
-class QuizSettings:
-    def __init__(self, session: Session):
-        self.session = session
-        self.file = session.quiz.qz_file
-        self.term_format1 = r"Define the term: {0}"
-        self.definition_format2 = r"The definition is: {0}"
-        self.definition_format1 = r"Guess the term: {0}"
-        self.term_format2 = r"The term is: {0}"
+class StudySettings:
+    def __init__(self, notebook: Notebook):
+        self.notebook = notebook
+        self.qz_file = notebook.quiz.qz_file
+        self.lt_file = notebook.leitner.lt_file
+        self.term_format1 = "Define the term: {0}"
+        self.definition_format2 = "The definition is: {1}\n" \
+                                  "Note Index: {3}"
+
+        self.definition_format1 = "Guess the term: {1}"
+        self.term_format2 = "The term is: {0}\n" \
+                            "Note Index: {3}"
 
         self.random = True
         self.term_first = True
         self.include_extensions = True
-        self.extension_format = r"\n{0}: {1}"
+        self.extension_format = {}
+        self.extension_first = {}
+        for ext_name in notebook.noteutil.extension_names:
+            self.extension_format[ext_name] = "\n{0}: {1}"
+            self.extension_first[ext_name] = False
 
     @property
     def heading(self):
-        heading = self.session.quiz.heading
+        heading = self.notebook.quiz.heading
         if heading is None:
-            return "None (All)"
+            return "none"
         elif isinstance(heading, str):
-            return heading.title()
+            return heading
         elif isinstance(heading, Note):
             return heading.heading_name
         return "Error"
-
-
-class LeitnerSettings:
-    def __init__(self, session: Session):
-        self.session = session
-        self.file = session.leitner.lt_file
-
+    
 
 class Commands:
     def __init__(self, noteutils: List[NoteUtil]):
-        self.sessions = {}
+        self.notebooks = {}
         for nu in noteutils:
-            self.sessions[nu.note_file] = Session(nu)
-        self.current_session = None
+            self.notebooks[nu.note_file] = Notebook(nu)
+        self.current_notebook = None
         self.commands = {
             "commands":     self.display,
             "select":       self.select,
@@ -169,21 +170,22 @@ class Commands:
         commands    : Shows this.
         select      : Select a note file to use.
         noteutil    : Shows commands for NoteUtil.
+        study       : Shows commands for Study Settings
         quiz        : Shows commands for Quiz.
         leitner     : Shows commands for Leitner.
         """)
 
     def select(self):
         print("Please choose one of the following note files:")
-        for i, note_file in enumerate(self.sessions.keys()):
+        for i, note_file in enumerate(self.notebooks.keys()):
             print("\t{0}. {1}".format(i + 1, note_file))
         i_nu = range_input("Select the number corresponding to the note file you want to use.",
-                           range(1, len(self.sessions) + 1))
+                           range(1, len(self.notebooks) + 1))
         if i_nu is None:
             return print("Canceled input. (1)")
 
-        note_file = list(self.sessions.keys())[i_nu - 1]
-        self.current_session = self.sessions[note_file]
+        note_file = list(self.notebooks.keys())[i_nu - 1]
+        self.current_notebook = self.notebooks[note_file]
 
     def noteutil(self):
         print(
@@ -191,7 +193,7 @@ class Commands:
 
         noteutil    : Shows this.
         
-        Settings
+        NoteUtil Settings
             noteutil settings   : Displays your NoteUtil settings.
             noteutil settings search    : Toggles between simple and advanced search.
             noteutil settings define    : Toggles between asking to define in depth and not
@@ -203,23 +205,23 @@ class Commands:
         """)
 
     def noteutil_settings(self):
-        settings = self.current_session.noteutil_settings
+        settings = self.current_notebook.noteutil_settings
         print("Noteutil Settings:")
         print("\tSimple Search: " + str(settings.simple_search))
         print("\tAsk Define: " + str(settings.ask_define))
 
     def noteutil_settings_search(self):
-        settings = self.current_session.noteutil_settings
+        settings = self.current_notebook.noteutil_settings
         settings.simple_search = not settings.simple_search
         print("Simple Search set to: " + str(settings.simple_search))
 
     def noteutil_settings_define(self):
-        settings = self.current_session.noteutil_settings
+        settings = self.current_notebook.noteutil_settings
         settings.ask_define = not settings.ask_define
         print("Ask Define set to: " + str(settings.ask_define))
 
     def noteutil_headings(self):
-        noteutil = self.current_session.noteutil
+        noteutil = self.current_notebook.noteutil
 
         heading_description = ""
         heading_description += "Heading Levels:" + "\n"
@@ -239,7 +241,7 @@ class Commands:
         print(heading_description)
 
     def noteutil_extensions(self):
-        noteutil = self.current_session.noteutil
+        noteutil = self.current_notebook.noteutil
 
         print("Extensions:")
         for name, bounds in zip(noteutil.extension_names, noteutil.extension_bounds):
@@ -248,8 +250,8 @@ class Commands:
             print("\t\tRight bound: " + bounds[1])
 
     def noteutil_search(self):
-        noteutil = self.current_session.noteutil
-        settings = self.current_session.noteutil_settings
+        noteutil = self.current_notebook.noteutil
+        settings = self.current_notebook.noteutil_settings
 
         if settings.simple_search:
             query = text_input("Enter the part of the Note you are searching for.")
@@ -364,7 +366,7 @@ class Commands:
                     print("\t{0}. {1}".format(i + 1, ext.content))
 
     def noteutil_edit(self):
-        noteutil = self.current_session.noteutil
+        noteutil = self.current_notebook.noteutil
 
         nindex = range_input("Enter the note index of the Note.", range(len(noteutil.notes)))
         if nindex is None:
