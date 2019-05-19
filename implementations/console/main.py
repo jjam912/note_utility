@@ -1,7 +1,7 @@
 from noteutil import NoteUtil, Quiz, Leitner
 from noteutil.notes import Note
 from noteutil.comparisons import CompareOptions
-from noteutil.errors import NoteError
+from noteutil.errors import NoteError, TimeTooShort, LastBox
 import os
 from typing import List
 from itertools import filterfalse
@@ -169,7 +169,14 @@ class Commands:
             "quiz save":                    self.quiz_save,
             "quiz load":                    self.quiz_load,
 
-            "leitner":      self.leitner
+            "leitner":                      self.leitner,
+            "leitner settings":             self.leitner_settings,
+            "leitner boxes":                self.leitner_boxes,
+            "leitner notes":                self.leitner_notes,
+            "leitner generate":             self.leitner_generate,
+            "leitner reset":                self.leitner_reset,
+            "leitner save":                 self.leitner_save,
+            "leitner load":                 self.leitner_load
         }
 
     @staticmethod
@@ -481,7 +488,7 @@ class Commands:
         print("\tTerm First: " + str(settings.term_first))
         print("\tInclude Extensions: " + str(settings.include_extensions))
         print("\tExtension Format: " + repr(settings.extension_format))
-        print("\tExtension Term First: " + repr(settings.extension_term_first))
+        print("\tExtension Term First: " + repr(settings.extension_first))
 
     def study_settings_format(self):
         print("""
@@ -609,7 +616,7 @@ class Commands:
                 term_first = yn_input("Should this term appear with the term (Y) or with the definition (N)?")
                 if term_first is None:
                     return print("Canceled input. (4)")
-                settings.extension_term_first[ext_name] = term_first
+                settings.extension_first[ext_name] = term_first
     
     def quiz(self):
         print("""
@@ -660,27 +667,31 @@ class Commands:
                 question = settings.term_format1.format(term, definition, separator, nindex)
                 if settings.include_extensions:
                     for extension in note.extensions:
-                        if settings.extension_term_first[extension.name]:
-                            question += settings.extension_format[extension.name].format(extension.name, extension.content)
+                        if settings.extension_first[extension.name]:
+                            question += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
                 input(question)
                 answer = settings.definition_format2.format(term, definition, separator, nindex)
                 if settings.include_extensions:
                     for extension in note.extensions:
-                        if not settings.extension_term_first[extension.name]:
-                            answer += settings.extension_format[extension.name].format(extension.name, extension.content)
+                        if not settings.extension_first[extension.name]:
+                            answer += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
                 print(answer)
             else:
                 question = settings.definition_format1.format(term, definition, separator, nindex)
                 if settings.include_extensions:
                     for extension in note.extensions:
-                        if settings.extension_term_first[extension.name]:
-                            question += settings.extension_format[extension.name].format(extension.name, extension.content)
+                        if settings.extension_first[extension.name]:
+                            question += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
                 input(question)
                 answer = settings.term_format2.format(term, definition, separator, nindex)
                 if settings.include_extensions:
                     for extension in note.extensions:
-                        if not settings.extension_term_first[extension.name]:
-                            answer += settings.extension_format[extension.name].format(extension.name, extension.content)
+                        if not settings.extension_first[extension.name]:
+                            answer += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
                 print(answer)
 
             def quiz_options():
@@ -743,7 +754,138 @@ class Commands:
         print("Quiz terms loaded successfully.")
 
     def leitner(self):
-        pass
+        print("""
+        leitner:    Shows this
+        
+        Leitner System:
+            leitner settings        : Modify Leitner's boxes settings. 
+            leitner boxes           : Display the boxes and their time periods.
+            leitner notes           : Display the boxes and the Notes they have inside of them.
+            leitner generate        : Generate and begin a Leitner session.
+            leitner reset           : Reset all of the Notes to Box 1
+            leitner save            : Save the location of all Notes into the .lt file.
+            leitner load            : Load the state of a Leitner system from the .lt file.
+        """)
+
+    def leitner_settings(self):
+        leitner = self.current_notebook.leitner
+        self.leitner_boxes()
+        add_box = yn_input("Would you like to add another box to the end?")
+        if add_box is None:
+            return print("Canceled input. (0)")
+        if add_box:
+            time = range_input("Enter a time period for the box (how long between each review.)\n"
+                               "It must be greater than the current longest time period (max 9999999).",
+                               range(leitner.times[len(leitner.times)] + 1, 10000000))
+            if time is None:
+                return print("Canceled input. (1)")
+            try:
+                leitner.add_box(time)
+                return print("Added Box {0} with time period {1}.".format(len(leitner.boxes), time))
+            except TimeTooShort:
+                return print("The time you gave was shorter than the current longest time period.")
+
+        pop_box = yn_input("Would you like to remove the last box?")
+        if pop_box is None:
+            return print("Canceled input. (2)")
+        if pop_box:
+            try:
+                leitner.pop_box()
+                print("Removed Box {0}.".format(len(leitner.boxes) + 1))
+            except LastBox:
+                return print("The Leitner system only has one box left (the minimum).")
+
+    def leitner_boxes(self):
+        leitner = self.current_notebook.leitner
+        boxes_description = ""
+        for number, time in leitner.times.items():
+            boxes_description += "Box {0} with time period {1}".format(number, time) + "\n"
+        print(boxes_description)
+
+    def leitner_notes(self):
+        leitner = self.current_notebook.leitner
+        boxes_description = ""
+        for number, note_list in leitner.boxes.items():
+            boxes_description += "Box {0} with time period {1}:\n".format(number, leitner.times[number])
+            for note in note_list:
+                boxes_description += "\t" + note.content + "\n"
+        print(boxes_description)
+
+    def leitner_generate(self):
+        leitner = self.current_notebook.leitner
+        settings = self.current_notebook.study_settings
+
+        for note in leitner.generate():
+            term, definition, separator, nindex = note.term, note.definition, note.separator, note.nindex
+            if settings.term_first:
+                question = settings.term_format1.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if settings.extension_first[extension.name]:
+                            question += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
+                input(question)
+                answer = settings.definition_format2.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if not settings.extension_first[extension.name]:
+                            answer += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
+                print(answer)
+            else:
+                question = settings.definition_format1.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if settings.extension_first[extension.name]:
+                            question += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
+                input(question)
+                answer = settings.term_format2.format(term, definition, separator, nindex)
+                if settings.include_extensions:
+                    for extension in note.extensions:
+                        if not settings.extension_first[extension.name]:
+                            answer += settings.extension_format[extension.name].format(
+                                extension.name, extension.content)
+                print(answer)
+
+            def quiz_options():
+                while True:
+                    option = text_input("Enter 'c' for correct or 'i' for incorrect.")
+                    if option is None:
+                        print("Canceled input. (1)")
+                        return False
+                    option = option.strip().lower()
+                    if option in ["c", "i"]:
+                        if option == "c":
+                            leitner.correct(note)
+                            print("Moved {0} to Box {1}.".format(note.term, note.box))
+                            return True
+                        else:
+                            leitner.incorrect(note)
+                            print("Moved {0} to Box 1.".format(note.term))
+                            return True
+                    else:
+                        print("Input was not 'c' or 'i'. Try again.")
+
+            proceed = quiz_options()
+            if proceed is False:
+                return
+        print("All pairs have been cycled.")
+
+    def leitner_reset(self):
+        leitner = self.current_notebook.leitner
+        leitner.reset()
+        print("Leitner reset successfully.")
+
+    def leitner_save(self):
+        leitner = self.current_notebook.leitner
+        leitner.save()
+        print("Leitner terms saved successfully.")
+
+    def leitner_load(self):
+        leitner = self.current_notebook.leitner
+        leitner.load()
+        print("Leitner terms loaded successfully.")
 
 
 def main():
