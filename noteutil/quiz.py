@@ -346,11 +346,11 @@ class Leitner:
             if self.session % self.times[number] == 0:
                 pairs.extend(self.boxes[number])
 
-        self.session += 1       # Not sure if this is the right place for it to go
         random.shuffle(pairs)
         for pair in pairs:
             self.last_nindex = pair.nindex
             yield pair
+        self.session += 1
 
     def correct(self, pair: Note) -> None:
         """Handles the pair if it was answered correctly.
@@ -402,6 +402,11 @@ class Leitner:
         Returns
         -------
         None
+
+        Raises
+        ------
+        TimeTooShort
+            If the time given is shorter than the current longest time period.
         """
 
         if time <= self.times[len(self.times)]:
