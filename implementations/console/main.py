@@ -104,11 +104,11 @@ class StudySettings:
         self.notebook = notebook
         self.qz_file = notebook.quiz.qz_file
         self.lt_file = notebook.leitner.lt_file
-        self.term_format1 = "Define the term: {0}"
+        self.term_format1 = "\nDefine the term: {0}"
         self.definition_format2 = "The definition is: {1}\n" \
                                   "Note Index: {3}"
 
-        self.definition_format1 = "Guess the term: {1}"
+        self.definition_format1 = "\nGuess the term: {1}"
         self.term_format2 = "The term is: {0}\n" \
                             "Note Index: {3}"
 
