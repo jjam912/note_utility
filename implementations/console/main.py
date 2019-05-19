@@ -717,6 +717,11 @@ class Commands:
             if proceed is False:
                 return
         print("All pairs have been cycled.")
+        save = yn_input("Save progress?")
+        if save is None:
+            return print("Canceled input. (2)")
+        if save:
+            quiz.save()
 
     def quiz_correct(self):
         quiz = self.current_notebook.quiz
@@ -871,6 +876,11 @@ class Commands:
             if proceed is False:
                 return
         print("All pairs have been cycled.")
+        save = yn_input("Save progress?")
+        if save is None:
+            return print("Canceled input. (2)")
+        if save:
+            leitner.save()
 
     def leitner_reset(self):
         leitner = self.current_notebook.leitner
