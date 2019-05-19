@@ -427,6 +427,8 @@ class Leitner:
             raise LastBox
 
         pairs = self.boxes.pop(len(self.boxes))
+        for pair in pairs:
+            pair.box -= 1
         self.times.pop(len(self.times))
         self.boxes[len(self.boxes)].extend(pairs)
 
