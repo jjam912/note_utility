@@ -24,12 +24,19 @@ basic_notes.txt
     >>> A name for each Heading separated by newlines - To give each level of Heading a general name to refer to.
     >>> The number of names should match the number of Headings.
 
+>>> [Optional] Number of Categories - To know how many different Categories will be created.
+
+    >>> [Required if Number of Categories given, otherwise leave blank]
+    >>> A name for each Category separated by newlines - To give each Category a general name to refer to. Order matters.
+
+    >>> For each name on a newline in the same order, enter the character prefix.
+
 >>> [Optional] Number of Extensions - To know how many different types of Extensions will be created.
 
     >>> [Required if Number of Extensions given, otherwise leave blank.]
     >>> A name for each extension separated by newlines - To give each Extension a general name to refer to.
 
-    >>> For each name, enter the 1. left bound, and 2. right bound separated by a space.
+    >>> For each name on a newline, enter the 1. left bound, and 2. right bound separated by a space.
 
 >>>
 >>>

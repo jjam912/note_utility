@@ -29,6 +29,13 @@ Heading 3
 Heading 4
 Heading 5
 Heading 6
+>>> [Optional] Number of Categories - To know how many different Categories will be created.
+
+    >>> [Required if Number of Categories given, otherwise leave blank]
+    >>> A name for each Category separated by newlines - To give each Category a general name to refer to. Order matters.
+
+    >>> For each name on a newline in the same order, enter the character prefix.
+
 >>> [Optional] Number of Extensions - To know how many different types of Extensions will be created.
 
     >>> [Required if Number of Extensions given, otherwise leave blank.]
