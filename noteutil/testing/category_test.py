@@ -97,3 +97,4 @@ if os.path.exists("category_notes.nu"):
     os.remove("category_notes.nu")
 noteutil = NoteUtil("category_config.txt")
 print(test_noteutil(noteutil))
+print(test_note_list(noteutil.get_list(category_names="Dollar", compare=CompareOptions.IN)))

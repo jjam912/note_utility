@@ -27,12 +27,12 @@ edit_notes.txt
     Chapter
     Subunit
 >>> [Optional] Number of Categories - To know how many different Categories will be created.
-
+1
     >>> [Required if Number of Categories given, otherwise leave blank]
     >>> A name for each Category separated by newlines - To give each Category a general name to refer to. Order matters.
-
+My Cat
     >>> For each name on a newline in the same order, enter the character prefix.
-
+$
 >>> [Optional] Number of Extensions - To know how many different types of Extensions will be created.
 1
     >>> [Required if Number of Extensions given, otherwise leave blank.]

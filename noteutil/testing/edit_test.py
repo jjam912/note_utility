@@ -31,7 +31,12 @@ def test_note(note):
     string += "Note Index: {!s:<5}\t\t".format(note.nindex)
     string += "Term: {!s:<10}\t\t".format(note.term[:10] if note.term else None)
     string += "Definition: {!s:<10}\t\t".format(note.definition[:10] if note.definition else None)
-    string += "Separator: {!s:<5}\t\t".format(note.separator)
+    string += "Separator: {!s:<5}\t\t".format(note.separator) + "\n"
+    if note.has_categories():
+        string += "\t\t|| "
+        for category_name in note.category_names:
+            string += category_name + " || "
+        string += "\n"
     if note.has_extensions():
         string += "\n\t----------" + "\n"
         string += "\tExtensions" + "\n"
@@ -92,4 +97,16 @@ print("Refresh\n"
       "-------")
 noteutil.refresh()
 print(noteutil.get(extension_names="Cool beans", compare=CompareOptions.IN))
+print(noteutil.get(nindex=1))
+print("-------\n")
+
+n3 = noteutil.get(nindex=3)
+print(test_note(n3))
+print(noteutil.categories)
+before_after_edit(n3, "I lost my Cat")
+print(noteutil.categories)
+before_after_edit(n3, "$ Oh yay! I found it")
+print(noteutil.categories)
+
+
 
