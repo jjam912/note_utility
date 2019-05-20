@@ -1,5 +1,5 @@
 # Heading 1
-Term 1: Definition 1
+$Term 1: Definition 1 with Category 1
 Line 1
 $Line with Category 1
 !Line with Category 2
@@ -7,7 +7,7 @@ $!Line with Category 1 and 2
 ## $Heading 2 with Category 1
 Term with Extension: 1 %%Eung Eung%%
 # !Heading 3 with Category 2
-Term with $$hOI$$: Extension 2
+!Term with $$hOI$$: Extension 2 and Category 2
 Term 2: Definition 2
 
 

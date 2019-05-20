@@ -39,6 +39,22 @@ def test_noteutil(noteutil):
     for note in noteutil.heading_order:
         string += "\tLevel " + str(note.level) + ": \t" + note.heading_name + "\n"
     string += "-------------" + "\n"
+    string += "Category Names and Prefixes" + "\n"
+    string += "---------------------------" + "\n"
+    for name, prefix in zip(noteutil.category_names, noteutil.category_prefixes):
+        string += "\t" + name + ": " + prefix + "\n"
+    string += "----------" + "\n"
+    string += "Categories" + "\n"
+    string += "----------" + "\n"
+    for name, note_list in noteutil.categories.items():
+        string += "\t" + name + ":" + "\n"
+        for note in note_list:
+            string += "\t\t" + note.content + "\n"
+    string += "--------------------------" + "\n"
+    string += "Extension Names and Bounds" + "\n"
+    string += "--------------------------" + "\n"
+    for name, bounds in zip(noteutil.extension_names, noteutil.extension_bounds):
+        string += "\t" + name + ": " + bounds[0] + " " + bounds[1] + "\n"
     return string
 
 
@@ -165,7 +181,25 @@ def test_note(note):
     string += "Heading: {!s:<10}\t\t".format(note.heading)
     string += "Heading Name: {!s:<10}\t\t".format(note.heading_name[:10] if note.heading_name else None)
     string += "Beginning Note Index: {!s:<5}\t\t".format(note.begin_nindex)
-    string += "Ending Note Index: {!s:<5}\t\t".format(note.end_nindex)
+    string += "Ending Note Index: {!s:<5}\t\t".format(note.end_nindex) + "\n"
+    if note.has_categories():
+        string += "\t\t|| "
+        for category_name in note.category_names:
+            string += category_name + " || "
+        string += "\n"
+    if note.has_extensions():
+        for ext in note.extensions:
+            string += "\t\t" + test_extension(ext) + "\n"
+    string += "\t\tRaw Content: {0}".format(note.rcontent)
+    return string
+
+
+def test_extension(ext):
+    string = "Extension:\t"
+    string += "Content: {0}\t\t".format(ext.content)
+    string += "Name: {!s:<10}\t\t".format(ext.name[:10])
+    string += "Left Bound: {!s:<10}\t\t".format(ext.lbound[:10])
+    string += "Right Bound: {!s:<10}\t\t".format(ext.rbound[:10])
     return string
 
 
@@ -174,47 +208,47 @@ def test_note_list(note_list) -> str:
     return "\t\n".join((list(map(test_note, note_list))))
 
 
-if os.path.exists("heading_notes.nu"):
-    os.remove("heading_notes.nu")
-if os.path.exists("heading_notes.qz"):
-    os.remove("heading_notes.qz")
+if os.path.exists("category_notes.nu"):
+    os.remove("category_notes.nu")
+if os.path.exists("category_notes.qz"):
+    os.remove("category_notes.qz")
 
-noteutil = NoteUtil("heading_config.txt")
+noteutil = NoteUtil("category_config.txt")
 quiz = Quiz(noteutil)
 print(test_noteutil(noteutil))
 print(test_quiz(quiz))
 
-print("Change heading to 2. Basic Structures: Sets, Functions, Sequences, Sums, and Matrices")
-quiz.select_pairs(noteutil.get(heading_name="2. Basic Structures:", compare=CompareOptions.SIN))
+print("Change heading to APink")
+quiz.select_pairs("Exclamation")
 print(test_quiz(quiz))
 
-print("Change back to all pairs")
-quiz.select_pairs(None)
-print(test_quiz(quiz))
-
-print(test_quiz_save(noteutil, quiz))
-print(test_noteutil(noteutil))
-quiz.reset()
-print(test_quiz_refresh(noteutil, quiz))
-print(test_noteutil(noteutil))
-
-print()
-
-pairs = quiz.generate(randomize=True)
-print("Add random five to correct")
-for _ in range(5):
-    quiz.append(next(pairs), correct=True)
-print(test_quiz(quiz))
-print("Generate unmarked terms and print them out in chronological order:")
-quiz.select_pairs("unmarked")
-pairs = quiz.generate(randomize=False)
-print(test_note_list(list(pairs)))
-print("Generate unmarked terms and print them out in random order:")
-pairs = quiz.generate(randomize=True)
-print(test_note_list(list(pairs)))
-
-
-
-
-
+# print("Change back to all pairs")
+# quiz.select_pairs(None)
+# print(test_quiz(quiz))
+#
+# print(test_quiz_save(noteutil, quiz))
+# print(test_noteutil(noteutil))
+# quiz.reset()
+# print(test_quiz_refresh(noteutil, quiz))
+# print(test_noteutil(noteutil))
+#
+# print()
+#
+# pairs = quiz.generate(randomize=True)
+# print("Add random five to correct")
+# for _ in range(5):
+#     quiz.append(next(pairs), correct=True)
+# print(test_quiz(quiz))
+# print("Generate unmarked terms and print them out in chronological order:")
+# quiz.select_pairs("unmarked")
+# pairs = quiz.generate(randomize=False)
+# print(test_note_list(list(pairs)))
+# print("Generate unmarked terms and print them out in random order:")
+# pairs = quiz.generate(randomize=True)
+# print(test_note_list(list(pairs)))
+#
+#
+#
+#
+#
 
