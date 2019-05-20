@@ -29,9 +29,9 @@ class Quiz:
         All Notes marked as incorrect.
     pairs : List[Note]
         List of all Notes that are pairs that the Quiz is generating from.
-        This can either be all pairs in NoteUtil, or only pairs inside a specific heading.
-    heading : None or Note
-        The heading whose pairs are being used.
+        This can either be all pairs in NoteUtil, or only pairs inside a specific heading/category.
+    division : None or Note
+        The heading/category whose pairs are being used.
         It is None if pairs are being used from all of NoteUtil's pairs, or the correct/incorrect list.
     qz_file : str
         File name for the .qz file to save the Quiz's correct and incorrect lists.
@@ -45,7 +45,7 @@ class Quiz:
 
         # Options
         self.pairs = self.noteutil.pairs
-        self.heading = None
+        self.division = None
 
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
@@ -152,16 +152,16 @@ class Quiz:
         self.correct.clear()
         self.incorrect.clear()
 
-    def select_heading(self, heading: Union[None, str, Note]) -> None:
-        """Changes the current heading and pairs to match the pairs in the given heading.
+    def select_pairs(self, division: Union[None, str, Note]) -> None:
+        """Changes the current division and pairs to match the pairs in the given Heading/Category.
 
         Parameters
         ----------
-        heading : None or Note or str
-            The Note or heading name whose pairs should be used.
-            If the heading name is "correct" or "incorrect", the pairs in the corresponding list will be used.
-            If the heading name is "unmarked", the pairs that are not in the correct or incorrect list will be used.
-            If left as None, all pairs in NoteUtil will be used.
+        division : None or Note or str
+            The Note or heading name or category name whose pairs should be used.
+            If the division name is "correct" or "incorrect", the pairs in the corresponding list will be used.
+            If the division name is "unmarked", the pairs that are not in the correct or incorrect list will be used.
+            If left as None or "none", all pairs in NoteUtil will be used.
 
         Returns
         -------
@@ -171,39 +171,41 @@ class Quiz:
         ------
         HeadingExpected
             If the Note provided is not None and isn't a heading.
-        HeadingNotFound
-            If the str provided is not None and it isn't a recognized heading name.
+        DivisionNotFound
+            If the str provided is not None and it isn't a recognized heading or category name.
         """
 
-        if heading is None or heading == "none":
-            self.heading = None
+        if division is None or division == "none":
+            self.division = None
             self.pairs = self.noteutil.pairs
             return
 
-        if heading == "correct":
-            self.heading = "correct"
+        if division == "correct":
+            self.division = "correct"
             self.pairs = self.correct
             return
-        elif heading == "incorrect":
-            self.heading = "incorrect"
+        elif division == "incorrect":
+            self.division = "incorrect"
             self.pairs = self.incorrect
             return
-        elif heading == "unmarked":
-            self.heading = "unmarked"
+        elif division == "unmarked":
+            self.division = "unmarked"
             self.pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, self.noteutil.pairs))
             return
 
-        if isinstance(heading, Note):
-            if not heading.is_heading():
-                raise HeadingExpected(heading)
-            self.heading = heading
-        elif heading in self.noteutil.heading_names:
-            self.heading = self.noteutil.get(heading_name=heading)
+        if division in self.noteutil.heading_names:
+            self.division = self.noteutil.get(heading_name=division)
+        if isinstance(division, Note):
+            if not division.is_heading():
+                raise HeadingExpected(division)
+            self.division = division
+            self.pairs = list(filter(lambda n: n.is_pair(),
+                                     self.noteutil.notes[self.division.begin_nindex: self.division.end_nindex]))
+        elif division in self.noteutil.category_names:
+            self.division = division
+            self.pairs = list(filter(lambda n: n.is_pair(), self.noteutil.categories[division]))
         else:
-            raise HeadingNotFound(heading)
-
-        self.pairs = list(filter(lambda n: n.is_pair(),
-                                 self.noteutil.notes[self.heading.begin_nindex: self.heading.end_nindex]))
+            raise DivisionNotFound(division)
 
     def save(self) -> None:
         """Writes correct and incorrect terms to a .qz file.
@@ -283,7 +285,7 @@ class Quiz:
 
         self.last_nindex = 0
         self.pairs = self.noteutil.pairs
-        self.heading = None
+        self.division = None
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
 
