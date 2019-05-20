@@ -32,6 +32,11 @@ class Note:
             The ending note index for this heading.
         nindexes : List[int]
             List of indexes starting from the begin_nindex to the end_nindex like a range.
+    If the Note is part of a Category:
+        category_names : List[str]
+            List of Category names that this Note belongs to.
+        category_prefixes : List[str]
+            List of Category prefixes that each Category name corresponds to.
     If the Note has Extensions:
         extension_names : List[str]
             A set of the generic names of the Extensions that this Note has.
@@ -59,7 +64,10 @@ class Note:
 
         self.begin_nindex = kwargs.get("begin_nindex", None)
         self.end_nindex = None      # Later assigned
-        self.nindexes = []          # Later assigned
+
+        # Category parameters
+        self.category_names = kwargs.get("category_names", [])
+        self.category_prefixes = kwargs.get("category_prefixes", [])
 
         # Pair parameters
         self.term = kwargs.get("term", None)
@@ -93,9 +101,8 @@ class Note:
         rstring += "content='{0}', nindex={1}".format(self.content, self.nindex)
         if self.is_heading():
             rstring += (", heading_char='{0}', level={1}, heading='{2}', heading_name='{3}', begin_nindex={4}, "
-                        "end_nindex={5}, nindexes={6}".format(self.heading_char, self.level, self.heading,
-                                                              self.heading_name, self.begin_nindex, self.end_nindex,
-                                                              self.nindexes))
+                        "end_nindex={5}".format(self.heading_char, self.level, self.heading,
+                                                self.heading_name, self.begin_nindex, self.end_nindex))
         if self.has_extensions():
             rstring += ", extension_names={0}".format(repr(self.extension_names))
             rstring += ", extensions=["
@@ -114,6 +121,8 @@ class Note:
         rcontent = ""
         if self.is_heading():
             rcontent += self.heading
+        for prefix in self.category_prefixes:
+            rcontent += prefix
         rcontent += self.content
         for ext in self.extensions:
             rcontent += ext.rcontent
@@ -138,6 +147,16 @@ class Note:
         """
 
         return self.heading_char is not None
+
+    def has_categories(self) -> bool:
+        """Returns whether the Note belongs to any Categories.
+
+        Returns
+        -------
+        bool
+        """
+
+        return not not self.category_names
 
     def has_extensions(self) -> bool:
         """Returns whether the Note has any extensions.
