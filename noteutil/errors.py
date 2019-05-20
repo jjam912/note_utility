@@ -64,9 +64,9 @@ class HeadingExpected(QuizError):
         super().__init__("The note was expected to be a heading, but wasn't: {0}".format(note.raw()))
 
 
-class HeadingNotFound(QuizError):
+class DivisionNotFound(QuizError):
     def __init__(self, heading_name):
-        super().__init__("The heading name wasn't found: {0}".format(heading_name))
+        super().__init__("The division name wasn't found: {0}".format(heading_name))
 
 
 class LeitnerError(Exception):
