@@ -50,10 +50,6 @@ def test_note(note):
     string += "Heading Name: {!s:<10}\t\t".format(note.heading_name[:10] if note.heading_name else None)
     string += "Beginning Note Index: {!s:<5}\t\t".format(note.begin_nindex)
     string += "Ending Note Index: {!s:<5}\t\t".format(note.end_nindex)
-    if note.nindexes:
-        string += "Notes Indexes: " + str(note.nindexes)
-    else:
-        string += "Notes Indexes: None"
     return string
 
 
@@ -82,5 +78,5 @@ print(test_note_list(noteutil.get_list(level=3)))
 print(test_note_list(noteutil.get_list(heading_char="#")))
 print(test_note_list(noteutil.get_list(heading="##", compare=CompareOptions.IN)))
 print(test_note_list(noteutil.get_list(heading_name="1.", compare=CompareOptions.IN)))
-print(test_note_list(noteutil.get_list(end_nindex=28)))
-print(test_note_list(noteutil.get_list(nindexes=None)))
+print(test_note_list(noteutil.get_list(end_nindex=25)))
+print(test_note_list(noteutil.get_list(begin_nindex=None)))
