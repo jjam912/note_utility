@@ -123,7 +123,7 @@ class StudySettings:
 
     @property
     def heading(self):
-        heading = self.notebook.quiz.heading
+        heading = self.notebook.quiz.division
         if heading is None:
             return "none"
         elif isinstance(heading, str):
@@ -148,19 +148,20 @@ class Commands:
             "noteutil settings search":     self.noteutil_settings_search,
             "noteutil settings define":     self.noteutil_settings_define,
             "noteutil headings":            self.noteutil_headings,
+            "noteutil categories":          self.noteutil_categories,
             "noteutil extensions":          self.noteutil_extensions,
             "noteutil search":              self.noteutil_search,
             "noteutil edit":                self.noteutil_edit,
 
             "study":                         self.study,
             "study settings":                self.study_settings,
-            "study settings heading":        self.study_settings_heading,
             "study settings format":         self.study_settings_format,
             "study settings order":          self.study_settings_order,
             "study settings random":         self.study_settings_random,
             "study settings extensions":     self.study_settings_extensions,
 
             "quiz":                         self.quiz,
+            "quiz division":                self.quiz_division,
             "quiz generate":                self.quiz_generate,
             "quiz correct":                 self.quiz_correct,
             "quiz incorrect":               self.quiz_incorrect,
@@ -216,7 +217,8 @@ class Commands:
             noteutil settings define    : Toggles between asking to define in depth and not
         NoteUtil
             noteutil headings       : Shows heading order and names.
-            noteutil extensions     : Shows extension names
+            noteutil categories     : Shows category names and prefixes.
+            noteutil extensions     : Shows extension names and bounds.
             noteutil search         : Search for a Note.
             noteutil edit           : Edit the content of a Note.
         """)
@@ -256,6 +258,13 @@ class Commands:
                 heading_description += "\t"
             heading_description += note.heading_name + "\n"
         print(heading_description)
+
+    def noteutil_categories(self):
+        noteutil = self.current_notebook.noteutil
+        print("Categories:")
+
+        for name, prefix in zip(noteutil.category_names, noteutil.category_prefixes):
+            print("\t" + name + ": " + prefix)
 
     def noteutil_extensions(self):
         noteutil = self.current_notebook.noteutil
@@ -391,30 +400,6 @@ class Commands:
                                            note.level, note.heading_name,
                                            "range(" + str(note.begin_nindex) + ", " + str(note.end_nindex) + ")",
                                            "\n\t".join(list(map(lambda e: e.name + ":" + e.content, note.extensions)))))
-            define_type = range_input("Choose an attribute of the Note you want defined."
-                                      "\n\t1. Content"
-                                      "\n\t2. Note index"
-                                      "\n\t3. Term"
-                                      "\n\t4. Definition"
-                                      "\n\t5. Heading level"
-                                      "\n\t6. Heading name"
-                                      "\n\t7. Notes"
-                                      "\n\t8. Extensions", range(1, 9))
-            if define_type is None:
-                return print("Canceled input. (10)")
-            define_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
-                                 5: "level", 6: "heading_name", 7: "notes", 8: "extensions"}
-            if define_type in [1, 2, 3, 4, 5, 6]:
-                print(getattr(note, define_conversion[define_type]))
-            elif define_type in [7]:
-                notes = noteutil.notes[note.begin_nindex:note.end_nindex]
-                for i, note in enumerate(notes):
-                    print("\t{0}. {1}".format(i + 1, note.content))
-
-            elif define_type in [8]:
-                extensions = note.extensions
-                for i, ext in enumerate(extensions):
-                    print("\t{0}. {1}".format(i + 1, ext.content))
 
     def noteutil_edit(self):
         noteutil = self.current_notebook.noteutil
@@ -570,22 +555,6 @@ class Commands:
         settings.random = not settings.random
         print("Random set to: " + str(settings.random))
 
-    def study_settings_heading(self):
-        settings = self.current_notebook.study_settings
-        headings = list(map(lambda n: n.heading_name, self.current_notebook.noteutil.heading_order))
-        headings.insert(0, "unmarked")
-        headings.insert(0, "correct")
-        headings.insert(0, "incorrect")
-        headings.insert(0, "none")
-
-        for i, heading in enumerate(headings):
-            print("\t{0}. {1}".format(i + 1, heading))
-        heading_choice = range_input("Select the number of the heading you want.", range(1, len(headings) + 1))
-        if heading_choice is None:
-            return print("Canceled input. (0)")
-        self.current_notebook.quiz.select_heading(headings[heading_choice - 1])
-        print("Quiz heading set to: " + settings.heading)
-
     def study_settings_extensions(self):
         settings = self.current_notebook.study_settings
         noteutil = self.current_notebook.noteutil
@@ -623,6 +592,7 @@ class Commands:
         quiz    : Shows this.
         
         Quizzing:
+            quiz division       : Choose the division to quiz yourself with.
             quiz generate       : Generates and begins a quiz.
             quiz correct        : Displays all correct pairs.
             quiz incorrect      : Displays all incorrect pairs.
@@ -632,11 +602,28 @@ class Commands:
             quiz load           : Loads the correct and incorrect terms from the .qz file.
             """)
 
+    def quiz_division(self):
+        settings = self.current_notebook.study_settings
+        divisions = list(map(lambda n: n.heading_name, self.current_notebook.noteutil.heading_order))
+        divisions.extend(self.current_notebook.noteutil.category_names)
+        divisions.insert(0, "unmarked")
+        divisions.insert(0, "correct")
+        divisions.insert(0, "incorrect")
+        divisions.insert(0, "none")
+
+        for i, division in enumerate(divisions):
+            print("\t{0}. {1}".format(i + 1, division))
+        division_choice = range_input("Select the number of the division you want.", range(1, len(divisions) + 1))
+        if division_choice is None:
+            return print("Canceled input. (0)")
+        self.current_notebook.quiz.select_pairs(divisions[division_choice - 1])
+        print("Quiz division set to: " + settings.heading)
+
     def quiz_generate(self):
         quiz = self.current_notebook.quiz
         settings = self.current_notebook.study_settings
 
-        filter_notes = yn_input("Do you want to filter the current heading you are using more?")
+        filter_notes = yn_input("Do you want to filter the current division you are using more?")
         if filter_notes is None:
             return print("Canceled input. (0)")
         if filter_notes:
@@ -660,7 +647,7 @@ class Commands:
                 quiz.pairs = list(filter(lambda p: p in quiz.correct or p in quiz.incorrect, quiz.pairs))
 
         session = list(quiz.generate(randomize=settings.random))
-        quiz.select_heading(settings.heading)
+        quiz.select_pairs(settings.heading)
         for note in session:
             term, definition, separator, nindex = note.term, note.definition, note.separator, note.nindex
             if settings.term_first:
@@ -908,6 +895,7 @@ Before we begin, you must first set up a few settings:""")
 
     try:
         commands = Commands(noteutils)
+        commands.current_notebook = commands.notebooks[noteutils[0].note_file]
         commands.select()
         Commands.display()
         command_loop(commands)
@@ -922,7 +910,7 @@ def command_loop(commands: Commands):
         command = text_input("Enter a command.")
         if command is None:
             return print("Canceled input. (0)")
-        if command.lower() in commands.commands:
+        if command.lower().strip() in commands.commands:
             commands.commands[command]()
         else:
             print("Command not found.")
