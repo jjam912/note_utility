@@ -55,6 +55,13 @@ class NoteUtil:
         Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[Note]
         Chronological list of notes that are headings.
+    category_names : List[str]
+        The list of all category names in chronological order.
+    category_prefixes : List[str]
+        The list of all category prefixes in chronological order.
+        zip(category_names, category_prefixes) gives correctly corresponding names and prefixes.
+    categories : Dict[str, List[int]]
+        Mapped category names to list of Notes.
     extension_names : List[str]
         List of all generic names of the extensions.
     extension_bounds : List[Tuple[str, str]]
@@ -121,6 +128,14 @@ class NoteUtil:
         return list(filter(lambda n: n.is_heading(), self.notes))
 
     @property
+    def categories(self) -> Dict[str, List[Note]]:
+        categories = {name: [] for name in self.category_names}
+        for note in self.notes:
+            for category_name in note.category_names:
+                categories[category_name].append(note)
+        return categories
+
+    @property
     def extensions(self) -> List[Note]:
         return list(filter(lambda n: n.has_extensions(), self.notes))
 
@@ -171,6 +186,20 @@ class NoteUtil:
                 for _ in range(self.levels):
                     self.level_names.append(next(lines))
             else:
+                next(lines)
+                next(lines)
+
+            category_number = next(lines) or None
+            if category_number:
+                self.category_names = list()
+                self.category_prefixes = list()
+                for _ in range(int(category_number)):
+                    self.category_names.append(next(lines))
+                for _ in range(int(category_number)):
+                    self.category_prefixes.append(next(lines))
+            else:
+                self.category_names = None
+                self.category_prefixes = None
                 next(lines)
                 next(lines)
 
@@ -245,6 +274,20 @@ class NoteUtil:
                         kwargs["begin_nindex"] = nindex
                 # End Heading Detection
 
+                # Category Detection
+                if self.category_names is not None and self.category_prefixes is not None:
+                    kwargs["category_names"] = []
+                    kwargs["category_prefixes"] = []
+                    for name, prefix in zip(self.category_names, self.category_prefixes):
+                        if line.startswith(prefix):
+                            kwargs["category_names"].append(name)
+                            kwargs["category_prefixes"].append(prefix)
+                            line = line[len(prefix):].strip()       # !! Remove prefix from line - Affects content
+                    # Since content may have been modified, fix up heading_name
+                    if kwargs.get("heading_name", False):
+                        kwargs["heading_name"] = line
+                # End Category Detection
+
                 # Extension Detection
                 if self.extension_names is not None and self.extension_bounds is not None:
                     kwargs["extensions"] = []
@@ -297,7 +340,7 @@ class NoteUtil:
                     self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
                     self.heading_order.append(note)
 
-            # Headings are still missing their end_nindex and nindexes:
+            # Headings are still missing their end_nindex:
             # Complete Headings
             if self.heading_char is not None:
                 headings_list = list(self.heading_level.values())
@@ -326,7 +369,6 @@ class NoteUtil:
                             end_nindex = order_begin_nindex
 
                         heading.end_nindex = end_nindex
-                        heading.nindexes = [i for i in range(heading.begin_nindex, heading.end_nindex)]
             # End Complete Headings
 
     def get(self, **kwargs) -> Union[None, Note]:
