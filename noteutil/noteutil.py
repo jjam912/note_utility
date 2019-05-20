@@ -438,6 +438,7 @@ class NoteUtil:
         """Given a Note, edit its content.
         This can have many side effects:
             1. Changes to heading_name.
+            2. Changes to categories.
             2. Changes to extensions.
             3. Changes to whether the Note is a pair.
             4. Changes to term, definition, and separator
@@ -462,6 +463,15 @@ class NoteUtil:
         DuplicateTerm
         NoDefinition
         """
+
+        if self.category_names is not None and self.category_prefixes is not None:
+            note.category_names = []
+            note.category_prefixes = []
+            for name, prefix in zip(self.category_names, self.category_prefixes):
+                if content.startswith(prefix):
+                    note.category_names.append(name)
+                    note.category_prefixes.append(prefix)
+                    content = content[len(prefix):].strip()
 
         if self.extension_names is not None and self.extension_bounds is not None:
             note.extensions = []
