@@ -61,7 +61,7 @@ class QuizError(Exception):
 
 class HeadingExpected(QuizError):
     def __init__(self, note):
-        super().__init__("The note was expected to be a heading, but wasn't: {0}".format(note.raw()))
+        super().__init__("The note was expected to be a heading, but wasn't: {0}".format(note.rcontent))
 
 
 class DivisionNotFound(QuizError):
