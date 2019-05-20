@@ -40,6 +40,25 @@ Rules for using headings:
 4. Do not use the heading character within the first n characters of your notes when starting a new line, with n being the number of headings.
 5. Headings are considered notes too, and thus must also comply with the note rules.
 
+## Categories:
+When you want to group together specific notes, but they don't appear in chronological order, you can use Categories to 
+include all of them into the same "heading-like" way. These are prefixed the similarly to Headings, except that you definitely
+should use a different character and category characters do not repeat. 
+
+Example:
+```
+# Let $ denote Category 1's prefix
+# Let ! denote Category 2's prefix
+# In order to assign both Category 1 and 2 to the Note:
+$!The quick brown fox jumps over the lazy dog
+```
+
+Rules for using Categories:
+1. Category prefixes should go before the content of the Note, after any heading characters.
+2. In order to assign one Note more than one Category, place the prefixes **in the order you type them** in the config file.
+3. If Category prefixes are not in the order shown in the config file, then they will not be recognized.
+4. The Categories themselves aren't Notes, but they reference to a group of Notes similar to Headings.
+
 ## Extensions:
 Extensions are an additional piece of text that you want to separate from either the main content of the *Note*. 
 They are created by surrounding your notes with a specific string (bounds) and are useful for adding information to a *Note* that's not required.
@@ -67,9 +86,10 @@ Rules for using extensions:
 The order of conversion is the order in which NoteUtil creates its notes. Here is the order:
 
 1. Headings
-2. Extensions
-3. Pairs
-4. Content
+2. Categories
+3. Extensions
+4. Pairs
+5. Content
 
 This means that anything lower in the creation hierarchy should not interfere with anything higher in the creation hierarchy.
 
