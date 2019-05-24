@@ -198,8 +198,8 @@ class NoteUtil:
                 for _ in range(int(category_number)):
                     self.category_prefixes.append(next(lines))
             else:
-                self.category_names = None
-                self.category_prefixes = None
+                self.category_names = []
+                self.category_prefixes = []
                 next(lines)
                 next(lines)
 
@@ -212,8 +212,8 @@ class NoteUtil:
                 for _ in range(int(extension_number)):
                     self.extension_bounds.append(tuple(next(lines).split()))
             else:
-                self.extension_names = None
-                self.extension_bounds = None
+                self.extension_names = []
+                self.extension_bounds = []
                 next(lines)
                 next(lines)
 

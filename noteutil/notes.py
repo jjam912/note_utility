@@ -66,8 +66,8 @@ class Note:
         self.end_nindex = None      # Later assigned
 
         # Category parameters
-        self.category_names = kwargs.get("category_names", None)
-        self.category_prefixes = kwargs.get("category_prefixes", None)
+        self.category_names = kwargs.get("category_names", [])
+        self.category_prefixes = kwargs.get("category_prefixes", [])
 
         # Pair parameters
         self.term = kwargs.get("term", None)
@@ -75,8 +75,8 @@ class Note:
         self.separator = kwargs.get("separator", None)
 
         # Extension parameters
-        self.extension_names = kwargs.get("extension_names", None)
-        self.extensions = kwargs.get("extensions", None)
+        self.extension_names = kwargs.get("extension_names", [])
+        self.extensions = kwargs.get("extensions", [])
 
     def __eq__(self, other):
         if isinstance(other, Note):
