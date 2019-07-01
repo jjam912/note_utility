@@ -11,7 +11,10 @@ os.chdir(os.path.join(os.getcwd(), "notes"))
 # Construct and add your NoteUtils here::
 math = NoteUtil("heading_config.txt")
 euro = NoteUtil("euro_config.txt")
-noteutils = [math, euro]
+calc = NoteUtil("calc_config.txt")
+noteutils = [math, euro, calc]
+#
+
 CANCEL = ["exit", "quit", "stop"]
 
 
@@ -807,7 +810,7 @@ class Commands:
         leitner = self.current_notebook.leitner
         settings = self.current_notebook.study_settings
 
-        for note in leitner.generate():
+        for note in leitner.generate(randomize=settings.random):
             term, definition, separator, nindex = note.term, note.definition, note.separator, note.nindex
             if settings.term_first:
                 question = settings.term_format1.format(term, definition, separator, nindex)
