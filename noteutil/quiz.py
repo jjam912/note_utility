@@ -333,7 +333,7 @@ class Leitner:
         if not os.path.exists(self.lt_file):
             open(self.lt_file, mode="w").close()
 
-    def generate(self) -> Generator[Note, None, None]:
+    def generate(self, *, randomize: bool) -> Generator[Note, None, None]:
         """A generator that yields Notes according to the session number.
         If the session number is divisible by the time on a box, then we review that box.
 
@@ -348,7 +348,8 @@ class Leitner:
             if self.session % self.times[number] == 0:
                 pairs.extend(self.boxes[number])
 
-        random.shuffle(pairs)
+        if randomize:
+            random.shuffle(pairs)
         for pair in pairs:
             self.last_nindex = pair.nindex
             yield pair
