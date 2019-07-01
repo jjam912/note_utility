@@ -263,14 +263,15 @@ class NoteUtil:
             index = 0
             while index < len(lines):
                 line = lines[index]
-                if line.startswith(self.blocks):
-                    line = line[len(self.blocks):]
-                    while index < len(lines):
-                        index += 1
-                        line += "\n" + lines[index]
-                        if lines[index].endswith(self.blocks):
-                            break
-                    line = line[:-1 * len(self.blocks)]
+                if self.blocks is not None:
+                    if line.startswith(self.blocks):
+                        line = line[len(self.blocks):]
+                        while index < len(lines):
+                            index += 1
+                            line += "\n" + lines[index]
+                            if lines[index].endswith(self.blocks):
+                                break
+                        line = line[:-1 * len(self.blocks)]
                 if line != "":
                     yield line
                 index += 1
