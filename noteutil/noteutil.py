@@ -326,8 +326,8 @@ class NoteUtil:
                 for name, bounds in zip(self.extension_names, self.extension_bounds):
                     lbound, rbound = bounds
                     while lbound in line:
-                        if rbound in line:
-                            lindex = line.index(lbound) + len(lbound)
+                        lindex = line.index(lbound) + len(lbound)
+                        if rbound in line[lindex:]:
                             rindex = line.index(rbound, lindex)
                             kwargs["extensions"].append(
                                 Extension(line[lindex:rindex].strip(), name, lbound, rbound))
