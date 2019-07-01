@@ -14,6 +14,8 @@
 heading_notes.md
 >>> [Optional] Comments (cannot be >>>) - Prefix a line in your notes with this so it is ignored while your notes are being read.
 !
+>>> Blocks
+```
 >>> [Recommended] Separator - For the creation of Pairs.
 :
 >>> [Recommended] Heading character - To indicate a Headings hierarchy.

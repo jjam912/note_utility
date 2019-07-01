@@ -55,3 +55,10 @@ The past tense of Yeet: Yeeted
 
 ! Comment test
 
+```python
+print("Super mega awesome multiline note")
+for _ in range(5):
+    print("Line")
+input("Did it work?")
+print("K")
+```
