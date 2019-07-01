@@ -10,7 +10,7 @@ def readlines(f) -> Generator[str, None, None]:
 
     Parameters
     ----------
-    f : File
+    f: File
 
     Yields
     ------
@@ -20,7 +20,6 @@ def readlines(f) -> Generator[str, None, None]:
     lines = f.read().split("\n")
     for line in lines:
         yield line.strip()
-
 
 class NoteUtil:
     """NoteUtil is used for retrieving and manipulating Notes.
@@ -39,6 +38,8 @@ class NoteUtil:
         The same name of the file with notes, but with a .nu extension indicating NoteUtil modified.
     comments: str
         The prefix of lines that should be ignored in the note file.
+    blocks: str
+        The prefix and suffix of lines that mark the beginning and end of a block of notes (multi-line).
     separator: str
         A delimiter used to split Note lines into pairs (terms and definitions).
     notes : List[Note]
@@ -91,7 +92,7 @@ class NoteUtil:
         self._read_config()
         if not os.path.exists(self.nu_file) or refresh:
             self._parse_notes()
-        self._read_notes()
+        self._make_notes()
 
         if self.warnings:
             print("Warnings for {0}\n"
@@ -177,6 +178,7 @@ class NoteUtil:
             self.note_file = next(lines)
             self.nu_file = self.note_file.split(".")[0] + ".nu"
             self.comments = next(lines) or None
+            self.blocks = next(lines) or None
             self.separator = next(lines) or None
 
             self.heading_char = next(lines) or None
@@ -243,133 +245,161 @@ class NoteUtil:
         with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
 
-    def _read_notes(self) -> None:
+    def _read_notes(self) -> Generator[str, None, None]:
+        """Splits a file into lines without the "\n" suffixes.
+        Continues a line if it starts with line_continue.
+
+        Parameters
+        ----------
+        f : File
+
+        Yields
+        ------
+        str
+        """
+        with open(self.nu_file, mode="r") as f:
+            lines = f.read().split("\n")
+
+            index = 0
+            while index < len(lines):
+                line = lines[index]
+                if line.startswith(self.blocks):
+                    line = line[len(self.blocks):]
+                    while index < len(lines):
+                        index += 1
+                        line += "\n" + lines[index]
+                        if lines[index].endswith(self.blocks):
+                            break
+                    line = line[:-1 * len(self.blocks)]
+                if line != "":
+                    yield line
+                index += 1
+
+    def _make_notes(self) -> None:
         """Parses the newly written .nu file and creates Notes in the order of Heading, Extensions, Pairs, and Notes.
         Adds all of the notes to self.notes.
         """
 
-        with open(self.nu_file, mode="r") as f:
+        if self.heading_char is not None:
+            current_level = 0
 
+        for nindex, line in enumerate(self._read_notes()):
+            kwargs = {}
+            line = line.strip()
+
+            # Heading Detection
             if self.heading_char is not None:
-                current_level = 0
+                if line.startswith(self.heading_char):
+                    kwargs["heading_char"] = self.heading_char
 
-            for nindex, line in enumerate(f.readlines()):
-                kwargs = {}
-                line = line.strip()
+                    previous_level = current_level
+                    kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
+                    if current_level - previous_level > 1:
+                        self.errors.append("Heading Jump - Line content: {0}".format(line))
+                        # raise HeadingJump(line, previous_level, current_level)
+                    kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
+                    line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
+                    kwargs["heading_name"] = line
 
-                # Heading Detection
-                if self.heading_char is not None:
-                    if line.startswith(self.heading_char):
-                        kwargs["heading_char"] = self.heading_char
+                    kwargs["begin_nindex"] = nindex
+            # End Heading Detection
 
-                        previous_level = current_level
-                        kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
-                        if current_level - previous_level > 1:
-                            self.errors.append("Heading Jump - Line content: {0}".format(line))
-                            # raise HeadingJump(line, previous_level, current_level)
-                        kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
-                        line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
-                        kwargs["heading_name"] = line
+            # Category Detection
+            if self.category_names is not None and self.category_prefixes is not None:
+                kwargs["category_names"] = []
+                kwargs["category_prefixes"] = []
+                for name, prefix in zip(self.category_names, self.category_prefixes):
+                    if line.startswith(prefix):
+                        kwargs["category_names"].append(name)
+                        kwargs["category_prefixes"].append(prefix)
+                        line = line[len(prefix):].strip()       # !! Remove prefix from line - Affects content
+                # Since content may have been modified, fix up heading_name
+                if kwargs.get("heading_name", False):
+                    kwargs["heading_name"] = line
+            # End Category Detection
 
-                        kwargs["begin_nindex"] = nindex
-                # End Heading Detection
+            # Extension Detection
+            if self.extension_names is not None and self.extension_bounds is not None:
+                kwargs["extensions"] = []
+                kwargs["extension_names"] = []
+                for name, bounds in zip(self.extension_names, self.extension_bounds):
+                    lbound, rbound = bounds
+                    while lbound in line:
+                        if rbound in line:
+                            lindex = line.index(lbound) + len(lbound)
+                            rindex = line.index(rbound, lindex)
+                            kwargs["extensions"].append(
+                                Extension(line[lindex:rindex].strip(), name, lbound, rbound))
+                            if name not in kwargs["extension_names"]:
+                                kwargs["extension_names"].append(name)
 
-                # Category Detection
-                if self.category_names is not None and self.category_prefixes is not None:
-                    kwargs["category_names"] = []
-                    kwargs["category_prefixes"] = []
-                    for name, prefix in zip(self.category_names, self.category_prefixes):
-                        if line.startswith(prefix):
-                            kwargs["category_names"].append(name)
-                            kwargs["category_prefixes"].append(prefix)
-                            line = line[len(prefix):].strip()       # !! Remove prefix from line - Affects content
-                    # Since content may have been modified, fix up heading_name
-                    if kwargs.get("heading_name", False):
-                        kwargs["heading_name"] = line
-                # End Category Detection
-
-                # Extension Detection
-                if self.extension_names is not None and self.extension_bounds is not None:
-                    kwargs["extensions"] = []
-                    kwargs["extension_names"] = []
-                    for name, bounds in zip(self.extension_names, self.extension_bounds):
-                        lbound, rbound = bounds
-                        while lbound in line:
-                            if rbound in line:
-                                lindex = line.index(lbound) + len(lbound)
-                                rindex = line.index(rbound, lindex)
-                                kwargs["extensions"].append(
-                                    Extension(line[lindex:rindex].strip(), name, lbound, rbound))
-                                if name not in kwargs["extension_names"]:
-                                    kwargs["extension_names"].append(name)
-
-                                line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
-                                line = line.strip()
-                            else:
-                                self.warnings.append("Missing Bound - Line content: {0}".format(line))
-                                break
-                                # raise MissingBound(line, lbound, rbound)
-
-                # End Extension Detection
-
-                # Pair Detection
-                if self.separator is not None:
-                    if self.separator in line:      # Line is a pair, add additional parameters
-                        if len(line.split(self.separator)) > 2:
-                            self.warnings.append("Extra Separator - Line content: {0}".format(line))
-                            # raise ExtraSeparator(line)
-
-                        kwargs["term"] = line.split(self.separator)[0].strip()
-                        if kwargs["term"] in map(lambda n: n.term, self.pairs):
-                            self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
-                            # raise DuplicateTerm(kwargs["term"])
-
-                        kwargs["definition"] = line.split(self.separator)[1].strip()
-                        if kwargs["definition"] == "":
-                            self.warnings.append("No Definition - Line content: {0}".format(line))
-                            # raise NoDefinition(line)
-
-                        kwargs["separator"] = self.separator
-                # End Pair Detection
-
-                note = Note(line, nindex, **kwargs)
-
-                # Add the note to NoteUtil's data structures.
-                self.notes.append(note)
-                if note.is_heading():
-                    self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
-                    self.heading_order.append(note)
-
-            # Headings are still missing their end_nindex:
-            # Complete Headings
-            if self.heading_char is not None:
-                headings_list = list(self.heading_level.values())
-                for headings in headings_list:
-                    for i in range(len(headings)):
-                        heading = headings[i]
-                        level_index = i + 1     # The next heading index at the same level
-                        order_index = self.heading_order.index(heading) + 1    # The next heading index in heading order
-
-                        while order_index != len(self.heading_order) and \
-                                self.heading_order[order_index].level > heading.level:
-                            order_index += 1
-
-                        if level_index == len(headings):
-                            level_begin_nindex = len(self.notes)
+                            line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
+                            line = line.strip()
                         else:
-                            level_begin_nindex = headings[level_index].begin_nindex
-                        if order_index == len(self.heading_order):
-                            order_begin_nindex = len(self.notes)
-                        else:
-                            order_begin_nindex = self.heading_order[order_index].begin_nindex
+                            self.warnings.append("Missing Bound - Line content: {0}".format(line))
+                            break
+                            # raise MissingBound(line, lbound, rbound)
 
-                        if level_begin_nindex < order_begin_nindex:
-                            end_nindex = level_begin_nindex
-                        else:
-                            end_nindex = order_begin_nindex
+            # End Extension Detection
 
-                        heading.end_nindex = end_nindex
-            # End Complete Headings
+            # Pair Detection
+            if self.separator is not None:
+                if self.separator in line:      # Line is a pair, add additional parameters
+                    if len(line.split(self.separator)) > 2:
+                        self.warnings.append("Extra Separator - Line content: {0}".format(line))
+                        # raise ExtraSeparator(line)
+
+                    kwargs["term"] = line.split(self.separator)[0].strip()
+                    if kwargs["term"] in map(lambda n: n.term, self.pairs):
+                        self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
+                        # raise DuplicateTerm(kwargs["term"])
+
+                    kwargs["definition"] = line.split(self.separator)[1].strip()
+                    if kwargs["definition"] == "":
+                        self.warnings.append("No Definition - Line content: {0}".format(line))
+                        # raise NoDefinition(line)
+
+                    kwargs["separator"] = self.separator
+            # End Pair Detection
+
+            note = Note(line, nindex, **kwargs)
+
+            # Add the note to NoteUtil's data structures.
+            self.notes.append(note)
+            if note.is_heading():
+                self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
+                self.heading_order.append(note)
+
+        # Headings are still missing their end_nindex:
+        # Complete Headings
+        if self.heading_char is not None:
+            headings_list = list(self.heading_level.values())
+            for headings in headings_list:
+                for i in range(len(headings)):
+                    heading = headings[i]
+                    level_index = i + 1     # The next heading index at the same level
+                    order_index = self.heading_order.index(heading) + 1    # The next heading index in heading order
+
+                    while order_index != len(self.heading_order) and \
+                            self.heading_order[order_index].level > heading.level:
+                        order_index += 1
+
+                    if level_index == len(headings):
+                        level_begin_nindex = len(self.notes)
+                    else:
+                        level_begin_nindex = headings[level_index].begin_nindex
+                    if order_index == len(self.heading_order):
+                        order_begin_nindex = len(self.notes)
+                    else:
+                        order_begin_nindex = self.heading_order[order_index].begin_nindex
+
+                    if level_begin_nindex < order_begin_nindex:
+                        end_nindex = level_begin_nindex
+                    else:
+                        end_nindex = order_begin_nindex
+
+                    heading.end_nindex = end_nindex
+        # End Complete Headings
 
     def get(self, **kwargs) -> Union[None, Note]:
         """Retrieves a Note with attributes equal to passed keyword args.
