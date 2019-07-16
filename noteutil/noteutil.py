@@ -83,7 +83,7 @@ class NoteUtil:
         If there were any severe problems during the Note creation process.
     """
 
-    def __init__(self, config_file: str, refresh: bool = False):
+    def __init__(self, config_file: str, refresh: bool = True):
         self.notes = []
         self.config_file = config_file
         self.warnings = []
