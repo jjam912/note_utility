@@ -21,6 +21,7 @@ def readlines(f) -> Generator[str, None, None]:
     for line in lines:
         yield line.strip()
 
+
 class NoteUtil:
     """NoteUtil is used for retrieving and manipulating Notes.
     It must be configured with a config file.
@@ -110,6 +111,10 @@ class NoteUtil:
         return list(filter(lambda n: n.is_pair(), self.notes))
 
     @property
+    def heading_order(self) -> List[Note]:
+        return list(filter(lambda n: n.is_heading(), self.notes))
+
+    @property
     def heading_names(self) -> List[str]:
         return list(map(lambda n: n.heading_name, self.heading_order))
 
@@ -123,10 +128,6 @@ class NoteUtil:
             level_name = self.level_names[note.level - 1]
             heading_level[level_name].append(note)
         return heading_level
-
-    @property
-    def heading_order(self) -> List[Note]:
-        return list(filter(lambda n: n.is_heading(), self.notes))
 
     @property
     def categories(self) -> Dict[str, List[Note]]:
@@ -302,7 +303,7 @@ class NoteUtil:
                     line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
                     kwargs["heading_name"] = line
 
-                    kwargs["begin_nindex"] = nindex
+                    kwargs["begin_nindex"] = nindex + 1
             # End Heading Detection
 
             # Category Detection
@@ -376,6 +377,7 @@ class NoteUtil:
         if self.heading_char is not None:
             headings_list = list(self.heading_level.values())
             for headings in headings_list:
+                # Assign end_nindex
                 for i in range(len(headings)):
                     heading = headings[i]
                     level_index = i + 1     # The next heading index at the same level
@@ -400,6 +402,12 @@ class NoteUtil:
                         end_nindex = order_begin_nindex
 
                     heading.end_nindex = end_nindex
+                # End assign end_nindex
+
+                # Assign heading_order, heading_names, heading_level
+
+                # End assign heading_order, heading_names, heading_level
+
         # End Complete Headings
 
     def get(self, **kwargs) -> Union[None, Note]:
