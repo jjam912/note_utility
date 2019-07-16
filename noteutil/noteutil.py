@@ -69,7 +69,7 @@ class NoteUtil:
     extension_bounds : List[Tuple[str, str]]
         List of all (left bound, right bound) tuples that correspond to the extension names.
         zip(extension_names, extension_bounds) gives correctly corresponding names and bounds.
-    extensions : List[Note]
+    with_extensions : List[Note]
         All Notes that have extensions.
     pairs : List[Note]
         All Notes that have terms and definitions.
@@ -138,7 +138,7 @@ class NoteUtil:
         return categories
 
     @property
-    def extensions(self) -> List[Note]:
+    def with_extensions(self) -> List[Note]:
         return list(filter(lambda n: n.has_extensions(), self.notes))
 
     def _parse_config(self) -> None:
@@ -250,10 +250,6 @@ class NoteUtil:
         """Splits a file into lines without the "\n" suffixes.
         Continues a line if it starts with line_continue.
 
-        Parameters
-        ----------
-        f : File
-
         Yields
         ------
         str
@@ -364,13 +360,10 @@ class NoteUtil:
                     kwargs["separator"] = self.separator
             # End Pair Detection
 
-            note = Note(line, nindex, **kwargs)
+            note = Note(self, line, nindex, **kwargs)
 
             # Add the note to NoteUtil's data structures.
             self.notes.append(note)
-            if note.is_heading():
-                self.heading_level[list(self.heading_level.keys())[kwargs["level"] - 1]].append(note)
-                self.heading_order.append(note)
 
         # Headings are still missing their end_nindex:
         # Complete Headings
@@ -388,24 +381,32 @@ class NoteUtil:
                         order_index += 1
 
                     if level_index == len(headings):
-                        level_begin_nindex = len(self.notes)
+                        level_nindex = len(self.notes)
                     else:
-                        level_begin_nindex = headings[level_index].begin_nindex
+                        level_nindex = headings[level_index].nindex
                     if order_index == len(self.heading_order):
-                        order_begin_nindex = len(self.notes)
+                        order_nindex = len(self.notes)
                     else:
-                        order_begin_nindex = self.heading_order[order_index].begin_nindex
+                        order_nindex = self.heading_order[order_index].nindex
 
-                    if level_begin_nindex < order_begin_nindex:
-                        end_nindex = level_begin_nindex
+                    if level_nindex < order_nindex:
+                        end_nindex = level_nindex
                     else:
-                        end_nindex = order_begin_nindex
+                        end_nindex = order_nindex
 
                     heading.end_nindex = end_nindex
                 # End assign end_nindex
 
                 # Assign heading_order, heading_names, heading_level
-
+                for i in range(len(headings)):
+                    heading = headings[i]
+                    heading_order = []
+                    heading_names = []
+                    for j in range(heading.begin_nindex, heading.end_nindex):
+                        note = self.get(nindex=j)
+                        if note.is_heading():
+                            heading_order.append(note)
+                            heading_names.append(note.heading_name)
                 # End assign heading_order, heading_names, heading_level
 
         # End Complete Headings
