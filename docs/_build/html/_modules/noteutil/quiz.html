@@ -149,6 +149,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">filterfalse</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 
@@ -192,8 +193,10 @@
 
         <span class="c1"># Saving</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qz_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">note_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.qz&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qz_file</span><span class="p">):</span>
+            <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qz_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Quiz.generate"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Quiz.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">unmarked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Note</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<div class="viewcode-block" id="Quiz.generate"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Quiz.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Note</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;A generator that yields Notes, either chronologically or randomly.</span>
 <span class="sd">        Once a generator is created, it is &quot;frozen in time,&quot; and isn&#39;t affected by any changes to Quiz.</span>
 <span class="sd">        However, Quiz keeps track of the last index used, which changes every time this generator is activated.</span>
@@ -202,8 +205,6 @@
 <span class="sd">        ----------</span>
 <span class="sd">        randomize : bool</span>
 <span class="sd">            Whether to generate a random term from the list of pairs.</span>
-<span class="sd">        unmarked : bool</span>
-<span class="sd">            Whether to only generate terms that have not been marked as correct/incorrect.</span>
 
 <span class="sd">        Yields</span>
 <span class="sd">        ------</span>
@@ -211,10 +212,7 @@
 <span class="sd">            A pair that is either in random or chronological order.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">unmarked</span><span class="p">:</span>
-            <span class="n">pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filterfalse</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span> <span class="ow">or</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">)))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pairs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">)</span>       <span class="c1"># This could be changed to use indices</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pairs</span><span class="p">)</span>       <span class="c1"># This could be changed to use indices</span>
 
         <span class="k">if</span> <span class="n">randomize</span><span class="p">:</span>
             <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
@@ -247,13 +245,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">correct</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pair</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pair</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">correct</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -304,6 +304,7 @@
 <span class="sd">        heading : None or Note or str</span>
 <span class="sd">            The Note or heading name whose pairs should be used.</span>
 <span class="sd">            If the heading name is &quot;correct&quot; or &quot;incorrect&quot;, the pairs in the corresponding list will be used.</span>
+<span class="sd">            If the heading name is &quot;unmarked&quot;, the pairs that are not in the correct or incorrect list will be used.</span>
 <span class="sd">            If left as None, all pairs in NoteUtil will be used.</span>
 
 <span class="sd">        Returns</span>
@@ -314,22 +315,26 @@
 <span class="sd">        ------</span>
 <span class="sd">        HeadingExpected</span>
 <span class="sd">            If the Note provided is not None and isn&#39;t a heading.</span>
-<span class="sd">        HeadingNotFound</span>
+<span class="sd">        DivisionNotFound</span>
 <span class="sd">            If the str provided is not None and it isn&#39;t a recognized heading name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">heading</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">heading</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">heading</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">pairs</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">heading</span> <span class="o">==</span> <span class="s2">&quot;correct&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="s2">&quot;correct&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct</span>
             <span class="k">return</span>
         <span class="k">elif</span> <span class="n">heading</span> <span class="o">==</span> <span class="s2">&quot;incorrect&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="s2">&quot;incorrect&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="n">heading</span> <span class="o">==</span> <span class="s2">&quot;unmarked&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="s2">&quot;unmarked&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filterfalse</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">incorrect</span> <span class="ow">or</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">pairs</span><span class="p">))</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heading</span><span class="p">,</span> <span class="n">Note</span><span class="p">):</span>
@@ -339,7 +344,7 @@
         <span class="k">elif</span> <span class="n">heading</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">heading_names</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">heading_name</span><span class="o">=</span><span class="n">heading</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">HeadingNotFound</span><span class="p">(</span><span class="n">heading</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DivisionNotFound</span><span class="p">(</span><span class="n">heading</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">.</span><span class="n">is_pair</span><span class="p">(),</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">notes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">heading</span><span class="o">.</span><span class="n">begin_nindex</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">heading</span><span class="o">.</span><span class="n">end_nindex</span><span class="p">]))</span></div>
@@ -431,7 +436,7 @@
     <span class="sd">&quot;&quot;&quot;The Leitner system is a method of spaced repetition where cards are reviewed at increasing intervals.</span>
 
 <span class="sd">    If we model a pair as a flashcard (term and definition), then we can also use the Leitner system.</span>
-<span class="sd">    We use seven &quot;boxes&quot; numbered 1-7, and every time our session is divisible by the box number, we review that box.</span>
+<span class="sd">    We use seven &quot;boxes&quot; numbered 1-7, and every time our session is divisible by the box period, we review that box.</span>
 <span class="sd">    Any terms that we mark as correct will advance to the next box number (+1), and incorrect ones will reset to box 1.</span>
 
 <span class="sd">    Parameters</span>
@@ -467,6 +472,8 @@
 
         <span class="c1"># Saving</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lt_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noteutil</span><span class="o">.</span><span class="n">note_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.lt&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lt_file</span><span class="p">):</span>
+            <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lt_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Leitner.generate"><a class="viewcode-back" href="../../api.html#noteutil.quiz.Leitner.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Note</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;A generator that yields Notes according to the session number.</span>

@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/implementations/console/notes/calc_config.txt" line="45" mnemonic="5" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f69031af-7c73-42b6-af6c-36f7a580af33" name="Default" comment="Added docs">
+    <list default="true" id="f69031af-7c73-42b6-af6c-36f7a580af33" name="Default" comment="Added a test for blocks">
       <change beforePath="$PROJECT_DIR$/.idea/dictionaries/jjam912.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/jjam912.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/note_format.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/noteutil.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/.buildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/.buildinfo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/comparisons.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/comparisons.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/api.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/doctrees/api.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/environment.pickle" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/doctrees/environment.pickle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/errors.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/errors.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/notes.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/notes.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/noteutil.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/noteutil.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/quiz.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/noteutil/quiz.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/_static/pygments.css" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/_static/pygments.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/_build/html/api.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/api.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/_build/html/genindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/genindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/py-modindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/py-modindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_build/html/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/search.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementations/console/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/implementations/console/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/objects.inv" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/objects.inv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/searchindex.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_build/html/searchindex.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,58 +24,52 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/noteutil$main.coverage" NAME="main Coverage Results" MODIFIED="1556286124689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/implementations/console" />
+    <SUITE FILE_PATH="coverage/noteutil$main.coverage" NAME="main Coverage Results" MODIFIED="1558359463569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/implementations/console" />
     <SUITE FILE_PATH="coverage/noteutil$quiz_test.coverage" NAME="quiz_test Coverage Results" MODIFIED="1555761215332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
-    <SUITE FILE_PATH="coverage/noteutil$extensions_test.coverage" NAME="extensions_test Coverage Results" MODIFIED="1556018873446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
-    <SUITE FILE_PATH="coverage/noteutil$basic_test.coverage" NAME="basic_test Coverage Results" MODIFIED="1554565018167" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
-    <SUITE FILE_PATH="coverage/noteutil$basic_test_leitner.coverage" NAME="basic_test_leitner Coverage Results" MODIFIED="1555856586546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$basic_test.coverage" NAME="basic_test Coverage Results" MODIFIED="1558351618165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$basic_test_leitner.coverage" NAME="basic_test_leitner Coverage Results" MODIFIED="1556977915612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
     <SUITE FILE_PATH="coverage/noteutil$review.coverage" NAME="review Coverage Results" MODIFIED="1555763346629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2" />
-    <SUITE FILE_PATH="coverage/noteutil$edit_test.coverage" NAME="edit_test Coverage Results" MODIFIED="1556018752595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$edit_test.coverage" NAME="edit_test Coverage Results" MODIFIED="1558355722508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$heading_test_quiz.coverage" NAME="heading_test_quiz Coverage Results" MODIFIED="1558356266446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$basic_test_quiz.coverage" NAME="basic_test_quiz Coverage Results" MODIFIED="1558356281519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$quiz.coverage" NAME="quiz Coverage Results" MODIFIED="1558359000320" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil" />
+    <SUITE FILE_PATH="coverage/noteutil$category_test.coverage" NAME="category_test Coverage Results" MODIFIED="1558355001469" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$extensions_test.coverage" NAME="extensions_test Coverage Results" MODIFIED="1558351717237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$category_test_quiz.coverage" NAME="category_test_quiz Coverage Results" MODIFIED="1558356733736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
     <SUITE FILE_PATH="coverage/noteutil$noteutil__1_.coverage" NAME="noteutil (1) Coverage Results" MODIFIED="1556283298279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil" />
-    <SUITE FILE_PATH="coverage/noteutil$heading_test_quiz.coverage" NAME="heading_test_quiz Coverage Results" MODIFIED="1555849690888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
-    <SUITE FILE_PATH="coverage/noteutil$noteutil.coverage" NAME="noteutil Coverage Results" MODIFIED="1555938046675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2" />
-    <SUITE FILE_PATH="coverage/noteutil$quiz.coverage" NAME="quiz Coverage Results" MODIFIED="1555674821112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2" />
-    <SUITE FILE_PATH="coverage/noteutil$heading_test.coverage" NAME="heading_test Coverage Results" MODIFIED="1555684941859" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil2/testing" />
+    <SUITE FILE_PATH="coverage/noteutil$noteutil.coverage" NAME="noteutil Coverage Results" MODIFIED="1558351900465" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil" />
+    <SUITE FILE_PATH="coverage/noteutil$heading_test.coverage" NAME="heading_test Coverage Results" MODIFIED="1558353115540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/noteutil/testing" />
   </component>
   <component name="FileEditorManager">
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/CONFIG.txt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state>
+                  <caret selection-end-line="46" selection-end-column="3" />
+                </state>
+              </provider>
+            </entry>
+          </file>
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/implementations/console/main.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="60">
-                  <caret line="4" selection-start-line="4" selection-end-line="4" />
+                <state relative-caret-position="873">
+                  <caret line="747" column="19" selection-start-line="747" selection-start-column="19" selection-end-line="747" selection-end-column="19" />
+                  <folding>
+                    <element signature="e#0#44#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/implementations/console/notes/euro_vocab.nu">
+            <entry file="file://$PROJECT_DIR$/noteutil/noteutil.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="289">
-                  <caret line="671" column="67" selection-start-line="671" selection-start-column="67" selection-end-line="671" selection-end-column="67" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_notes.md">
-              <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-                <state split_layout="SPLIT">
-                  <first_editor relative-caret-position="30">
-                    <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-                  </first_editor>
-                  <second_editor />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/noteutil/__init__.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="60">
-                  <caret line="4" column="30" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
+                <state relative-caret-position="4890">
+                  <caret line="330" column="47" selection-start-line="330" selection-start-column="47" selection-end-line="330" selection-end-column="47" />
                 </state>
               </provider>
             </entry>
@@ -88,41 +78,11 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/noteutil/quiz.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="765">
-                  <caret line="363" column="28" selection-start-line="363" selection-start-column="28" selection-end-line="363" selection-end-column="28" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/CONFIG.txt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="555">
-                  <caret line="37" column="2" selection-start-line="37" selection-start-column="2" selection-end-line="37" selection-end-column="2" />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/noteutil/noteutil.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="629">
-                  <caret line="84" column="23" selection-start-line="84" selection-start-column="23" selection-end-line="84" selection-end-column="23" />
-                  <folding>
-                    <element signature="e#0#34#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/noteutil/notes.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1620">
-                  <caret line="108" column="21" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+                <state relative-caret-position="873">
+                  <caret line="78" column="52" selection-start-line="78" selection-start-column="52" selection-end-line="78" selection-end-column="52" />
                 </state>
               </provider>
             </entry>
@@ -147,6 +107,9 @@
       <find>set</find>
       <find>`</find>
       <find>self.noteutil</find>
+      <find>extension</find>
+      <find>extension_first</find>
+      <find>a-</find>
     </findStrings>
     <replaceStrings>
       <replace>print(</replace>
@@ -156,6 +119,7 @@
       <replace>new_note</replace>
       <replace>list</replace>
       <replace>noteutil</replace>
+      <replace>self</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -164,30 +128,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/noteutil2/testing/heading_notes2.md" />
-        <option value="$PROJECT_DIR$/LICENSE" />
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/setup.py" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/heading_config2.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/heading_config.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/CONFIG.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/edit_notes.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/RULES.md" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/quiz_notes.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/quiz_config.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/heading_test.py" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/quiz_test.py" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/basic_test.py" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/basic_notes.txt" />
-        <option value="$PROJECT_DIR$/noteutil2/testing/heading_notes.md" />
         <option value="$PROJECT_DIR$/noteutil2/testing/basic_test_quiz.py" />
         <option value="$PROJECT_DIR$/noteutil2/review.py" />
         <option value="$PROJECT_DIR$/noteutil2/testing/heading_test_quiz.py" />
         <option value="$PROJECT_DIR$/noteutil2/quiz.py" />
         <option value="$PROJECT_DIR$/noteutil2/testing/basic_test_leitner.py" />
         <option value="$PROJECT_DIR$/noteutil2/testing/extensions_config.py" />
-        <option value="$PROJECT_DIR$/RULES.md" />
-        <option value="$PROJECT_DIR$/CONFIG.txt" />
         <option value="$PROJECT_DIR$/noteutil2/testing/extensions_config.txt" />
         <option value="$PROJECT_DIR$/noteutil2/errors.py" />
         <option value="$PROJECT_DIR$/noteutil2/testing/extensions_notes.txt" />
@@ -203,31 +149,50 @@
         <option value="$PROJECT_DIR$/docs/index.rst" />
         <option value="$PROJECT_DIR$/docs/api.rst" />
         <option value="$PROJECT_DIR$/docs/conf.py" />
-        <option value="$PROJECT_DIR$/noteutil/quiz.py" />
-        <option value="$PROJECT_DIR$/noteutil/errors.py" />
         <option value="$PROJECT_DIR$/noteutil/comparisons.py" />
         <option value="$PROJECT_DIR$/noteutil/__init__.py" />
-        <option value="$PROJECT_DIR$/implementations/console/notes/heading_notes.md" />
-        <option value="$PROJECT_DIR$/implementations/console/notes/heading_config.txt" />
-        <option value="$PROJECT_DIR$/noteutil/notes.py" />
-        <option value="$PROJECT_DIR$/implementations/console/notes/euro_config.txt" />
         <option value="$PROJECT_DIR$/implementations/console/notes/euro_vocab.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/basic_test_quiz.py" />
+        <option value="$PROJECT_DIR$/noteutil/testing/basic_config.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/extensions_config.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/heading_config2.txt" />
+        <option value="$PROJECT_DIR$/RULES.md" />
+        <option value="$PROJECT_DIR$/noteutil/testing/category_config.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/category_test.py" />
+        <option value="$PROJECT_DIR$/noteutil/testing/edit_notes.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/edit_config.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/edit_test.py" />
+        <option value="$PROJECT_DIR$/noteutil/testing/heading_test_quiz.py" />
+        <option value="$PROJECT_DIR$/noteutil/testing/category_notes.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/category_test_quiz.py" />
+        <option value="$PROJECT_DIR$/noteutil/notes.py" />
+        <option value="$PROJECT_DIR$/noteutil/errors.py" />
+        <option value="$PROJECT_DIR$/implementations/console/notes/euro_config.txt" />
+        <option value="$PROJECT_DIR$/implementations/console/notes/heading_notes.md" />
+        <option value="$PROJECT_DIR$/CONFIG.txt" />
+        <option value="$PROJECT_DIR$/implementations/console/notes/heading_config.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/heading_config.txt" />
+        <option value="$PROJECT_DIR$/noteutil/testing/heading_test.py" />
+        <option value="$PROJECT_DIR$/noteutil/testing/heading_notes.md" />
+        <option value="$PROJECT_DIR$/implementations/console/notes/calc_config.txt" />
         <option value="$PROJECT_DIR$/noteutil/noteutil.py" />
+        <option value="$PROJECT_DIR$/implementations/console/notes/calc_notes.md" />
+        <option value="$PROJECT_DIR$/noteutil/quiz.py" />
         <option value="$PROJECT_DIR$/implementations/console/main.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1920" />
-    <option name="y" value="25" />
-    <option name="width" value="1380" />
-    <option name="height" value="1000" />
+    <option name="y" value="-2" />
+    <option name="width" value="1920" />
+    <option name="height" value="1082" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -258,17 +223,23 @@
               <item name="noteutil" type="462c0819:PsiDirectoryNode" />
               <item name="noteutil" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="noteutil" type="b2602c69:ProjectViewProjectNode" />
+              <item name="noteutil" type="462c0819:PsiDirectoryNode" />
+              <item name="noteutil" type="462c0819:PsiDirectoryNode" />
+              <item name="testing" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../jhubot" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../gui/tkinter" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -288,7 +259,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.main">
-    <configuration name="edit_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="category_test_quiz" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="noteutil" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -296,12 +267,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/noteutil2/testing" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/noteutil/testing" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil2/testing/edit_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil/testing/category_test_quiz.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -310,7 +281,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="extensions_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="heading_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="noteutil" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -318,12 +289,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/noteutil2/testing" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/noteutil/testing" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil2/testing/extensions_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil/testing/heading_test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -354,7 +324,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="noteutil (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="noteutil" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="noteutil" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/noteutil" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil/noteutil.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="quiz" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="noteutil" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -367,29 +358,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil/noteutil.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="noteutil" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="noteutil" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/noteutil2" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil2/noteutil.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noteutil/quiz.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -401,10 +370,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.noteutil (1)" />
-        <item itemvalue="Python.extensions_test" />
-        <item itemvalue="Python.edit_test" />
+        <item itemvalue="Python.heading_test" />
         <item itemvalue="Python.noteutil" />
+        <item itemvalue="Python.quiz" />
+        <item itemvalue="Python.category_test_quiz" />
       </list>
     </recent_temporary>
   </component>
@@ -435,301 +404,20 @@
       <workItem from="1556035483509" duration="594000" />
       <workItem from="1556190626122" duration="7500000" />
       <workItem from="1556276360733" duration="9638000" />
-      <workItem from="1556286029703" duration="256000" />
-    </task>
-    <task id="LOCAL-00067" summary="Changed raw() to rcontent">
-      <created>1555679548978</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1555679548978</updated>
-    </task>
-    <task id="LOCAL-00068" summary="Changed correct and incorrect sets to lists due to hash values changing when editing notes">
-      <created>1555685427448</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1555685427448</updated>
-    </task>
-    <task id="LOCAL-00069" summary="Fixed bug where term, definition, and separator would not change when editing content">
-      <created>1555685454152</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1555685454152</updated>
-    </task>
-    <task id="LOCAL-00070" summary="Added save and refresh tests">
-      <created>1555685515208</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1555685515209</updated>
-    </task>
-    <task id="LOCAL-00071" summary="Removed randomize and turned it into a kwarg in generate; added unmarked kwarg to generate">
-      <created>1555761286403</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1555761286403</updated>
-    </task>
-    <task id="LOCAL-00072" summary="Changes to randomize and added testing for unmarked kwarg in generate">
-      <created>1555761308215</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1555761308215</updated>
-    </task>
-    <task id="LOCAL-00073" summary="Remove format constants, rearrange imports, added param annotations">
-      <created>1555761651271</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1555761651271</updated>
-    </task>
-    <task id="LOCAL-00074" summary="Changed append and remove correct arg to kwarg">
-      <created>1555762202405</created>
-      <option name="number" value="00074" />
-      <option name="presentableId" value="LOCAL-00074" />
-      <option name="project" value="LOCAL" />
-      <updated>1555762202405</updated>
-    </task>
-    <task id="LOCAL-00075" summary="Added to quiz's features">
-      <created>1555762344524</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
-      <option name="project" value="LOCAL" />
-      <updated>1555762344524</updated>
-    </task>
-    <task id="LOCAL-00076" summary="Fixed changes to append and remove in quiz">
-      <created>1555762360899</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1555762360899</updated>
-    </task>
-    <task id="LOCAL-00077" summary="Changed warnings assert to a NoteError">
-      <created>1555769959602</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1555769959602</updated>
-    </task>
-    <task id="LOCAL-00078" summary="Tiny fix to __eq__">
-      <created>1555849513597</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1555849513597</updated>
-    </task>
-    <task id="LOCAL-00079" summary="Remove hash because rcontent can change">
-      <created>1555849700100</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
-      <option name="project" value="LOCAL" />
-      <updated>1555849700101</updated>
-    </task>
-    <task id="LOCAL-00080" summary="Added in a test_quiz before generating unmarked terms">
-      <created>1555853844097</created>
-      <option name="number" value="00080" />
-      <option name="presentableId" value="LOCAL-00080" />
-      <option name="project" value="LOCAL" />
-      <updated>1555853844097</updated>
-    </task>
-    <task id="LOCAL-00081" summary="Added in the Leitner system">
-      <created>1555854108516</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1555854108516</updated>
-    </task>
-    <task id="LOCAL-00082" summary="Added docs to reset()">
-      <created>1555854916908</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1555854916908</updated>
-    </task>
-    <task id="LOCAL-00083" summary="Tiny change to allow correct() to be compatible with different box numbers">
-      <created>1555855691130</created>
-      <option name="number" value="00083" />
-      <option name="presentableId" value="LOCAL-00083" />
-      <option name="project" value="LOCAL" />
-      <updated>1555855691130</updated>
-    </task>
-    <task id="LOCAL-00084" summary="Added in adding and popping boxes from the Leitner system">
-      <created>1555856610936</created>
-      <option name="number" value="00084" />
-      <option name="presentableId" value="LOCAL-00084" />
-      <option name="project" value="LOCAL" />
-      <updated>1555856610936</updated>
-    </task>
-    <task id="LOCAL-00085" summary="Added errors that come with adding and removing Leitner boxes">
-      <created>1555856627242</created>
-      <option name="number" value="00085" />
-      <option name="presentableId" value="LOCAL-00085" />
-      <option name="project" value="LOCAL" />
-      <updated>1555856627242</updated>
-    </task>
-    <task id="LOCAL-00086" summary="Added tests for adding and removing boxes">
-      <created>1555856636759</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1555856636759</updated>
-    </task>
-    <task id="LOCAL-00087" summary="Added in Leitner rules and made some changes to Quiz">
-      <created>1555856797386</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1555856797386</updated>
-    </task>
-    <task id="LOCAL-00088" summary="__ne__ fix">
-      <created>1555933752185</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1555933752186</updated>
-    </task>
-    <task id="LOCAL-00089" summary="Added configs for making Extensions and description in rules">
-      <created>1555940366995</created>
-      <option name="number" value="00089" />
-      <option name="presentableId" value="LOCAL-00089" />
-      <option name="project" value="LOCAL" />
-      <updated>1555940366995</updated>
-    </task>
-    <task id="LOCAL-00090" summary="Creates extensions in note making process now">
-      <created>1555940389942</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1555940389942</updated>
-    </task>
-    <task id="LOCAL-00091" summary="Added Extensions">
-      <created>1555940401831</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1555940401831</updated>
-    </task>
-    <task id="LOCAL-00092" summary="Added bound error for extensions">
-      <created>1555940410031</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1555940410031</updated>
-    </task>
-    <task id="LOCAL-00093" summary="Added basic test for extensions">
-      <created>1555940422521</created>
-      <option name="number" value="00093" />
-      <option name="presentableId" value="LOCAL-00093" />
-      <option name="project" value="LOCAL" />
-      <updated>1555940422521</updated>
-    </task>
-    <task id="LOCAL-00094" summary="Made a distinction between errors and warnings">
-      <created>1555942344834</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1555942344834</updated>
-    </task>
-    <task id="LOCAL-00095" summary="Removed extra characters to test warnings">
-      <created>1555942394056</created>
-      <option name="number" value="00095" />
-      <option name="presentableId" value="LOCAL-00095" />
-      <option name="project" value="LOCAL" />
-      <updated>1555942394056</updated>
-    </task>
-    <task id="LOCAL-00096" summary="Added typing annotations">
-      <created>1555942479024</created>
-      <option name="number" value="00096" />
-      <option name="presentableId" value="LOCAL-00096" />
-      <option name="project" value="LOCAL" />
-      <updated>1555942479024</updated>
-    </task>
-    <task id="LOCAL-00097" summary="Added extensions property">
-      <created>1555942693216</created>
-      <option name="number" value="00097" />
-      <option name="presentableId" value="LOCAL-00097" />
-      <option name="project" value="LOCAL" />
-      <updated>1555942693216</updated>
-    </task>
-    <task id="LOCAL-00098" summary="Tiny change fixing using .raw() instead of .rcontent">
-      <created>1555942733310</created>
-      <option name="number" value="00098" />
-      <option name="presentableId" value="LOCAL-00098" />
-      <option name="project" value="LOCAL" />
-      <updated>1555942733310</updated>
-    </task>
-    <task id="LOCAL-00099" summary="Added extension_names to Note">
-      <created>1555943415048</created>
-      <option name="number" value="00099" />
-      <option name="presentableId" value="LOCAL-00099" />
-      <option name="project" value="LOCAL" />
-      <updated>1555943415048</updated>
-    </task>
-    <task id="LOCAL-00100" summary="Added changing extensions in edit">
-      <created>1555943788397</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1555943788397</updated>
-    </task>
-    <task id="LOCAL-00101" summary="Fixed issue with extension_names and extension_bounds not being None when they don't exist">
-      <created>1555944328239</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1555944328240</updated>
-    </task>
-    <task id="LOCAL-00102" summary="Made edits to edit_test to test editing notes with extensions">
-      <created>1555944341687</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1555944341687</updated>
-    </task>
-    <task id="LOCAL-00103" summary="Added test to get note through extension name">
-      <created>1556018794881</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1556018794881</updated>
-    </task>
-    <task id="LOCAL-00104" summary="Updated repr for `Note`">
-      <created>1556018803343</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1556018803343</updated>
-    </task>
-    <task id="LOCAL-00105" summary="Space">
-      <created>1556019031340</created>
-      <option name="number" value="00105" />
-      <option name="presentableId" value="LOCAL-00105" />
-      <option name="project" value="LOCAL" />
-      <updated>1556019031340</updated>
-    </task>
-    <task id="LOCAL-00106" summary="Remove unused import">
-      <created>1556019043603</created>
-      <option name="number" value="00106" />
-      <option name="presentableId" value="LOCAL-00106" />
-      <option name="project" value="LOCAL" />
-      <updated>1556019043604</updated>
-    </task>
-    <task id="LOCAL-00107" summary="Added docs">
-      <created>1556024154248</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1556024154248</updated>
-    </task>
-    <task id="LOCAL-00108" summary="Change theme">
-      <created>1556024372023</created>
-      <option name="number" value="00108" />
-      <option name="presentableId" value="LOCAL-00108" />
-      <option name="project" value="LOCAL" />
-      <updated>1556024372023</updated>
+      <workItem from="1556286029703" duration="638000" />
+      <workItem from="1556976657981" duration="12169000" />
+      <workItem from="1557062617154" duration="10041000" />
+      <workItem from="1557620871672" duration="1186000" />
+      <workItem from="1558178277219" duration="11123000" />
+      <workItem from="1558216567050" duration="141000" />
+      <workItem from="1558216757774" duration="162000" />
+      <workItem from="1558265048380" duration="4199000" />
+      <workItem from="1558350205548" duration="9931000" />
+      <workItem from="1558989126406" duration="631000" />
+      <workItem from="1559421296385" duration="1217000" />
+      <workItem from="1560023491003" duration="2796000" />
+      <workItem from="1560733817000" duration="1202000" />
+      <workItem from="1561990650211" duration="621000" />
     </task>
     <task id="LOCAL-00109" summary="Remove bad italics">
       <created>1556024572872</created>
@@ -780,13 +468,307 @@
       <option name="project" value="LOCAL" />
       <updated>1556286263202</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="Updated docs">
+      <created>1556286368832</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1556286368832</updated>
+    </task>
+    <task id="LOCAL-00117" summary="Updated config files">
+      <created>1556978950229</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1556978950229</updated>
+    </task>
+    <task id="LOCAL-00118" summary="Changed heading from None to &quot;correct&quot; and &quot;incorrect&quot; for select_heading()">
+      <created>1556981044204</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1556981044204</updated>
+    </task>
+    <task id="LOCAL-00119" summary="Changed unmarked into a heading">
+      <created>1556981775798</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1556981775798</updated>
+    </task>
+    <task id="LOCAL-00120" summary="Fixed bug where DuplicateTerm was being called accidentally">
+      <created>1556982706478</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1556982706478</updated>
+    </task>
+    <task id="LOCAL-00121" summary="Changed testing to use &quot;unmarked&quot; as a heading instead of a param">
+      <created>1556982806417</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1556982806417</updated>
+    </task>
+    <task id="LOCAL-00122" summary="Added quiz commands skeleton">
+      <created>1556984504342</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1556984504342</updated>
+    </task>
+    <task id="LOCAL-00123" summary="Changed reformat() into save() and added load() and refresh() to allow flexibility with files">
+      <created>1556992722482</created>
+      <option name="number" value="00123" />
+      <option name="presentableId" value="LOCAL-00123" />
+      <option name="project" value="LOCAL" />
+      <updated>1556992722482</updated>
+    </task>
+    <task id="LOCAL-00124" summary="Made quiz classes pre-generate its save files to avoid unfound files">
+      <created>1556992745982</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1556992745982</updated>
+    </task>
+    <task id="LOCAL-00125" summary="Added tests for NoteUtil's new save(), load(), and refresh()">
+      <created>1556992761815</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1556992761815</updated>
+    </task>
+    <task id="LOCAL-00126" summary="Added note file to warning message">
+      <created>1556992873461</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1556992873461</updated>
+    </task>
+    <task id="LOCAL-00127" summary="Added lowercase for heading if it is a string">
+      <created>1557065273090</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1557065273091</updated>
+    </task>
+    <task id="LOCAL-00128" summary="Revert lowercasing strings">
+      <created>1557066843078</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1557066843078</updated>
+    </task>
+    <task id="LOCAL-00129" summary="Added implementations to quiz settings">
+      <created>1557066975677</created>
+      <option name="number" value="00129" />
+      <option name="presentableId" value="LOCAL-00129" />
+      <option name="project" value="LOCAL" />
+      <updated>1557066975677</updated>
+    </task>
+    <task id="LOCAL-00130" summary="Removed unnecessary deepcopy">
+      <created>1557068516338</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1557068516338</updated>
+    </task>
+    <task id="LOCAL-00131" summary="Added in a check for duplicates in append()">
+      <created>1558199686537</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1558199686538</updated>
+    </task>
+    <task id="LOCAL-00132" summary="Moved the session incrementor in generate() to the end of the generator">
+      <created>1558266628476</created>
+      <option name="number" value="00132" />
+      <option name="presentableId" value="LOCAL-00132" />
+      <option name="project" value="LOCAL" />
+      <updated>1558266628477</updated>
+    </task>
+    <task id="LOCAL-00133" summary="Added the Leitner system">
+      <created>1558267947169</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1558267947169</updated>
+    </task>
+    <task id="LOCAL-00134" summary="Fixed pop_box not decrementing pair's box number">
+      <created>1558268431482</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1558268431483</updated>
+    </task>
+    <task id="LOCAL-00135" summary="Change to default term and definition format 1">
+      <created>1558268470548</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1558268470548</updated>
+    </task>
+    <task id="LOCAL-00136" summary="Add save option after cycling through terms.">
+      <created>1558268643764</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1558268643764</updated>
+    </task>
+    <task id="LOCAL-00137" summary="Added rules to Categories">
+      <created>1558354781627</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354781628</updated>
+    </task>
+    <task id="LOCAL-00138" summary="Modified Config for Categories">
+      <created>1558354791336</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354791336</updated>
+    </task>
+    <task id="LOCAL-00139" summary="Implemented testing for Categories">
+      <created>1558354813531</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354813531</updated>
+    </task>
+    <task id="LOCAL-00140" summary="Added categories and removed nindexes">
+      <created>1558354828047</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354828047</updated>
+    </task>
+    <task id="LOCAL-00141" summary="Adjust config to match changes caused by Categories">
+      <created>1558354849635</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354849635</updated>
+    </task>
+    <task id="LOCAL-00142" summary="Remove nindexes">
+      <created>1558354863657</created>
+      <option name="number" value="00142" />
+      <option name="presentableId" value="LOCAL-00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354863657</updated>
+    </task>
+    <task id="LOCAL-00143" summary="Add some creation of Categories">
+      <created>1558354882018</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1558354882018</updated>
+    </task>
+    <task id="LOCAL-00144" summary="Tested editing with Categories">
+      <created>1558355751132</created>
+      <option name="number" value="00144" />
+      <option name="presentableId" value="LOCAL-00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1558355751132</updated>
+    </task>
+    <task id="LOCAL-00145" summary="Added editing with categories">
+      <created>1558355760014</created>
+      <option name="number" value="00145" />
+      <option name="presentableId" value="LOCAL-00145" />
+      <option name="project" value="LOCAL" />
+      <updated>1558355760014</updated>
+    </task>
+    <task id="LOCAL-00146" summary="Change headingnotfound to divisionnotfound">
+      <created>1558356138915</created>
+      <option name="number" value="00146" />
+      <option name="presentableId" value="LOCAL-00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1558356138915</updated>
+    </task>
+    <task id="LOCAL-00147" summary="Fixed old attribute">
+      <created>1558356748113</created>
+      <option name="number" value="00147" />
+      <option name="presentableId" value="LOCAL-00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1558356748113</updated>
+    </task>
+    <task id="LOCAL-00148" summary="Changed heading to division for select_pairs">
+      <created>1558356763355</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1558356763355</updated>
+    </task>
+    <task id="LOCAL-00149" summary="Tests for Category with the Quiz module">
+      <created>1558356783175</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1558356783175</updated>
+    </task>
+    <task id="LOCAL-00150" summary="Added checks to rcontent">
+      <created>1558357971700</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1558357971700</updated>
+    </task>
+    <task id="LOCAL-00151" summary="Changes from heading to division for select_pairs() and included categories for Quiz">
+      <created>1558359526952</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1558359526952</updated>
+    </task>
+    <task id="LOCAL-00152" summary="Added blocks and changed name of two functions">
+      <created>1561994215256</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1561994215257</updated>
+    </task>
+    <task id="LOCAL-00153" summary="Added a test for blocks">
+      <created>1561994219913</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1561994219913</updated>
+    </task>
+    <task id="LOCAL-00154" summary="Added check for if blocks exists">
+      <created>1561994286647</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1561994286647</updated>
+    </task>
+    <task id="LOCAL-00155" summary="Fixed extension detection not properly checking if rbound is in the line">
+      <created>1561995537558</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1561995537558</updated>
+    </task>
+    <task id="LOCAL-00156" summary="Added randomize to Leitner">
+      <created>1561995549157</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1561995549157</updated>
+    </task>
+    <task id="LOCAL-00157" summary="Added calc notes">
+      <created>1561995561238</created>
+      <option name="number" value="00157" />
+      <option name="presentableId" value="LOCAL-00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1561995561238</updated>
+    </task>
+    <option name="localTasksCounter" value="158" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="132984000" />
+    <option name="totallyTimeSpent" value="188785000" />
   </component>
-  <component name="TodoView" selected-index="4">
+  <component name="TodoView">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -796,24 +778,25 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1920" y="25" width="2560" height="1415" extended-state="6" />
+    <frame x="0" y="-2" width="1920" height="1082" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12171838" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13231418" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32970452" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32348368" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39968896" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32970452" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32970452" />
-      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49960223" weight="0.32348368" />
+      <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.49920446" weight="0.39968896" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49920446" weight="0.32970452" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49920446" weight="0.32763976" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50079554" side_tool="true" weight="0.3281493" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32970452" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32970452" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
+      <window_info anchor="bottom" id="Messages" order="13" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -834,85 +817,76 @@
       </list>
     </option>
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added Extensions" />
-    <MESSAGE value="Added bound error for extensions" />
-    <MESSAGE value="Added basic test for extensions" />
-    <MESSAGE value="Made a distinction between errors and warnings" />
-    <MESSAGE value="Removed extra characters to test warnings" />
-    <MESSAGE value="Added typing annotations" />
-    <MESSAGE value="Added extensions property" />
-    <MESSAGE value="Tiny change fixing using .raw() instead of .rcontent" />
-    <MESSAGE value="Added extension_names to Note" />
-    <MESSAGE value="Added changing extensions in edit" />
-    <MESSAGE value="Fixed issue with extension_names and extension_bounds not being None when they don't exist" />
-    <MESSAGE value="Made edits to edit_test to test editing notes with extensions" />
-    <MESSAGE value="Added test to get note through extension name" />
-    <MESSAGE value="Updated repr for `Note`" />
-    <MESSAGE value="Space" />
-    <MESSAGE value="Remove unused import" />
-    <MESSAGE value="Added docs" />
-    <MESSAGE value="Change theme" />
-    <MESSAGE value="Remove bad italics" />
-    <MESSAGE value="Made sure extension names don't repeat" />
-    <MESSAGE value="Added docs for a Note having Extensions" />
-    <MESSAGE value="Created command loop and search command" />
-    <MESSAGE value="Added imports" />
-    <MESSAGE value="Fixed infinite loop caused by missing bound" />
-    <MESSAGE value="Implemented edit command and made some stuff smoother" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented edit command and made some stuff smoother" />
+    <MESSAGE value="Added the Leitner system" />
+    <MESSAGE value="Fixed pop_box not decrementing pair's box number" />
+    <MESSAGE value="Change to default term and definition format 1" />
+    <MESSAGE value="Add save option after cycling through terms." />
+    <MESSAGE value="Added rules to Categories" />
+    <MESSAGE value="Modified Config for Categories" />
+    <MESSAGE value="Implemented testing for Categories" />
+    <MESSAGE value="Added categories and removed nindexes" />
+    <MESSAGE value="Adjust config to match changes caused by Categories" />
+    <MESSAGE value="Remove nindexes" />
+    <MESSAGE value="Add some creation of Categories" />
+    <MESSAGE value="Tested editing with Categories" />
+    <MESSAGE value="Added editing with categories" />
+    <MESSAGE value="Change headingnotfound to divisionnotfound" />
+    <MESSAGE value="Fixed old attribute" />
+    <MESSAGE value="Changed heading to division for select_pairs" />
+    <MESSAGE value="Tests for Category with the Quiz module" />
+    <MESSAGE value="Added checks to rcontent" />
+    <MESSAGE value="Changes from heading to division for select_pairs() and included categories for Quiz" />
+    <MESSAGE value="Added blocks and changed name of two functions" />
+    <MESSAGE value="Added a test for blocks" />
+    <MESSAGE value="Added check for if blocks exists" />
+    <MESSAGE value="Fixed extension detection not properly checking if rbound is in the line" />
+    <MESSAGE value="Added randomize to Leitner" />
+    <MESSAGE value="Added calc notes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added calc notes" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/heading_test.py" />
-    <entry file="file://$PROJECT_DIR$/../jhubot/cogs/memes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="35" column="46" lean-forward="true" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/heading_notes.qz" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/review.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/heading_notes.md" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/heading_test_quiz.py" />
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="15">
-            <caret line="1" selection-start-line="1" selection-end-line="1" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/basic_notes.lt" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/quiz.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/basic_test_quiz.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/basic_test_leitner.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/basic_test.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/extensions_notes.nu" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/extensions_config.txt" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/extensions_notes.txt" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/errors.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/edit_config.txt" />
-    <entry file="file://$PROJECT_DIR$/noteutil/groups.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/comparisons.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/noteutil.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/notes.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil/extensions.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil2/testing/edit_test.py" />
-    <entry file="file://$PROJECT_DIR$/noteutil/categories.py" />
     <entry file="file://$PROJECT_DIR$/noteutil2/testing/extensions_test.py" />
-    <entry file="file://$PROJECT_DIR$/RULES.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="1050">
-            <caret line="70" selection-start-line="70" selection-end-line="70" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/docs/Makefile">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -932,27 +906,10 @@
     <entry file="file://$PROJECT_DIR$/docs/index.rst">
       <provider selected="true" editor-type-id="restructured-text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil/errors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="959">
-          <caret line="72" column="35" selection-start-line="72" selection-start-column="35" selection-end-line="72" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/noteutil/comparisons.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_config2.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_config.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="3" lean-forward="true" selection-end-line="32" selection-end-column="3" />
         </state>
       </provider>
     </entry>
@@ -966,32 +923,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/implementations/console/notes/heading_config.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="37" column="3" selection-start-line="37" selection-start-column="3" selection-end-line="37" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/implementations/console/notes/heading_notes.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="675">
-            <caret line="45" column="20" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/noteutil/testing/extensions_notes.nu">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/implementations/console/notes/euro_config.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="2" selection-start-line="33" selection-start-column="2" selection-end-line="33" selection-end-column="2" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/implementations/console/notes/euro_vocab.txt">
       <provider selected="true" editor-type-id="text-editor">
@@ -1000,6 +933,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/basic_test_leitner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="33" lean-forward="true" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/edit_notes.nu">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/noteutil/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1007,58 +962,268 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil/quiz.py">
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/euro_vocab.nu">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="363" column="28" selection-start-line="363" selection-start-column="28" selection-end-line="363" selection-end-column="28" />
+        <state relative-caret-position="-26">
+          <caret line="701" column="95" selection-start-line="701" selection-start-column="95" selection-end-line="701" selection-end-column="95" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/noteutil/notes.py">
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/basic_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1620">
-          <caret line="108" column="21" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+        <state relative-caret-position="270">
+          <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CONFIG.txt">
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/basic_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="1" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/extensions_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_config2.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="555">
-          <caret line="37" column="2" selection-start-line="37" selection-start-column="2" selection-end-line="37" selection-end-column="2" />
+          <caret line="37" column="4" selection-start-line="37" selection-start-column="4" selection-end-line="37" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/extensions_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/temp.cfg">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/category_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RULES.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="225">
+            <caret line="24" column="3" lean-forward="true" selection-start-line="24" selection-start-column="3" selection-end-line="24" selection-end-column="3" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/edit_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/basic_test_quiz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="96" column="12" lean-forward="true" selection-start-line="96" selection-start-column="12" selection-end-line="96" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_test_quiz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="167" column="41" lean-forward="true" selection-end-line="220" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/edit_notes.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="23" lean-forward="true" selection-start-column="23" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/edit_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="102" column="27" lean-forward="true" selection-start-line="102" selection-start-column="27" selection-end-line="102" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/category_notes.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/category_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="83" column="12" lean-forward="true" selection-start-line="83" selection-start-column="12" selection-end-line="83" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/category_test_quiz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="563">
+          <caret line="232" column="32" lean-forward="true" selection-start-line="232" selection-start-column="32" selection-end-line="232" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/heading_notes.nu">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="22" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/errors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="7" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/euro_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/heading_notes.lt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="27" lean-forward="true" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/heading_notes.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="594">
+            <caret line="56" selection-start-line="56" selection-end-line="56" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_notes.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="30">
-            <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <first_editor relative-caret-position="624">
+            <caret line="57" column="9" lean-forward="true" selection-start-line="57" selection-start-column="9" selection-end-line="57" selection-end-column="9" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/implementations/console/notes/euro_vocab.nu">
+    <entry file="file://$PROJECT_DIR$/noteutil/testing/heading_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="671" column="67" selection-start-line="671" selection-start-column="67" selection-end-line="671" selection-end-column="67" />
+        <state relative-caret-position="855">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/heading_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="16" lean-forward="true" selection-start-line="13" selection-start-column="16" selection-end-line="13" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/calc_config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/implementations/console/notes/calc_notes.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="788">
+            <caret line="487" column="12" selection-start-line="487" selection-start-column="12" selection-end-line="487" selection-end-column="12" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/quiz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="351" column="12" selection-start-line="351" selection-start-column="12" selection-end-line="351" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CONFIG.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="46" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/noteutil/noteutil.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="84" column="23" selection-start-line="84" selection-start-column="23" selection-end-line="84" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="4890">
+          <caret line="330" column="47" selection-start-line="330" selection-start-column="47" selection-end-line="330" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/implementations/console/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        <state relative-caret-position="873">
+          <caret line="747" column="19" selection-start-line="747" selection-start-column="19" selection-end-line="747" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noteutil/notes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="873">
+          <caret line="78" column="52" selection-start-line="78" selection-start-column="52" selection-end-line="78" selection-end-column="52" />
         </state>
       </provider>
     </entry>

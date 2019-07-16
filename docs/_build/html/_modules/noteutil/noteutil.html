@@ -219,22 +219,22 @@
 <span class="sd">        If there were any severe problems during the Note creation process.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_file</span> <span class="o">=</span> <span class="n">config_file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parse_config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_config</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nu_file</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nu_file</span><span class="p">)</span> <span class="ow">or</span> <span class="n">refresh</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parse_notes</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_notes</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warnings</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warnings for </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span>
                   <span class="s2">&quot;--------</span><span class="se">\n</span><span class="s2">&quot;</span>
-                  <span class="s2">&quot;</span><span class="se">\t</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                  <span class="s2">&quot;--------&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">)))</span>
+                  <span class="s2">&quot;</span><span class="se">\t</span><span class="si">{1}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;--------&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">note_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">)))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NoteError</span><span class="p">(</span><span class="s2">&quot;Errors</span><span class="se">\n</span><span class="s2">&quot;</span>
                             <span class="s2">&quot;------</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -584,9 +584,6 @@
                             <span class="k">raise</span> <span class="n">MissingBound</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">lbound</span><span class="p">,</span> <span class="n">rbound</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">note</span><span class="o">.</span><span class="n">term</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">note</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">note</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">override</span><span class="p">:</span>
@@ -604,6 +601,10 @@
                 <span class="n">note</span><span class="o">.</span><span class="n">term</span> <span class="o">=</span> <span class="n">term</span>
                 <span class="n">note</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="n">definition</span>
                 <span class="n">note</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">note</span><span class="o">.</span><span class="n">term</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">note</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">note</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">note</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
         <span class="k">if</span> <span class="n">note</span><span class="o">.</span><span class="n">is_heading</span><span class="p">():</span>
@@ -611,7 +612,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">notes</span><span class="p">[</span><span class="n">note</span><span class="o">.</span><span class="n">nindex</span><span class="p">]</span> <span class="o">=</span> <span class="n">note</span></div>
 
-<div class="viewcode-block" id="NoteUtil.reformat"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.NoteUtil.reformat">[docs]</a>    <span class="k">def</span> <span class="nf">reformat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="NoteUtil.save"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.NoteUtil.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Writes all of the Notes back into what they were when they were being parsed into a .nu file.</span>
 
 <span class="sd">        If any changes to the Notes were made, they will be written here as well.</span>
@@ -623,9 +624,28 @@
 
         <span class="n">raw_notes</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">.</span><span class="n">rcontent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">notes</span><span class="p">)))</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nu_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">raw_notes</span><span class="p">)</span></div></div>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">raw_notes</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="NoteUtil.load"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.NoteUtil.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Re-parses the .nu file, reverting any changes that could have been made to NoteUtil during use.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NoteUtil.refresh"><a class="viewcode-back" href="../../api.html#noteutil.noteutil.NoteUtil.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Re-initializes the NoteUtil from the note file instead of the .nu file.</span>
+<span class="sd">        This is used to match a new or updated note file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_file</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 
 
 
