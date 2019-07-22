@@ -8,6 +8,8 @@ class Note:
 
     Parameters
     ----------
+    noteutil : NoteUtil
+        A reference to the NoteUtil that is creating this Note.
     content : str
         The content of the Note excluding prefixes and Extensions.
     nindex : int
@@ -15,8 +17,21 @@ class Note:
     **kwargs
         Any other parameters that extend the Note.
 
-    Other Parameters
-    ----------------
+    Attributes
+    ----------
+    content : str
+        The content of the Note excluding prefixes and Extensions.
+    rcontent : str
+        The raw content of the Note before parsing, including prefixes and Extensions.
+    nindex : int
+        The index at which this Note resides in NoteUtil.notes.
+
+    If the NoteUtil uses headings:
+        previous_heading : Note
+            The first heading that comes before this Note.
+        next_heading : Note
+            The first heading that comes after this Note.
+
     If the Note is a Heading:
         heading_char : str
             The character used as to indicate this Note is a heading.
@@ -138,6 +153,22 @@ class Note:
             for ext in self.extensions:
                 rcontent += ext.rcontent
         return rcontent
+
+    @property
+    def previous_heading(self):
+        if self._noteutil.heading_char is not None:
+            for heading in self._noteutil.heading_order[::-1]:
+                if self.nindex > heading.nindex:
+                    return heading
+        return None
+
+    @property
+    def next_heading(self):
+        if self._noteutil.heading_char is not None:
+            for heading in self._noteutil.heading_order:
+                if self.nindex < heading.nindex:
+                    return heading
+        return None
 
     @property
     def pairs(self):
