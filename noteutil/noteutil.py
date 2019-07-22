@@ -504,8 +504,7 @@ class NoteUtil:
                 note.heading_char = self.heading_char
                 note.level = content.count(self.heading_char, 0, self.levels)
                 if note.level - note.previous_heading.level > 1:
-                    raise HeadingJump(content)
-                    # raise HeadingJump(line, previous_level, current_level)
+                    raise HeadingJump(content, note.previous_heading.level, note.level)
                 note.heading = note.heading_char * note.level
                 content = content[len(note.heading):].lstrip()
                 note.begin_nindex = note.nindex + 1
