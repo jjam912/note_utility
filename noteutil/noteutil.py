@@ -271,25 +271,24 @@ class NoteUtil:
         Adds all of the notes to self.notes.
         """
 
-        if self.heading_char is not None:
-            current_level = 0
-
-        for nindex, line in enumerate(self._read_notes()):
+        for nindex, content in enumerate(self._read_notes()):
             kwargs = {}
 
             # Heading Detection
             if self.heading_char is not None:
-                if line.startswith(self.heading_char):
+                if content.startswith(self.heading_char):
                     kwargs["heading_char"] = self.heading_char
 
-                    previous_level = current_level
-                    kwargs["level"] = current_level = line.count(self.heading_char, 0, self.levels)
+                    try:
+                        previous_level = self.heading_order[-1].level
+                    except IndexError:
+                        previous_level = 0
+                    kwargs["level"] = current_level = content.count(self.heading_char, 0, self.levels)
                     if current_level - previous_level > 1:
-                        self.errors.append("Heading Jump - Line content: {0}".format(line))
-                        # raise HeadingJump(line, previous_level, current_level)
+                        self.errors.append("Heading Jump - Line content: {0}".format(content))
                     kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
-                    line = line[len(kwargs["heading"]):].lstrip()    # !! Remove heading from line - Affects content
-                    kwargs["heading_name"] = line
+                    content = content[len(kwargs["heading"]):].lstrip()
+                    kwargs["heading_name"] = content
 
                     kwargs["begin_nindex"] = nindex + 1
             # End Heading Detection
@@ -299,13 +298,10 @@ class NoteUtil:
                 kwargs["category_names"] = []
                 kwargs["category_prefixes"] = []
                 for name, prefix in zip(self.category_names, self.category_prefixes):
-                    if line.startswith(prefix):
+                    if content.startswith(prefix):
                         kwargs["category_names"].append(name)
                         kwargs["category_prefixes"].append(prefix)
-                        line = line[len(prefix):].lstrip()       # !! Remove prefix from line - Affects content
-                # Since content may have been modified, fix up heading_name
-                if kwargs.get("heading_name", False):
-                    kwargs["heading_name"] = line
+                        content = content[len(prefix):].lstrip()
             # End Category Detection
 
             # Extension Detection
@@ -314,44 +310,45 @@ class NoteUtil:
                 kwargs["extension_names"] = []
                 for name, bounds in zip(self.extension_names, self.extension_bounds):
                     lbound, rbound = bounds
-                    while lbound in line:
-                        lindex = line.index(lbound) + len(lbound)
-                        if rbound in line[lindex:]:
-                            rindex = line.index(rbound, lindex)
+                    while lbound in content:
+                        lindex = content.index(lbound) + len(lbound)
+                        if rbound in content[lindex:]:
+                            rindex = content.index(rbound, lindex)
                             kwargs["extensions"].append(
-                                Extension(line[lindex:rindex].strip(), name, lbound, rbound))
+                                Extension(content[lindex:rindex].strip(), name, lbound, rbound))
                             if name not in kwargs["extension_names"]:
                                 kwargs["extension_names"].append(name)
 
-                            line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
+                            content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
                         else:
-                            self.warnings.append("Missing Bound - Line content: {0}".format(line))
+                            self.warnings.append("Missing Bound - Line content: {0}".format(content))
                             break
-                            # raise MissingBound(line, lbound, rbound)
-
             # End Extension Detection
 
             # Pair Detection
             if self.separator is not None:
-                if self.separator in line:      # Line is a pair, add additional parameters
-                    if len(line.split(self.separator)) > 2:
-                        self.warnings.append("Extra Separator - Line content: {0}".format(line))
-                        # raise ExtraSeparator(line)
+                if self.separator in content:      # Line is a pair, add additional parameters
+                    if len(content.split(self.separator)) > 2:
+                        self.warnings.append("Extra Separator - Line content: {0}".format(content))
+                        # raise ExtraSeparator(content)
 
-                    kwargs["term"] = line.split(self.separator)[0].strip()
+                    kwargs["term"] = content.split(self.separator)[0].strip()
                     if kwargs["term"] in map(lambda n: n.term, self.pairs):
                         self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
                         # raise DuplicateTerm(kwargs["term"])
 
-                    kwargs["definition"] = line.split(self.separator)[1].strip()
+                    kwargs["definition"] = content.split(self.separator)[1].strip()
                     if kwargs["definition"] == "":
-                        self.warnings.append("No Definition - Line content: {0}".format(line))
-                        # raise NoDefinition(line)
+                        self.warnings.append("No Definition - Line content: {0}".format(content))
+                        # raise NoDefinition(content)
 
                     kwargs["separator"] = self.separator
             # End Pair Detection
 
-            note = Note(self, line, nindex, **kwargs)
+            # Since content may have been modified, fix up heading_name
+            if kwargs.get("heading_name", False):
+                kwargs["heading_name"] = content
+            note = Note(self, content, nindex, **kwargs)
 
             # Add the note to NoteUtil's data structures.
             self.notes.append(note)
