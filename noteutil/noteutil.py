@@ -140,8 +140,8 @@ class NoteUtil:
         return list(filter(lambda n: n.has_extensions(), self.notes))
 
     def _parse_config(self) -> None:
-        """Strips the file of white space, empty lines, and comments.
-        Detects unusual spacing and writes contents into a temporary config file.
+        """Strips the config file of white space, empty lines, and comments.
+        Detects unusual spacing and writes stripped contents into a temporary config file.
         """
 
         with open(self.config_file, mode="r") as f:
@@ -178,49 +178,57 @@ class NoteUtil:
             self.nu_file = self.note_file.split(".")[0] + ".nu"
             self.comments = next(lines) or None
             self.blocks = next(lines) or None
+
             self.separator = next(lines) or None
+            self._read_headings(lines)
+            self._read_categories(lines)
+            self._read_extensions(lines)
 
-            self.heading_char = next(lines) or None
-            if self.heading_char is not None:
-                self.levels = int(next(lines))
-                self.level_names = []
-                for _ in range(self.levels):
-                    self.level_names.append(next(lines))
-            else:
-                next(lines)
-                next(lines)
+    def _read_headings(self, lines):
+        self.heading_char = next(lines) or None
+        if self.heading_char is not None:
+            self.levels = int(next(lines))
+            self.level_names = []
+            for _ in range(self.levels):
+                self.level_names.append(next(lines))
+        else:
+            next(lines)
+            next(lines)
 
-            category_number = next(lines) or None
-            if category_number:
-                self.category_names = list()
-                self.category_prefixes = list()
-                for _ in range(int(category_number)):
-                    self.category_names.append(next(lines))
-                for _ in range(int(category_number)):
-                    self.category_prefixes.append(next(lines))
-            else:
-                self.category_names = []
-                self.category_prefixes = []
-                next(lines)
-                next(lines)
+    def _read_categories(self, lines):
 
-            extension_number = next(lines) or None
-            if extension_number:
-                self.extension_names = list()
-                self.extension_bounds = list()
-                for _ in range(int(extension_number)):
-                    self.extension_names.append(next(lines))
-                for _ in range(int(extension_number)):
-                    self.extension_bounds.append(tuple(next(lines).split()))
-            else:
-                self.extension_names = []
-                self.extension_bounds = []
-                next(lines)
-                next(lines)
+        category_number = next(lines) or None
+        if category_number:
+            self.category_names = list()
+            self.category_prefixes = list()
+            for _ in range(int(category_number)):
+                self.category_names.append(next(lines))
+            for _ in range(int(category_number)):
+                self.category_prefixes.append(next(lines))
+        else:
+            self.category_names = []
+            self.category_prefixes = []
+            next(lines)
+            next(lines)
+
+    def _read_extensions(self, lines):
+        extension_number = next(lines) or None
+        if extension_number:
+            self.extension_names = list()
+            self.extension_bounds = list()
+            for _ in range(int(extension_number)):
+                self.extension_names.append(next(lines))
+            for _ in range(int(extension_number)):
+                self.extension_bounds.append(tuple(next(lines).split()))
+        else:
+            self.extension_names = []
+            self.extension_bounds = []
+            next(lines)
+            next(lines)
 
     def _parse_notes(self) -> None:
-        """Strips the note file of whitespace, empty lines, and comments.
-        Removes the underline heading generated from Docs to Markdown and writes content to the .nu file.
+        """Strips the note file of empty lines, and comments.
+        Writes the content to the .nu file.
         """
 
         with open(self.note_file, mode="r") as f:
@@ -247,6 +255,7 @@ class NoteUtil:
         ------
         str
         """
+
         with open(self.nu_file, mode="r") as f:
             lines = f.read().split("\n")
 
@@ -272,93 +281,101 @@ class NoteUtil:
         """
 
         for nindex, content in enumerate(self._read_notes()):
-            kwargs = {}
-
-            # Heading Detection
-            if self.heading_char is not None:
-                if content.startswith(self.heading_char):
-                    kwargs["heading_char"] = self.heading_char
-
-                    try:
-                        previous_level = self.heading_order[-1].level
-                    except IndexError:
-                        previous_level = 0
-                    kwargs["level"] = current_level = content.count(self.heading_char, 0, self.levels)
-                    if current_level - previous_level > 1:
-                        self.errors.append("Heading Jump - Line content: {0}".format(content))
-                    kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
-                    content = content[len(kwargs["heading"]):].lstrip()
-                    kwargs["heading_name"] = content
-
-                    kwargs["begin_nindex"] = nindex + 1
-            # End Heading Detection
-
-            # Category Detection
-            if self.category_names is not None and self.category_prefixes is not None:
-                kwargs["category_names"] = []
-                kwargs["category_prefixes"] = []
-                for name, prefix in zip(self.category_names, self.category_prefixes):
-                    if content.startswith(prefix):
-                        kwargs["category_names"].append(name)
-                        kwargs["category_prefixes"].append(prefix)
-                        content = content[len(prefix):].lstrip()
-            # End Category Detection
-
-            # Extension Detection
-            if self.extension_names is not None and self.extension_bounds is not None:
-                kwargs["extensions"] = []
-                kwargs["extension_names"] = []
-                for name, bounds in zip(self.extension_names, self.extension_bounds):
-                    lbound, rbound = bounds
-                    while lbound in content:
-                        lindex = content.index(lbound) + len(lbound)
-                        if rbound in content[lindex:]:
-                            rindex = content.index(rbound, lindex)
-                            kwargs["extensions"].append(
-                                Extension(content[lindex:rindex].strip(), name, lbound, rbound))
-                            if name not in kwargs["extension_names"]:
-                                kwargs["extension_names"].append(name)
-
-                            content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
-                        else:
-                            self.warnings.append("Missing Bound - Line content: {0}".format(content))
-                            break
-            # End Extension Detection
-
-            # Pair Detection
-            if self.separator is not None:
-                if self.separator in content:      # Line is a pair, add additional parameters
-                    if len(content.split(self.separator)) > 2:
-                        self.warnings.append("Extra Separator - Line content: {0}".format(content))
-                        # raise ExtraSeparator(content)
-
-                    kwargs["term"] = content.split(self.separator)[0].strip()
-                    if kwargs["term"] in map(lambda n: n.term, self.pairs):
-                        self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
-                        # raise DuplicateTerm(kwargs["term"])
-
-                    kwargs["definition"] = content.split(self.separator)[1].strip()
-                    if kwargs["definition"] == "":
-                        self.warnings.append("No Definition - Line content: {0}".format(content))
-                        # raise NoDefinition(content)
-
-                    kwargs["separator"] = self.separator
-            # End Pair Detection
-
-            # Since content may have been modified, fix up heading_name
-            if kwargs.get("heading_name", False):
-                kwargs["heading_name"] = content
-            note = Note(self, content, nindex, **kwargs)
-
-            # Add the note to NoteUtil's data structures.
-            self.notes.append(note)
+            self.make_note(content, nindex)
+            note = self.make_note(content, nindex)
+            self.insert(note, len(self.notes))
 
         # Headings are still missing their end_nindex:
-        # Complete Headings
+        self._complete_headings()
+
+    def make_note(self, content, nindex):
+        kwargs = {}
+        # The following 3 all modify content in some way:
+        content = self._detect_headings(content, nindex, kwargs)
+        content = self._detect_categories(content, kwargs)
+        content = self._detect_extensions(content, kwargs)
+
+        self._detect_pairs(content, kwargs)
+
+        # Since content may have been modified, fix up heading_name
+        if kwargs.get("heading_name", False):
+            kwargs["heading_name"] = content
+        return Note(self, content, nindex, **kwargs)
+
+    def _detect_headings(self, content, nindex, kwargs):
         if self.heading_char is not None:
-            headings_list = list(self.level_order.values())
-            for headings in headings_list:
-                # Assign end_nindex
+            if content.startswith(self.heading_char):
+                kwargs["heading_char"] = self.heading_char
+
+                try:
+                    previous_level = self.heading_order[-1].level
+                except IndexError:
+                    previous_level = 0
+                kwargs["level"] = current_level = content.count(self.heading_char, 0, self.levels)
+                if current_level - previous_level > 1:
+                    self.errors.append("Heading Jump - Line content: {0}".format(content))
+                kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
+                content = content[len(kwargs["heading"]):].lstrip()
+                kwargs["heading_name"] = content
+
+                kwargs["begin_nindex"] = nindex + 1
+        return content
+
+    def _detect_categories(self, content, kwargs):
+        if self.category_names is not None and self.category_prefixes is not None:
+            kwargs["category_names"] = []
+            kwargs["category_prefixes"] = []
+            for name, prefix in zip(self.category_names, self.category_prefixes):
+                if content.startswith(prefix):
+                    kwargs["category_names"].append(name)
+                    kwargs["category_prefixes"].append(prefix)
+                    content = content[len(prefix):].lstrip()
+        return content
+
+    def _detect_extensions(self, content, kwargs):
+        if self.extension_names is not None and self.extension_bounds is not None:
+            kwargs["extensions"] = []
+            kwargs["extension_names"] = []
+            for name, bounds in zip(self.extension_names, self.extension_bounds):
+                lbound, rbound = bounds
+                while lbound in content:
+                    lindex = content.index(lbound) + len(lbound)
+                    if rbound in content[lindex:]:
+                        rindex = content.index(rbound, lindex)
+                        kwargs["extensions"].append(
+                            Extension(content[lindex:rindex].strip(), name, lbound, rbound))
+                        if name not in kwargs["extension_names"]:
+                            kwargs["extension_names"].append(name)
+
+                        content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
+                    else:
+                        self.warnings.append("Missing Bound - Line content: {0}".format(content))
+                        break
+        return content
+
+    def _detect_pairs(self, content, kwargs):
+        if self.separator is not None:
+            if self.separator in content:  # Line is a pair, add additional parameters
+                if len(content.split(self.separator)) > 2:
+                    self.warnings.append("Extra Separator - Line content: {0}".format(content))
+                    # raise ExtraSeparator(content)
+
+                kwargs["term"] = content.split(self.separator)[0].strip()
+                if kwargs["term"] in map(lambda n: n.term, self.pairs):
+                    self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
+                    # raise DuplicateTerm(kwargs["term"])
+
+                kwargs["definition"] = content.split(self.separator)[1].strip()
+                if kwargs["definition"] == "":
+                    self.warnings.append("No Definition - Line content: {0}".format(content))
+                    # raise NoDefinition(content)
+
+                kwargs["separator"] = self.separator
+
+    def _complete_headings(self):
+        if self.heading_char is not None:
+            headings_by_level = list(self.level_order.values())
+            for headings in headings_by_level:
                 for i in range(len(headings)):
                     heading = headings[i]
                     level_index = i + 1     # The next heading index at the same level
@@ -372,6 +389,7 @@ class NoteUtil:
                         level_nindex = len(self.notes)
                     else:
                         level_nindex = headings[level_index].nindex
+
                     if order_index == len(self.heading_order):
                         order_nindex = len(self.notes)
                     else:
@@ -383,21 +401,6 @@ class NoteUtil:
                         end_nindex = order_nindex
 
                     heading.end_nindex = end_nindex
-                # End assign end_nindex
-
-                # Assign heading_order, heading_names, level_order
-                for i in range(len(headings)):
-                    heading = headings[i]
-                    heading_order = []
-                    heading_names = []
-                    for j in range(heading.begin_nindex, heading.end_nindex):
-                        note = self.get(nindex=j)
-                        if note.is_heading():
-                            heading_order.append(note)
-                            heading_names.append(note.heading_name)
-                # End assign heading_order, heading_names, level_order
-
-        # End Complete Headings
 
     def get(self, **kwargs) -> Union[None, Note]:
         """Retrieves a Note with attributes equal to passed keyword args.
@@ -559,13 +562,13 @@ class NoteUtil:
 
         self.notes[note.nindex] = note
 
-    def insert(self, rcontent, nindex) -> Note:
+    def insert(self, note, nindex):
         """Creates and inserts a Note at the given nindex.
 
         Parameters
         ----------
-        rcontent : str
-            The raw content of the Note to be created.
+        note : Note
+            The Note to insert at position nindex.
         nindex : int
             The note index of the Note to be inserted.
 
@@ -575,7 +578,11 @@ class NoteUtil:
             The Note that was originally at the given nindex.
         """
 
-        pass
+        if nindex == len(self.notes):
+            self.notes.append(note)
+        else:
+            # TODO
+            pass
 
     def delete(self, nindex) -> Note:
         """Deletes a Note at the given nindex.
