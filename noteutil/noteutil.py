@@ -498,6 +498,19 @@ class NoteUtil:
         NoDefinition
         """
 
+        content = content.strip()
+        if self.heading_char is not None:
+            if content.startswith(self.heading_char):
+                note.heading_char = self.heading_char
+                note.level = content.count(self.heading_char, 0, self.levels)
+                if note.level - note.previous_heading.level > 1:
+                    raise HeadingJump(content)
+                    # raise HeadingJump(line, previous_level, current_level)
+                note.heading = note.heading_char * note.level
+                content = content[len(note.heading):].lstrip()
+                note.begin_nindex = note.nindex + 1
+                note.end_nindex = note.next_heading.nindex if note.next_heading else len(self.notes)
+
         if self.category_names is not None and self.category_prefixes is not None:
             note.category_names = []
             note.category_prefixes = []
