@@ -51,10 +51,10 @@ class NoteUtil:
         The number of headings.
     level_names : List[str]
         The general name of each group of headings.
+    level_order : Dict[str, List[Note]]
+        Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_names : List[str]
         The list of all heading names in chronological order.
-    heading_level : Dict[str, List[Note]]
-        Mapped general names of headings to a list of notes that are headings that belong to that name.
     heading_order : List[Note]
         Chronological list of notes that are headings.
     category_names : List[str]
@@ -112,23 +112,20 @@ class NoteUtil:
         return list(filter(lambda n: n.is_pair(), self.notes))
 
     @property
+    def level_order(self) -> Dict[str, List[Note]]:
+        heading_level = {name: [] for name in self.level_names}
+        for note in self.heading_order:
+            level_name = self.level_names[note.level - 1]
+            heading_level[level_name].append(note)
+        return heading_level
+
+    @property
     def heading_order(self) -> List[Note]:
         return list(filter(lambda n: n.is_heading(), self.notes))
 
     @property
     def heading_names(self) -> List[str]:
         return list(map(lambda n: n.heading_name, self.heading_order))
-
-    @property
-    def heading_level(self) -> Dict[str, List[Note]]:
-        heading_level = {}
-        for level_name in self.level_names:
-            heading_level[level_name] = []
-
-        for note in self.heading_order:
-            level_name = self.level_names[note.level - 1]
-            heading_level[level_name].append(note)
-        return heading_level
 
     @property
     def categories(self) -> Dict[str, List[Note]]:
@@ -362,7 +359,7 @@ class NoteUtil:
         # Headings are still missing their end_nindex:
         # Complete Headings
         if self.heading_char is not None:
-            headings_list = list(self.heading_level.values())
+            headings_list = list(self.level_order.values())
             for headings in headings_list:
                 # Assign end_nindex
                 for i in range(len(headings)):
@@ -391,7 +388,7 @@ class NoteUtil:
                     heading.end_nindex = end_nindex
                 # End assign end_nindex
 
-                # Assign heading_order, heading_names, heading_level
+                # Assign heading_order, heading_names, level_order
                 for i in range(len(headings)):
                     heading = headings[i]
                     heading_order = []
@@ -401,7 +398,7 @@ class NoteUtil:
                         if note.is_heading():
                             heading_order.append(note)
                             heading_names.append(note.heading_name)
-                # End assign heading_order, heading_names, heading_level
+                # End assign heading_order, heading_names, level_order
 
         # End Complete Headings
 
