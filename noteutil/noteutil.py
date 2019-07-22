@@ -236,7 +236,7 @@ class NoteUtil:
                     continue
 
                 # Passed, add it to the raw notes
-                raw_notes += line + "\n"
+                raw_notes += line
 
         with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
