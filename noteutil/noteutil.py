@@ -113,11 +113,11 @@ class NoteUtil:
 
     @property
     def level_order(self) -> Dict[str, List[Note]]:
-        heading_level = {name: [] for name in self.level_names}
+        level_order = {name: [] for name in self.level_names}
         for note in self.heading_order:
             level_name = self.level_names[note.level - 1]
-            heading_level[level_name].append(note)
-        return heading_level
+            level_order[level_name].append(note)
+        return level_order
 
     @property
     def heading_order(self) -> List[Note]:
