@@ -283,19 +283,25 @@ class NoteUtil:
         # Headings are still missing their end_nindex:
         self._complete_headings()
 
-    def make_note(self, content, nindex):
+    def _make_note(self, content, nindex):
+        """This private version exists because Notes do not have their end_nindex yet and thus it can't be assigned,
+        whereas in public use, end_nindexes and heading order have already been assigned."""
         kwargs = {}
         # The following 3 all modify content in some way:
         content = self._detect_headings(content, nindex, kwargs)
         content = self._detect_categories(content, kwargs)
         content = self._detect_extensions(content, kwargs)
-
         self._detect_pairs(content, kwargs)
 
         # Since content may have been modified, fix up heading_name
         if kwargs.get("heading_name", False):
             kwargs["heading_name"] = content
         return Note(self, content, nindex, **kwargs)
+
+    def make_note(self, content, nindex):
+        note = self._make_note(content, nindex)
+        note.end_nindex = note.next_heading.nindex if note.next_heading else len(self.notes)
+        return note
 
     def _detect_headings(self, content, nindex, kwargs):
         if self.heading_char is not None:
