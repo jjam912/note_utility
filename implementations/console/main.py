@@ -249,7 +249,7 @@ class Commands:
         heading_description += "Heading Levels:" + "\n"
 
         level = 1
-        for gname, anames in noteutil.heading_level.items():  # General name, Actual names
+        for gname, anames in noteutil.level_order.items():  # General name, Actual names
             heading_description += "\tLevel " + str(level) + ". " + gname + ":" + "\n"
             for aname in anames:
                 heading_description += "\t\t" + aname.heading_name + "\n"
