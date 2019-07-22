@@ -105,6 +105,7 @@ class NoteUtil:
                             "------\n"
                             "\t{0}\n"
                             "------".format("\n\t".join(self.errors)))
+        self.save()
 
     @property
     def pairs(self) -> List[Note]:
