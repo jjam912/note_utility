@@ -462,30 +462,31 @@ class NoteUtil:
                 notes.append(note)
         return notes if notes else None
 
-    def edit(self, note: Note, content: str, override: bool = False) -> None:
+    def edit(self, content: str, nindex: int) -> Note:
         """Given a Note, edit its content.
         This can have many side effects:
-            1. Changes to heading_name.
-            2. Changes to categories.
-            2. Changes to extensions.
-            3. Changes to whether the Note is a pair.
-            4. Changes to term, definition, and separator
+            1. Changes to heading
+            2. Changes to heading_name.
+            3. Changes to categories.
+            4. Changes to extensions.
+            5. Changes to whether the Note is a pair.
+            6. Changes to term, definition, and separator
 
         Parameters
         ----------
-        note : Note
-            A Note that you want to modify.
         content : str
             The new content that the Note should have.
-        override : bool
-            Whether to override the warning when editing the content.
+        nindex : int
+            The note index of the Note you want to modify.
 
         Returns
         -------
-        None
+        Note
+            The modified note.
 
         Raises
         ------
+        HeadingJump
         MissingBound
         ExtraSeparator
         DuplicateTerm
@@ -493,71 +494,9 @@ class NoteUtil:
         """
 
         content = content.strip()
-        if self.heading_char is not None:
-            if content.startswith(self.heading_char):
-                note.heading_char = self.heading_char
-                note.level = content.count(self.heading_char, 0, self.levels)
-                if note.level - note.previous_heading.level > 1:
-                    raise HeadingJump(content, note.previous_heading.level, note.level)
-                note.heading = note.heading_char * note.level
-                content = content[len(note.heading):].lstrip()
-                note.begin_nindex = note.nindex + 1
-                note.end_nindex = note.next_heading.nindex if note.next_heading else len(self.notes)
-
-        if self.category_names is not None and self.category_prefixes is not None:
-            note.category_names = []
-            note.category_prefixes = []
-            for name, prefix in zip(self.category_names, self.category_prefixes):
-                if content.startswith(prefix):
-                    note.category_names.append(name)
-                    note.category_prefixes.append(prefix)
-                    content = content[len(prefix):].lstrip()
-
-        if self.extension_names is not None and self.extension_bounds is not None:
-            note.extensions = []
-            note.extension_names = []
-            for name, bounds in zip(self.extension_names, self.extension_bounds):
-                lbound, rbound = bounds
-                while lbound in content:
-                    if rbound in content:
-                        lindex = content.index(lbound) + len(lbound)
-                        rindex = content.index(rbound, lindex)
-                        note.extensions.append(Extension(content[lindex:rindex].strip(), name, lbound, rbound))
-                        note.extension_names.append(name)
-
-                        content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
-                    else:
-                        if not override:
-                            raise MissingBound(content, lbound, rbound)
-
-        if self.separator is not None:
-            if self.separator in content:
-                if len(content.split(self.separator)) > 2:
-                    if not override:
-                        raise ExtraSeparator(content)
-
-                term = content.split(self.separator)[0].strip()
-                if note.term != term and term in map(lambda n: n.term, self.pairs):
-                    if not override:
-                        raise DuplicateTerm(term)
-
-                definition = content.split(self.separator)[1].strip()
-                if definition == "":
-                    if not override:
-                        raise NoDefinition(content)
-                note.term = term
-                note.definition = definition
-                note.separator = self.separator
-            else:
-                note.term = None
-                note.definition = None
-                note.separator = None
-
-        note.content = content
-        if note.is_heading():
-            note.heading_name = content
-
-        self.notes[note.nindex] = note
+        note = self.make_note(content, nindex)
+        self.notes[nindex] = note
+        return self.notes[nindex]
 
     def insert(self, note, nindex):
         """Creates and inserts a Note at the given nindex.
