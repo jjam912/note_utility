@@ -622,7 +622,7 @@ class NoteUtil:
         None
         """
 
-        self.__init__(self.config_file)
+        self.__init__(self.config_file, refresh=False)
 
     def refresh(self) -> None:
         """Re-initializes the NoteUtil from the note file instead of the .nu file.
