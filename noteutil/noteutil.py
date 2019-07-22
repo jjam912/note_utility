@@ -566,6 +566,13 @@ class NoteUtil:
 
         self.notes[note.nindex] = note
 
+    def add(self) -> None:
+        """Adds a note to the end of notes."""
+        pass
+
+    def delete(self, nindex) -> None:
+        """Deletes a note from the provided nindex."""
+
     def save(self) -> None:
         """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
 
