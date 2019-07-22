@@ -189,16 +189,13 @@ class Note:
         return []
 
     @property
-    def heading_level(self):
+    def level_order(self):
         if self.is_heading():
-            heading_level = {}
-            for level_name in self._noteutil.level_names[self.level:]:
-                heading_level[level_name] = []
-
+            level_order = {name: [] for name in self._noteutil.level_names}
             for note in self.heading_order:
                 level_name = self._noteutil.level_names[note.level - 1]
-                heading_level[level_name].append(note)
-            return heading_level
+                level_order[level_name].append(note)
+            return level_order
         return {}
 
     @property
