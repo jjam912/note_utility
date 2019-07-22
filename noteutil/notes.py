@@ -61,7 +61,7 @@ class Note:
 
     def __init__(self, noteutil, content, nindex, **kwargs):
         # Basics of all notes
-        self.noteutil = noteutil
+        self._noteutil = noteutil
         self.content = content
         self.nindex = nindex
 
@@ -142,14 +142,14 @@ class Note:
     @property
     def pairs(self):
         if self.is_heading():
-            return list(filter(lambda n: n.is_pair(), [self.noteutil.get(nindex=i)
+            return list(filter(lambda n: n.is_pair(), [self._noteutil.get(nindex=i)
                                                        for i in range(self.begin_nindex, self.end_nindex)]))
         return []
 
     @property
     def heading_order(self):
         if self.is_heading():
-            return list(filter(lambda n: n.is_heading(), [self.noteutil.get(nindex=i)
+            return list(filter(lambda n: n.is_heading(), [self._noteutil.get(nindex=i)
                                                           for i in range(self.begin_nindex, self.end_nindex)]))
         return []
 
@@ -163,11 +163,11 @@ class Note:
     def heading_level(self):
         if self.is_heading():
             heading_level = {}
-            for level_name in self.noteutil.level_names[self.level:]:
+            for level_name in self._noteutil.level_names[self.level:]:
                 heading_level[level_name] = []
 
             for note in self.heading_order:
-                level_name = self.noteutil.level_names[note.level - 1]
+                level_name = self._noteutil.level_names[note.level - 1]
                 heading_level[level_name].append(note)
             return heading_level
         return {}
@@ -175,8 +175,8 @@ class Note:
     @property
     def categories(self):
         if self.is_heading():
-            categories = {name: [] for name in self.noteutil.category_names}
-            for note in [self.noteutil.get(nindex=i) for i in range(self.begin_nindex, self.end_nindex)]:
+            categories = {name: [] for name in self._noteutil.category_names}
+            for note in [self._noteutil.get(nindex=i) for i in range(self.begin_nindex, self.end_nindex)]:
                 for category_name in note.category_names:
                     categories[category_name].append(note)
             return categories
@@ -186,7 +186,7 @@ class Note:
     @property
     def with_extensions(self):
         if self.is_heading():
-            return list(filter(lambda n: n.has_extensions(), [self.noteutil.get(nindex=i)
+            return list(filter(lambda n: n.has_extensions(), [self._noteutil.get(nindex=i)
                                                               for i in range(self.begin_nindex, self.end_nindex)]))
         return []
 
