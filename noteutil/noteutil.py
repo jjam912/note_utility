@@ -87,19 +87,12 @@ class NoteUtil:
     def __init__(self, config_file: str, refresh: bool = True):
         self.notes = []
         self.config_file = config_file
-        self.warnings = []
         self.errors = []
         self._parse_config()
         self._read_config()
         if not os.path.exists(self.nu_file) or refresh:
             self._parse_notes()
         self._make_notes()
-
-        if self.warnings:
-            print("Warnings for {0}\n"
-                  "--------\n"
-                  "\t{1}\n"
-                  "--------".format(self.note_file, "\n\t".join(self.warnings)))
         if self.errors:
             raise NoteError("Errors\n"
                             "------\n"
@@ -281,9 +274,11 @@ class NoteUtil:
         """
 
         for nindex, content in enumerate(self._read_notes()):
-            self.make_note(content, nindex)
-            note = self.make_note(content, nindex)
-            self.insert(note, len(self.notes))
+            try:
+                note = self._make_note(content, nindex)
+                self.insert(note, len(self.notes))
+            except NoteError as e:
+                self.errors.append(e.args[0])
 
         # Headings are still missing their end_nindex:
         self._complete_headings()
@@ -313,7 +308,7 @@ class NoteUtil:
                     previous_level = 0
                 kwargs["level"] = current_level = content.count(self.heading_char, 0, self.levels)
                 if current_level - previous_level > 1:
-                    self.errors.append("Heading Jump - Line content: {0}".format(content))
+                    raise HeadingJump(content, previous_level, current_level)
                 kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
                 content = content[len(kwargs["heading"]):].lstrip()
                 kwargs["heading_name"] = content
@@ -349,26 +344,22 @@ class NoteUtil:
 
                         content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
                     else:
-                        self.warnings.append("Missing Bound - Line content: {0}".format(content))
-                        break
+                        raise MissingBound(content, lbound, rbound)
         return content
 
     def _detect_pairs(self, content, kwargs):
         if self.separator is not None:
             if self.separator in content:  # Line is a pair, add additional parameters
                 if len(content.split(self.separator)) > 2:
-                    self.warnings.append("Extra Separator - Line content: {0}".format(content))
-                    # raise ExtraSeparator(content)
+                    raise ExtraSeparator(content)
 
                 kwargs["term"] = content.split(self.separator)[0].strip()
                 if kwargs["term"] in map(lambda n: n.term, self.pairs):
-                    self.warnings.append("Duplicate Term - Line content: {0}".format(kwargs["term"]))
-                    # raise DuplicateTerm(kwargs["term"])
+                    raise DuplicateTerm(kwargs["term"])
 
                 kwargs["definition"] = content.split(self.separator)[1].strip()
                 if kwargs["definition"] == "":
-                    self.warnings.append("No Definition - Line content: {0}".format(content))
-                    # raise NoDefinition(content)
+                    raise NoDefinition(content)
 
                 kwargs["separator"] = self.separator
 
