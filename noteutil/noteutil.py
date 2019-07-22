@@ -228,16 +228,11 @@ class NoteUtil:
         with open(self.note_file, mode="r") as f:
             raw_notes = ""
             for line in f.readlines():
-                line = line.strip()
-
-                if line.startswith('<span style="text-decoration:underline;">'):
-                    line = "__" + line[41:-7] + "__"
-
                 # Check for comments or empty line
                 if self.comments is not None:
-                    if line.startswith(self.comments):
+                    if line.strip().startswith(self.comments):
                         continue
-                if line == "":
+                if line.strip() == "":
                     continue
 
                 # Passed, add it to the raw notes
@@ -261,16 +256,16 @@ class NoteUtil:
             while index < len(lines):
                 line = lines[index]
                 if self.blocks is not None:
-                    if line.startswith(self.blocks):
+                    if line.strip().startswith(self.blocks):
                         line = line[len(self.blocks):]
                         while index < len(lines):
                             index += 1
                             line += "\n" + lines[index]
-                            if lines[index].endswith(self.blocks):
+                            if lines[index].strip().endswith(self.blocks):
                                 break
                         line = line[:-1 * len(self.blocks)]
                 if line != "":
-                    yield line
+                    yield line.strip()
                 index += 1
 
     def _make_notes(self) -> None:
@@ -283,7 +278,6 @@ class NoteUtil:
 
         for nindex, line in enumerate(self._read_notes()):
             kwargs = {}
-            line = line.strip()
 
             # Heading Detection
             if self.heading_char is not None:
@@ -296,7 +290,7 @@ class NoteUtil:
                         self.errors.append("Heading Jump - Line content: {0}".format(line))
                         # raise HeadingJump(line, previous_level, current_level)
                     kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
-                    line = line[len(kwargs["heading"]):].strip()    # !! Remove heading from line - Affects content
+                    line = line[len(kwargs["heading"]):].lstrip()    # !! Remove heading from line - Affects content
                     kwargs["heading_name"] = line
 
                     kwargs["begin_nindex"] = nindex + 1
@@ -310,7 +304,7 @@ class NoteUtil:
                     if line.startswith(prefix):
                         kwargs["category_names"].append(name)
                         kwargs["category_prefixes"].append(prefix)
-                        line = line[len(prefix):].strip()       # !! Remove prefix from line - Affects content
+                        line = line[len(prefix):].lstrip()       # !! Remove prefix from line - Affects content
                 # Since content may have been modified, fix up heading_name
                 if kwargs.get("heading_name", False):
                     kwargs["heading_name"] = line
@@ -332,7 +326,6 @@ class NoteUtil:
                                 kwargs["extension_names"].append(name)
 
                             line = line[:lindex - len(lbound)].strip() + " " + line[rindex + len(rbound):].strip()
-                            line = line.strip()
                         else:
                             self.warnings.append("Missing Bound - Line content: {0}".format(line))
                             break
@@ -511,7 +504,7 @@ class NoteUtil:
                 if content.startswith(prefix):
                     note.category_names.append(name)
                     note.category_prefixes.append(prefix)
-                    content = content[len(prefix):].strip()
+                    content = content[len(prefix):].lstrip()
 
         if self.extension_names is not None and self.extension_bounds is not None:
             note.extensions = []
@@ -526,7 +519,6 @@ class NoteUtil:
                         note.extension_names.append(name)
 
                         content = content[:lindex - len(lbound)].strip() + " " + content[rindex + len(rbound):].strip()
-                        content = content.strip()
                     else:
                         if not override:
                             raise MissingBound(content, lbound, rbound)
