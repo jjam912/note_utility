@@ -566,12 +566,39 @@ class NoteUtil:
 
         self.notes[note.nindex] = note
 
-    def add(self) -> None:
-        """Adds a note to the end of notes."""
+    def insert(self, rcontent, nindex) -> Note:
+        """Creates and inserts a Note at the given nindex.
+
+        Parameters
+        ----------
+        rcontent : str
+            The raw content of the Note to be created.
+        nindex : int
+            The note index of the Note to be inserted.
+
+        Returns
+        -------
+        Note
+            The Note that was originally at the given nindex.
+        """
+
         pass
 
-    def delete(self, nindex) -> None:
-        """Deletes a note from the provided nindex."""
+    def delete(self, nindex) -> Note:
+        """Deletes a Note at the given nindex.
+
+        Parameters
+        ----------
+        nindex : int
+            The note index of the Note to be deleted.
+
+        Returns
+        -------
+        Note
+            The Note that was deleted.
+        """
+
+        pass
 
     def save(self) -> None:
         """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
