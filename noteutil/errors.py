@@ -53,6 +53,11 @@ class MissingBound(NoteError):
             lbound, rbound, content))
 
 
+class NindexError(NoteUtilError, IndexError):
+    def __init__(self, nindex):
+        super().__init__("The nindex was out of bounds: {0}".format(nindex))
+
+
 class QuizError(Exception):
     """Superclass for all Quiz exceptions."""
 
