@@ -518,8 +518,15 @@ class NoteUtil:
             raise NindexError(nindex)
 
         self.notes.insert(nindex, note)
+        if note.previous_heading is not None and note.previous_heading.end_nindex is not None:
+            note.previous_heading.end_nindex += 1
+
         for i in range(nindex + 1, len(self.notes)):
-            self.notes[i].nindex += 1
+            n = self.notes[i]
+            n.nindex += 1
+            if n.is_heading():
+                n.begin_nindex = n.nindex + 1
+        self._complete_headings()
 
     def delete(self, nindex) -> None:
         """Deletes a Note at the given nindex.
@@ -537,9 +544,17 @@ class NoteUtil:
         if not 0 <= nindex < len(self.notes):
             raise NindexError(nindex)
 
+        n = self.notes[nindex]
+        if n.previous_heading is not None and n.previous_heading.end_nindex is not None:
+            n.previous_heading.end_nindex -= 1
         del self.notes[nindex]
+
         for i in range(nindex, len(self.notes)):
-            self.notes[i].nindex -= 1
+            note = self.notes[i]
+            note.nindex -= 1
+            if note.is_heading():
+                note.begin_nindex -= 1
+        self._complete_headings()
 
     def save(self) -> None:
         """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
