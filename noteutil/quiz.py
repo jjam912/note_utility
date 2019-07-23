@@ -280,7 +280,6 @@ class Quiz:
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
 
 
-# 1, 2, 3, 5, 11, 19, 29
 class Leitner:
     """The Leitner system is a method of spaced repetition where cards are reviewed at increasing intervals.
 
