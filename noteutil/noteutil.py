@@ -301,6 +301,7 @@ class NoteUtil:
     def make_note(self, content, nindex):
         note = self._make_note(content, nindex)
         note.end_nindex = note.next_heading.nindex if note.next_heading else len(self.notes)
+        self.insert(note, nindex)
         return note
 
     def _detect_headings(self, content, nindex, kwargs):
@@ -510,17 +511,17 @@ class NoteUtil:
 
         Returns
         -------
-        Note
-            The Note that was originally at the given nindex.
+        None
         """
 
-        if nindex == len(self.notes):
-            self.notes.append(note)
-        else:
-            # TODO
-            pass
+        if not 0 <= nindex <= len(self.notes):
+            raise NindexError(nindex)
 
-    def delete(self, nindex) -> Note:
+        self.notes.insert(nindex, note)
+        for i in range(nindex + 1, len(self.notes)):
+            self.notes[i].nindex += 1
+
+    def delete(self, nindex) -> None:
         """Deletes a Note at the given nindex.
 
         Parameters
@@ -530,11 +531,15 @@ class NoteUtil:
 
         Returns
         -------
-        Note
-            The Note that was deleted.
+        None
         """
 
-        pass
+        if not 0 <= nindex < len(self.notes):
+            raise NindexError(nindex)
+
+        del self.notes[nindex]
+        for i in range(nindex, len(self.notes)):
+            self.notes[i].nindex -= 1
 
     def save(self) -> None:
         """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
