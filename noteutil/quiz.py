@@ -30,9 +30,8 @@ class Quiz:
     pairs : List[Note]
         List of all Notes that are pairs that the Quiz is generating from.
         This can either be all pairs in NoteUtil, or only pairs inside a specific heading/category.
-    division : None or Note
+    division : str or Note
         The heading/category whose pairs are being used.
-        It is None if pairs are being used from all of NoteUtil's pairs, or the correct/incorrect list.
     qz_file : str
         File name for the .qz file to save the Quiz's correct and incorrect lists.
     """
@@ -45,7 +44,7 @@ class Quiz:
 
         # Options
         self.pairs = self.noteutil.pairs
-        self.division = None
+        self.division = "none"
 
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
@@ -54,8 +53,7 @@ class Quiz:
 
     def generate(self, *, randomize: bool) -> Generator[Note, None, None]:
         """A generator that yields Notes, either chronologically or randomly.
-        Once a generator is created, it is "frozen in time," and isn't affected by any changes to Quiz.
-        However, Quiz keeps track of the last index used, which changes every time this generator is activated.
+        Quiz keeps track of the last index used, which changes every time this generator is iterated.
 
         Parameters
         ----------
@@ -68,18 +66,17 @@ class Quiz:
             A pair that is either in random or chronological order.
         """
 
-        pairs = copy.deepcopy(self.pairs)       # This could be changed to use indices
-
         if randomize:
-            random.shuffle(pairs)
-            while pairs:
-                note = pairs.pop()
+            indexes = [i for i in range(len(self.pairs))]
+            random.shuffle(indexes)
+            while indexes:
+                note = self.pairs[indexes.pop()]
                 self.last_nindex = note.nindex
                 yield note
         else:
             index = 0
-            while index != len(pairs):
-                note = pairs[index]
+            while index != len(self.pairs):
+                note = self.pairs[index]
                 self.last_nindex = note.nindex
                 yield note
                 index += 1
@@ -103,17 +100,11 @@ class Quiz:
         if correct:
             if pair not in self.correct:
                 self.correct.append(pair)
-            try:
-                self.incorrect.remove(pair)
-            except ValueError:
-                pass
+            self.remove(pair, correct=False)
         else:
             if pair not in self.incorrect:
                 self.incorrect.append(pair)
-            try:
-                self.correct.remove(pair)
-            except ValueError:
-                pass
+            self.remove(pair, correct=True)
 
     def remove(self, pair: Note, *, correct: bool) -> None:
         """Removes a pair from one of the correct or incorrect lists.
@@ -157,7 +148,7 @@ class Quiz:
 
         Parameters
         ----------
-        division : None or Note or str
+        division : Note or str
             The Note or heading name or category name whose pairs should be used.
             If the division name is "correct" or "incorrect", the pairs in the corresponding list will be used.
             If the division name is "unmarked", the pairs that are not in the correct or incorrect list will be used.
@@ -176,7 +167,7 @@ class Quiz:
         """
 
         if division is None or division == "none":
-            self.division = None
+            self.division = "none"
             self.pairs = self.noteutil.pairs
             return
 
@@ -194,7 +185,7 @@ class Quiz:
             return
 
         if division in self.noteutil.heading_names:
-            self.division = self.noteutil.get(heading_name=division)
+            division = self.noteutil.get(heading_name=division)
         if isinstance(division, Note):
             if not division.is_heading():
                 raise HeadingExpected(division)
@@ -482,7 +473,7 @@ class Leitner:
                         self.boxes[box_number].append(pair)
 
         for box_number, time_period in kwargs.get("times", self.times).items():
-            self.times[int(box_number)] = time_period
+            self.times[int(box_number)] = int(time_period)
         self.session = kwargs.get("session", self.session)
 
     def reset(self) -> None:
@@ -507,10 +498,10 @@ class Leitner:
 
         self.noteutil = noteutil
 
-        new_pairs = copy.deepcopy(self.noteutil.pairs)
+        new_pairs = copy.deepcopy(self.noteutil.pairs[::-1])
         for box_number, pairs in self.boxes.items():
-            for old_note in pairs.copy():
-                pairs.remove(old_note)
+            for _ in range(len(pairs)):
+                old_note = pairs.pop()
                 for new_note in new_pairs:
                     if old_note.rcontent == new_note.rcontent:
                         new_pairs.remove(new_note)
