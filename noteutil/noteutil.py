@@ -276,7 +276,7 @@ class NoteUtil:
         for nindex, content in enumerate(self._read_notes()):
             try:
                 note = self._make_note(content, nindex)
-                self.insert(note, len(self.notes))
+                self.notes.append(note)
             except NoteError as e:
                 self.errors.append(e.args[0])
 
@@ -373,14 +373,16 @@ class NoteUtil:
     def _complete_headings(self):
         if self.heading_char is not None:
             headings_by_level = list(self.level_order.values())
+            heading_order = self.heading_order
+
             for headings in headings_by_level:
                 for i in range(len(headings)):
                     heading = headings[i]
                     level_index = i + 1     # The next heading index at the same level
-                    order_index = self.heading_order.index(heading) + 1    # The next heading index in heading order
+                    order_index = heading_order.index(heading) + 1    # The next heading index in heading order
 
-                    while order_index != len(self.heading_order) and \
-                            self.heading_order[order_index].level > heading.level:
+                    while order_index != len(heading_order) and \
+                            heading_order[order_index].level > heading.level:
                         order_index += 1
 
                     if level_index == len(headings):
@@ -388,10 +390,10 @@ class NoteUtil:
                     else:
                         level_nindex = headings[level_index].nindex
 
-                    if order_index == len(self.heading_order):
+                    if order_index == len(heading_order):
                         order_nindex = len(self.notes)
                     else:
-                        order_nindex = self.heading_order[order_index].nindex
+                        order_nindex = heading_order[order_index].nindex
 
                     if level_nindex < order_nindex:
                         end_nindex = level_nindex
