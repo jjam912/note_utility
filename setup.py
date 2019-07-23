@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="noteutil",
-    version="0.0.2",
+    version="0.0.3",
     author="James S. Wang",
     author_email="jjameswwang@gmail.com",
     description="A package for handling specially written notes",
