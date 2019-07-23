@@ -686,20 +686,19 @@ class Commands:
 
             def quiz_options():
                 while True:
-                    option = text_input("Enter 'c' for correct or 'i' for incorrect.")
+                    option = text_input("Enter 'c' for correct, 'i' for incorrect, or enter to continue")
                     if option is None:
                         print("Canceled input. (1)")
                         return False
                     option = option.strip().lower()
-                    if option in ["c", "i"]:
+                    if option in ["c", "i", ""]:
                         if option == "c":
                             quiz.append(note, correct=True)
                             print("Added {0} to correct list.".format(note.term))
-                            return True
-                        else:
+                        elif option == "i":
                             quiz.append(note, correct=False)
                             print("Added {0} to incorrect list.".format(note.term))
-                            return True
+                        return True
                     else:
                         print("Input was not 'c' or 'i'. Try again.")
 
@@ -845,20 +844,19 @@ class Commands:
 
             def quiz_options():
                 while True:
-                    option = text_input("Enter 'c' for correct or 'i' for incorrect.")
+                    option = text_input("Enter 'c' for correct, 'i' for incorrect, or enter to continue")
                     if option is None:
                         print("Canceled input. (1)")
                         return False
                     option = option.strip().lower()
-                    if option in ["c", "i"]:
+                    if option in ["c", "i", ""]:
                         if option == "c":
                             leitner.correct(note)
                             print("Moved {0} to Box {1}.".format(note.term, note.box))
-                            return True
-                        else:
+                        elif option == "i":
                             leitner.incorrect(note)
                             print("Moved {0} to Box 1.".format(note.term))
-                            return True
+                        return True
                     else:
                         print("Input was not 'c' or 'i'. Try again.")
 
