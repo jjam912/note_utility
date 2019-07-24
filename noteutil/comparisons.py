@@ -46,6 +46,50 @@ def is_similar_in(note, **kwargs) -> bool:
     return all(getattr(note, attr) is not None and val.lower() in getattr(note, attr).lower() for attr, val in kwargs.items())
 
 
+def is_less(note, **kwargs) -> bool:
+    """Is True when all of the kwargs value are greater than the Note's attribute.
+
+    Returns
+    -------
+    bool
+    """
+
+    return all(getattr(note, attr) is not None and val < getattr(note, attr) for attr, val in kwargs.items())
+
+
+def is_greater(note, **kwargs) -> bool:
+    """Is True when all of the kwargs value are greater than the Note's attribute.
+
+    Returns
+    -------
+    bool
+    """
+
+    return all(getattr(note, attr) is not None and val > getattr(note, attr) for attr, val in kwargs.items())
+
+
+def is_lesse(note, **kwargs) -> bool:
+    """Is True when all of the kwargs value are greater than the Note's attribute
+
+    Returns
+    -------
+    bool
+    ."""
+
+    return all(getattr(note, attr) is not None and val <= getattr(note, attr) for attr, val in kwargs.items())
+
+
+def is_greatere(note, **kwargs) -> bool:
+    """Is True when all of the kwargs value are greater than the Note's attribute.
+
+    Returns
+    -------
+    bool
+    """
+
+    return all(getattr(note, attr) is not None and val >= getattr(note, attr) for attr, val in kwargs.items())
+
+
 class CompareOptions(enum.Enum):
     """Enum for selecting compare options for NoteUtil.get methods.
     The Enums here are only a few of the possible comparing options for Notes.
@@ -69,5 +113,9 @@ class CompareOptions(enum.Enum):
     SIMILAR = is_similar
     IN = is_in
     SIN = is_similar_in
+    LESS = is_less
+    LESSE = is_lesse
+    GREATER = is_greater
+    GREATERE = is_greatere
 
 
