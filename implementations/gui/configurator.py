@@ -84,7 +84,7 @@ class ConfiguratorView:
 
     def init_text_editor(self):
         text_editor_frame = tk.Frame(self.root)
-        self.line_numbers_text = DisabledText(text_editor_frame, width=4, font=tkfont.Font(family="Ubuntu", size=12))
+        self.line_numbers_text = DisabledText(text_editor_frame, width=5, font=tkfont.Font(family="Ubuntu", size=12))
         self.text_editor = tk.Text(text_editor_frame, wrap=tk.NONE, undo=True,
                                    font=tkfont.Font(family="Ubuntu", size=12))
         xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
