@@ -33,7 +33,6 @@ class EditorView:
         file_menu.add_command(label="Open", command=self.controller.on_open_file)
         file_menu.add_command(label="Save", command=self.controller.on_save)
         file_menu.add_command(label="Save as", command=self.controller.on_save_as)
-        file_menu.add_separator()
         self.menu_bar.add_cascade(label="File", menu=file_menu)
 
     def init_edit_menu(self):
@@ -81,6 +80,10 @@ class EditorView:
 
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx="1in", pady=("0.25in", 0))
 
+    def clear(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
 
 class EditorController:
     def __init__(self, view, noteutil, quiz, leitner):
@@ -126,8 +129,9 @@ class EditorController:
         print(self.count)
 
     def on_to_configurator(self):
-        self.count += 1
-        print(self.count)
+        from configurator import ConfiguratorView
+        self.view.clear()
+        ConfiguratorView(self.view.root)
 
     def on_view_image_link(self):
         self.count += 1
