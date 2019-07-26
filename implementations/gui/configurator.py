@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 import tkinter.font as tkfont
 import noteutil as nu
+from disabled_text import DisabledText
 from editor import EditorView
 from searcher import SearcherView
 from quizzer import QuizzerView
@@ -24,6 +25,7 @@ class ConfiguratorView:
         self.status_label = None
         self.init_info_labels()
 
+        self.line_numbers_text = None
         self.text_editor = None
         self.init_text_editor()
 
@@ -84,17 +86,21 @@ class ConfiguratorView:
         self.status_label.pack(side=tk.TOP, padx=30, fill=tk.X)
 
     def init_text_editor(self):
-        self.text_editor = tk.Text(self.root, wrap=tk.NONE, undo=True,
+        text_editor_frame = tk.Frame(self.root)
+        self.line_numbers_text = DisabledText(text_editor_frame, width=4, font=tkfont.Font(family="Ubuntu", size=12))
+        self.text_editor = tk.Text(text_editor_frame, wrap=tk.NONE, undo=True,
                                    font=tkfont.Font(family="Ubuntu", size=12))
-        xscrollbar = tk.Scrollbar(self.text_editor, orient=tk.HORIZONTAL)
-        yscrollbar = tk.Scrollbar(self.text_editor, orient=tk.VERTICAL)
+        xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
+        yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=self.text_editor.yview)
         self.text_editor.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
-        xscrollbar.config(command=self.text_editor.xview)
-        yscrollbar.config(command=self.text_editor.yview)
+
         xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=40, pady=10)
+        self.line_numbers_text.pack(side=tk.LEFT, fill=tk.Y)
+        self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
         self.controller.on_new_config()
+        text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=40, pady=10)
 
     def init_actions_frame(self):
         actions_frame = tk.LabelFrame(self.root, text="Choose a method of review:")
