@@ -7,7 +7,7 @@ class Main:
     def __init__(self, root):
         self.root = root
         self.root.title("NoteUtil")
-        self.root.bind("<Button-1>", self.navigate_config)
+        self.root.bind("<Button-1>", self.to_configurator)
 
         self.noteutil_label = None
         self.continue_label = None
@@ -23,13 +23,13 @@ class Main:
         self.continue_label.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
     def clear(self):
-        self.root.unbind("<Button-1>")
         for widget in self.root.winfo_children():
             widget.destroy()
 
-    def navigate_config(self, event):
+    def to_configurator(self, event=None):
+        self.root.unbind("<Button-1>")
         self.clear()
-        ConfiguratorView(self.root)
+        ConfiguratorView(self)
 
 
 if __name__ == "__main__":
