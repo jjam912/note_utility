@@ -15,12 +15,9 @@ class ConfiguratorView:
         self.root.title("NoteUtil Configurator")
         self.controller = ConfiguratorController(self, noteutil, quiz, leitner)
 
-        self.line_numbers = tk.BooleanVar(value=True)
-        self.highlight = tk.BooleanVar(value=True)
         self.menu_bar = None
         self.init_menu_bar()
 
-        self.config_filename = tk.StringVar(value="None")
         self.config_label = None
         self.status_label = None
         self.init_info_labels()
@@ -64,9 +61,9 @@ class ConfiguratorView:
 
     def init_view_menu(self):
         view_menu = tk.Menu(self.menu_bar, tearoff=False)
-        view_menu.add_checkbutton(label="Show line number", variable=self.line_numbers,
+        view_menu.add_checkbutton(label="Show line number", variable=self.controller.line_numbers,
                                   command=self.controller.on_line_numbers)
-        view_menu.add_checkbutton(label="Highlight current line", variable=self.highlight,
+        view_menu.add_checkbutton(label="Highlight current line", variable=self.controller.highlight,
                                   command=self.controller.on_highlight)
         self.menu_bar.add_cascade(menu=view_menu, label="View")
 
@@ -77,8 +74,8 @@ class ConfiguratorView:
         self.menu_bar.add_cascade(menu=help_menu, label="Help")
 
     def init_info_labels(self):
-        self.config_label = tk.Label(self.root, text="Your current config file is: " + str(self.config_filename.get()),
-                                     padx=10, anchor=tk.W)
+        self.config_label = tk.Label(self.root, text="Your current config file is: " +
+                                                     str(self.controller.config_filename.get()), padx=10, anchor=tk.W)
         self.status_label = tk.Label(self.root, text="Open a config file or create a new one and then compile it. " +
                                                      "If you already have a config file, use File >> Open Config.",
                                      padx=10, anchor=tk.W)
@@ -105,9 +102,12 @@ class ConfiguratorView:
     def init_actions_frame(self):
         actions_frame = tk.LabelFrame(self.root, text="Choose a method of review:")
         self.editor_button = tk.Button(actions_frame, text="Editor", bd=5, command=self.controller.on_editor)
-        self.searcher_button = tk.Button(actions_frame, text="Searcher", bd=5, command=self.controller.on_searcher)
-        self.quizzer_button = tk.Button(actions_frame, text="Quizzer", bd=5, command=self.controller.on_quizzer)
-        self.reviewer_button = tk.Button(actions_frame, text="Reviewer", bd=5, command=self.controller.on_reviewer)
+        self.searcher_button = tk.Button(actions_frame, text="Searcher", state=tk.DISABLED, bd=5,
+                                         command=self.controller.on_searcher)
+        self.quizzer_button = tk.Button(actions_frame, text="Quizzer", state=tk.DISABLED, bd=5,
+                                        command=self.controller.on_quizzer)
+        self.reviewer_button = tk.Button(actions_frame, text="Reviewer", state=tk.DISABLED, bd=5,
+                                         command=self.controller.on_reviewer)
         self.editor_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
         self.searcher_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
         self.quizzer_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
@@ -127,6 +127,10 @@ class ConfiguratorController:
         self.quiz = quiz
         self.leitner = leitner
 
+        self.config_filename = tk.StringVar(value="None")
+        self.line_numbers = tk.BooleanVar(value=True)
+        self.highlight = tk.BooleanVar(value=True)
+
     def on_new_config(self):
         self.view.text_editor.delete(1.0, tk.END)
         with open("CONFIG_TEMPLATE.txt", mode="r") as f:
@@ -145,9 +149,9 @@ class ConfiguratorController:
         print(self.count)
 
     def on_compile(self):
-        self.count += 1
-        print(self.count)
-        self.noteutil = nu.NoteUtil(self.view.text_editor.get(1.0, tk.END))
+        self.view.searcher_button.config(state=tk.NORMAL)
+        self.view.quizzer_button.config(state=tk.NORMAL)
+        self.view.reviewer_button.config(state=tk.NORMAL)
 
     def on_find(self):
         self.count += 1
@@ -178,8 +182,10 @@ class ConfiguratorController:
         print(self.count)
 
     def on_editor(self):
-        self.view.clear()
-        EditorView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        toplevel = tk.Tk()
+        toplevel.geometry("1600x900+160+90")
+        EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
+        toplevel.mainloop()
 
     def on_searcher(self):
         self.view.clear()
