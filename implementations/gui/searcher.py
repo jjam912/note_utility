@@ -262,16 +262,19 @@ class SearcherController:
         ConfiguratorView(self.view.root)
 
     def on_to_editor(self):
-        self.count += 1
-        print(self.count)
+        from editor import EditorView
+        self.view.clear()
+        EditorView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_quizzer(self):
-        self.count += 1
-        print(self.count)
+        from quizzer import QuizzerView
+        self.view.clear()
+        QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_reviewer(self):
-        self.count += 1
-        print(self.count)
+        from reviewer import ReviewerView
+        self.view.clear()
+        ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_search_explanation(self):
         self.count += 1
