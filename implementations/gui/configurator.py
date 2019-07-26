@@ -1,17 +1,18 @@
+import os
 import tkinter as tk
 import tkinter.font as tkfont
 import noteutil as nu
-from editor import Editor
-from searcher import Searcher
-from quizzer import Quizzer
-from reviewer import Reviewer
+from editor import EditorView
+from searcher import SearcherView
+from quizzer import QuizzerView
+from reviewer import ReviewerView
 
 
 class ConfiguratorView:
-    def __init__(self, root):
+    def __init__(self, root, noteutil=None, quiz=None, leitner=None):
         self.root = root
         self.root.title("NoteUtil Configurator")
-        self.controller = ConfiguratorController(self)
+        self.controller = ConfiguratorController(self, noteutil, quiz, leitner)
 
         self.line_numbers = tk.BooleanVar(value=True)
         self.highlight = tk.BooleanVar(value=True)
@@ -31,6 +32,9 @@ class ConfiguratorView:
         self.quizzer_button = None
         self.reviewer_button = None
         self.init_actions_frame()
+
+        if not os.path.exists(os.path.join(os.getcwd(), "notes")):
+            os.mkdir(os.path.join(os.getcwd(), "notes"))
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
@@ -94,14 +98,14 @@ class ConfiguratorView:
 
     def init_actions_frame(self):
         actions_frame = tk.LabelFrame(self.root, text="Choose a method of review:")
-        self.editor_button = tk.Button(actions_frame, text="Editor", command=self.controller.on_editor)
-        self.searcher_button = tk.Button(actions_frame, text="Searcher", command=self.controller.on_searcher)
-        self.quizzer_button = tk.Button(actions_frame, text="Quizzer", command=self.controller.on_quizzer)
-        self.reviewer_button = tk.Button(actions_frame, text="Reviewer", command=self.controller.on_reviewer)
-        self.editor_button.pack(side=tk.LEFT, padx=1, fill=tk.X, expand=True)
-        self.searcher_button.pack(side=tk.LEFT, padx=1, fill=tk.X, expand=True)
-        self.quizzer_button.pack(side=tk.LEFT, padx=1, fill=tk.X, expand=True)
-        self.reviewer_button.pack(side=tk.LEFT, padx=1, fill=tk.X, expand=True)
+        self.editor_button = tk.Button(actions_frame, text="Editor", bd=5, command=self.controller.on_editor)
+        self.searcher_button = tk.Button(actions_frame, text="Searcher", bd=5, command=self.controller.on_searcher)
+        self.quizzer_button = tk.Button(actions_frame, text="Quizzer", bd=5, command=self.controller.on_quizzer)
+        self.reviewer_button = tk.Button(actions_frame, text="Reviewer", bd=5, command=self.controller.on_reviewer)
+        self.editor_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
+        self.searcher_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
+        self.quizzer_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
+        self.reviewer_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
         actions_frame.pack(side=tk.TOP, fill=tk.X, padx=40, pady=(0, 10))
 
     def clear(self):
@@ -110,9 +114,12 @@ class ConfiguratorView:
 
 
 class ConfiguratorController:
-    def __init__(self, view):
+    def __init__(self, view, noteutil, quiz, leitner):
         self.count = 0
         self.view = view
+        self.noteutil = noteutil
+        self.quiz = quiz
+        self.leitner = leitner
 
     def on_new_config(self):
         self.view.text_editor.delete(1.0, tk.END)
@@ -134,6 +141,7 @@ class ConfiguratorController:
     def on_compile(self):
         self.count += 1
         print(self.count)
+        self.noteutil = nu.NoteUtil(self.view.text_editor.get(1.0, tk.END))
 
     def on_find(self):
         self.count += 1
@@ -165,19 +173,19 @@ class ConfiguratorController:
 
     def on_editor(self):
         self.view.clear()
-        Editor(self.view.root)
+        EditorView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_searcher(self):
         self.view.clear()
-        Searcher(self.view.root)
+        SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_quizzer(self):
         self.view.clear()
-        Quizzer(self.view.root)
+        QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_reviewer(self):
         self.view.clear()
-        Reviewer(self.view.root)
+        ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
 
 if __name__ == "__main__":
