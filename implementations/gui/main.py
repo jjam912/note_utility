@@ -29,7 +29,7 @@ class Main:
     def to_configurator(self, event=None):
         self.root.unbind("<Button-1>")
         self.clear()
-        ConfiguratorView(self)
+        ConfiguratorView(self.root)
 
 
 if __name__ == "__main__":
