@@ -89,10 +89,15 @@ class SearcherView:
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
+        self.init_notes_menu()
         self.init_view_menu()
         self.init_navigate_menu()
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
+
+    def init_notes_menu(self):
+        notes_menu = tk.Menu(self.menu_bar, tearoff=False)
+        self.menu_bar.add_cascade(label="Notes", menu=notes_menu)
 
     def init_view_menu(self):
         view_menu = tk.Menu(self.menu_bar, tearoff=False)
