@@ -103,7 +103,7 @@ class CompareOptions(enum.Enum):
         Tests for equals ignore case. Use with strings when you want to match, but ignore case.
     IN : function
         Tests for "in". Use with strings when you want to know if the exact value is in the attribute.
-    SIN : function
+    SIMIN : function
         Tests for "in" and also ignores case. Use with strings when you want to know if the value is in the attribute.
         Stands for "Similar In".
 
@@ -112,7 +112,7 @@ class CompareOptions(enum.Enum):
     EQUALS = is_equal
     SIMILAR = is_similar
     IN = is_in
-    SIN = is_similar_in
+    SIMIN = is_similar_in
     LESS = is_less
     LESSE = is_lesse
     GREATER = is_greater
