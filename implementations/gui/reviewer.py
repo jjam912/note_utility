@@ -71,6 +71,7 @@ class ReviewerView:
         navigate_menu = tk.Menu(self.menu_bar, tearoff=False)
         navigate_menu.add_command(label="Go to configurator", command=self.controller.on_to_configurator)
         navigate_menu.add_command(label="Go to editor", command=self.controller.on_to_editor)
+        navigate_menu.add_command(label="Go to searcher", command=self.controller.on_to_searcher)
         navigate_menu.add_command(label="Go to quizzer", command=self.controller.on_to_quizzer)
         self.menu_bar.add_cascade(label="Navigate", menu=navigate_menu)
 
@@ -219,6 +220,11 @@ class ReviewerController:
         from editor import EditorView
         self.view.clear()
         EditorView(self.view.root, self.noteutil, self.quiz, self.leitner)
+
+    def on_to_searcher(self):
+        from searcher import SearcherView
+        self.view.clear()
+        SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_quizzer(self):
         from quizzer import QuizzerView
