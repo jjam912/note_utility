@@ -61,6 +61,8 @@ class Note:
     If the Note has Extensions:
         extension_names : List[str]
             A set of the generic names of the Extensions that this Note has.
+        extension_bounds: List[Tuple[str, str]]
+            A list of tuples of size two, the first element being the left bound and the second being the right bound.
         extensions : List[Extension]
             All of the Extensions that this Note has.
     If the Note is a Pair:
@@ -98,6 +100,7 @@ class Note:
 
         # Extension parameters
         self.extension_names = kwargs.get("extension_names", [])
+        self.extension_bounds = kwargs.get("extension_bounds", [])
         self.extensions = kwargs.get("extensions", [])
 
     def __eq__(self, other):

@@ -337,9 +337,11 @@ class NoteUtil:
     def _detect_extensions(self, content, kwargs):
         if self.extension_names is not None and self.extension_bounds is not None:
             kwargs["extensions"] = []
+            kwargs["extension_bounds"] = []
             kwargs["extension_names"] = []
             for name, bounds in zip(self.extension_names, self.extension_bounds):
                 lbound, rbound = bounds
+                kwargs["extension_bounds"].append(tuple([lbound, rbound]))
                 while lbound in content:
                     lindex = content.index(lbound) + len(lbound)
                     if rbound in content[lindex:]:
