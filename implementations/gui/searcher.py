@@ -92,6 +92,7 @@ class SearcherView:
         self.init_notes_menu()
         self.init_view_menu()
         self.init_navigate_menu()
+        self.init_tools_menu()
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
 
@@ -111,6 +112,13 @@ class SearcherView:
         navigate_menu.add_command(label="Go to quizzer", command=self.controller.on_to_quizzer)
         navigate_menu.add_command(label="Go to reviewer", command=self.controller.on_to_reviewer)
         self.menu_bar.add_cascade(label="Navigate", menu=navigate_menu)
+
+    def init_tools_menu(self):
+        tools_menu = tk.Menu(self.menu_bar, tearoff=False)
+        tools_menu.add_command(label="View image link", command=self.controller.on_view_image_link)
+        tools_menu.add_command(label="Font selector", command=self.controller.on_font_selector)
+        tools_menu.add_command(label="Display LaTeX", command=self.controller.on_display_latex)
+        self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
     def init_help_menu(self):
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
@@ -275,6 +283,18 @@ class SearcherController:
         from reviewer import ReviewerView
         self.view.clear()
         ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
+
+    def on_view_image_link(self):
+        self.count += 1
+        print(self.count)
+
+    def on_font_selector(self):
+        self.count += 1
+        print(self.count)
+
+    def on_display_latex(self):
+        self.count += 1
+        print(self.count)
 
     def on_search_explanation(self):
         self.count += 1
