@@ -1,3 +1,9 @@
-/noteutil.egg-info
-/dist
-/noteutil/testing
+noteutil.egg-info
+build
+dist
+noteutil/tests
+docs/_build
+.idea
+*.json
+venv
+.venv
