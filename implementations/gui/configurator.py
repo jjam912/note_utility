@@ -1,12 +1,19 @@
 import os
 import tkinter as tk
 import tkinter.font as tkfont
+import tkinter.filedialog as tkfiledialog
+import tkinter.messagebox as tkmsgbox
 import noteutil as nu
+from noteutil.errors import NoteUtilError, QuizError, LeitnerError
 from disabled_text import DisabledText
 from editor import EditorView
 from searcher import SearcherView
 from quizzer import QuizzerView
 from reviewer import ReviewerView
+import webbrowser
+
+
+NOTES_DIR = os.path.join(os.getcwd(), "notes")
 
 
 class ConfiguratorView:
@@ -32,8 +39,8 @@ class ConfiguratorView:
         self.reviewer_button = None
         self.init_actions_frame()
 
-        if not os.path.exists(os.path.join(os.getcwd(), "notes")):
-            os.mkdir(os.path.join(os.getcwd(), "notes"))
+        if not os.path.exists(NOTES_DIR):
+            os.mkdir(NOTES_DIR)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
@@ -74,8 +81,7 @@ class ConfiguratorView:
         self.menu_bar.add_cascade(menu=help_menu, label="Help")
 
     def init_info_labels(self):
-        self.config_label = tk.Label(self.root, text="Your current config file is: " +
-                                                     str(self.controller.config_filename.get()), padx=10, anchor=tk.W)
+        self.config_label = tk.Label(self.root, text="Your current config file is: None", padx=10, anchor=tk.W)
         self.status_label = tk.Label(self.root, text="Open a config file or create a new one and then compile it. " +
                                                      "If you already have a config file, use File >> Open Config.",
                                      padx=10, anchor=tk.W)
@@ -98,6 +104,9 @@ class ConfiguratorView:
 
         self.controller.on_new_config()
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=40, pady=10)
+
+        self.text_editor.bind("<Control-a>", self.controller.on_select_all)
+        self.text_editor.bind("<Control-A>", self.controller.on_select_all)
 
     def init_actions_frame(self):
         actions_frame = tk.LabelFrame(self.root, text="Choose a method of review:")
@@ -127,7 +136,8 @@ class ConfiguratorController:
         self.quiz = quiz
         self.leitner = leitner
 
-        self.config_filename = tk.StringVar(value="None")
+        self.config_file_path = None
+        self.config_file_name = None
         self.line_numbers = tk.BooleanVar(value=True)
         self.highlight = tk.BooleanVar(value=True)
 
@@ -135,23 +145,64 @@ class ConfiguratorController:
         self.view.text_editor.delete(1.0, tk.END)
         with open("CONFIG_TEMPLATE.txt", mode="r") as f:
             self.view.text_editor.insert(tk.END, f.read())
+        return "break"
 
     def on_open_config(self):
-        self.count += 1
-        print(self.count)
+        file = tkfiledialog.askopenfile(defaultextension=".txt", initialdir=NOTES_DIR, title="Open config",
+                                        filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
+        if file:
+            self.view.text_editor.delete(1.0, tk.END)
+            self.view.text_editor.insert(tk.END, file.read())
+            self.file_update(file)
+        return "break"
+
+    def file_update(self, file):
+        self.config_file_name = os.path.basename(file.name)
+        self.config_file_path = file.name
+        self.view.config_label.config(text="Your current config file is: " + self.config_file_name)
+        self.view.status_label.config(text="Compile your file using File >> Compile")
+        self.view.root.title("NoteUtil Configurator - " + self.config_file_name)
+        return "break"
 
     def on_save(self):
-        self.count += 1
-        print(self.count)
+        if self.config_file_path is None:
+            return self.on_save_as()
+        with open(self.config_file_path, mode="w") as f:
+            f.write(self.view.text_editor.get(1.0, tk.END))
+        return "break"
 
     def on_save_as(self):
-        self.count += 1
-        print(self.count)
+        file_name = self.config_file_name if self.config_file_name is not None else ""
+        file = tk.filedialog.asksaveasfile(defaultextension=".txt",
+                                           initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
+                                           filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
+        if file:
+            self.file_update(file)
+            with open(self.config_file_path, mode="w") as f:
+                f.write(self.view.text_editor.get(1.0, tk.END))
+        return "break"
 
     def on_compile(self):
+        if self.config_file_path is None:
+            self.on_save_as()
+        else:
+            self.on_save()
+
+        try:
+            self.noteutil = nu.NoteUtil(self.config_file_path)
+            self.quiz = nu.Quiz(self.noteutil)
+            self.leitner = nu.Leitner(self.noteutil)
+        except (NoteUtilError, QuizError, LeitnerError) as e:
+            tkmsgbox.showerror(title="An error occurred compiling your notes", message=e.args[0])
+            self.view.status_label.config(text=e.args[0])
+            return "break"
+
+        tkmsgbox.showinfo(title="Success!", message="Your file compiled successfully.")
+        self.view.status_label.config(text="Your file compiled successfully.")
         self.view.searcher_button.config(state=tk.NORMAL)
         self.view.quizzer_button.config(state=tk.NORMAL)
         self.view.reviewer_button.config(state=tk.NORMAL)
+        return "break"
 
     def on_find(self):
         self.count += 1
@@ -161,9 +212,9 @@ class ConfiguratorController:
         self.count += 1
         print(self.count)
 
-    def on_select_all(self):
-        self.count += 1
-        print(self.count)
+    def on_select_all(self, event=None):
+        self.view.text_editor.tag_add(tk.SEL, 1.0, tk.END)
+        return "break"
 
     def on_line_numbers(self):
         self.count += 1
@@ -178,8 +229,7 @@ class ConfiguratorController:
         print(self.count)
 
     def on_about(self):
-        self.count += 1
-        print(self.count)
+        webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
     def on_editor(self):
         toplevel = tk.Tk()
