@@ -17,7 +17,7 @@ class DisabledText(tk.Text):
         self.config(state=tk.DISABLED)
 
     @switch
-    def set(self, text, args):
+    def set(self, text, *args):
         super().delete(1.0, tk.END)
         super().insert(tk.END, text, *args)
 
