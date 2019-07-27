@@ -22,7 +22,6 @@ class EditorView:
         self.init_file_menu()
         self.init_edit_menu()
         self.init_view_menu()
-        self.init_navigate_menu()
         self.init_tools_menu()
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
@@ -48,11 +47,6 @@ class EditorView:
         view_menu.add_checkbutton(label="Highlight current line", variable=self.controller.highlight,
                                   command=self.controller.on_highlight)
         self.menu_bar.add_cascade(label="View", menu=view_menu)
-
-    def init_navigate_menu(self):
-        navigate_menu = tk.Menu(self.menu_bar, tearoff=False)
-        navigate_menu.add_command(label="To configurator", command=self.controller.on_to_configurator)
-        self.menu_bar.add_cascade(label="Navigate", menu=navigate_menu)
 
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
@@ -127,11 +121,6 @@ class EditorController:
     def on_highlight(self):
         self.count += 1
         print(self.count)
-
-    def on_to_configurator(self):
-        from configurator import ConfiguratorView
-        self.view.clear()
-        ConfiguratorView(self.view.root)
 
     def on_view_image_link(self):
         self.count += 1
