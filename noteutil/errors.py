@@ -26,6 +26,16 @@ class NoteError(NoteUtilError):
     pass
 
 
+class IncorrectConfig(NoteError):
+    def __init__(self, lines):
+        super().__init__("There was an incorrect number of lines in the config file: {0} (should be 13).".format(lines))
+
+
+class NoteFileNotFound(NoteError):
+    def __init__(self, file_name):
+        super().__init__("The file: {0} was not found".format(file_name))
+
+
 class ExtraSeparator(NoteError):
     def __init__(self, content):
         super().__init__("There was more than one separator in the line content: {0}".format(content))
