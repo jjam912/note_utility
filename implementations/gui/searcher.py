@@ -271,8 +271,10 @@ class SearcherController:
 
     def on_to_editor(self):
         from editor import EditorView
-        self.view.clear()
-        EditorView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        toplevel = tk.Tk()
+        toplevel.geometry("1600x900+160+90")
+        EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
+        toplevel.mainloop()
 
     def on_to_quizzer(self):
         from quizzer import QuizzerView
