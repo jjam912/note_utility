@@ -434,8 +434,8 @@ class Leitner:
         """
 
         kwargs = dict()
-        boxes = self.boxes
-        for box_number, pairs in boxes.items():
+        boxes = {}
+        for box_number, pairs in self.boxes.items():
             boxes[box_number] = list(map(lambda p: p.rcontent, pairs))
 
         kwargs["boxes"] = boxes
