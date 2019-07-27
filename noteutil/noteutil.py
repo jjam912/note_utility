@@ -164,6 +164,11 @@ class NoteUtil:
         """Parses the config file into NoteUtil attributes."""
 
         with open("temp.cfg", mode="r") as f:
+            lines = f.readlines()
+            if len(lines) != 13:
+                raise IncorrectConfig(len(lines))
+
+        with open("temp.cfg", mode="r") as f:
             lines = readlines(f)
 
             # Read line by line to get each variable
@@ -223,6 +228,11 @@ class NoteUtil:
         """Strips the note file of empty lines, and comments.
         Writes the content to the .nu file.
         """
+
+        try:
+            open(self.note_file, mode="r").close()
+        except FileNotFoundError:
+            raise NoteFileNotFound(self.note_file)
 
         with open(self.note_file, mode="r") as f:
             raw_notes = ""
