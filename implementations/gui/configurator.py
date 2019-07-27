@@ -154,6 +154,7 @@ class ConfiguratorController:
             self.view.text_editor.delete(1.0, tk.END)
             self.view.text_editor.insert(tk.END, file.read())
             self.file_update(file)
+            self.on_compile()
         return "break"
 
     def file_update(self, file):
@@ -168,7 +169,7 @@ class ConfiguratorController:
         if self.config_file_path is None:
             return self.on_save_as()
         with open(self.config_file_path, mode="w") as f:
-            f.write(self.view.text_editor.get(1.0, tk.END))
+            f.write(self.view.text_editor.get(1.0, tk.END).strip())
         return "break"
 
     def on_save_as(self):
@@ -179,7 +180,7 @@ class ConfiguratorController:
         if file:
             self.file_update(file)
             with open(self.config_file_path, mode="w") as f:
-                f.write(self.view.text_editor.get(1.0, tk.END))
+                f.write(self.view.text_editor.get(1.0, tk.END).strip())
         return "break"
 
     def on_compile(self):
