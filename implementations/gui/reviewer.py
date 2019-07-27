@@ -1,6 +1,8 @@
 import tkinter as tk
 import tkinter.font as tkfont
+import tkinter.messagebox as tkmsgbox
 from disabled_text import DisabledText
+import webbrowser
 
 
 class ReviewerView:
@@ -13,8 +15,6 @@ class ReviewerView:
         self.reveal_label = None
         self.init_menu_bar()
 
-        self.current_session = tk.StringVar(value="Current session: None")
-        self.reviewing_boxes = tk.StringVar(value="Reviewing boxes: None")
         self.session_label = None
         self.boxes_label = None
         self.generate_button = None
@@ -105,11 +105,11 @@ class ReviewerView:
 
     def init_top_frame(self):
         top_frame = tk.Frame(self.root)
-        self.session_label = tk.Label(top_frame, textvariable=self.current_session)
+        self.session_label = tk.Label(top_frame, textvariable=self.controller.current_session)
         self.session_label.pack(side=tk.LEFT, expand=True, fill=tk.X)
         self.generate_button = tk.Button(top_frame, text="Generate", command=self.controller.on_generate)
         self.generate_button.pack(side=tk.LEFT, fill=tk.X)
-        self.boxes_label = tk.Label(top_frame, textvariable=self.reviewing_boxes)
+        self.boxes_label = tk.Label(top_frame, textvariable=self.controller.reviewing_boxes)
         self.boxes_label.pack(side=tk.LEFT, expand=True, fill=tk.X)
         top_frame.pack(side=tk.TOP, fill=tk.X, pady=(10, 0))
 
@@ -139,7 +139,8 @@ class ReviewerView:
         button_frame = tk.Frame(self.root)
         self.correct_button = tk.Button(button_frame, text="Correct", bd=5, command=self.controller.on_add_correct)
         self.correct_button.pack(side=tk.LEFT, padx=(10, 0), pady=10, fill=tk.X, expand=True)
-        self.reveal_button = tk.Button(button_frame, text="Reveal", bd=5, command=self.controller.on_reveal)
+        self.reveal_button = tk.Button(button_frame, textvariable=self.controller.reveal, bd=5,
+                                       command=self.controller.on_reveal)
         self.reveal_button.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.X, expand=True)
         self.incorrect_button = tk.Button(button_frame, text="Incorrect", bd=5, command=self.controller.on_add_incorrect)
         self.incorrect_button.pack(side=tk.LEFT, padx=(0, 10), pady=10, fill=tk.X, expand=True)
@@ -157,51 +158,128 @@ class ReviewerController:
         self.noteutil = noteutil
         self.quiz = quiz
         self.leitner = leitner
+        self.reveal = tk.StringVar(value="Reveal")
+        self.current_session = tk.StringVar(value="Current session: None")
+        self.reviewing_boxes = tk.StringVar(value="Reviewing boxes: None")
 
+        self.current_note = None
         self.random = tk.BooleanVar(value=True)
         self.term_first = tk.BooleanVar(value=True)
+        self.term_format1 = tk.StringVar(value="Define the term: {0}")
+        self.term_format2 = tk.StringVar(value="The definition is: {1}\nNote Index: {3}")
+        self.definition_format1 = tk.StringVar(value="Guess the term: {1}")
+        self.definition_format2 = tk.StringVar(value="The term is: {0}\n Note Index: {3}")
+
         self.include_extensions = tk.BooleanVar(value=True)
-        self.reveal = True
+        self.extension_format = {}
+        self.extension_first = {}
+        for ext_name in self.noteutil.extension_names:
+            self.extension_format[ext_name] = "\n{0}: {1}"
+            self.extension_first[ext_name] = False
+
+    def format_question(self, note, term_format):
+        question = term_format.get().format(note.term, note.definition, note.separator, note.nindex)
+        if self.include_extensions.get():
+            for extension in note.extensions:
+                if self.extension_first[extension.name]:
+                    question += self.extension_format[extension.name].format(
+                        extension.name, extension.content)
+        self.view.term_text.delete(1.0, tk.END)
+        self.view.term_text.insert(tk.END, question)
+
+    def format_answer(self, note, definition_format):
+        answer = definition_format.get().format(note.term, note.definition, note.separator, note.nindex)
+        if self.include_extensions.get():
+            for extension in note.extensions:
+                if not self.extension_first[extension.name]:
+                    answer += self.extension_format[extension.name].format(
+                        extension.name, extension.content)
+        self.view.definition_text.delete(1.0, tk.END)
+        self.view.definition_text.insert(tk.END, answer)
 
     def on_generate(self):
-        self.count += 1
-        print(self.count)
+        self.current_session.set("Current session: " + str(self.leitner.session))
+        self.reviewing_boxes.set("Reviewing boxes: " + ", ".join(list(map(str, filter(
+            lambda number: self.leitner.session % self.leitner.times[number] == 0, self.leitner.boxes)))))
+        for note in self.leitner.generate(randomize=self.random.get()):
+            if self.term_first.get():
+                self.format_question(note, self.term_format1)
+            else:
+                self.format_question(note, self.term_format2)
+            self.current_note = None
+            self.view.reveal_button.wait_variable(self.reveal)
+            if self.term_first.get():
+                self.format_answer(note, self.definition_format2)
+            else:
+                self.format_answer(note, self.definition_format1)
+            self.current_note = note
+            self.view.reveal_button.wait_variable(self.reveal)
+
+        self.current_note = None
+        if tkmsgbox.askyesno(title="Save?", message="All pairs have been cycled.\n"
+                                                    "Would you like to save your progress?"):
+            self.leitner.save()
+            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
 
     def on_reveal(self):
         option_menu = self.view.menu_bar.winfo_children()[0]
-        if self.reveal:
-            self.view.reveal_button.config(text="Continue")
+        if self.reveal.get() == "Reveal":
+            self.reveal.set("Continue")
             option_menu.entryconfigure(2, label="Continue")
         else:
-            self.view.reveal_button.config(text="Reveal")
+            self.reveal.set("Reveal")
             option_menu.entryconfigure(2, label="Reveal")
-        self.reveal = not self.reveal
 
     def on_add_correct(self):
-        self.view.term_text.insert(tk.END, "Heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy :) ")
+        if self.current_note is not None:
+            self.leitner.correct(self.current_note)
+            self.on_reveal()
 
     def on_add_incorrect(self):
-        self.view.term_text.delete(1.0, tk.END)
+        if self.current_note is not None:
+            self.leitner.incorrect(self.current_note)
+            self.on_reveal()
 
     def on_view_boxes(self):
-        self.count += 1
-        print(self.count)
+        boxes_description = ""
+        for number, time in self.leitner.times.items():
+            boxes_description += "Box {0} with time period {1}".format(number, time) + "\n"
+        tkmsgbox.showinfo(title="Box periods", message=boxes_description)
 
     def on_view_notes(self):
-        self.count += 1
-        print(self.count)
+        boxes_description = ""
+        for number, note_list in self.leitner.boxes.items():
+            boxes_description += "Box {0} with time period {1}:\n".format(number, self.leitner.times[number])
+            for note in note_list:
+                boxes_description += "\t" + note.content + "\n"
+        view_notes_toplevel = tk.Toplevel(self.view.root)
+        view_notes_toplevel.title("Your notes in boxes")
+        view_notes_toplevel.transient(self.view.root)
+
+        notes_text = DisabledText(view_notes_toplevel, wrap=tk.NONE)
+        notes_text.set(boxes_description)
+        xscrollbar = tk.Scrollbar(view_notes_toplevel, orient=tk.HORIZONTAL, command=notes_text.xview)
+        yscrollbar = tk.Scrollbar(view_notes_toplevel, orient=tk.VERTICAL, command=notes_text.yview)
+        notes_text.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        notes_text.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     def on_load(self):
-        self.count += 1
-        print(self.count)
+        if tkmsgbox.askyesno(title="Load?", message="Would you like to load your previous save?\n"
+                                                    "This will reset any unsaved progress."):
+            self.leitner.load()
+            tkmsgbox.showinfo(title="Success!", message="Loaded successfully.")
 
     def on_save(self):
-        self.count += 1
-        print(self.count)
+        if tkmsgbox.askyesno(title="Save?", message="Would you like to save your progress?"):
+            self.leitner.save()
+            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
 
     def on_reset(self):
-        self.count += 1
-        print(self.count)
+        if tkmsgbox.askyesno(title="Reset?", message="Are you sure you want to reset?\n"
+                                                     "This will reset all of your boxes to 1."):
+            self.leitner.reset()
+            tkmsgbox.showinfo(title="Success!", message="Reset successfully.")
 
     def on_edit_note(self):
         self.count += 1
@@ -274,12 +352,4 @@ class ReviewerController:
         print(self.count)
 
     def on_about(self):
-        self.count += 1
-        print(self.count)
-
-
-if __name__ == "__main__":
-    gui = tk.Tk()
-    app = ReviewerView(gui, None, None, None)
-    gui.geometry("1600x900+160+90")
-    gui.mainloop()
+        webbrowser.open("https://github.com/JJamesWWang/noteutil")
