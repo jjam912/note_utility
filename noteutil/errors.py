@@ -28,7 +28,8 @@ class NoteError(NoteUtilError):
 
 class IncorrectConfig(NoteError):
     def __init__(self, lines):
-        super().__init__("There was an incorrect number of lines in the config file: {0} (should be 13).".format(lines))
+        super().__init__("There was an "
+                         "incorrect number of lines in the config file: {0} (should be at least 13).".format(lines))
 
 
 class NoteFileNotFound(NoteError):
