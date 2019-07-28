@@ -165,7 +165,7 @@ class NoteUtil:
 
         with open("temp.cfg", mode="r") as f:
             lines = f.readlines()
-            if len(lines) != 13:
+            if len(lines) < 13:
                 raise IncorrectConfig(len(lines))
 
         with open("temp.cfg", mode="r") as f:
@@ -509,8 +509,14 @@ class NoteUtil:
         """
 
         content = content.strip()
-        note = self.make_note(content, nindex)
-        self.notes[nindex] = note
+        old_note = self.notes.pop(nindex)
+        try:
+            note = self.make_note(content, nindex)
+            self.notes.insert(nindex, note)
+            print(note)
+        except NoteError:
+            self.notes.insert(nindex, old_note)
+            raise
         return self.notes[nindex]
 
     def insert(self, note, nindex):
