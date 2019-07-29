@@ -1,3 +1,4 @@
+"""The starting program that greets the user and then continues to the configurator."""
 import tkinter as tk
 import tkinter.font as tkfont
 from configurator import ConfiguratorView
@@ -23,10 +24,12 @@ class Main:
         self.continue_label.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
     def clear(self):
+        """Removes all of the root's children"""
         for widget in self.root.winfo_children():
             widget.destroy()
 
     def to_configurator(self, event=None):
+        """Clears the root and then instantiates the ConfiguratorView."""
         self.root.unbind("<Button-1>")
         self.clear()
         ConfiguratorView(self.root)
