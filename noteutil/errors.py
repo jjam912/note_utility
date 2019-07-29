@@ -93,7 +93,17 @@ class LeitnerError(Exception):
 
 class TimeTooShort(LeitnerError):
     def __init__(self, time):
-        super().__init__("The time period for the added box must be longer than the last box: (> {0})".format(time))
+        super().__init__("The time period for the box must be longer than the last box: (> {0})".format(time))
+
+
+class TimeTooLong(LeitnerError):
+    def __init__(self, time):
+        super().__init__("The time period for the box must be shorter than the box after it: (< {0})".format(time))
+
+
+class BoxNumberError(LeitnerError, KeyError):
+    def __init__(self, box):
+        super().__init__("The box number was out of bounds: {0}".format(box))
 
 
 class LastBox(LeitnerError):
