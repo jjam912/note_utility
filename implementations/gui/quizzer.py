@@ -10,6 +10,7 @@ class QuizzerView:
         self.controller = QuizzerController(self, noteutil, quiz, leitner)
 
         self.menu_bar = None
+        self.reveal_label = None
         self.init_menu_bar()
 
         self.division_combobox = None
@@ -94,6 +95,7 @@ class QuizzerView:
     def init_help_menu(self):
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
         help_menu.add_command(label="What is this?", command=self.controller.on_what_is_this)
+        help_menu.add_command(label="Key shortcuts", command=self.controller.on_key_shortcuts)
         help_menu.add_command(label="About", command=self.controller.on_about)
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
 
@@ -269,6 +271,10 @@ class QuizzerController:
         print(self.count)
 
     def on_what_is_this(self):
+        self.count += 1
+        print(self.count)
+
+    def on_key_shortcuts(self):
         self.count += 1
         print(self.count)
 
