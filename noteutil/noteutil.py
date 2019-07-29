@@ -477,15 +477,15 @@ class NoteUtil:
                 notes.append(note)
         return notes if notes else None
 
-    def edit(self, content: str, nindex: int) -> Note:
+    def edit(self, nindex: int, content: str) -> Note:
         """Given a Note, edit its content.
         This can have many side effects:
-            1. Changes to heading
+            1. Changes to heading.
             2. Changes to heading_name.
             3. Changes to categories.
             4. Changes to extensions.
             5. Changes to whether the Note is a pair.
-            6. Changes to term, definition, and separator
+            6. Changes to term, definition, and separator.
 
         Parameters
         ----------
@@ -501,6 +501,7 @@ class NoteUtil:
 
         Raises
         ------
+        NoteError
         HeadingJump
         MissingBound
         ExtraSeparator
@@ -511,9 +512,7 @@ class NoteUtil:
         content = content.strip()
         old_note = self.notes.pop(nindex)
         try:
-            note = self.make_note(content, nindex)
-            self.notes.insert(nindex, note)
-            print(note)
+            self.make_note(content, nindex)
         except NoteError:
             self.notes.insert(nindex, old_note)
             raise
