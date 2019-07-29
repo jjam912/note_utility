@@ -774,7 +774,7 @@ class Commands:
             if time is None:
                 return print("Canceled input. (1)")
             try:
-                leitner.add_box(time)
+                leitner.append_box(time)
                 return print("Added Box {0} with time period {1}.".format(len(leitner.boxes), time))
             except TimeTooShort:
                 return print("The time you gave was shorter than the current longest time period.")
