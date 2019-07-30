@@ -38,6 +38,10 @@ class ConfiguratorView:
         if not os.path.exists(NOTES_DIR):
             os.mkdir(NOTES_DIR)
 
+        if noteutil is not None and quiz is not None and leitner is not None:
+            with open(noteutil.config_file, mode="r") as f:
+                self.controller.on_open_config(f)
+
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
@@ -143,9 +147,10 @@ class ConfiguratorController:
             self.view.text_editor.insert(tk.END, f.read())
         return "break"
 
-    def on_open_config(self):
-        file = tkfiledialog.askopenfile(defaultextension=".txt", initialdir=NOTES_DIR, title="Open config",
-                                        filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
+    def on_open_config(self, file=None):
+        if file is None:
+            file = tkfiledialog.askopenfile(defaultextension=".txt", initialdir=NOTES_DIR, title="Open config",
+                                            filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
         if file:
             self.view.text_editor.delete(1.0, tk.END)
             self.view.text_editor.insert(tk.END, file.read())
@@ -166,7 +171,6 @@ class ConfiguratorController:
             return self.on_save_as()
         with open(self.config_file_path, mode="w") as f:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
-        return "break"
 
     def on_save_as(self):
         file_name = self.config_file_name if self.config_file_name is not None else ""
@@ -228,21 +232,40 @@ class ConfiguratorController:
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
     def on_editor(self):
+        from editor import EditorView
         toplevel = tk.Tk()
         toplevel.geometry("1600x900+160+90")
         EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
         toplevel.mainloop()
 
     def on_searcher(self):
-        self.view.clear()
-        SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        from searcher import SearcherView
+        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
+        if option == tk.YES:
+            self.on_save()
+            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        if option is not None:
+            self.view.clear()
+            SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_quizzer(self):
-        self.view.clear()
-        QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        from quizzer import QuizzerView
+        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
+        if option == tk.YES:
+            self.on_save()
+            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        if option is not None:
+            self.view.clear()
+            QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_reviewer(self):
-        self.view.clear()
+        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
+        if option == tk.YES:
+            self.on_save()
+            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        if option is not None:
+            from reviewer import ReviewerView
+            self.view.clear()
         ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
 
