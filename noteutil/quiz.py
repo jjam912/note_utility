@@ -505,6 +505,7 @@ class Leitner:
                         self.boxes[1].remove(pair)
                         pair.box = box_number
                         self.boxes[box_number].append(pair)
+                        break
 
         for box_number, time_period in kwargs.get("times", self.times).items():
             self.times[int(box_number)] = int(time_period)
