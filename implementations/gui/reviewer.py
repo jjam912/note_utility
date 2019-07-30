@@ -136,9 +136,6 @@ class ReviewerView:
         question_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, pady=10, expand=True)
         self.question_text.insert(tk.END, "The question will be asked here.")
 
-        self.question_text.bind("<Control-C>", lambda e: self.question_text.event_generate("<<Copy>>"))
-        self.question_text.bind("<Control-c>", lambda e: self.question_text.event_generate("<<Copy>>"))
-
     def init_answer_text(self):
         answer_frame = tk.LabelFrame(self.root, text="Answer", padx=10, pady=10, labelanchor=tk.N)
         self.answer_text = tk.Text(answer_frame, wrap=tk.WORD, width=1, height=1,
@@ -149,9 +146,6 @@ class ReviewerView:
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         answer_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, expand=True)
         self.answer_text.insert(tk.END, "The answer will be displayed here.")
-
-        self.answer_text.bind("<Control-C>", lambda e: self.answer_text.event_generate("<<Copy>>"))
-        self.answer_text.bind("<Control-c>", lambda e: self.answer_text.event_generate("<<Copy>>"))
 
     def init_button_frame(self):
         button_frame = tk.Frame(self.root)
