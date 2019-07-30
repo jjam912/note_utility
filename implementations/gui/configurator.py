@@ -231,39 +231,34 @@ class ConfiguratorController:
         EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
         toplevel.mainloop()
 
-    def on_searcher(self):
-        from searcher import SearcherView
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.on_save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+    def handle_exit(self):
+        option = "ok"
+        with open(self.config_file_path, mode="r") as f:
+            if f.read().strip() != self.view.text_editor.get(1.0, tk.END).strip():
+                option = tkmsgbox.askyesnocancel(title="Window closing",
+                                                 message="Would you like to save before closing?")
+                if option == tk.YES:
+                    self.on_save()
+                    tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
         if option is not None:
             self.view.clear()
+        return option
+
+    def on_searcher(self):
+        from searcher import SearcherView
+        if self.handle_exit() is not None:
             SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_quizzer(self):
         from quizzer import QuizzerView
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.on_save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            self.view.clear()
+        if self.handle_exit() is not None:
             QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_reviewer(self):
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.on_save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            from reviewer import ReviewerView
-            self.view.clear()
-        ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        from reviewer import ReviewerView
+        if self.handle_exit() is not None:
+            ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
-
-if __name__ == "__main__":
-    gui = tk.Tk()
-    app = ConfiguratorView(gui)
-    gui.geometry("1600x900+160+90")
-    gui.mainloop()
+    def on_close(self):
+        if self.handle_exit() is not None:
+            self.view.root.destroy()
