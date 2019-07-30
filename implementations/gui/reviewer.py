@@ -9,7 +9,11 @@ import webbrowser
 
 
 class ReviewerView:
-    KEY_SHORTCUTS = ""
+    KEY_SHORTCUTS = ("H: Reveal\n"
+                     "J: Correct\n"
+                     "K: Incorrect\n"
+                     "L: Continue\n"
+                     )
 
     def __init__(self, root, noteutil, quiz, leitner):
         self.root = root
@@ -40,7 +44,7 @@ class ReviewerView:
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
-        self.init_option_menu()
+        self.init_options_menu()
         self.init_notes_menu()
         self.init_navigate_menu()
         self.init_tools_menu()
@@ -48,21 +52,21 @@ class ReviewerView:
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
 
-    def init_option_menu(self):
-        option_menu = tk.Menu(self.menu_bar, tearoff=False)
+    def init_options_menu(self):
+        options_menu = tk.Menu(self.menu_bar, tearoff=False)
 
-        option_menu.add_command(label="Generate", command=self.controller.on_generate)
-        option_menu.add_separator()
+        options_menu.add_command(label="Generate", command=self.controller.on_generate)
+        options_menu.add_separator()
 
-        option_menu.add_command(label="Reveal", command=self.controller.on_reveal)
-        option_menu.add_command(label="Mark correct", command=self.controller.on_add_correct)
-        option_menu.add_command(label="Mark incorrect", command=self.controller.on_add_incorrect)
-        option_menu.add_separator()
+        options_menu.add_command(label="Reveal", command=self.controller.on_reveal)
+        options_menu.add_command(label="Mark correct", command=self.controller.on_add_correct)
+        options_menu.add_command(label="Mark incorrect", command=self.controller.on_add_incorrect)
+        options_menu.add_separator()
 
-        option_menu.add_command(label="Load", command=self.controller.on_load)
-        option_menu.add_command(label="Save", command=self.controller.on_save)
-        option_menu.add_command(label="Reset", command=self.controller.on_reset)
-        self.menu_bar.add_cascade(label="Options", menu=option_menu)
+        options_menu.add_command(label="Load", command=self.controller.on_load)
+        options_menu.add_command(label="Save", command=self.controller.on_save)
+        options_menu.add_command(label="Reset", command=self.controller.on_reset)
+        self.menu_bar.add_cascade(label="Options", menu=options_menu)
 
     def init_notes_menu(self):
         notes_menu = tk.Menu(self.menu_bar, tearoff=False)
