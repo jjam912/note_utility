@@ -335,7 +335,7 @@ class ReviewerView:
                                                         textvariable=toplevel.extension_name)
         toplevel.extension_name_combobox.pack(side=tk.TOP, fill=tk.X, expand=True)
         tk.Label(toplevel,
-                 text=r"Use {0} for extension_name and {1} for content, \n for newline, and \t for tab.")
+                 text=r"Use {0} for extension_name, {1} for content, \n for newline, and \t for tab.").pack(side=tk.TOP)
         toplevel.extension_format = tk.StringVar()
         tk.Entry(toplevel, textvariable=toplevel.extension_format).pack(side=tk.TOP, expand=True, fill=tk.X)
         tk.Label(toplevel, text="Show with:").pack(side=tk.TOP)
@@ -469,8 +469,9 @@ class ReviewerController:
 
     def on_save(self):
         self.leitner.save()
+        self.view.answer_text.delete(1.0, tk.END)
+        self.view.answer_text.insert(tk.END, "Your progress was saved.")
         self.on_generate()
-        self.view.answer_text.config(text="Your progress has been saved.")
         return "break"
 
     def on_reset(self):
