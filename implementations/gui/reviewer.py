@@ -423,10 +423,9 @@ class ReviewerController:
             self.view.reveal_button.wait_variable(self.reveal)
 
         self.current_note = None
-        if tkmsgbox.askyesno(title="Save?", message="All pairs have been cycled.\n"
-                                                    "Would you like to save your progress?"):
-            self.leitner.save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        self.leitner.save()
+        tkmsgbox.showinfo(title="Complete!", message="All pairs have been cycled.\n"
+                                                     "Your progress has been saved.")
 
     def on_reveal(self):
         option_menu = self.view.menu_bar.winfo_children()[0]
@@ -469,10 +468,9 @@ class ReviewerController:
             self.on_generate()
 
     def on_save(self):
-        if tkmsgbox.askyesno(title="Save?", message="Would you like to save your progress?"):
-            self.leitner.save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-            self.on_generate()
+        self.leitner.save()
+        self.on_generate()
+        self.view.answer_text.config(text="Your progress has been saved.")
         return "break"
 
     def on_reset(self):
@@ -514,13 +512,9 @@ class ReviewerController:
 
     def on_to_configurator(self):
         from configurator import ConfiguratorView
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.leitner.save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            self.view.clear()
-            ConfiguratorView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        self.leitner.save()
+        self.view.clear()
+        ConfiguratorView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_editor(self):
         from editor import EditorView
@@ -531,23 +525,15 @@ class ReviewerController:
 
     def on_to_searcher(self):
         from searcher import SearcherView
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.leitner.save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            self.view.clear()
-            SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        self.leitner.save()
+        self.view.clear()
+        SearcherView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_quizzer(self):
         from quizzer import QuizzerView
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.leitner.save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            self.view.clear()
-            QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
+        self.leitner.save()
+        self.view.clear()
+        QuizzerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_append_box(self):
         boxes_description = ""
@@ -653,16 +639,9 @@ class ReviewerController:
     def on_what_is_this(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil/blob/master/README.md#Leitner")
 
-    def on_key_shortcuts(self):
-        tkmsgbox.showinfo(title="Key shortcuts", message=self.view.KEY_SHORTCUTS)
-
     def on_about(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
     def on_close(self):
-        option = tkmsgbox.askyesnocancel(title="Window closing", message="Would you like to save before closing?")
-        if option == tk.YES:
-            self.leitner.save()
-            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            self.view.root.destroy()
+        self.leitner.save()
+        self.view.root.destroy()
