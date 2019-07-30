@@ -524,7 +524,7 @@ class ReviewerController:
             tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
         if option is not None:
             self.view.clear()
-            ConfiguratorView(self.view.root)
+            ConfiguratorView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_editor(self):
         from editor import EditorView
