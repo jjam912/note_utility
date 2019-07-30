@@ -4,7 +4,6 @@ import tkinter.messagebox as tkmsgbox
 import tkinter.simpledialog as tksimpledialog
 import tkinter.ttk as ttk
 import noteutil as nu
-from disabled_text import DisabledText
 import webbrowser
 
 
@@ -128,8 +127,8 @@ class ReviewerView:
 
     def init_question_text(self):
         question_frame = tk.LabelFrame(self.root, text="Question", padx=10, pady=10, labelanchor=tk.N)
-        self.question_text = DisabledText(question_frame, wrap=tk.WORD, state=tk.DISABLED, width=1, height=1,
-                                          font=tkfont.Font(family="Ubuntu", size=12))
+        self.question_text = tk.Text(question_frame, wrap=tk.WORD, width=1, height=1,
+                                     font=tkfont.Font(family="Ubuntu", size=12))
         yscrollbar = tk.Scrollbar(question_frame, orient=tk.VERTICAL, command=self.question_text.yview)
         self.question_text.config(yscrollcommand=yscrollbar.set)
         self.question_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -137,16 +136,22 @@ class ReviewerView:
         question_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, pady=10, expand=True)
         self.question_text.insert(tk.END, "The question will be asked here.")
 
+        self.question_text.bind("<Control-C>", lambda e: self.question_text.event_generate("<<Copy>>"))
+        self.question_text.bind("<Control-c>", lambda e: self.question_text.event_generate("<<Copy>>"))
+
     def init_answer_text(self):
         answer_frame = tk.LabelFrame(self.root, text="Answer", padx=10, pady=10, labelanchor=tk.N)
-        self.answer_text = DisabledText(answer_frame, wrap=tk.WORD, state=tk.DISABLED, width=1, height=1,
-                                        font=tkfont.Font(family="Ubuntu", size=12))
+        self.answer_text = tk.Text(answer_frame, wrap=tk.WORD, width=1, height=1,
+                                   font=tkfont.Font(family="Ubuntu", size=12))
         yscrollbar = tk.Scrollbar(answer_frame, orient=tk.VERTICAL, command=self.answer_text.yview)
         self.answer_text.config(yscrollcommand=yscrollbar.set)
         self.answer_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         answer_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, expand=True)
         self.answer_text.insert(tk.END, "The answer will be displayed here.")
+
+        self.answer_text.bind("<Control-C>", lambda e: self.answer_text.event_generate("<<Copy>>"))
+        self.answer_text.bind("<Control-c>", lambda e: self.answer_text.event_generate("<<Copy>>"))
 
     def init_button_frame(self):
         button_frame = tk.Frame(self.root)
@@ -166,11 +171,11 @@ class ReviewerView:
         toplevel.title("Your notes in boxes")
         toplevel.transient(self.root)
 
-        toplevel.notes_text = DisabledText(toplevel, wrap=tk.NONE)
-        toplevel.notes_text.set(boxes_description)
+        toplevel.notes_text = tk.Text(toplevel, wrap=tk.NONE)
+        toplevel.notes_text.insert(tk.END, boxes_description)
         xscrollbar = tk.Scrollbar(toplevel, orient=tk.HORIZONTAL, command=toplevel.notes_text.xview)
         yscrollbar = tk.Scrollbar(toplevel, orient=tk.VERTICAL, command=toplevel.notes_text.yview)
-        toplevel.notes_text.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        toplevel.notes_text.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set, state=tk.DISABLED)
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
         toplevel.notes_text.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
