@@ -105,9 +105,6 @@ class ConfiguratorView:
         self.controller.on_new_config()
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=40, pady=10)
 
-        self.text_editor.bind("<Control-a>", self.controller.on_select_all)
-        self.text_editor.bind("<Control-A>", self.controller.on_select_all)
-
     def init_actions_frame(self):
         actions_frame = tk.LabelFrame(self.root, text="Choose a method of review:")
         self.editor_button = tk.Button(actions_frame, text="Editor", bd=5, command=self.controller.on_editor)
@@ -212,10 +209,6 @@ class ConfiguratorController:
     def on_replace(self):
         self.count += 1
         print(self.count)
-
-    def on_select_all(self, event=None):
-        self.view.text_editor.tag_add(tk.SEL, 1.0, tk.END)
-        return "break"
 
     def on_line_numbers(self):
         self.count += 1
