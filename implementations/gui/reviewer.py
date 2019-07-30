@@ -8,12 +8,6 @@ import webbrowser
 
 
 class ReviewerView:
-    KEY_SHORTCUTS = ("H: Reveal\n"
-                     "J: Correct\n"
-                     "K: Incorrect\n"
-                     "L: Continue\n"
-                     )
-
     def __init__(self, root, noteutil, quiz, leitner):
         self.root = root
         self.root.title("NoteUtil Reviewer")
@@ -111,7 +105,6 @@ class ReviewerView:
     def init_help_menu(self):
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
         help_menu.add_command(label="What is this?", command=self.controller.on_what_is_this)
-        help_menu.add_command(label="Key shortcuts", command=self.controller.on_key_shortcuts)
         help_menu.add_command(label="About", command=self.controller.on_about)
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
 
