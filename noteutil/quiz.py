@@ -533,19 +533,23 @@ class Leitner:
 
         self.noteutil = noteutil
 
-        new_pairs = copy.deepcopy(self.noteutil.pairs[::-1])
-        for box_number, pairs in self.boxes.items():
+        new_pairs = copy.deepcopy(self.noteutil.pairs)
+        for box_number, pairs in zip(self.boxes.keys(), list(self.boxes.values()).copy()):
             for _ in range(len(pairs)):
-                old_note = pairs.pop()
+                old_note = pairs.pop(0)
                 for new_note in new_pairs:
                     if old_note.rcontent == new_note.rcontent:
                         new_pairs.remove(new_note)
                         self.boxes[box_number].append(new_note)
                         new_note.box = box_number
                         break
+
         for pair in new_pairs:
             pair.box = 1
             self.boxes[1].append(pair)
+
+        for pairs in self.boxes.values():
+            pairs.sort(key=lambda n: n.nindex)
 
         self.last_nindex = 0
         self.session = 1
