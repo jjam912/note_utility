@@ -6,10 +6,6 @@ import tkinter.messagebox as tkmsgbox
 import noteutil as nu
 from noteutil.errors import NoteUtilError, QuizError, LeitnerError
 from disabled_text import DisabledText
-from editor import EditorView
-from searcher import SearcherView
-from quizzer import QuizzerView
-from reviewer import ReviewerView
 import webbrowser
 
 
@@ -226,8 +222,7 @@ class ConfiguratorController:
         print(self.count)
 
     def on_what_config(self):
-        self.count += 1
-        print(self.count)
+        webbrowser.open("https://github.com/JJamesWWang/noteutil/blob/master/README.md#Config")
 
     def on_about(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
