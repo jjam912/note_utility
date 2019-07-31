@@ -48,17 +48,17 @@ class ReviewerView:
     def init_options_menu(self):
         options_menu = tk.Menu(self.menu_bar, tearoff=False)
 
-        options_menu.add_command(label="Generate", command=self.controller.on_generate)
+        options_menu.add_command(label="Generate", accelerator="Ctrl+G", command=self.controller.on_generate)
         options_menu.add_separator()
 
-        options_menu.add_command(label="Reveal", command=self.controller.on_reveal)
-        options_menu.add_command(label="Mark correct", command=self.controller.on_add_correct)
-        options_menu.add_command(label="Mark incorrect", command=self.controller.on_add_incorrect)
+        options_menu.add_command(label="Reveal", accelerator="H", command=self.controller.on_reveal)
+        options_menu.add_command(label="Mark correct", accelerator="J", command=self.controller.on_add_correct)
+        options_menu.add_command(label="Mark incorrect", accelerator="K", command=self.controller.on_add_incorrect)
         options_menu.add_separator()
 
-        options_menu.add_command(label="Load", command=self.controller.on_load)
-        options_menu.add_command(label="Save", command=self.controller.on_save)
-        options_menu.add_command(label="Reset", command=self.controller.on_reset)
+        options_menu.add_command(label="Load", accelerator="Ctrl+O", command=self.controller.on_load)
+        options_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
+        options_menu.add_command(label="Reset", accelerator="Ctrl+R", command=self.controller.on_reset)
         self.menu_bar.add_cascade(label="Options", menu=options_menu)
 
     def init_notes_menu(self):
@@ -67,8 +67,8 @@ class ReviewerView:
         notes_menu.add_command(label="View notes", command=self.controller.on_view_notes)
         notes_menu.add_separator()
 
-        notes_menu.add_command(label="Edit current note", command=self.controller.on_edit_note)
-        notes_menu.add_command(label="Quick search", command=self.controller.on_quick_search)
+        notes_menu.add_command(label="Edit current note", accelerator="Ctrl+E", command=self.controller.on_edit_note)
+        notes_menu.add_command(label="Quick search", accelerator="Ctrl+F", command=self.controller.on_quick_search)
         self.menu_bar.add_cascade(label="Notes", menu=notes_menu)
 
     def init_navigate_menu(self):
@@ -81,9 +81,9 @@ class ReviewerView:
 
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
-        tools_menu.add_command(label="View image link", command=self.init_image_link_view)
+        tools_menu.add_command(label="View image link", accelerator="Ctrl+I", command=self.init_image_link_view)
+        tools_menu.add_command(label="Display LaTeX", accelerator="Ctrl+L", command=self.init_display_latex_view)
         tools_menu.add_command(label="Font selector", command=self.init_font_chooser_view)
-        tools_menu.add_command(label="Display LaTeX", command=self.init_display_latex_view)
         self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
     def init_settings_menu(self):
@@ -407,6 +407,7 @@ class ReviewerController:
         self.reveal.set("Reveal")
         option_menu = self.view.menu_bar.winfo_children()[0]
         option_menu.entryconfigure(2, label="Reveal")
+        option_menu.entryconfigure(2, accelerator="L")
 
         for note in self.leitner.generate(randomize=self.random.get()):
             if self.term_first.get():
@@ -432,9 +433,11 @@ class ReviewerController:
         if self.reveal.get() == "Reveal":
             self.reveal.set("Continue")
             option_menu.entryconfigure(2, label="Continue")
+            option_menu.entryconfigure(2, accelerator="L")
         else:
             self.reveal.set("Reveal")
             option_menu.entryconfigure(2, label="Reveal")
+            option_menu.entryconfigure(2, accelerator="H")
 
     def on_add_correct(self):
         if self.current_note is not None:
