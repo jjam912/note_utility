@@ -49,16 +49,30 @@ class ReviewerView:
         options_menu = tk.Menu(self.menu_bar, tearoff=False)
 
         options_menu.add_command(label="Generate", accelerator="Ctrl+G", command=self.controller.on_generate)
+        self.root.bind("<Control-G>", lambda e: self.controller.on_generate)
+        self.root.bind("<Control-g>", lambda e: self.controller.on_generate)
         options_menu.add_separator()
 
         options_menu.add_command(label="Reveal", accelerator="H", command=self.controller.on_reveal)
+        self.root.bind("<H>", lambda e: self.controller.on_reveal)
+        self.root.bind("<h>", lambda e: self.controller.on_reveal)
         options_menu.add_command(label="Mark correct", accelerator="J", command=self.controller.on_add_correct)
+        self.root.bind("<J>", lambda e: self.controller.on_generate)
+        self.root.bind("<j>", lambda e: self.controller.on_generate)
         options_menu.add_command(label="Mark incorrect", accelerator="K", command=self.controller.on_add_incorrect)
+        self.root.bind("<G>", lambda e: self.controller.on_generate)
+        self.root.bind("<g>", lambda e: self.controller.on_generate)
         options_menu.add_separator()
 
         options_menu.add_command(label="Load", accelerator="Ctrl+O", command=self.controller.on_load)
+        self.root.bind("<Control-O>", lambda e: self.controller.on_load)
+        self.root.bind("<Control-o>", lambda e: self.controller.on_load)
         options_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
+        self.root.bind("<Control-S>", lambda e: self.controller.on_save)
+        self.root.bind("<Control-s>", lambda e: self.controller.on_save)
         options_menu.add_command(label="Reset", accelerator="Ctrl+R", command=self.controller.on_reset)
+        self.root.bind("<Control-R>", lambda e: self.controller.on_reset)
+        self.root.bind("<Control-r>", lambda e: self.controller.on_reset)
         self.menu_bar.add_cascade(label="Options", menu=options_menu)
 
     def init_notes_menu(self):
@@ -68,7 +82,11 @@ class ReviewerView:
         notes_menu.add_separator()
 
         notes_menu.add_command(label="Edit current note", accelerator="Ctrl+E", command=self.controller.on_edit_note)
+        self.root.bind("<Control-E>", lambda e: self.controller.on_edit_note)
+        self.root.bind("<Control-e>", lambda e: self.controller.on_edit_note)
         notes_menu.add_command(label="Quick search", accelerator="Ctrl+F", command=self.controller.on_quick_search)
+        self.root.bind("<Control-F>", lambda e: self.controller.on_quick_search)
+        self.root.bind("<Control-f>", lambda e: self.controller.on_quick_search)
         self.menu_bar.add_cascade(label="Notes", menu=notes_menu)
 
     def init_navigate_menu(self):
@@ -82,7 +100,11 @@ class ReviewerView:
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
         tools_menu.add_command(label="View image link", accelerator="Ctrl+I", command=self.init_image_link_view)
+        self.root.bind("<Control-I>", lambda e: self.init_image_link_view)
+        self.root.bind("<Control-i>", lambda e: self.init_image_link_view)
         tools_menu.add_command(label="Display LaTeX", accelerator="Ctrl+L", command=self.init_display_latex_view)
+        self.root.bind("<Control-L>", lambda e: self.init_display_latex_view)
+        self.root.bind("<Control-l>", lambda e: self.init_display_latex_view)
         tools_menu.add_command(label="Font selector", command=self.init_font_chooser_view)
         self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
@@ -407,7 +429,11 @@ class ReviewerController:
         self.reveal.set("Reveal")
         option_menu = self.view.menu_bar.winfo_children()[0]
         option_menu.entryconfigure(2, label="Reveal")
-        option_menu.entryconfigure(2, accelerator="L")
+        option_menu.entryconfigure(2, accelerator="H")
+        self.view.root.unbind("<L>")
+        self.view.root.unbind("<l>")
+        self.view.root.bind("<H>", lambda e: self.on_reveal)
+        self.view.root.bind("<h>", lambda e: self.on_reveal)
 
         for note in self.leitner.generate(randomize=self.random.get()):
             if self.term_first.get():
@@ -434,10 +460,18 @@ class ReviewerController:
             self.reveal.set("Continue")
             option_menu.entryconfigure(2, label="Continue")
             option_menu.entryconfigure(2, accelerator="L")
+            self.view.root.unbind("<H>")
+            self.view.root.unbind("<h>")
+            self.view.root.bind("<L>", lambda e: self.on_reveal)
+            self.view.root.bind("<l>", lambda e: self.on_reveal)
         else:
             self.reveal.set("Reveal")
             option_menu.entryconfigure(2, label="Reveal")
             option_menu.entryconfigure(2, accelerator="H")
+            self.view.root.unbind("<L>")
+            self.view.root.unbind("<l>")
+            self.view.root.bind("<H>", lambda e: self.on_reveal)
+            self.view.root.bind("<h>", lambda e: self.on_reveal)
 
     def on_add_correct(self):
         if self.current_note is not None:
