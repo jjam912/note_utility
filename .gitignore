@@ -2,9 +2,13 @@ noteutil.egg-info
 build
 dist
 noteutil/tests
+implementations/gui/notes
 docs/_build
 .idea
 *.json
 venv
 .venv
 .vscode
+*.pyc
+temp.*
+tempCodeRunnerFile.py
