@@ -508,13 +508,18 @@ class ReviewerController:
         if tkmsgbox.askyesno(title="Load?", message="Would you like to load your previous save?\n"
                                                     "This will reset any unsaved progress."):
             self.leitner.load()
-            tkmsgbox.showinfo(title="Success!", message="Loaded successfully.")
+            self.view.answer_text.config(state=tk.NORMAL)
+            self.view.answer_text.delete(1.0, tk.END)
+            self.view.answer_text.insert(tk.END, "Your previous save was loaded.")
+            self.view.answer_text.config(state=tk.DISABLED)
             self.on_generate()
 
     def on_save(self):
         self.leitner.save()
+        self.view.answer_text.config(state=tk.NORMAL)
         self.view.answer_text.delete(1.0, tk.END)
         self.view.answer_text.insert(tk.END, "Your progress was saved.")
+        self.view.answer_text.config(state=tk.DISABLED)
         self.on_generate()
         return "break"
 
@@ -522,7 +527,10 @@ class ReviewerController:
         if tkmsgbox.askyesno(title="Reset?", message="Are you sure you want to reset?\n"
                                                      "This will reset all of your notes to box 1."):
             self.leitner.reset()
-            tkmsgbox.showinfo(title="Success!", message="Reset successfully.")
+            self.view.answer_text.config(state=tk.NORMAL)
+            self.view.answer_text.delete(1.0, tk.END)
+            self.view.answer_text.insert(tk.END, "Your progress was reset.")
+            self.view.answer_text.config(state=tk.DISABLED)
             self.on_generate()
 
     def edit_note(self, view):
