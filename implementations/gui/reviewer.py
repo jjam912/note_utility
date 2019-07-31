@@ -150,6 +150,7 @@ class ReviewerView:
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         question_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, pady=10, expand=True)
         self.question_text.insert(tk.END, "The question will be asked here.")
+        self.question_text.config(state=tk.DISABLED)
 
     def init_answer_text(self):
         answer_frame = tk.LabelFrame(self.root, text="Answer", padx=10, pady=10, labelanchor=tk.N)
@@ -161,6 +162,7 @@ class ReviewerView:
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         answer_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, expand=True)
         self.answer_text.insert(tk.END, "The answer will be displayed here.")
+        self.answer_text.config(state=tk.DISABLED)
 
     def init_button_frame(self):
         button_frame = tk.Frame(self.root)
@@ -409,8 +411,10 @@ class ReviewerController:
                 if self.extension_first[extension.name]:
                     question += self.extension_format[extension.name].format(
                         extension.name, extension.content)
+        self.view.question_text.config(state=tk.NORMAL)
         self.view.question_text.delete(1.0, tk.END)
         self.view.question_text.insert(tk.END, question)
+        self.view.question_text.config(state=tk.DISABLED)
 
     def format_answer(self, note, definition_format):
         answer = definition_format.get().format(note.term, note.definition, note.separator, note.nindex)
@@ -419,8 +423,10 @@ class ReviewerController:
                 if not self.extension_first[extension.name]:
                     answer += self.extension_format[extension.name].format(
                         extension.name, extension.content)
+        self.view.answer_text.config(state=tk.NORMAL)
         self.view.answer_text.delete(1.0, tk.END)
         self.view.answer_text.insert(tk.END, answer)
+        self.view.answer_text.config(state=tk.DISABLED)
 
     def on_generate(self):
         self.current_session.set("Current session: " + str(self.leitner.session))
