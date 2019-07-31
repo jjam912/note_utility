@@ -8,7 +8,7 @@
 >>> NOTEUTIL CONFIGURATION
 >>> -------------------------------------------
 >>>
->>> [Required] File name (include . ending) - To detect your notes file.
+>>> [Required] File path - To detect your notes file.
 
 >>> [Optional] Comments (cannot be >>>) - Prefix a line in your notes with this so it is ignored while your notes are being read.
 
