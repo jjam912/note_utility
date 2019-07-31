@@ -696,5 +696,7 @@ class ReviewerController:
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
     def on_close(self):
+        import sys
         self.leitner.save()
         self.view.root.destroy()
+        sys.exit()
