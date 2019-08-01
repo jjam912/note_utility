@@ -329,6 +329,8 @@ class NoteUtil:
                 kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]
                 content = content[len(kwargs["heading"]):].lstrip()
                 kwargs["heading_name"] = content
+                if kwargs["heading_name"] in self.heading_names:
+                    raise DuplicateHeading(kwargs["heading_name"])
 
                 kwargs["begin_nindex"] = nindex + 1
         return content
