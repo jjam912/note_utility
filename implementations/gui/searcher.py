@@ -1,5 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkfont
+import noteutil as nu
+from noteutil.comparisons import CompareOptions
 
 
 class SearcherView:
@@ -49,6 +51,42 @@ class SearcherView:
         # Category
         self.by_category_names_button = None
         self.init_sub_compare()
+
+        self.buttons = [
+            self.by_eval_button, self.by_content_button, self.by_rcontent_button, self.by_nindex_button,
+            self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
+            self.by_has_categories_button, self.if_equals_button, self.if_similar_button, self.if_in_button,
+            self.if_simin_button, self.if_less_button, self.if_lesse_button, self.if_greater_button,
+            self.if_greatere_button, self.and_button, self.or_button, self.by_term_button, self.by_definition_button,
+            self.by_heading_button, self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
+            self.by_end_nindex_button, self.by_extension_names_button, self.by_category_names_button
+        ]
+
+        self.buttons_eval = {
+            self.by_content_button:         "content=\"{0}\"",
+            self.by_rcontent_button:        "rcontent=\"{1}\"",
+            self.by_nindex_button:          "nindex={2}",
+            self.by_term_button:            "term=\"{3}\"",
+            self.by_definition_button:      "definition=\"{4}\"",
+            self.by_heading_button:         "heading=\"{5}\"",
+            self.by_level_button:           "level={6}",
+            self.by_level_name_button:      "level_name=\"{7}\"",
+            self.by_begin_nindex_button:    "begin_nindex={8}",
+            self.by_end_nindex_button:      "end_nindex={9}",
+            self.by_extension_names_button: "extension_names=\"{10}\"",
+            self.by_category_names_button:  "category_names=\"{11}\"",
+        }
+
+        self.compare_button_functions = {
+            self.if_equals_button:      CompareOptions.EQUALS,
+            self.if_similar_button:     CompareOptions.SIMILAR,
+            self.if_in_button:          CompareOptions.IN,
+            self.if_simin_button:       CompareOptions.SIMIN,
+            self.if_less_button:        CompareOptions.LESS,
+            self.if_lesse_button:       CompareOptions.LESSE,
+            self.if_greater_button:     CompareOptions.GREATER,
+            self.if_greatere_button:    CompareOptions.GREATERE,
+        }
 
         self.search_bar = None
         self.search_button = None
