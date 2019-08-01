@@ -478,7 +478,6 @@ class ReviewerController:
             self.view.root.unbind("<l>")
             self.view.root.bind("<H>", lambda e: self.on_reveal())
             self.view.root.bind("<h>", lambda e: self.on_reveal())
-        return "break"
 
     def on_add_correct(self):
         if self.current_note is not None:
@@ -521,7 +520,6 @@ class ReviewerController:
         self.view.answer_text.insert(tk.END, "Your progress was saved.")
         self.view.answer_text.config(state=tk.DISABLED)
         self.on_generate()
-        return "break"
 
     def on_reset(self):
         if tkmsgbox.askyesno(title="Reset?", message="Are you sure you want to reset?\n"
@@ -635,7 +633,6 @@ class ReviewerController:
         except ValueError:
             tkmsgbox.showerror(title="Error saving term format", message="Something went wrong "
                                                                          "formatting the term.")
-            return "break"
         if view.new_term_format1.get() != "":
             view.new_term_format1.set(view.new_term_format1.get().replace("\\n", "\n"))
             view.new_term_format1.set(view.new_term_format1.get().replace("\\t", "\t"))
@@ -654,8 +651,6 @@ class ReviewerController:
         except ValueError:
             tkmsgbox.showerror(title="Error saving definition format", message="Something went wrong "
                                                                                "formatting the definition")
-            return "break"
-
         if view.new_definition_format1.get() != "":
             view.new_definition_format1.set(view.new_definition_format1.get().replace("\\n", "\n"))
             view.new_definition_format1.set(view.new_definition_format1.get().replace("\\t", "\t"))
@@ -679,7 +674,6 @@ class ReviewerController:
         except ValueError:
             tkmsgbox.showerror(title="Error saving extension format", message="Something went wrong "
                                                                               "formatting the extension")
-            return "break"
         if view.extension_format.get() != "":
             view.extension_format.set(view.extension_format.get().replace("\\n", "\n"))
             view.extension_format.set(view.extension_format.get().replace("\\t", "\t"))
