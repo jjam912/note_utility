@@ -50,8 +50,8 @@ class Main:
         self.root.bind_class(tk.Text.__name__, "<Control-y>", lambda e: e.widget.event_generate("<<Redo>>"))
         self.root.bind_class(tk.Text.__name__, "<Control-A>", lambda e: e.widget.event_generate("<<Select All>>"))
         self.root.bind_class(tk.Text.__name__, "<Control-a>", lambda e: e.widget.event_generate("<<Select All>>"))
-
         self.root.bind_class(tk.Text.__name__, "<Button-3>", self.popup)
+
         self.root.bind_class(tk.Entry.__name__, "<<Select All>>", lambda e: e.widget.select_range(0, tk.END))
         self.root.bind_class(tk.Entry.__name__, "<<Select All>>", lambda e: e.widget.select_range(0, tk.END))
         self.root.bind_class(tk.Entry.__name__, "<Control-A>", lambda e: e.widget.event_generate("<<Select All>>"))
