@@ -11,69 +11,42 @@ class SearcherView:
         self.menu_bar = None
         self.init_menu_bar()
 
-        self.by_eval = tk.BooleanVar()
         self.by_eval_button = None
-        self.by_content = tk.BooleanVar(value=True)
         self.by_content_button = None
-        self.by_rcontent = tk.BooleanVar()
         self.by_rcontent_button = None
-        self.by_nindex = tk.BooleanVar()
         self.by_nindex_button = None
-        self.by_is_pair = tk.BooleanVar()
         self.by_is_pair_button = None
-        self.by_is_heading = tk.BooleanVar()
         self.by_is_heading_button = None
-        self.by_has_extensions = tk.BooleanVar()
         self.by_has_extensions_button = None
-        self.by_has_categories = tk.BooleanVar()
         self.by_has_categories_button = None
         self.init_main_compare()
 
-        self.if_equals = tk.BooleanVar()
         self.if_equals_button = None
-        self.if_similar = tk.BooleanVar()
         self.if_similar_button = None
-        self.if_in = tk.BooleanVar()
         self.if_in_button = None
-        self.if_simin = tk.BooleanVar(value=True)
         self.if_simin_button = None
-        self.if_less = tk.BooleanVar()
         self.if_less_button = None
-        self.if_lesse = tk.BooleanVar()
         self.if_lesse_button = None
-        self.if_greater = tk.BooleanVar()
         self.if_greater_button = None
-        self.if_greatere = tk.BooleanVar()
         self.if_greatere_button = None
         self.init_compare_options()
 
-        self.and_this = tk.BooleanVar()
-        self.and_this_button = None
-        self.or_this = tk.BooleanVar()
-        self.or_this_button = None
+        self.and_button = None
+        self.or_button = None
         self.init_narrow_options()
 
         # Pair
-        self.by_term = tk.BooleanVar()
         self.by_term_button = None
-        self.by_definition = tk.BooleanVar()
         self.by_definition_button = None
         # Heading
-        self.by_heading = tk.BooleanVar()
         self.by_heading_button = None
-        self.by_level = tk.BooleanVar()
         self.by_level_button = None
-        self.by_level_name = tk.BooleanVar()
         self.by_level_name_button = None
-        self.by_begin_nindex = tk.BooleanVar()
         self.by_begin_nindex_button = None
-        self.by_end_nindex = tk.BooleanVar()
         self.by_end_nindex_button = None
         # Extension
-        self.by_extension_names = tk.BooleanVar()
         self.by_extension_names_button = None
         # Category
-        self.by_category_names = tk.BooleanVar()
         self.by_category_names_button = None
         self.init_sub_compare()
 
@@ -130,83 +103,86 @@ class SearcherView:
 
     def init_main_compare(self):
         search_frame = tk.LabelFrame(self.root, text="Search by:")
-        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.by_eval, text="Eval")
+        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval")
         self.by_eval_button.grid(row=0, column=0, sticky=tk.W)
-        self.by_content_button = tk.Checkbutton(search_frame, variable=self.by_content, text="Content")
+        self.by_content_button = tk.Checkbutton(search_frame, variable=self.controller.by_content, text="Content")
         self.by_content_button.grid(row=1, column=0, sticky=tk.W)
-        self.by_rcontent_button = tk.Checkbutton(search_frame, variable=self.by_rcontent, text="Raw content")
+        self.by_rcontent_button = tk.Checkbutton(search_frame, variable=self.controller.by_rcontent, text="Raw content")
         self.by_rcontent_button.grid(row=2, column=0, sticky=tk.W)
-        self.by_nindex_button = tk.Checkbutton(search_frame, variable=self.by_nindex, text="Note index")
+        self.by_nindex_button = tk.Checkbutton(search_frame, variable=self.controller.by_nindex, text="Note index")
         self.by_nindex_button.grid(row=3, column=0, sticky=tk.W)
-        self.by_is_pair_button = tk.Checkbutton(search_frame, variable=self.by_is_pair, text="Is pair",
+        self.by_is_pair_button = tk.Checkbutton(search_frame, variable=self.controller.by_is_pair, text="Is pair",
                                                 command=self.controller.on_is_pair)
         self.by_is_pair_button.grid(row=0, column=1, sticky=tk.W)
-        self.by_is_heading_button = tk.Checkbutton(search_frame, variable=self.by_is_heading, text="Is heading",
-                                                   command=self.controller.on_is_heading)
+        self.by_is_heading_button = tk.Checkbutton(search_frame, variable=self.controller.by_is_heading,
+                                                   text="Is heading", command=self.controller.on_is_heading)
         self.by_is_heading_button.grid(row=1, column=1, sticky=tk.W)
-        self.by_has_extensions_button = tk.Checkbutton(search_frame, variable=self.by_has_extensions,
+        self.by_has_extensions_button = tk.Checkbutton(search_frame, variable=self.controller.by_has_extensions,
                                                        text="Has extensions", command=self.controller.on_has_extensions)
         self.by_has_extensions_button.grid(row=2, column=1, sticky=tk.W)
-        self.by_has_categories_button = tk.Checkbutton(search_frame, variable=self.by_has_categories,
+        self.by_has_categories_button = tk.Checkbutton(search_frame, variable=self.controller.by_has_categories,
                                                        text="Has categories", command=self.controller.on_has_categories)
         self.by_has_categories_button.grid(row=3, column=1, sticky=tk.W)
         search_frame.grid(row=0, column=1, sticky=tk.EW)
 
     def init_compare_options(self):
         compare_frame = tk.LabelFrame(self.root, text="Compare by:")
-        self.if_equals_button = tk.Checkbutton(compare_frame, variable=self.if_equals, text="Equals")
+        self.if_equals_button = tk.Checkbutton(compare_frame, variable=self.controller.if_equals, text="Equals")
         self.if_equals_button.grid(row=0, column=0, sticky=tk.W)
-        self.if_similar_button = tk.Checkbutton(compare_frame, variable=self.if_similar, text="Similar")
+        self.if_similar_button = tk.Checkbutton(compare_frame, variable=self.controller.if_similar, text="Similar")
         self.if_similar_button.grid(row=1, column=0, sticky=tk.W)
-        self.if_in_button = tk.Checkbutton(compare_frame, variable=self.if_in, text="In")
+        self.if_in_button = tk.Checkbutton(compare_frame, variable=self.controller.if_in, text="In")
         self.if_in_button.grid(row=2, column=0, sticky=tk.W)
-        self.if_simin_button = tk.Checkbutton(compare_frame, variable=self.if_simin, text="Similar in")
+        self.if_simin_button = tk.Checkbutton(compare_frame, variable=self.controller.if_simin, text="Similar in")
         self.if_simin_button.grid(row=3, column=0, sticky=tk.W)
-        self.if_less_button = tk.Checkbutton(compare_frame, variable=self.if_less, text="Less than")
+        self.if_less_button = tk.Checkbutton(compare_frame, variable=self.controller.if_less, text="Less than")
         self.if_less_button.grid(row=0, column=1, sticky=tk.W)
-        self.if_lesse_button = tk.Checkbutton(compare_frame, variable=self.if_lesse, text="Less/Equal")
+        self.if_lesse_button = tk.Checkbutton(compare_frame, variable=self.controller.if_lesse, text="Less/Equal")
         self.if_lesse_button.grid(row=1, column=1, sticky=tk.W)
-        self.if_greater_button = tk.Checkbutton(compare_frame, variable=self.if_greater, text="Greater than")
+        self.if_greater_button = tk.Checkbutton(compare_frame, variable=self.controller.if_greater, text="Greater than")
         self.if_greater_button.grid(row=2, column=1, sticky=tk.W)
-        self.if_greatere_button = tk.Checkbutton(compare_frame, variable=self.if_greatere, text="Greater/Equal")
+        self.if_greatere_button = tk.Checkbutton(compare_frame, variable=self.controller.if_greatere,
+                                                 text="Greater/Equal")
         self.if_greatere_button.grid(row=3, column=1, sticky=tk.W)
         compare_frame.grid(row=0, column=2, sticky=tk.EW)
 
     def init_narrow_options(self):
         narrow_frame = tk.LabelFrame(self.root, text="Narrow with:")
-        self.or_this_button = tk.Checkbutton(narrow_frame, variable=self.or_this, text="Or", state=tk.DISABLED)
-        self.or_this_button.grid(row=0, column=0, sticky=tk.W)
-        self.and_this_button = tk.Checkbutton(narrow_frame, variable=self.and_this, text="And", state=tk.DISABLED)
-        self.and_this_button.grid(row=1, column=0, sticky=tk.W)
+        self.or_button = tk.Checkbutton(narrow_frame, variable=self.controller.or_this, text="Or",
+                                        state=tk.DISABLED)
+        self.or_button.grid(row=0, column=0, sticky=tk.W)
+        self.and_button = tk.Checkbutton(narrow_frame, variable=self.controller.and_this, text="And",
+                                         state=tk.DISABLED)
+        self.and_button.grid(row=1, column=0, sticky=tk.W)
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
 
     def init_sub_compare(self):
         subsearch_frame = tk.LabelFrame(self.root, text="Search by:")
-        self.by_term_button = tk.Checkbutton(subsearch_frame, variable=self.by_term,
+        self.by_term_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_term,
                                              text="Term", state=tk.DISABLED)
         self.by_term_button.grid(row=0, column=0, sticky=tk.W)
-        self.by_definition_button = tk.Checkbutton(subsearch_frame, variable=self.by_definition,
+        self.by_definition_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_definition,
                                                    text="Definition", state=tk.DISABLED)
         self.by_definition_button.grid(row=1, column=0, sticky=tk.W)
-        self.by_heading_button = tk.Checkbutton(subsearch_frame, variable=self.by_heading,
+        self.by_heading_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_heading,
                                                 text="Heading", state=tk.DISABLED)
         self.by_heading_button.grid(row=2, column=0, sticky=tk.W)
-        self.by_level_button = tk.Checkbutton(subsearch_frame, variable=self.by_level,
+        self.by_level_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_level,
                                               text="Level", state=tk.DISABLED)
         self.by_level_button.grid(row=3, column=0, sticky=tk.W)
-        self.by_level_name_button = tk.Checkbutton(subsearch_frame, variable=self.by_level_name,
+        self.by_level_name_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_level_name,
                                                    text="Level name", state=tk.DISABLED)
         self.by_level_name_button.grid(row=4, column=0, sticky=tk.W)
-        self.by_begin_nindex_button = tk.Checkbutton(subsearch_frame, variable=self.by_begin_nindex,
+        self.by_begin_nindex_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_begin_nindex,
                                                      text="Begin note index", state=tk.DISABLED)
         self.by_begin_nindex_button.grid(row=5, column=0, sticky=tk.W)
-        self.by_end_nindex_button = tk.Checkbutton(subsearch_frame, variable=self.by_end_nindex,
+        self.by_end_nindex_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_end_nindex,
                                                    text="End note index", state=tk.DISABLED)
         self.by_end_nindex_button.grid(row=6, column=0, sticky=tk.W)
-        self.by_extension_names_button = tk.Checkbutton(subsearch_frame, variable=self.by_extension_names,
+        self.by_extension_names_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_extension_names,
                                                         text="Extension names", state=tk.DISABLED)
         self.by_extension_names_button.grid(row=7, column=0, sticky=tk.W)
-        self.by_category_names_button = tk.Checkbutton(subsearch_frame, variable=self.by_category_names,
+        self.by_category_names_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_category_names,
                                                        text="Category names", state=tk.DISABLED)
         self.by_category_names_button.grid(row=8, column=0, sticky=tk.W)
         subsearch_frame.grid(row=1, column=0, rowspan=2, padx=20, pady=20, sticky=tk.NS)
@@ -259,6 +235,42 @@ class SearcherController:
         self.noteutil = noteutil
         self.quiz = quiz
         self.leitner = leitner
+        self.search_eval = "self.noteutil.get_list("
+
+        self.by_eval = tk.BooleanVar()
+        self.by_content = tk.BooleanVar(value=True)
+        self.by_rcontent = tk.BooleanVar()
+        self.by_nindex = tk.BooleanVar()
+        self.by_is_pair = tk.BooleanVar()
+        self.by_is_heading = tk.BooleanVar()
+        self.by_has_extensions = tk.BooleanVar()
+        self.by_has_categories = tk.BooleanVar()
+
+        self.if_equals = tk.BooleanVar()
+        self.if_similar = tk.BooleanVar()
+        self.if_in = tk.BooleanVar()
+        self.if_simin = tk.BooleanVar(value=True)
+        self.if_less = tk.BooleanVar()
+        self.if_lesse = tk.BooleanVar()
+        self.if_greater = tk.BooleanVar()
+        self.if_greatere = tk.BooleanVar()
+
+        # Pair
+        self.by_term = tk.BooleanVar()
+        self.by_definition = tk.BooleanVar()
+        # Heading
+        self.by_heading = tk.BooleanVar()
+        self.by_level = tk.BooleanVar()
+        self.by_level_name = tk.BooleanVar()
+        self.by_begin_nindex = tk.BooleanVar()
+        self.by_end_nindex = tk.BooleanVar()
+        # Extension
+        self.by_extension_names = tk.BooleanVar()
+        # Category
+        self.by_category_names = tk.BooleanVar()
+
+        self.and_this = tk.BooleanVar()
+        self.or_this = tk.BooleanVar()
 
     def on_change_output_format(self):
         self.count += 1
