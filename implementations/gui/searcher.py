@@ -326,37 +326,37 @@ class SearcherController:
         self.count += 1
         print(self.count)
 
-    def set_checkbuttons(self, state, *buttons):
+    def set_checkbuttons_state(self, state, *buttons):
         for button in buttons:
             button.config(state=state)
 
     def on_is_pair(self):
         if self.view.by_is_pair.get():
-            self.set_checkbuttons(tk.NORMAL, self.view.by_term_button, self.view.by_definition_button)
+            self.set_checkbuttons_state(tk.NORMAL, self.view.by_term_button, self.view.by_definition_button)
         else:
-            self.set_checkbuttons(tk.DISABLED, self.view.by_term_button, self.view.by_definition_button)
+            self.set_checkbuttons_state(tk.DISABLED, self.view.by_term_button, self.view.by_definition_button)
 
     def on_is_heading(self):
         if self.view.by_is_heading.get():
-            self.set_checkbuttons(tk.NORMAL, self.view.by_heading_button, self.view.by_level_button,
-                                  self.view.by_level_name_button, self.view.by_begin_nindex_button,
-                                  self.view.by_end_nindex_button)
+            self.set_checkbuttons_state(tk.NORMAL, self.view.by_heading_button, self.view.by_level_button,
+                                        self.view.by_level_name_button, self.view.by_begin_nindex_button,
+                                        self.view.by_end_nindex_button)
         else:
-            self.set_checkbuttons(tk.DISABLED, self.view.by_heading_button, self.view.by_level_button,
-                                  self.view.by_level_name_button, self.view.by_begin_nindex_button,
-                                  self.view.by_end_nindex_button)
+            self.set_checkbuttons_state(tk.DISABLED, self.view.by_heading_button, self.view.by_level_button,
+                                        self.view.by_level_name_button, self.view.by_begin_nindex_button,
+                                        self.view.by_end_nindex_button)
 
     def on_has_extensions(self):
         if self.view.by_has_extensions.get():
-            self.set_checkbuttons(tk.NORMAL, self.view.by_extension_names_button)
+            self.set_checkbuttons_state(tk.NORMAL, self.view.by_extension_names_button)
         else:
-            self.set_checkbuttons(tk.DISABLED, self.view.by_extension_names_button)
+            self.set_checkbuttons_state(tk.DISABLED, self.view.by_extension_names_button)
 
     def on_has_categories(self):
         if self.view.by_has_categories.get():
-            self.set_checkbuttons(tk.NORMAL, self.view.by_category_names_button)
+            self.set_checkbuttons_state(tk.NORMAL, self.view.by_category_names_button)
         else:
-            self.set_checkbuttons(tk.DISABLED, self.view.by_category_names_button)
+            self.set_checkbuttons_state(tk.DISABLED, self.view.by_category_names_button)
 
     def on_search(self, event=None):
         self.count += 1
