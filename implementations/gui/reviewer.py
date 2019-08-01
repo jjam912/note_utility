@@ -84,9 +84,9 @@ class ReviewerView:
         notes_menu.add_command(label="Edit current note", accelerator="Ctrl+E", command=self.controller.on_edit_note)
         self.root.bind("<Control-E>", lambda e: self.controller.on_edit_note())
         self.root.bind("<Control-e>", lambda e: self.controller.on_edit_note())
-        notes_menu.add_command(label="Quick search", accelerator="Ctrl+F", command=self.controller.on_quick_search)
-        self.root.bind("<Control-F>", lambda e: self.controller.on_quick_search())
-        self.root.bind("<Control-f>", lambda e: self.controller.on_quick_search())
+        notes_menu.add_command(label="Quick search", accelerator="Ctrl+F", command=self.init_quick_search_view)
+        self.root.bind("<Control-F>", lambda e: self.init_quick_search_view())
+        self.root.bind("<Control-f>", lambda e: self.init_quick_search_view())
         self.menu_bar.add_cascade(label="Notes", menu=notes_menu)
 
     def init_navigate_menu(self):
@@ -180,7 +180,7 @@ class ReviewerView:
 
     def init_note_view(self, boxes_description):
         toplevel = tk.Toplevel(self.root)
-        toplevel.title("Your notes in boxes")
+        toplevel.title("Your Notes in boxes")
         toplevel.transient(self.root)
 
         toplevel.notes_text = tk.Text(toplevel, wrap=tk.NONE)
@@ -557,9 +557,6 @@ class ReviewerController:
             view.results_list.insert(tk.END, *list(map(lambda n: n.rcontent, notes)))
         else:
             tkmsgbox.showinfo(title="Nothing", message="No results found.")
-
-    def on_quick_search(self):
-        self.view.init_quick_search_view()
 
     def on_to_configurator(self):
         from configurator import ConfiguratorView
