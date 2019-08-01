@@ -1,6 +1,10 @@
 import tkinter as tk
 import tkinter.font as tkfont
+import tkinter.messagebox as tkmsgbox
+import tkinter.simpledialog as tksimpledialog
 import tkinter.ttk as ttk
+import noteutil as nu
+import webbrowser
 
 
 class QuizzerView:
@@ -17,16 +21,18 @@ class QuizzerView:
         self.generate_button = None
         self.init_top_frame()
 
-        self.term_text = None
-        self.init_term_text()
+        self.question_text = None
+        self.init_question_text()
 
-        self.definition_text = None
-        self.init_definition_text()
+        self.answer_text = None
+        self.init_answer_text()
 
         self.reveal_button = None
         self.correct_button = None
         self.incorrect_button = None
         self.init_button_frame()
+
+        self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
@@ -39,21 +45,32 @@ class QuizzerView:
         self.root.config(menu=self.menu_bar)
 
     def init_option_menu(self):
-        option_menu = tk.Menu(self.menu_bar, tearoff=False)
+        options_menu = tk.Menu(self.menu_bar, tearoff=False)
 
-        option_menu.add_command(label="Generate", state=tk.DISABLED, command=self.controller.on_generate)
-        option_menu.add_separator()
+        options_menu.add_command(label="Generate", accelerator="Ctrl+G", command=self.controller.on_generate)
+        options_menu.add_separator()
 
-        option_menu.add_command(label="Reveal", command=self.controller.on_reveal)
-        option_menu.add_command(label="Add to correct", command=self.controller.on_add_correct)
-        option_menu.add_command(label="Add to incorrect", command=self.controller.on_add_incorrect)
-        option_menu.add_separator()
-        
-        option_menu.add_command(label="Load", command=self.controller.on_load)
-        option_menu.add_command(label="Save", command=self.controller.on_save)
-        option_menu.add_command(label="Reset", command=self.controller.on_reset)
-        
-        self.menu_bar.add_cascade(label="Options", menu=option_menu)
+        options_menu.add_command(label="Reveal", accelerator="H", command=self.controller.on_reveal)
+        self.root.bind("<H>", lambda e: self.controller.on_reveal())
+        self.root.bind("<h>", lambda e: self.controller.on_reveal())
+        options_menu.add_command(label="Add to correct", accelerator="J", command=self.controller.on_add_correct)
+        self.root.bind("<J>", lambda e: self.controller.on_add_correct())
+        self.root.bind("<j>", lambda e: self.controller.on_add_correct())
+        options_menu.add_command(label="Add to incorrect", accelerator="K", command=self.controller.on_add_incorrect)
+        self.root.bind("<K>", lambda e: self.controller.on_add_incorrect())
+        self.root.bind("<k>", lambda e: self.controller.on_add_incorrect())
+        options_menu.add_separator()
+
+        options_menu.add_command(label="Load", accelerator="Ctrl+O", command=self.controller.on_load)
+        self.root.bind("<Control-O>", lambda e: self.controller.on_load())
+        self.root.bind("<Control-o>", lambda e: self.controller.on_load())
+        options_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
+        self.root.bind("<Control-S>", lambda e: self.controller.on_save())
+        self.root.bind("<Control-s>", lambda e: self.controller.on_save())
+        options_menu.add_command(label="Reset", accelerator="Ctrl+R", command=self.controller.on_reset)
+        self.root.bind("<Control-R>", lambda e: self.controller.on_reset())
+        self.root.bind("<Control-r>", lambda e: self.controller.on_reset())
+        self.menu_bar.add_cascade(label="Options", menu=options_menu)
 
     def init_notes_menu(self):
         notes_menu = tk.Menu(self.menu_bar, tearoff=False)
@@ -62,8 +79,12 @@ class QuizzerView:
         notes_menu.add_command(label="View unmarked", command=self.controller.on_view_unmarked)
         notes_menu.add_separator()
 
-        notes_menu.add_command(label="Edit current note", command=self.controller.on_edit_note)
-        notes_menu.add_command(label="Quick search", command=self.controller.on_quick_search)
+        notes_menu.add_command(label="Edit current note", accelerator="Ctrl+E", command=self.controller.on_edit_note)
+        self.root.bind("<Control-E>", lambda e: self.controller.on_edit_note())
+        self.root.bind("<Control-e>", lambda e: self.controller.on_edit_note())
+        notes_menu.add_command(label="Quick search", accelerator="Ctrl+F", command=self.controller.on_quick_search)
+        self.root.bind("<Control-F>", lambda e: self.controller.on_quick_search())
+        self.root.bind("<Control-f>", lambda e: self.controller.on_quick_search())
         self.menu_bar.add_cascade(label="Notes", menu=notes_menu)
 
     def init_navigate_menu(self):
@@ -76,9 +97,13 @@ class QuizzerView:
 
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
-        tools_menu.add_command(label="View image link", command=self.controller.on_view_image_link)
-        tools_menu.add_command(label="Font selector", command=self.controller.on_font_selector)
-        tools_menu.add_command(label="Display LaTeX", command=self.controller.on_display_latex)
+        tools_menu.add_command(label="View image link", accelerator="Ctrl+I", command=self.init_image_link_view)
+        self.root.bind("<Control-I>", lambda e: self.init_image_link_view())
+        self.root.bind("<Control-i>", lambda e: self.init_image_link_view())
+        tools_menu.add_command(label="Display LaTeX", accelerator="Ctrl+L", command=self.init_display_latex_view)
+        self.root.bind("<Control-L>", lambda e: self.init_display_latex_view())
+        self.root.bind("<Control-l>", lambda e: self.init_display_latex_view())
+        tools_menu.add_command(label="Font selector", command=self.init_font_chooser_view)
         self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
     def init_settings_menu(self):
@@ -89,13 +114,11 @@ class QuizzerView:
         settings_menu.add_command(label="Set term format", command=self.controller.on_set_term_format)
         settings_menu.add_command(label="Set definition format", command=self.controller.on_set_definition_format)
         settings_menu.add_command(label="Set extension format", command=self.controller.on_set_extension_format)
-
         self.menu_bar.add_cascade(label="Settings", menu=settings_menu)
 
     def init_help_menu(self):
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
         help_menu.add_command(label="What is this?", command=self.controller.on_what_is_this)
-        help_menu.add_command(label="Key shortcuts", command=self.controller.on_key_shortcuts)
         help_menu.add_command(label="About", command=self.controller.on_about)
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
 
@@ -111,36 +134,240 @@ class QuizzerView:
         self.generate_button.pack(side=tk.LEFT, padx=(0, 10), expand=True, anchor=tk.W)
         top_frame.pack(side=tk.TOP, fill=tk.X, pady=(10, 0))
 
-    def init_term_text(self):
-        term_frame = tk.LabelFrame(self.root, text="Term", padx=10, pady=10, labelanchor=tk.N)
-        self.term_text = tk.Text(term_frame, wrap=tk.WORD, state=tk.DISABLED, width=1, height=1,
-                                 font=tkfont.Font(family="Ubuntu", size=12))
-        yscrollbar = tk.Scrollbar(term_frame, orient=tk.VERTICAL, command=self.term_text.yview)
-        self.term_text.config(yscrollcommand=yscrollbar.set)
-        self.term_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    def init_question_text(self):
+        question_frame = tk.LabelFrame(self.root, text="Question", padx=10, pady=10, labelanchor=tk.N)
+        self.question_text = tk.Text(question_frame, wrap=tk.WORD, width=1, height=1,
+                                     font=tkfont.Font(family="Ubuntu", size=12))
+        yscrollbar = tk.Scrollbar(question_frame, orient=tk.VERTICAL, command=self.question_text.yview)
+        self.question_text.config(yscrollcommand=yscrollbar.set)
+        self.question_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        term_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, pady=10, expand=True)
+        question_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, pady=10, expand=True)
+        self.question_text.insert(tk.END, "The question will be asked here.")
+        self.question_text.config(state=tk.DISABLED)
 
-    def init_definition_text(self):
-        definition_frame = tk.LabelFrame(self.root, text="Definition", padx=10, pady=10, labelanchor=tk.N)
-        self.definition_text = tk.Text(definition_frame, wrap=tk.WORD, state=tk.DISABLED, width=1, height=1,
-                                       font=tkfont.Font(family="Ubuntu", size=12))
-        yscrollbar = tk.Scrollbar(definition_frame, orient=tk.VERTICAL, command=self.definition_text.yview)
-        self.definition_text.config(yscrollcommand=yscrollbar.set)
-        self.definition_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    def init_answer_text(self):
+        answer_frame = tk.LabelFrame(self.root, text="Answer", padx=10, pady=10, labelanchor=tk.N)
+        self.answer_text = tk.Text(answer_frame, wrap=tk.WORD, width=1, height=1,
+                                   font=tkfont.Font(family="Ubuntu", size=12))
+        yscrollbar = tk.Scrollbar(answer_frame, orient=tk.VERTICAL, command=self.answer_text.yview)
+        self.answer_text.config(yscrollcommand=yscrollbar.set)
+        self.answer_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        definition_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, expand=True)
+        answer_frame.pack(side=tk.TOP, fill=tk.BOTH, padx=10, expand=True)
+        self.answer_text.insert(tk.END, "The answer will be displayed here.")
+        self.answer_text.config(state=tk.DISABLED)
 
     def init_button_frame(self):
         button_frame = tk.Frame(self.root)
         self.correct_button = tk.Button(button_frame, text="Correct", bd=5, command=self.controller.on_add_correct)
         self.correct_button.pack(side=tk.LEFT, padx=(10, 0), pady=10, fill=tk.X, expand=True)
-        self.reveal_button = tk.Button(button_frame, text="Reveal", bd=5, command=self.controller.on_reveal)
+        self.reveal_button = tk.Button(button_frame, textvariable=self.controller.reveal, bd=5,
+                                       command=self.controller.on_reveal)
         self.reveal_button.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.X, expand=True)
         self.incorrect_button = tk.Button(button_frame, text="Incorrect", bd=5,
                                           command=self.controller.on_add_incorrect)
         self.incorrect_button.pack(side=tk.LEFT, padx=(0, 10), pady=10, fill=tk.X, expand=True)
         button_frame.pack(side=tk.TOP, fill=tk.X)
+
+        # Views generated by Menu commands
+
+    def init_note_view(self, boxes_description):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.title("Your notes in boxes")
+        toplevel.transient(self.root)
+
+        toplevel.notes_text = tk.Text(toplevel, wrap=tk.NONE)
+        toplevel.notes_text.insert(tk.END, boxes_description)
+        xscrollbar = tk.Scrollbar(toplevel, orient=tk.HORIZONTAL, command=toplevel.notes_text.xview)
+        yscrollbar = tk.Scrollbar(toplevel, orient=tk.VERTICAL, command=toplevel.notes_text.yview)
+        toplevel.notes_text.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set, state=tk.DISABLED)
+        yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        toplevel.notes_text.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+    def init_edit_note_view(self):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.title("Edit Note")
+        toplevel.transient(self.root)
+        tk.Label(toplevel, text="Displayed below is the raw content of the current note.",
+                 font=tkfont.Font(family="Ubuntu", size=12)).grid(row=0, column=0, ipady=5)
+
+        toplevel.text_editor = tk.Text(toplevel, wrap=tk.WORD, font=tkfont.Font(family="Ubuntu", size=12),
+                                       width=52, height=5)
+        yscrollbar = tk.Scrollbar(toplevel, orient=tk.VERTICAL, command=toplevel.text_editor.yview)
+        toplevel.text_editor.config(yscrollcommand=yscrollbar.set)
+
+        yscrollbar.grid(row=1, column=2, padx=(0, 10), sticky=tk.NS)
+        toplevel.text_editor.insert(tk.END, self.controller.current_note.rcontent)
+        toplevel.text_editor.grid(row=1, column=0, columnspan=2, padx=(10, 0), sticky=tk.NSEW)
+
+        tk.Button(toplevel, text="Edit", command=lambda: self.controller.edit_note(
+            toplevel)).grid(row=0, column=1, columnspan=2, padx=(5, 10), sticky=tk.EW)
+
+    def init_quick_search_view(self):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.title("Quick search")
+        toplevel.transient(self.root)
+        toplevel.geometry("800x450")
+
+        def is_int(string):
+            try:
+                int(string)
+                return True
+            except ValueError:
+                return False
+
+        toplevel.query = tk.StringVar()
+        query_entry = tk.Entry(toplevel, width=52, textvariable=toplevel.query, validate="key")
+        search_icon = tk.PhotoImage(file="icons/magnifying_glass.png")
+
+        def on_content():
+            query_entry.delete(0, tk.END)
+            query_entry.config(validatecommand=True)
+
+        def on_nindex():
+            query_entry.delete(0, tk.END)
+            query_entry.config(validatecommand=(toplevel.register(is_int), "%P"))
+
+        options_frame = tk.LabelFrame(toplevel, text="Search by:")
+        toplevel.search_option = tk.StringVar(value="content")
+        content_radiobutton = tk.Radiobutton(options_frame, text="Content", value="content", anchor=tk.W,
+                                             variable=toplevel.search_option, command=on_content)
+        nindex_radiobutton = tk.Radiobutton(options_frame, text="Note index", value="nindex", anchor=tk.W,
+                                            variable=toplevel.search_option, command=on_nindex)
+        content_radiobutton.pack(side=tk.TOP)
+        nindex_radiobutton.pack(side=tk.TOP)
+        toplevel.results = tk.StringVar()
+
+        list_frame = tk.Frame(toplevel)
+        toplevel.results_list = tk.Listbox(list_frame, activestyle="dotbox", listvariable=toplevel.results,
+                                           selectmode=tk.SINGLE)
+        yscrollbar = tk.Scrollbar(list_frame, orient=tk.VERTICAL, command=toplevel.results_list.yview)
+        xscrollbar = tk.Scrollbar(list_frame, orient=tk.HORIZONTAL, command=toplevel.results_list.xview)
+        toplevel.results_list.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+
+        search_button = tk.Button(query_entry, image=search_icon,
+                                  command=lambda: self.controller.quick_search(toplevel))
+        search_button.image = search_icon
+        query_entry.bind("<Return>", lambda e: self.controller.quick_search(toplevel))
+
+        options_frame.pack(side=tk.TOP, fill=tk.X)
+        search_button.pack(side=tk.RIGHT)
+        query_entry.pack(side=tk.TOP, fill=tk.X)
+        xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        toplevel.results_list.pack(fill=tk.BOTH, expand=True)
+        list_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    def init_image_link_view(self):
+        from PIL import Image
+        import requests
+        from io import BytesIO
+
+        url = tksimpledialog.askstring(title="Image", prompt="Enter the image link.")
+        if url:
+            toplevel = tk.Toplevel(self.root)
+            toplevel.transient(self.root)
+            toplevel.title("Image link")
+            toplevel.resizable(False, False)
+            tk.Label(toplevel, text="Image load failed.").grid(row=0, column=0)
+
+            # Thanks to https://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url-in-python
+            response = requests.get(url)
+            image = Image.open(BytesIO(response.content))
+            image.save("temp.png")
+
+            image = tk.PhotoImage(file="temp.png")
+            tk.Label(toplevel, image=image).grid(row=0, column=0)
+            toplevel.image = image
+
+    def init_font_chooser_view(self):
+        pass
+
+    def init_display_latex_view(self):
+        from sympy import preview
+
+        latex = tksimpledialog.askstring(title="LaTeX", prompt="Enter your latex code.")
+        if latex:
+            toplevel = tk.Toplevel(self.root)
+            toplevel.transient(self.root)
+            toplevel.title("LaTeX")
+            toplevel.resizable(False, False)
+            fail_label = tk.Label(toplevel, text="LaTeX load failed.")
+            fail_label.grid(row=0, column=0)
+
+            preview(latex, viewer="file", filename="temp.png")
+            image = tk.PhotoImage(file="temp.png")
+            tk.Label(toplevel, image=image).grid(row=0, column=0)
+            toplevel.image = image
+            fail_label.destroy()
+
+    def init_set_term_format_view(self):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.transient(self.root)
+        toplevel.title("Set term format")
+        toplevel.resizable(True, False)
+
+        tk.Label(toplevel, text=r"Use {0} for term, {1} for definition, {2} for separator, {3} for note index, "
+                                "\n" + r"\n for newline, and \t for tab" + "\n").pack(side=tk.TOP)
+        tk.Label(toplevel, text="Term format 1 (Used when the term is displayed first):").pack(side=tk.TOP)
+        toplevel.new_term_format1 = tk.StringVar()
+        tk.Entry(toplevel, textvariable=toplevel.new_term_format1).pack(side=tk.TOP, expand=True, fill=tk.X)
+        tk.Label(toplevel, text="Term format 2 (Used when the term is displayed second):").pack(side=tk.TOP)
+        toplevel.new_term_format2 = tk.StringVar()
+        tk.Entry(toplevel, textvariable=toplevel.new_term_format2).pack(side=tk.TOP, expand=True, fill=tk.X)
+        tk.Button(toplevel, text="Save", command=lambda: self.controller.on_save_term_formats(
+            toplevel)).pack(side=tk.TOP, fill=tk.X, expand=True)
+
+    def init_set_definition_format_view(self):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.transient(self.root)
+        toplevel.title("Set definition format")
+        toplevel.resizable(True, False)
+
+        tk.Label(toplevel, text=r"Use {0} for term, {1} for definition, {2} for separator, {3} for note index, "
+                                "\n" + r"\n for newline, and \t for tab" + "\n").pack(side=tk.TOP)
+        tk.Label(toplevel, text="Definition format 1 (Used when the definition is displayed first):"
+                 ).pack(side=tk.TOP)
+        toplevel.new_definition_format1 = tk.StringVar()
+        tk.Entry(toplevel, textvariable=toplevel.new_definition_format1).pack(side=tk.TOP, expand=True, fill=tk.X)
+        tk.Label(toplevel, text="Definition format 2 (Used when the definition is displayed second):"
+                 ).pack(side=tk.TOP)
+        toplevel.new_definition_format2 = tk.StringVar()
+        tk.Entry(toplevel, textvariable=toplevel.new_definition_format2).pack(side=tk.TOP, expand=True, fill=tk.X)
+        tk.Button(toplevel, text="Save", command=lambda: self.controller.on_save_definition_formats(
+            toplevel)).pack(side=tk.TOP, fill=tk.X, expand=True)
+
+    def init_set_extension_format_view(self):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.transient(self.root)
+        toplevel.title("Set extension format")
+        toplevel.resizable(True, False)
+
+        tk.Label(toplevel, text="Please select an extension:").pack(side=tk.TOP)
+
+        toplevel.extension_name = tk.StringVar()
+        toplevel.extension_name_combobox = ttk.Combobox(toplevel, justify=tk.LEFT,
+                                                        postcommand=lambda:
+                                                        self.controller.on_extension_name_prompt(toplevel),
+                                                        textvariable=toplevel.extension_name)
+        toplevel.extension_name_combobox.pack(side=tk.TOP, fill=tk.X, expand=True)
+        tk.Label(toplevel,
+                 text=r"Use {0} for extension_name, {1} for content, \n for newline, and \t for tab.").pack(
+            side=tk.TOP)
+        toplevel.extension_format = tk.StringVar()
+        tk.Entry(toplevel, textvariable=toplevel.extension_format).pack(side=tk.TOP, expand=True, fill=tk.X)
+        tk.Label(toplevel, text="Show with:").pack(side=tk.TOP)
+        toplevel.extension_first = tk.IntVar(value=-1)
+        radio_button_frame = tk.Frame(toplevel)
+        tk.Radiobutton(radio_button_frame, text="Question", value=1,
+                       variable=toplevel.extension_first).pack(side=tk.LEFT)
+        tk.Radiobutton(radio_button_frame, text="Answer", value=0,
+                       variable=toplevel.extension_first).pack(side=tk.LEFT)
+        radio_button_frame.pack(side=tk.TOP)
+        tk.Button(toplevel, text="Save", command=lambda: self.controller.on_save_extension_format(
+            toplevel)).pack(side=tk.TOP, fill=tk.X, expand=True)
 
     def clear(self):
         for widget in self.root.winfo_children():
@@ -149,7 +376,6 @@ class QuizzerView:
 
 class QuizzerController:
     def __init__(self, view, noteutil, quiz, leitner):
-        self.count = 0
         self.division = tk.StringVar(value="Select a division:")
         self.view = view
         self.noteutil = noteutil
@@ -165,6 +391,8 @@ class QuizzerController:
         self.division.set("")
         self.view.generate_button.config(state=tk.NORMAL)
         self.view.menu_bar.winfo_children()[0].entryconfigure(0, state=tk.NORMAL)
+        self.view.root.bind("<Control-G>", lambda e: self.on_generate())
+        self.view.root.bind("<Control-g>", lambda e: self.on_generate())
         self.view.division_combobox.config(values=list("1234"))
 
     def on_generate(self):
@@ -282,9 +510,8 @@ class QuizzerController:
         self.count += 1
         print(self.count)
 
-
-if __name__ == "__main__":
-    gui = tk.Tk()
-    app = QuizzerView(gui, None, None, None)
-    gui.geometry("1600x900+160+90")
-    gui.mainloop()
+    def on_close(self):
+        import sys
+        self.quiz.save()
+        self.view.root.destroy()
+        sys.exit()
