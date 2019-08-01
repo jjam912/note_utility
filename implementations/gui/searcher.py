@@ -165,22 +165,29 @@ class SearcherView:
 
     def init_compare_options(self):
         compare_frame = tk.LabelFrame(self.root, text="Compare by:")
-        self.if_equals_button = tk.Checkbutton(compare_frame, variable=self.controller.if_equals, text="Equals")
+        self.if_equals_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Equals", 
+                                               value="Equals")
         self.if_equals_button.grid(row=0, column=0, sticky=tk.W)
-        self.if_similar_button = tk.Checkbutton(compare_frame, variable=self.controller.if_similar, text="Similar")
+        self.if_similar_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Similar",
+                                                value="Similar")
         self.if_similar_button.grid(row=1, column=0, sticky=tk.W)
-        self.if_in_button = tk.Checkbutton(compare_frame, variable=self.controller.if_in, text="In")
+        self.if_in_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="In", 
+                                           value="In")
         self.if_in_button.grid(row=2, column=0, sticky=tk.W)
-        self.if_simin_button = tk.Checkbutton(compare_frame, variable=self.controller.if_simin, text="Similar in")
+        self.if_simin_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Similar in",
+                                              value="Similar in")
         self.if_simin_button.grid(row=3, column=0, sticky=tk.W)
-        self.if_less_button = tk.Checkbutton(compare_frame, variable=self.controller.if_less, text="Less than")
+        self.if_less_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Less than",
+                                             value="Less than")
         self.if_less_button.grid(row=0, column=1, sticky=tk.W)
-        self.if_lesse_button = tk.Checkbutton(compare_frame, variable=self.controller.if_lesse, text="Less/Equal")
+        self.if_lesse_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Less/Equal",
+                                              value="Less/Equal")
         self.if_lesse_button.grid(row=1, column=1, sticky=tk.W)
-        self.if_greater_button = tk.Checkbutton(compare_frame, variable=self.controller.if_greater, text="Greater than")
+        self.if_greater_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, 
+                                                text="Greater than", value="Greater than")
         self.if_greater_button.grid(row=2, column=1, sticky=tk.W)
-        self.if_greatere_button = tk.Checkbutton(compare_frame, variable=self.controller.if_greatere,
-                                                 text="Greater/Equal")
+        self.if_greatere_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option,
+                                                 text="Greater/Equal", value="Greater/Equal")
         self.if_greatere_button.grid(row=3, column=1, sticky=tk.W)
         compare_frame.grid(row=0, column=2, sticky=tk.EW)
 
@@ -284,15 +291,7 @@ class SearcherController:
         self.by_has_extensions = tk.BooleanVar()
         self.by_has_categories = tk.BooleanVar()
 
-        self.if_equals = tk.BooleanVar()
-        self.if_similar = tk.BooleanVar()
-        self.if_in = tk.BooleanVar()
-        self.if_simin = tk.BooleanVar(value=True)
-        self.if_less = tk.BooleanVar()
-        self.if_lesse = tk.BooleanVar()
-        self.if_greater = tk.BooleanVar()
-        self.if_greatere = tk.BooleanVar()
-
+        self.compare_option = tk.StringVar(value="Similar in")
         # Pair
         self.by_term = tk.BooleanVar()
         self.by_definition = tk.BooleanVar()
