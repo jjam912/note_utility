@@ -27,6 +27,8 @@ class Quiz:
         All Notes marked as correct.
     incorrect : List[Note]
         All Notes marked as incorrect.
+    unmarked : List[Note]
+        All Notes neither marked correct nor incorrect.
     pairs : List[Note]
         List of all Notes that are pairs that the Quiz is generating from.
         This can either be all pairs in NoteUtil, or only pairs inside a specific heading/category.
@@ -50,6 +52,10 @@ class Quiz:
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
         if not os.path.exists(self.qz_file):
             open(self.qz_file, mode="w").close()
+
+    @property
+    def unmarked(self):
+        return list(filterfalse(lambda p: p in self.incorrect or p in self.correct, self.noteutil.pairs))
 
     def generate(self, *, randomize: bool) -> Generator[Note, None, None]:
         """A generator that yields Notes, either chronologically or randomly.
@@ -181,7 +187,7 @@ class Quiz:
             return
         elif division == "unmarked":
             self.division = "unmarked"
-            self.pairs = list(filterfalse(lambda p: p in self.incorrect or p in self.correct, self.noteutil.pairs))
+            self.pairs = self.unmarked
             return
 
         if division in self.noteutil.heading_names:
