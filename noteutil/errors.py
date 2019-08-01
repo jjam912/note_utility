@@ -52,6 +52,11 @@ class NoDefinition(NoteError):
         super().__init__("There was no text after the separator in the line content: {0}".format(content))
 
 
+class DuplicateHeading(NoteError):
+    def __init__(self, heading_name):
+        super().__init__("There were two or more headings of the name: {0}".format(heading_name))
+
+
 class HeadingJump(NoteError):
     def __init__(self, content, previous_level, current_level):
         super().__init__("The heading level jumped down 2 or more levels: From level {0} to {1} in content: {2}".
