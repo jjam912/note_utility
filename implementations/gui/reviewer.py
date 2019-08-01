@@ -171,7 +171,8 @@ class ReviewerView:
         self.reveal_button = tk.Button(button_frame, textvariable=self.controller.reveal, bd=5,
                                        command=self.controller.on_reveal)
         self.reveal_button.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.X, expand=True)
-        self.incorrect_button = tk.Button(button_frame, text="Incorrect", bd=5, command=self.controller.on_add_incorrect)
+        self.incorrect_button = tk.Button(button_frame, text="Incorrect", bd=5,
+                                          command=self.controller.on_add_incorrect)
         self.incorrect_button.pack(side=tk.LEFT, padx=(0, 10), pady=10, fill=tk.X, expand=True)
         button_frame.pack(side=tk.TOP, fill=tk.X)
 
@@ -380,7 +381,6 @@ class ReviewerView:
 
 class ReviewerController:
     def __init__(self, view, noteutil, quiz, leitner):
-        self.count = 0
         self.view = view
         self.noteutil = noteutil
         self.quiz = quiz
