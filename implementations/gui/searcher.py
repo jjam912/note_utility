@@ -391,32 +391,32 @@ class SearcherController:
         self.leitner = leitner
         self.search_eval = "self.noteutil.get_list("
 
-        self.by_eval = tk.BooleanVar()
-        self.by_content = tk.BooleanVar(value=True)
-        self.by_rcontent = tk.BooleanVar()
-        self.by_nindex = tk.BooleanVar()
-        self.by_is_pair = tk.BooleanVar()
-        self.by_is_heading = tk.BooleanVar()
+        self.by_eval           = tk.BooleanVar()
+        self.by_content        = tk.BooleanVar(value=True)
+        self.by_rcontent       = tk.BooleanVar()
+        self.by_nindex         = tk.BooleanVar()
+        self.by_is_pair        = tk.BooleanVar()
+        self.by_is_heading     = tk.BooleanVar()
         self.by_has_extensions = tk.BooleanVar()
         self.by_has_categories = tk.BooleanVar()
 
         self.compare_option = tk.StringVar(value="Similar in")
         # Pair
-        self.by_term = tk.BooleanVar()
+        self.by_term       = tk.BooleanVar()
         self.by_definition = tk.BooleanVar()
         # Heading
-        self.by_heading = tk.BooleanVar()
-        self.by_level = tk.BooleanVar()
-        self.by_level_name = tk.BooleanVar()
+        self.by_heading      = tk.BooleanVar()
+        self.by_level        = tk.BooleanVar()
+        self.by_level_name   = tk.BooleanVar()
         self.by_begin_nindex = tk.BooleanVar()
-        self.by_end_nindex = tk.BooleanVar()
+        self.by_end_nindex   = tk.BooleanVar()
         # Extension
         self.by_extension_names = tk.BooleanVar()
         # Category
         self.by_category_names = tk.BooleanVar()
 
         self.and_this = tk.BooleanVar()
-        self.or_this = tk.BooleanVar()
+        self.or_this  = tk.BooleanVar()
 
         self.option_type = tk.StringVar(value="String")     # Can be String, Int, or Eval
 
