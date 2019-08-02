@@ -57,7 +57,7 @@ class SearcherView:
             self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
             self.by_has_categories_button, self.if_equals_button, self.if_similar_button, self.if_in_button,
             self.if_simin_button, self.if_less_button, self.if_lesse_button, self.if_greater_button,
-            self.if_greatere_button, self.and_button, self.or_button, self.by_term_button, self.by_definition_button,
+            self.if_greatere_button, self.and_this_button, self.or_this_button, self.by_term_button, self.by_definition_button,
             self.by_heading_button, self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
             self.by_end_nindex_button, self.by_extension_names_button, self.by_category_names_button
         ]
@@ -136,94 +136,137 @@ class SearcherView:
 
     def init_main_compare(self):
         search_frame = tk.LabelFrame(self.root, text="Search by:")
-        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval")
+        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval", 
+                                             state=tk.DISABLED, command=self.on_eval_button)
+        self.by_eval_button.value = self.controller.by_eval
         self.by_eval_button.grid(row=0, column=0, sticky=tk.W)
-        self.by_content_button = tk.Checkbutton(search_frame, variable=self.controller.by_content, text="Content")
+        self.by_content_button = tk.Checkbutton(search_frame, variable=self.controller.by_content, text="Content", 
+                                                command=self.on_button_click)
+        self.by_content_button.value = self.controller.by_content
         self.by_content_button.grid(row=1, column=0, sticky=tk.W)
-        self.by_rcontent_button = tk.Checkbutton(search_frame, variable=self.controller.by_rcontent, text="Raw content")
+        self.by_rcontent_button = tk.Checkbutton(search_frame, variable=self.controller.by_rcontent, text="Raw content",
+                                                 command=self.on_button_click)
+        self.by_rcontent_button.value = self.controller.by_rcontent
         self.by_rcontent_button.grid(row=2, column=0, sticky=tk.W)
-        self.by_nindex_button = tk.Checkbutton(search_frame, variable=self.controller.by_nindex, text="Note index")
+        self.by_nindex_button = tk.Checkbutton(search_frame, variable=self.controller.by_nindex, text="Note index",
+                                               state=tk.DISABLED, command=self.on_button_click)
+        self.by_nindex_button.value = self.controller.by_nindex
         self.by_nindex_button.grid(row=3, column=0, sticky=tk.W)
         self.by_is_pair_button = tk.Checkbutton(search_frame, variable=self.controller.by_is_pair, text="Is pair",
-                                                command=self.controller.on_is_pair)
+                                                command=self.on_is_pair)
+        self.by_is_pair_button.value = self.controller.by_is_pair
         self.by_is_pair_button.grid(row=0, column=1, sticky=tk.W)
         self.by_is_heading_button = tk.Checkbutton(search_frame, variable=self.controller.by_is_heading,
-                                                   text="Is heading", command=self.controller.on_is_heading)
+                                                   text="Is heading",
+                                                   command=self.on_is_heading)
+        self.by_is_heading_button.value = self.controller.by_is_heading
         self.by_is_heading_button.grid(row=1, column=1, sticky=tk.W)
         self.by_has_extensions_button = tk.Checkbutton(search_frame, variable=self.controller.by_has_extensions,
-                                                       text="Has extensions", command=self.controller.on_has_extensions)
+                                                       text="Has extensions", command=self.on_has_extensions)
+        self.by_has_extensions_button.value = self.controller.by_has_extensions
         self.by_has_extensions_button.grid(row=2, column=1, sticky=tk.W)
         self.by_has_categories_button = tk.Checkbutton(search_frame, variable=self.controller.by_has_categories,
-                                                       text="Has categories", command=self.controller.on_has_categories)
+                                                       text="Has categories", command=self.on_has_categories)
+        self.by_has_categories_button.value = self.controller.by_has_categories
         self.by_has_categories_button.grid(row=3, column=1, sticky=tk.W)
         search_frame.grid(row=0, column=1, sticky=tk.EW)
 
     def init_compare_options(self):
         compare_frame = tk.LabelFrame(self.root, text="Compare by:")
         self.if_equals_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Equals", 
-                                               value="Equals")
+                                               value="Equals", command=self.on_button_click)
+        self.if_equals_button.value = self.controller.compare_option
         self.if_equals_button.grid(row=0, column=0, sticky=tk.W)
         self.if_similar_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Similar",
-                                                value="Similar")
+                                                value="Similar", command=self.on_button_click)
+        self.if_similar_button.value = self.controller.compare_option
         self.if_similar_button.grid(row=1, column=0, sticky=tk.W)
         self.if_in_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="In", 
-                                           value="In")
-        self.if_in_button.grid(row=2, column=0, sticky=tk.W)
+                                           value="In", command=self.on_button_click)
+        self.if_in_button.value = self.controller.compare_option
+        self.if_in_button.grid(row=2, column=0, stick=tk.W)
         self.if_simin_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Similar in",
-                                              value="Similar in")
+                                              value="Similar in", command=self.on_button_click)
+        self.if_simin_button.value = self.controller.compare_option
         self.if_simin_button.grid(row=3, column=0, sticky=tk.W)
         self.if_less_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Less than",
-                                             value="Less than")
+                                             value="Less than", state=tk.DISABLED, command=self.on_button_click)
+        self.if_less_button.value = self.controller.compare_option
         self.if_less_button.grid(row=0, column=1, sticky=tk.W)
         self.if_lesse_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Less/Equal",
-                                              value="Less/Equal")
+                                              value="Less/Equal", state=tk.DISABLED, command=self.on_button_click)
+        self.if_lesse_button.value = self.controller.compare_option
         self.if_lesse_button.grid(row=1, column=1, sticky=tk.W)
         self.if_greater_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, 
-                                                text="Greater than", value="Greater than")
+                                                text="Greater than", value="Greater than", state=tk.DISABLED, 
+                                                command=self.on_button_click)
+        self.if_greater_button.value = self.controller.compare_option
         self.if_greater_button.grid(row=2, column=1, sticky=tk.W)
         self.if_greatere_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option,
-                                                 text="Greater/Equal", value="Greater/Equal")
+                                                 text="Greater/Equal", value="Greater/Equal", state=tk.DISABLED, 
+                                                 command=self.on_button_click)
+        self.if_greatere_button.value = self.controller.compare_option
         self.if_greatere_button.grid(row=3, column=1, sticky=tk.W)
         compare_frame.grid(row=0, column=2, sticky=tk.EW)
 
     def init_narrow_options(self):
         narrow_frame = tk.LabelFrame(self.root, text="Narrow with:")
-        self.or_button = tk.Checkbutton(narrow_frame, variable=self.controller.or_this, text="Or",
+        self.or_this_button = tk.Checkbutton(narrow_frame, variable=self.controller.or_this, text="Or",
                                         state=tk.DISABLED)
-        self.or_button.grid(row=0, column=0, sticky=tk.W)
-        self.and_button = tk.Checkbutton(narrow_frame, variable=self.controller.and_this, text="And",
+        self.or_this_button.value = self.controller.or_this
+        self.or_this_button.grid(row=0, column=0, sticky=tk.W)
+        self.and_this_button = tk.Checkbutton(narrow_frame, variable=self.controller.and_this, text="And",
                                          state=tk.DISABLED)
-        self.and_button.grid(row=1, column=0, sticky=tk.W)
+        self.and_this_button.value = self.controller.and_this
+        self.and_this_button.grid(row=1, column=0, sticky=tk.W)
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
 
     def init_sub_compare(self):
         subsearch_frame = tk.LabelFrame(self.root, text="Search by:")
         self.by_term_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_term,
-                                             text="Term", state=tk.DISABLED)
+                                             text="Term", state=tk.DISABLED,
+                                             command=self.on_button_click)
+        self.by_term_button.value = self.controller.by_term
         self.by_term_button.grid(row=0, column=0, sticky=tk.W)
         self.by_definition_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_definition,
-                                                   text="Definition", state=tk.DISABLED)
+                                                   text="Definition", state=tk.DISABLED,
+                                                   command=self.on_button_click)
+        self.by_definition_button.value = self.controller.by_definition
         self.by_definition_button.grid(row=1, column=0, sticky=tk.W)
         self.by_heading_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_heading,
-                                                text="Heading", state=tk.DISABLED)
+                                                text="Heading", state=tk.DISABLED,
+                                                command=self.on_button_click)
+        self.by_heading_button.value = self.controller.by_heading
         self.by_heading_button.grid(row=2, column=0, sticky=tk.W)
         self.by_level_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_level,
-                                              text="Level", state=tk.DISABLED)
+                                              text="Level", state=tk.DISABLED,
+                                              command=self.on_button_click)
+        self.by_level_button.value = self.controller.by_level
         self.by_level_button.grid(row=3, column=0, sticky=tk.W)
         self.by_level_name_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_level_name,
-                                                   text="Level name", state=tk.DISABLED)
+                                                   text="Level name", state=tk.DISABLED,
+                                                   command=self.on_button_click)
+        self.by_level_name_button.value = self.controller.by_level_name
         self.by_level_name_button.grid(row=4, column=0, sticky=tk.W)
         self.by_begin_nindex_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_begin_nindex,
-                                                     text="Begin note index", state=tk.DISABLED)
+                                                     text="Begin note index", state=tk.DISABLED,
+                                                     command=self.on_button_click)
+        self.by_begin_nindex_button.value = self.controller.by_begin_nindex
         self.by_begin_nindex_button.grid(row=5, column=0, sticky=tk.W)
         self.by_end_nindex_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_end_nindex,
-                                                   text="End note index", state=tk.DISABLED)
+                                                   text="End note index", state=tk.DISABLED,
+                                                   command=self.on_button_click)
+        self.by_end_nindex_button.value = self.controller.by_end_nindex
         self.by_end_nindex_button.grid(row=6, column=0, sticky=tk.W)
         self.by_extension_names_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_extension_names,
-                                                        text="Extension names", state=tk.DISABLED)
+                                                        text="Extension names", state=tk.DISABLED,
+                                                        command=self.on_button_click)
+        self.by_extension_names_button.value = self.controller.by_extension_names
         self.by_extension_names_button.grid(row=7, column=0, sticky=tk.W)
         self.by_category_names_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_category_names,
-                                                       text="Category names", state=tk.DISABLED)
+                                                       text="Category names", state=tk.DISABLED,
+                                                       command= self.on_button_click)
+        self.by_category_names_button.value = self.controller.by_category_names
         self.by_category_names_button.grid(row=8, column=0, sticky=tk.W)
         subsearch_frame.grid(row=1, column=0, rowspan=2, padx=20, pady=20, sticky=tk.NS)
 
@@ -260,11 +303,82 @@ class SearcherView:
         self.root.grid_rowconfigure(2, weight=1)
         self.root.grid_columnconfigure(4, weight=1)
 
+    def on_button_click(self):
+        if any(map(lambda b: True if b.value.get() is True 
+            or b.value.get() in self.int_compares else False, self.int_buttons)):
+            self.by_eval_button.config(state=tk.DISABLED)
+            for button in self.string_buttons:
+                button.deselect()
+                button.config(state=tk.DISABLED)
+        elif any(map(lambda b: True if b.value.get() is True 
+            or b.value.get() in self.string_compares else False, self.string_buttons)):
+            self.by_eval_button.config(state=tk.DISABLED)
+            for button in self.int_buttons:
+                button.deselect()
+                button.config(state=tk.DISABLED)
+        else:
+            enabled = [self.by_eval_button]
+            enabled.extend(self.main_compare_buttons)
+            enabled.extend(self.compare_option_buttons)
+            if self.by_is_pair_button.value.get():
+                enabled.extend([self.by_term_button, self.by_definition_button])
+            if self.by_is_heading_button.value.get():
+                enabled.extend([self.by_heading_button, self.by_level_button, self.by_level_name_button, 
+                                self.by_begin_nindex_button, self.by_end_nindex_button])
+            if self.by_has_extensions_button.value.get():
+                enabled.extend([self.by_extension_names_button])
+            if self.by_has_categories_button.value.get():
+                enabled.extend([self.by_category_names_button])
+            for button in enabled:
+                button.config(state=tk.NORMAL)
+
+    def on_eval_button(self):
+        if self.by_eval_button.value.get() is True:
+            for button in self.main_compare_buttons + self.compare_option_buttons:
+                button.deselect()
+                button.config(state=tk.DISABLED)
+        else:
+            for button in self.main_compare_buttons + self.compare_option_buttons:
+                button.config(state=tk.NORMAL)
+
+    def on_is_pair(self):
+        if self.by_is_pair_button.value.get():
+            for button in [self.by_term_button, self.by_definition_button]:
+                button.config(state=tk.NORMAL)
+        else:
+            for button in [self.by_term_button, self.by_definition_button]:
+                button.config(state=tk.DISABLED)
+        self.on_button_click()
+
+    def on_is_heading(self):
+        if self.by_is_heading_button.value.get():
+            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button, 
+                           self.by_begin_nindex_button, self.by_end_nindex_button]:
+                button.config(state=tk.NORMAL)
+        else:
+            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button, 
+                           self.by_begin_nindex_button, self.by_end_nindex_button]:
+                button.config(state=tk.DISABLED)
+        self.on_button_click()
+
+    def on_has_extensions(self):
+        if self.by_has_extensions_button.value.get():
+            self.by_extension_names_button.config(state=tk.NORMAL)
+        else:
+            self.by_extension_names_button.config(state=tk.DISABLED)
+        self.on_button_click()
+
+    def on_has_categories(self):
+        if self.by_has_categories_button.value.get():
+            self.by_category_names_button.config(state=tk.NORMAL)
+        else:
+            self.by_category_names_button.config(state=tk.DISABLED)
+        self.on_button_click()
+
     def clear(self):
         self.root.unbind("<Button-1>")
         for widget in self.root.winfo_children():
             widget.destroy()
-
 
 class SearcherController:
     # TODO: Each Checkbox limits what other checkboxes may be checked. Implement this? (literally will take 30 hours)
@@ -372,37 +486,19 @@ class SearcherController:
         self.count += 1
         print(self.count)
 
-    def set_checkbuttons_state(self, state, *buttons):
-        for button in buttons:
-            button.config(state=state)
-
-    def on_is_pair(self):
-        if self.view.by_is_pair.get():
-            self.set_checkbuttons_state(tk.NORMAL, self.view.by_term_button, self.view.by_definition_button)
-        else:
-            self.set_checkbuttons_state(tk.DISABLED, self.view.by_term_button, self.view.by_definition_button)
-
-    def on_is_heading(self):
-        if self.view.by_is_heading.get():
-            self.set_checkbuttons_state(tk.NORMAL, self.view.by_heading_button, self.view.by_level_button,
-                                        self.view.by_level_name_button, self.view.by_begin_nindex_button,
-                                        self.view.by_end_nindex_button)
-        else:
-            self.set_checkbuttons_state(tk.DISABLED, self.view.by_heading_button, self.view.by_level_button,
-                                        self.view.by_level_name_button, self.view.by_begin_nindex_button,
-                                        self.view.by_end_nindex_button)
-
-    def on_has_extensions(self):
-        if self.view.by_has_extensions.get():
-            self.set_checkbuttons_state(tk.NORMAL, self.view.by_extension_names_button)
-        else:
-            self.set_checkbuttons_state(tk.DISABLED, self.view.by_extension_names_button)
-
-    def on_has_categories(self):
-        if self.view.by_has_categories.get():
-            self.set_checkbuttons_state(tk.NORMAL, self.view.by_category_names_button)
-        else:
-            self.set_checkbuttons_state(tk.DISABLED, self.view.by_category_names_button)
+    def add_kwargs(self):
+        self.search_eval += ", content=\"{0}\"" if self.by_content.get() else ""
+        self.search_eval += ", rcontent=\"{1}\"" if self.by_rcontent.get() else ""
+        self.search_eval += ", nindex={2}" if self.by_nindex.get() else ""
+        self.search_eval += ", term=\"{3}\"" if self.by_term.get() else ""
+        self.search_eval += ", definition=\"{4}\"" if self.by_definition.get() else ""
+        self.search_eval += ", heading=\"{5}\"" if self.by_heading.get() else ""
+        self.search_eval += ", level={6}" if self.by_level.get() else ""
+        self.search_eval += ", level_name=\"{7}\"" if self.by_level_name.get() else ""
+        self.search_eval += ", begin_nindex={8}" if self.by_begin_nindex.get() else ""
+        self.search_eval += ", end_nindex={9}" if self.by_end_nindex.get() else ""
+        self.search_eval += ", extension_names=\"{10}\"" if self.by_extension_names.get() else ""
+        self.search_eval += ", category_names=\"{11}\"" if self.by_category_names.get() else ""
 
     def on_search(self, event=None):
         self.count += 1
