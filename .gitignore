@@ -1,7 +1,6 @@
 noteutil.egg-info
 build
 dist
-noteutil/tests
 implementations/gui/notes
 docs/_build
 .idea
