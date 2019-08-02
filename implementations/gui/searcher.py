@@ -33,8 +33,8 @@ class SearcherView:
         self.if_greatere_button = None
         self.init_compare_options()
 
-        self.and_button = None
-        self.or_button = None
+        self.and_this_button = None
+        self.or_this_button = None
         self.init_narrow_options()
 
         # Pair
