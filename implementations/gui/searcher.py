@@ -146,6 +146,7 @@ class SearcherView:
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
 
     def init_main_compare(self):
+        # TODO: Replace Checkbuttons with Radiobuttons
         search_frame = tk.LabelFrame(self.root, text="Search by:")
         self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval",
                                              state=tk.DISABLED, command=self.on_eval_button)
@@ -233,9 +234,11 @@ class SearcherView:
                                               value="And", state=tk.DISABLED)
         self.and_this_button.value = self.controller.narrow_option
         self.and_this_button.grid(row=2, column=0, sticky=tk.W)
+        # TODO: Add Invert button
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
 
     def init_sub_compare(self):
+        # TODO: Replace Checkbuttons with Radiobuttons
         subsearch_frame = tk.LabelFrame(self.root, text="Search by:")
         self.by_term_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_term,
                                              text="Term", state=tk.DISABLED,
@@ -296,8 +299,8 @@ class SearcherView:
         self.search_bar.bind("<Return>", self.controller.on_search)
 
     def init_results_list(self):
-        self.results_list = tk.Listbox(self.root, activestyle="dotbox", listvariable=self.controller.notes,
-                                       selectmode=tk.SINGLE, font=tkfont.Font(family="Ubuntu", size=12))
+        self.results_list = tk.Listbox(self.root, activestyle="dotbox", selectmode=tk.SINGLE,
+                                       font=tkfont.Font(family="Ubuntu", size=12))
         xscroll_bar = tk.Scrollbar(self.results_list, orient=tk.HORIZONTAL)
         yscroll_bar = tk.Scrollbar(self.results_list, orient=tk.VERTICAL)
         xscroll_bar.config(command=self.results_list.xview)
@@ -341,10 +344,15 @@ class SearcherView:
 
     def on_eval_button(self):
         if self.by_eval_button.value.get() is True:
+            self.search_bar.delete(0, tk.END)
+            self.controller.add_kwargs()
+            query = self.controller.search_eval + ")"
+            self.search_bar.insert(tk.END, query)
             for button in self.main_compare_buttons + self.compare_option_buttons + self.sub_compare_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
         else:
+            self.controller.search_eval = "self.noteutil.get_list("
             for button in self.main_compare_buttons + self.compare_option_buttons:
                 button.config(state=tk.NORMAL)
 
@@ -458,7 +466,7 @@ class SearcherController:
     def __init__(self, view, noteutil, quiz, leitner):
         self.count = 0
         self.view = view
-        self.notes = tk.StringVar()
+        self.notes = []
         self.noteutil = noteutil
         self.quiz = quiz
         self.leitner = leitner
@@ -508,23 +516,42 @@ class SearcherController:
         print(self.count)
 
     def add_kwargs(self):
-        self.search_eval += ", content=\"{0}\"" if self.by_content.get() else ""
-        self.search_eval += ", rcontent=\"{1}\"" if self.by_rcontent.get() else ""
-        self.search_eval += ", nindex={2}" if self.by_nindex.get() else ""
-        self.search_eval += ", term=\"{3}\"" if self.by_term.get() else ""
-        self.search_eval += ", definition=\"{4}\"" if self.by_definition.get() else ""
-        self.search_eval += ", heading=\"{5}\"" if self.by_heading.get() else ""
-        self.search_eval += ", level={6}" if self.by_level.get() else ""
-        self.search_eval += ", level_name=\"{7}\"" if self.by_level_name.get() else ""
-        self.search_eval += ", begin_nindex={8}" if self.by_begin_nindex.get() else ""
-        self.search_eval += ", end_nindex={9}" if self.by_end_nindex.get() else ""
-        self.search_eval += ", extension_names=\"{10}\"" if self.by_extension_names.get() else ""
-        self.search_eval += ", category_names=\"{11}\"" if self.by_category_names.get() else ""
+        self.search_eval += "content=\"{0}\", " if self.by_content.get() else ""
+        self.search_eval += "rcontent=\"{1}\", " if self.by_rcontent.get() else ""
+        self.search_eval += "nindex={2}, " if self.by_nindex.get() else ""
+        self.search_eval += "term=\"{3}\", " if self.by_term.get() else ""
+        self.search_eval += "definition=\"{4}\", " if self.by_definition.get() else ""
+        self.search_eval += "heading=\"{5}\", " if self.by_heading.get() else ""
+        self.search_eval += "level={6}, " if self.by_level.get() else ""
+        self.search_eval += "level_name=\"{7}\", " if self.by_level_name.get() else ""
+        self.search_eval += "begin_nindex={8}, " if self.by_begin_nindex.get() else ""
+        self.search_eval += "end_nindex={9}, " if self.by_end_nindex.get() else ""
+        self.search_eval += "extension_names=\"{10}\", " if self.by_extension_names.get() else ""
+        self.search_eval += "category_names=\"{11}\", " if self.by_category_names.get() else ""
+        self.search_eval = self.search_eval[:-2]
+        self.search_eval += ")"
 
     def on_search(self, event=None):
-        self.count += 1
-        print(self.count)
-        return "break"
+        self.add_kwargs()
+        try:
+            print(self.search_eval)
+            searched_notes = eval(self.search_eval).format()
+            print(searched_notes)
+            self.notes.extend(searched_notes if searched_notes else [])
+        except SyntaxError:
+            tkmsgbox.showerror(title="Error searching", message="No search options were selected.")
+
+        if self.by_is_pair.get():
+            self.notes = list(filter(lambda n: n.is_pair(), self.notes))
+        if self.by_is_heading.get():
+            self.notes = list(filter(lambda n: n.is_heading(), self.notes))
+        if self.by_has_extensions.get():
+            self.notes = list(filter(lambda n: n.has_extensions(), self.notes))
+        if self.by_has_categories.get():
+            self.notes = list(filter(lambda n: n.has_catgeories(), self.notes))
+        for note in self.notes:
+            self.view.results_list.insert(tk.END, note.rcontent)
+        self.search_eval = "self.noteutil.get_list("
 
     def on_edit_note(self):
         self.count += 1
