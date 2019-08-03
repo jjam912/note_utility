@@ -1,5 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkfont
+import tkinter.simpledialog as tksimpledialog
+import tkinter.messagebox as tkmsgbox
 import noteutil as nu
 from noteutil.comparisons import CompareOptions
 
@@ -129,9 +131,9 @@ class SearcherView:
 
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
-        tools_menu.add_command(label="View image link", command=self.controller.on_view_image_link)
-        tools_menu.add_command(label="Font selector", command=self.controller.on_font_selector)
-        tools_menu.add_command(label="Display LaTeX", command=self.controller.on_display_latex)
+        tools_menu.add_command(label="View image link", command=self.init_image_link_view)
+        tools_menu.add_command(label="Font selector", command=self.init_font_chooser_view)
+        tools_menu.add_command(label="Display LaTeX", command=self.init_display_latex_view)
         self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
     def init_help_menu(self):
@@ -399,6 +401,49 @@ class SearcherView:
         xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
         toplevel.notes_text.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
+    def init_image_link_view(self):
+        from PIL import Image
+        import requests
+        from io import BytesIO
+
+        url = tksimpledialog.askstring(title="Image", prompt="Enter the image link.")
+        if url:
+            toplevel = tk.Toplevel(self.root)
+            toplevel.transient(self.root)
+            toplevel.title("Image link")
+            toplevel.resizable(False, False)
+            tk.Label(toplevel, text="Image load failed.").grid(row=0, column=0)
+
+            # Thanks to https://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url-in-python
+            response = requests.get(url)
+            image = Image.open(BytesIO(response.content))
+            image.save("temp.png")
+
+            image = tk.PhotoImage(file="temp.png")
+            tk.Label(toplevel, image=image).grid(row=0, column=0)
+            toplevel.image = image
+
+    def init_font_chooser_view(self):
+        pass
+
+    def init_display_latex_view(self):
+        from sympy import preview
+
+        latex = tksimpledialog.askstring(title="LaTeX", prompt="Enter your latex code.")
+        if latex:
+            toplevel = tk.Toplevel(self.root)
+            toplevel.transient(self.root)
+            toplevel.title("LaTeX")
+            toplevel.resizable(False, False)
+            fail_label = tk.Label(toplevel, text="LaTeX load failed.")
+            fail_label.grid(row=0, column=0)
+
+            preview(latex, viewer="file", filename="temp.png")
+            image = tk.PhotoImage(file="temp.png")
+            tk.Label(toplevel, image=image).grid(row=0, column=0)
+            toplevel.image = image
+            fail_label.destroy()
+
     def clear(self):
         self.root.unbind("<Button-1>")
         for widget in self.root.winfo_children():
@@ -458,7 +503,6 @@ class SearcherController:
     def on_change_output_format(self):
         self.count += 1
         print(self.count)
-
 
     def add_kwargs(self):
         self.search_eval += ", content=\"{0}\"" if self.by_content.get() else ""
@@ -531,18 +575,6 @@ class SearcherController:
         from reviewer import ReviewerView
         self.view.clear()
         ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
-
-    def on_view_image_link(self):
-        self.count += 1
-        print(self.count)
-
-    def on_font_selector(self):
-        self.count += 1
-        print(self.count)
-
-    def on_display_latex(self):
-        self.count += 1
-        print(self.count)
 
     def on_search_explanation(self):
         self.count += 1
