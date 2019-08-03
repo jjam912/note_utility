@@ -305,7 +305,7 @@ class SearcherView:
 
     def on_button_click(self):
         if any(map(lambda b: True if b.value.get() is True 
-            or b.value.get() in self.int_compares else False, self.int_buttons)):
+                   or b.value.get() in self.int_compares else False, self.int_buttons)):
             self.by_eval_button.config(state=tk.DISABLED)
             for button in self.string_buttons:
                 button.deselect()
@@ -347,6 +347,7 @@ class SearcherView:
                 button.config(state=tk.NORMAL)
         else:
             for button in [self.by_term_button, self.by_definition_button]:
+                button.deselect()
                 button.config(state=tk.DISABLED)
         self.on_button_click()
 
@@ -358,6 +359,7 @@ class SearcherView:
         else:
             for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button, 
                            self.by_begin_nindex_button, self.by_end_nindex_button]:
+                button.deselect()
                 button.config(state=tk.DISABLED)
         self.on_button_click()
 
@@ -365,6 +367,7 @@ class SearcherView:
         if self.by_has_extensions_button.value.get():
             self.by_extension_names_button.config(state=tk.NORMAL)
         else:
+            self.by_extension_names_button.deselect()
             self.by_extension_names_button.config(state=tk.DISABLED)
         self.on_button_click()
 
@@ -372,6 +375,7 @@ class SearcherView:
         if self.by_has_categories_button.value.get():
             self.by_category_names_button.config(state=tk.NORMAL)
         else:
+            self.by_category_names_button.deselect()
             self.by_category_names_button.config(state=tk.DISABLED)
         self.on_button_click()
 
@@ -379,6 +383,7 @@ class SearcherView:
         self.root.unbind("<Button-1>")
         for widget in self.root.winfo_children():
             widget.destroy()
+
 
 class SearcherController:
     # TODO: Each Checkbox limits what other checkboxes may be checked. Implement this? (literally will take 30 hours)
