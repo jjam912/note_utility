@@ -499,19 +499,19 @@ class QuizzerController:
         notes_description = ""
         for note in self.quiz.correct:
             notes_description += note.rcontent + "\n"
-        self.view.init_note_view(notes_description)
+        self.view.init_notes_view(notes_description)
 
     def on_view_incorrect(self):
         notes_description = ""
         for note in self.quiz.incorrect:
             notes_description += note.rcontent + "\n"
-        self.view.init_note_view(notes_description)
+        self.view.init_notes_view(notes_description)
 
     def on_view_unmarked(self):
         notes_description = ""
         for note in self.quiz.unmarked:
             notes_description += note.rcontent + "\n"
-        self.view.init_note_view(notes_description)
+        self.view.init_notes_view(notes_description)
 
     def on_load(self):
         if tkmsgbox.askyesno(title="Load?", message="Would you like to load your previous save?\n"
