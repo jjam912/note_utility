@@ -32,6 +32,7 @@ class SearcherView:
         self.if_greatere_button = None
         self.init_compare_options()
 
+        self.new_button = None
         self.and_this_button = None
         self.or_this_button = None
         self.init_narrow_options()
@@ -61,22 +62,22 @@ class SearcherView:
             self.by_end_nindex_button, self.by_extension_names_button, self.by_category_names_button
         ]
         self.main_compare_buttons = [self.by_content_button, self.by_rcontent_button, self.by_nindex_button,
-                                     self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button, 
+                                     self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
                                      self.by_has_categories_button]
-        self.compare_option_buttons = [self.if_equals_button, self.if_similar_button, self.if_in_button, 
-                                       self.if_simin_button, self.if_less_button, self.if_lesse_button, 
+        self.compare_option_buttons = [self.if_equals_button, self.if_similar_button, self.if_in_button,
+                                       self.if_simin_button, self.if_less_button, self.if_lesse_button,
                                        self.if_greater_button, self.if_greatere_button]
-        self.narrow_buttons = [self.or_this_button, self.and_this_button]
-        self.sub_compare_buttons = [self.by_term_button, self.by_definition_button, self.by_heading_button, 
-                                    self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button, 
-                                    self.by_end_nindex_button, self.by_extension_names_button, 
+        self.narrow_buttons = [self.new_button, self.or_this_button, self.and_this_button]
+        self.sub_compare_buttons = [self.by_term_button, self.by_definition_button, self.by_heading_button,
+                                    self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
+                                    self.by_end_nindex_button, self.by_extension_names_button,
                                     self.by_category_names_button]
 
-        self.int_buttons = [self.by_nindex_button, self.by_level_button, self.by_begin_nindex_button, 
-                     self.by_end_nindex_button, self.if_less_button, self.if_lesse_button, 
+        self.int_buttons = [self.by_nindex_button, self.by_level_button, self.by_begin_nindex_button,
+                     self.by_end_nindex_button, self.if_less_button, self.if_lesse_button,
                      self.if_greater_button, self.if_greatere_button]
-        self.string_buttons = [self.by_content_button, self.by_rcontent_button, self.by_term_button, 
-                        self.by_definition_button, self.by_heading_button, self.by_level_name_button, 
+        self.string_buttons = [self.by_content_button, self.by_rcontent_button, self.by_term_button,
+                        self.by_definition_button, self.by_heading_button, self.by_level_name_button,
                         self.by_extension_names_button, self.by_category_names_button, self.if_similar_button,
                         self.if_in_button, self.if_simin_button]
         self.int_compares = ["Less than", "Less/Equal", "Greater than", "Greater/Equal"]
@@ -146,11 +147,11 @@ class SearcherView:
 
     def init_main_compare(self):
         search_frame = tk.LabelFrame(self.root, text="Search by:")
-        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval", 
+        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval",
                                              state=tk.DISABLED, command=self.on_eval_button)
         self.by_eval_button.value = self.controller.by_eval
         self.by_eval_button.grid(row=0, column=0, sticky=tk.W)
-        self.by_content_button = tk.Checkbutton(search_frame, variable=self.controller.by_content, text="Content", 
+        self.by_content_button = tk.Checkbutton(search_frame, variable=self.controller.by_content, text="Content",
                                                 command=self.on_button_click)
         self.by_content_button.value = self.controller.by_content
         self.by_content_button.grid(row=1, column=0, sticky=tk.W)
@@ -183,7 +184,7 @@ class SearcherView:
 
     def init_compare_options(self):
         compare_frame = tk.LabelFrame(self.root, text="Compare by:")
-        self.if_equals_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Equals", 
+        self.if_equals_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="Equals",
                                                value="Equals", command=self.on_button_click)
         self.if_equals_button.value = self.controller.compare_option
         self.if_equals_button.grid(row=0, column=0, sticky=tk.W)
@@ -191,7 +192,7 @@ class SearcherView:
                                                 value="Similar", command=self.on_button_click)
         self.if_similar_button.value = self.controller.compare_option
         self.if_similar_button.grid(row=1, column=0, sticky=tk.W)
-        self.if_in_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="In", 
+        self.if_in_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, text="In",
                                            value="In", command=self.on_button_click)
         self.if_in_button.value = self.controller.compare_option
         self.if_in_button.grid(row=2, column=0, stick=tk.W)
@@ -207,13 +208,13 @@ class SearcherView:
                                               value="Less/Equal", state=tk.DISABLED, command=self.on_button_click)
         self.if_lesse_button.value = self.controller.compare_option
         self.if_lesse_button.grid(row=1, column=1, sticky=tk.W)
-        self.if_greater_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option, 
-                                                text="Greater than", value="Greater than", state=tk.DISABLED, 
+        self.if_greater_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option,
+                                                text="Greater than", value="Greater than", state=tk.DISABLED,
                                                 command=self.on_button_click)
         self.if_greater_button.value = self.controller.compare_option
         self.if_greater_button.grid(row=2, column=1, sticky=tk.W)
         self.if_greatere_button = tk.Radiobutton(compare_frame, variable=self.controller.compare_option,
-                                                 text="Greater/Equal", value="Greater/Equal", state=tk.DISABLED, 
+                                                 text="Greater/Equal", value="Greater/Equal", state=tk.DISABLED,
                                                  command=self.on_button_click)
         self.if_greatere_button.value = self.controller.compare_option
         self.if_greatere_button.grid(row=3, column=1, sticky=tk.W)
@@ -221,14 +222,17 @@ class SearcherView:
 
     def init_narrow_options(self):
         narrow_frame = tk.LabelFrame(self.root, text="Narrow with:")
-        self.or_this_button = tk.Checkbutton(narrow_frame, variable=self.controller.or_this, text="Or",
-                                        state=tk.DISABLED)
-        self.or_this_button.value = self.controller.or_this
-        self.or_this_button.grid(row=0, column=0, sticky=tk.W)
-        self.and_this_button = tk.Checkbutton(narrow_frame, variable=self.controller.and_this, text="And",
-                                         state=tk.DISABLED)
-        self.and_this_button.value = self.controller.and_this
-        self.and_this_button.grid(row=1, column=0, sticky=tk.W)
+        self.new_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="New", value="New")
+        self.new_button.value = self.controller.narrow_option
+        self.new_button.grid(row=0, column=0, sticky=tk.W)
+        self.or_this_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="Or",
+                                             value="Or", state=tk.DISABLED)
+        self.or_this_button.value = self.controller.narrow_option
+        self.or_this_button.grid(row=1, column=0, sticky=tk.W)
+        self.and_this_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="And",
+                                              value="And", state=tk.DISABLED)
+        self.and_this_button.value = self.controller.narrow_option
+        self.and_this_button.grid(row=2, column=0, sticky=tk.W)
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
 
     def init_sub_compare(self):
@@ -307,13 +311,13 @@ class SearcherView:
         self.root.grid_columnconfigure(4, weight=1)
 
     def on_button_click(self):
-        if any(map(lambda b: True if b.value.get() is True 
+        if any(map(lambda b: True if b.value.get() is True
                    or b.value.get() in self.int_compares else False, self.int_buttons)):
             self.by_eval_button.config(state=tk.DISABLED)
             for button in self.string_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
-        elif any(map(lambda b: True if b.value.get() is True 
+        elif any(map(lambda b: True if b.value.get() is True
             or b.value.get() in self.string_compares else False, self.string_buttons)):
             self.by_eval_button.config(state=tk.DISABLED)
             for button in self.int_buttons:
@@ -326,7 +330,7 @@ class SearcherView:
             if self.by_is_pair_button.value.get():
                 enabled.extend([self.by_term_button, self.by_definition_button])
             if self.by_is_heading_button.value.get():
-                enabled.extend([self.by_heading_button, self.by_level_button, self.by_level_name_button, 
+                enabled.extend([self.by_heading_button, self.by_level_button, self.by_level_name_button,
                                 self.by_begin_nindex_button, self.by_end_nindex_button])
             if self.by_has_extensions_button.value.get():
                 enabled.extend([self.by_extension_names_button])
@@ -337,7 +341,7 @@ class SearcherView:
 
     def on_eval_button(self):
         if self.by_eval_button.value.get() is True:
-            for button in self.main_compare_buttons + self.compare_option_buttons:
+            for button in self.main_compare_buttons + self.compare_option_buttons + self.sub_compare_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
         else:
@@ -356,11 +360,11 @@ class SearcherView:
 
     def on_is_heading(self):
         if self.by_is_heading_button.value.get():
-            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button, 
+            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button,
                            self.by_begin_nindex_button, self.by_end_nindex_button]:
                 button.config(state=tk.NORMAL)
         else:
-            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button, 
+            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button,
                            self.by_begin_nindex_button, self.by_end_nindex_button]:
                 button.deselect()
                 button.config(state=tk.DISABLED)
@@ -484,8 +488,7 @@ class SearcherController:
         # Category
         self.by_category_names = tk.BooleanVar()
 
-        self.and_this = tk.BooleanVar()
-        self.or_this  = tk.BooleanVar()
+        self.narrow_option = tk.StringVar(value="New")
 
         self.option_type = tk.StringVar(value="String")     # Can be String, Int, or Eval
 
