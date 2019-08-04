@@ -32,6 +32,7 @@ class SearcherView:
         self.if_greatere_button = None
         self.init_compare_options()
 
+        self.invert_button = None
         self.new_button = None
         self.and_this_button = None
         self.or_this_button = None
@@ -69,7 +70,7 @@ class SearcherView:
         self.compare_option_buttons = [self.if_equals_button, self.if_similar_button, self.if_in_button,
                                        self.if_simin_button, self.if_less_button, self.if_lesse_button,
                                        self.if_greater_button, self.if_greatere_button]
-        self.narrow_buttons = [self.new_button, self.or_this_button, self.and_this_button]
+        self.narrow_buttons = [self.invert_button, self.new_button, self.or_this_button, self.and_this_button]
         self.sub_param_buttons = [self.by_term_button, self.by_definition_button, self.by_heading_button,
                                   self.by_heading_name_button, self.by_level_button, self.by_level_name_button,
                                   self.by_begin_nindex_button, self.by_end_nindex_button,
@@ -233,18 +234,21 @@ class SearcherView:
 
     def init_narrow_options(self):
         narrow_frame = tk.LabelFrame(self.root, text="Narrow with:")
+
+        self.invert_button = tk.Checkbutton(narrow_frame, variable=self.controller.invert_option, text="Invert")
+        self.invert_button.value = self.controller.invert_option
+        self.invert_button.grid(row=0, column=0, sticky=tk.W)
         self.new_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="New", value="New")
         self.new_button.value = "New"
-        self.new_button.grid(row=0, column=0, sticky=tk.W)
+        self.new_button.grid(row=1, column=0, sticky=tk.W)
         self.or_this_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="Or",
                                              value="Or", state=tk.DISABLED)
         self.or_this_button.value = "Or"
-        self.or_this_button.grid(row=1, column=0, sticky=tk.W)
+        self.or_this_button.grid(row=2, column=0, sticky=tk.W)
         self.and_this_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="And",
                                               value="And", state=tk.DISABLED)
         self.and_this_button.value = "And"
-        self.and_this_button.grid(row=2, column=0, sticky=tk.W)
-        # TODO: Add Invert button
+        self.and_this_button.grid(row=3, column=0, sticky=tk.W)
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
 
     def init_sub_params(self):
@@ -359,7 +363,8 @@ class SearcherView:
                 button.deselect()
                 button.config(state=tk.DISABLED)
         else:
-            self.controller.search_eval = "self.noteutil.get_list("
+            self.controller.search_eval = "self.noteutil.iget_list(" \
+                if self.controller.invert_option.get() else "self.noteutil.get_list("
             for button in self.main_param_buttons + self.compare_option_buttons:
                 button.config(state=tk.NORMAL)
 
@@ -457,6 +462,7 @@ class SearcherController:
         self.by_is_heading = tk.BooleanVar()
         self.by_has_extensions = tk.BooleanVar()
         self.by_has_categories = tk.BooleanVar()
+        self.invert_option = tk.BooleanVar()
 
         self.parameter_option = tk.StringVar(value="Content")
         self.compare_option = tk.StringVar(value="Similar in")
@@ -504,7 +510,7 @@ class SearcherController:
         self.view.results_list.delete(0, tk.END)
         self.notes = []
         if not self.by_eval.get():
-            self.search_eval = "self.noteutil.get_list("
+            self.search_eval = "self.noteutil.iget_list(" if self.invert_option.get() else "self.noteutil.get_list("
             self.add_kwargs(self.view.search_bar.get().strip())
         else:
             self.search_eval = self.view.search_bar.get().strip()
