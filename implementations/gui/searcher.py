@@ -74,14 +74,23 @@ class SearcherView:
                                     self.by_category_names_button]
 
         self.int_buttons = [self.by_nindex_button, self.by_level_button, self.by_begin_nindex_button,
-                     self.by_end_nindex_button, self.if_less_button, self.if_lesse_button,
-                     self.if_greater_button, self.if_greatere_button]
+                            self.by_end_nindex_button, self.if_less_button, self.if_lesse_button,
+                            self.if_greater_button, self.if_greatere_button]
         self.string_buttons = [self.by_content_button, self.by_rcontent_button, self.by_term_button,
-                        self.by_definition_button, self.by_heading_button, self.by_level_name_button,
-                        self.by_extension_names_button, self.by_category_names_button, self.if_similar_button,
-                        self.if_in_button, self.if_simin_button]
-        self.int_compares = ["Less than", "Less/Equal", "Greater than", "Greater/Equal"]
-        self.string_compares = ["Similar", "In", "Similar in"]
+                               self.by_definition_button, self.by_heading_button, self.by_level_name_button,
+                               self.by_extension_names_button, self.by_category_names_button,
+                               self.if_similar_button, self.if_in_button, self.if_simin_button]
+        self.bool_buttons = [self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
+                             self.by_has_categories_button]
+        self.bool_button_links = {self.by_is_pair_button: [self.by_term_button, self.by_definition_button],
+                                  self.by_is_heading_button: [self.by_heading_button, self.by_level_button,
+                                                              self.by_level_name_button, self.by_begin_nindex_button,
+                                                              self.by_end_nindex_button],
+                                  self.by_has_extensions_button: [self.by_extension_names_button],
+                                  self.by_has_categories_button: [self.by_category_names_button]}
+        self.int_compare_buttons = [self.if_less_button, self.if_lesse_button, self.if_greater_button,
+                                    self.if_greatere_button]
+        self.string_compare_buttons = [self.if_similar_button, self.if_in_button, self.if_simin_button]
 
         self.search_bar = None
         self.search_button = None
@@ -312,36 +321,28 @@ class SearcherView:
         self.root.grid_columnconfigure(4, weight=1)
 
     def on_button_click(self):
-        if any(map(lambda b: True if b.value.get() is True
-                   or b.value.get() in self.int_compares else False, self.int_buttons)):
+        if self.controller.compare_option.get() == "Equals":
+            enabled = [self.by_eval_button]
+            enabled.extend(self.main_compare_buttons)
+            enabled.extend(self.compare_option_buttons)
+            for kbutton, linked_buttons in self.bool_button_links.items():
+                if kbutton.value.get():
+                    enabled.extend(linked_buttons)
+            for button in enabled:
+                button.config(state=tk.NORMAL)
+        elif self.controller.parameter_option.get() in map(lambda b: b.value, self.int_buttons):
             self.by_eval_button.config(state=tk.DISABLED)
             for button in self.string_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
-        elif any(map(lambda b: True if b.value.get() is True
-            or b.value.get() in self.string_compares else False, self.string_buttons)):
+        elif self.controller.parameter_option.get() in map(lambda b: b.value, self.string_buttons):
             self.by_eval_button.config(state=tk.DISABLED)
             for button in self.int_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
-        else:
-            enabled = [self.by_eval_button]
-            enabled.extend(self.main_compare_buttons)
-            enabled.extend(self.compare_option_buttons)
-            if self.by_is_pair_button.value.get():
-                enabled.extend([self.by_term_button, self.by_definition_button])
-            if self.by_is_heading_button.value.get():
-                enabled.extend([self.by_heading_button, self.by_level_button, self.by_level_name_button,
-                                self.by_begin_nindex_button, self.by_end_nindex_button])
-            if self.by_has_extensions_button.value.get():
-                enabled.extend([self.by_extension_names_button])
-            if self.by_has_categories_button.value.get():
-                enabled.extend([self.by_category_names_button])
-            for button in enabled:
-                button.config(state=tk.NORMAL)
 
     def on_eval_button(self):
-        if self.by_eval_button.value.get() is True:
+        if self.controller.parameter_option.get() == "Eval":
             self.search_bar.delete(0, tk.END)
             self.controller.add_kwargs()
             query = self.controller.search_eval + ")"
