@@ -42,6 +42,7 @@ class SearcherView:
         self.by_definition_button = None
         # Heading
         self.by_heading_button = None
+        self.by_heading_name_button = None
         self.by_level_button = None
         self.by_level_name_button = None
         self.by_begin_nindex_button = None
@@ -57,9 +58,10 @@ class SearcherView:
             self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
             self.by_has_categories_button, self.if_equals_button, self.if_similar_button, self.if_in_button,
             self.if_simin_button, self.if_less_button, self.if_lesse_button, self.if_greater_button,
-            self.if_greatere_button, self.and_this_button, self.or_this_button, self.by_term_button, self.by_definition_button,
-            self.by_heading_button, self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
-            self.by_end_nindex_button, self.by_extension_names_button, self.by_category_names_button
+            self.if_greatere_button, self.and_this_button, self.or_this_button, self.by_term_button,
+            self.by_definition_button, self.by_heading_button, self.by_heading_name_button, self.by_level_button,
+            self.by_level_name_button, self.by_begin_nindex_button,self.by_end_nindex_button,
+            self.by_extension_names_button, self.by_category_names_button
         ]
         self.main_param_buttons = [self.by_content_button, self.by_rcontent_button, self.by_nindex_button,
                                    self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
@@ -69,23 +71,23 @@ class SearcherView:
                                        self.if_greater_button, self.if_greatere_button]
         self.narrow_buttons = [self.new_button, self.or_this_button, self.and_this_button]
         self.sub_param_buttons = [self.by_term_button, self.by_definition_button, self.by_heading_button,
-                                  self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
-                                  self.by_end_nindex_button, self.by_extension_names_button,
-                                  self.by_category_names_button]
+                                  self.by_heading_name_button, self.by_level_button, self.by_level_name_button,
+                                  self.by_begin_nindex_button, self.by_end_nindex_button,
+                                  self.by_extension_names_button, self.by_category_names_button]
 
         self.int_buttons = [self.by_nindex_button, self.by_level_button, self.by_begin_nindex_button,
                             self.by_end_nindex_button, self.if_less_button, self.if_lesse_button,
                             self.if_greater_button, self.if_greatere_button]
         self.string_buttons = [self.by_content_button, self.by_rcontent_button, self.by_term_button,
-                               self.by_definition_button, self.by_heading_button, self.by_level_name_button,
-                               self.by_extension_names_button, self.by_category_names_button,
+                               self.by_definition_button, self.by_heading_button, self.by_heading_name_button,
+                               self.by_level_name_button, self.by_extension_names_button, self.by_category_names_button,
                                self.if_similar_button, self.if_in_button, self.if_simin_button]
         self.bool_buttons = [self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
                              self.by_has_categories_button]
         self.bool_button_links = {self.by_is_pair_button: [self.by_term_button, self.by_definition_button],
-                                  self.by_is_heading_button: [self.by_heading_button, self.by_level_button,
-                                                              self.by_level_name_button, self.by_begin_nindex_button,
-                                                              self.by_end_nindex_button],
+                                  self.by_is_heading_button: [self.by_heading_button, self.by_heading_name_button,
+                                                              self.by_level_button, self.by_level_name_button,
+                                                              self.by_begin_nindex_button, self.by_end_nindex_button],
                                   self.by_has_extensions_button: [self.by_extension_names_button],
                                   self.by_has_categories_button: [self.by_category_names_button]}
         self.int_compare_buttons = [self.if_less_button, self.if_lesse_button, self.if_greater_button,
@@ -262,36 +264,41 @@ class SearcherView:
                                                 command=self.on_button_click)
         self.by_heading_button.value = "Heading"
         self.by_heading_button.grid(row=2, column=0, sticky=tk.W)
+        self.by_heading_name_button=tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
+                                                   text="Heading name", value="Heading name", state=tk.DISABLED,
+                                                   command=self.on_button_click)
+        self.by_heading_name_button.value = "Heading name"
+        self.by_heading_name_button.grid(row=3, column=0, sticky=tk.W)
         self.by_level_button = tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
                                               text="Level", value="Level", state=tk.DISABLED,
                                               command=self.on_button_click)
         self.by_level_button.value = "Level"
-        self.by_level_button.grid(row=3, column=0, sticky=tk.W)
+        self.by_level_button.grid(row=4, column=0, sticky=tk.W)
         self.by_level_name_button = tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
                                                    text="Level name", value="Level name", state=tk.DISABLED,
                                                    command=self.on_button_click)
         self.by_level_name_button.value = "Level name"
-        self.by_level_name_button.grid(row=4, column=0, sticky=tk.W)
+        self.by_level_name_button.grid(row=5, column=0, sticky=tk.W)
         self.by_begin_nindex_button = tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
                                                      text="Begin note index", value="Begin note index",
                                                      state=tk.DISABLED, command=self.on_button_click)
         self.by_begin_nindex_button.value = "Begin note index"
-        self.by_begin_nindex_button.grid(row=5, column=0, sticky=tk.W)
+        self.by_begin_nindex_button.grid(row=6, column=0, sticky=tk.W)
         self.by_end_nindex_button = tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
                                                    text="End note index", value="End note index", state=tk.DISABLED,
                                                    command=self.on_button_click)
         self.by_end_nindex_button.value = "End note index"
-        self.by_end_nindex_button.grid(row=6, column=0, sticky=tk.W)
+        self.by_end_nindex_button.grid(row=7, column=0, sticky=tk.W)
         self.by_extension_names_button = tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
                                                         text="Extension names", value="Extension names",
                                                         state=tk.DISABLED, command=self.on_button_click)
         self.by_extension_names_button.value = "Extension names"
-        self.by_extension_names_button.grid(row=7, column=0, sticky=tk.W)
+        self.by_extension_names_button.grid(row=8, column=0, sticky=tk.W)
         self.by_category_names_button = tk.Radiobutton(subsearch_frame, variable=self.controller.parameter_option,
                                                        text="Category names", value="Category names", state=tk.DISABLED,
                                                        command= self.on_button_click)
         self.by_category_names_button.value = "Category names"
-        self.by_category_names_button.grid(row=8, column=0, sticky=tk.W)
+        self.by_category_names_button.grid(row=9, column=0, sticky=tk.W)
         subsearch_frame.grid(row=1, column=0, rowspan=2, padx=20, pady=20, sticky=tk.NS)
 
     def init_search_bar(self):
@@ -477,6 +484,7 @@ class SearcherController:
         self.search_eval += "term=\"{}\"".format(query) if self.parameter_option.get() == "Term" else ""
         self.search_eval += "definition=\"{}\"".format(query) if self.parameter_option.get() == "Definition" else ""
         self.search_eval += "heading=\"{}\"".format(query) if self.parameter_option.get() == "Heading" else ""
+        self.search_eval += "heading_name=\"{}\"".format(query) if self.parameter_option.get() == "Heading name" else ""
         self.search_eval += "level={}".format(query) if self.parameter_option.get() == "Level" else ""
         self.search_eval += "level_name=\"{}\"".format(query) if self.parameter_option.get() == "Level name" else ""
         self.search_eval += "begin_nindex={}".format(query) \
