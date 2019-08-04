@@ -522,7 +522,7 @@ class SearcherController:
         if self.by_has_extensions.get():
             self.notes = list(filter(lambda n: n.has_extensions(), self.notes))
         if self.by_has_categories.get():
-            self.notes = list(filter(lambda n: n.has_catgeories(), self.notes))
+            self.notes = list(filter(lambda n: n.has_categories(), self.notes))
         for note in self.notes:
             self.view.results_list.insert(tk.END, note.rcontent)
 
