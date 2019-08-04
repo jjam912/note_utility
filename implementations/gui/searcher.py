@@ -20,7 +20,7 @@ class SearcherView:
         self.by_is_heading_button = None
         self.by_has_extensions_button = None
         self.by_has_categories_button = None
-        self.init_main_compare()
+        self.init_main_params()
 
         self.if_equals_button = None
         self.if_similar_button = None
@@ -50,7 +50,7 @@ class SearcherView:
         self.by_extension_names_button = None
         # Category
         self.by_category_names_button = None
-        self.init_sub_compare()
+        self.init_sub_params()
 
         self.buttons = [
             self.by_eval_button, self.by_content_button, self.by_rcontent_button, self.by_nindex_button,
@@ -145,8 +145,7 @@ class SearcherView:
         help_menu.add_command(label="About", command=self.controller.on_about)
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
 
-    def init_main_compare(self):
-        # TODO: Replace Checkbuttons with Radiobuttons
+    def init_main_params(self):
         search_frame = tk.LabelFrame(self.root, text="Search by:")
         self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval",
                                              state=tk.DISABLED, command=self.on_eval_button)
@@ -237,8 +236,7 @@ class SearcherView:
         # TODO: Add Invert button
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
 
-    def init_sub_compare(self):
-        # TODO: Replace Checkbuttons with Radiobuttons
+    def init_sub_params(self):
         subsearch_frame = tk.LabelFrame(self.root, text="Search by:")
         self.by_term_button = tk.Checkbutton(subsearch_frame, variable=self.controller.by_term,
                                              text="Term", state=tk.DISABLED,
