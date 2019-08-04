@@ -355,42 +355,15 @@ class SearcherView:
             for button in self.main_compare_buttons + self.compare_option_buttons:
                 button.config(state=tk.NORMAL)
 
-    def on_is_pair(self):
-        if self.by_is_pair_button.value.get():
-            for button in [self.by_term_button, self.by_definition_button]:
-                button.config(state=tk.NORMAL)
-        else:
-            for button in [self.by_term_button, self.by_definition_button]:
-                button.deselect()
-                button.config(state=tk.DISABLED)
-        self.on_button_click()
-
-    def on_is_heading(self):
-        if self.by_is_heading_button.value.get():
-            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button,
-                           self.by_begin_nindex_button, self.by_end_nindex_button]:
-                button.config(state=tk.NORMAL)
-        else:
-            for button in [self.by_heading_button, self.by_level_button, self.by_level_name_button,
-                           self.by_begin_nindex_button, self.by_end_nindex_button]:
-                button.deselect()
-                button.config(state=tk.DISABLED)
-        self.on_button_click()
-
-    def on_has_extensions(self):
-        if self.by_has_extensions_button.value.get():
-            self.by_extension_names_button.config(state=tk.NORMAL)
-        else:
-            self.by_extension_names_button.deselect()
-            self.by_extension_names_button.config(state=tk.DISABLED)
-        self.on_button_click()
-
-    def on_has_categories(self):
-        if self.by_has_categories_button.value.get():
-            self.by_category_names_button.config(state=tk.NORMAL)
-        else:
-            self.by_category_names_button.deselect()
-            self.by_category_names_button.config(state=tk.DISABLED)
+    def on_bool_button(self):
+        for kbutton, linked_buttons in self.bool_button_links.items():
+            if kbutton.value.get():
+                for button in self.bool_button_links[kbutton]:
+                    button.config(state=tk.NORMAL)
+            else:
+                for button in self.bool_button_links[kbutton]:
+                    button.deselect()
+                    button.config(state=tk.DISABLED)
         self.on_button_click()
 
     def on_select_search_bar(self):
