@@ -348,8 +348,7 @@ class SearcherView:
     def on_eval_button(self):
         if self.controller.parameter_option.get() == "Eval":
             self.search_bar.delete(0, tk.END)
-            self.controller.add_kwargs()
-            query = self.controller.search_eval + ")"
+            query = self.controller.search_eval
             self.search_bar.insert(tk.END, query)
             for button in self.main_param_buttons + self.compare_option_buttons + self.sub_param_buttons:
                 button.deselect()
@@ -496,7 +495,13 @@ class SearcherController:
 
     def on_search(self, event=None):
         self.view.results_list.delete(0, tk.END)
-        self.add_kwargs(self.view.search_bar.get().strip())
+        self.notes = []
+        if self.parameter_option.get() != "Eval":
+            self.search_eval = "self.noteutil.get_list("
+            self.add_kwargs(self.view.search_bar.get().strip())
+        else:
+            self.search_eval = self.view.search_bar.get().strip()
+
         try:
             searched_notes = eval(self.search_eval)
             self.notes.extend(searched_notes if searched_notes else [])
@@ -513,8 +518,6 @@ class SearcherController:
             self.notes = list(filter(lambda n: n.has_catgeories(), self.notes))
         for note in self.notes:
             self.view.results_list.insert(tk.END, note.rcontent)
-        self.notes = []
-        self.search_eval = "self.noteutil.get_list("
 
     def on_edit_note(self):
         self.count += 1
