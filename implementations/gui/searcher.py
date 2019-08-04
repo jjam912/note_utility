@@ -242,11 +242,11 @@ class SearcherView:
         self.new_button.value = "New"
         self.new_button.grid(row=1, column=0, sticky=tk.W)
         self.or_this_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="Or",
-                                             value="Or", state=tk.DISABLED)
+                                             value="Or",)
         self.or_this_button.value = "Or"
         self.or_this_button.grid(row=2, column=0, sticky=tk.W)
         self.and_this_button = tk.Radiobutton(narrow_frame, variable=self.controller.narrow_option, text="And",
-                                              value="And", state=tk.DISABLED)
+                                              value="And",)
         self.and_this_button.value = "And"
         self.and_this_button.grid(row=3, column=0, sticky=tk.W)
         narrow_frame.grid(row=0, column=3, columnspan=2, padx=(0, 20), sticky=tk.NSEW)
@@ -508,7 +508,9 @@ class SearcherController:
 
     def on_search(self, event=None):
         self.view.results_list.delete(0, tk.END)
-        self.notes = []
+        if self.narrow_option.get() == "New":
+            self.notes = []
+
         if not self.by_eval.get():
             self.search_eval = "self.noteutil.iget_list(" if self.invert_option.get() else "self.noteutil.get_list("
             self.add_kwargs(self.view.search_bar.get().strip())
@@ -517,7 +519,18 @@ class SearcherController:
 
         try:
             searched_notes = eval(self.search_eval)
-            self.notes.extend(searched_notes if searched_notes else [])
+            if self.narrow_option.get() == "And":
+                self.notes = list(filter(lambda n: n in searched_notes, self.notes))
+            elif self.narrow_option.get() == "Or":
+                self.notes.extend(searched_notes if searched_notes else [])
+                self.notes.sort()
+                notes_set = []
+                for i in range(1, len(self.notes)):
+                    if self.notes[i] != self.notes[i-1]:
+                        notes_set.append(self.notes[i])
+                self.notes = notes_set
+            else:
+                self.notes.extend(searched_notes if searched_notes else [])
         except SyntaxError:
             tkmsgbox.showerror(title="Error searching", message="No search options were selected.")
 
