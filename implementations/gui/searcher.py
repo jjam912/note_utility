@@ -295,14 +295,16 @@ class SearcherView:
         subsearch_frame.grid(row=1, column=0, rowspan=2, padx=20, pady=20, sticky=tk.NS)
 
     def init_search_bar(self):
-        self.search_bar = tk.Entry(self.root, font=tkfont.Font(family="Ubuntu", size=12))
+        search_bar_frame = tk.Frame(self.root)
+        self.search_bar = tk.Entry(search_bar_frame, font=tkfont.Font(family="Ubuntu", size=12))
         self.search_icon = tk.PhotoImage(file="icons/magnifying_glass.png")
-        self.search_button = tk.Button(self.search_bar, image=self.search_icon, command=self.controller.on_search,
+        self.search_button = tk.Button(search_bar_frame, image=self.search_icon, command=self.controller.on_search,
                                        relief=tk.GROOVE)
-        self.search_button.pack(side=tk.RIGHT)
 
         self.search_bar.insert(tk.END, "Enter your search query in here.")
-        self.search_bar.grid(row=1, column=1, columnspan=4, padx=(0, 20), pady=10, sticky=tk.EW)
+        self.search_button.pack(side=tk.RIGHT)
+        self.search_bar.pack(fill=tk.X, expand=True)
+        search_bar_frame.grid(row=1, column=1, columnspan=4, padx=(0, 20), pady=10, sticky=tk.EW)
         self.search_bar.bind("<Return>", self.controller.on_search)
 
     def init_results_list(self):
