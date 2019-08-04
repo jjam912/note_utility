@@ -156,9 +156,9 @@ class SearcherView:
 
     def init_main_params(self):
         search_frame = tk.LabelFrame(self.root, text="Search by:")
-        self.by_eval_button = tk.Radiobutton(search_frame, variable=self.controller.parameter_option, text="Eval",
-                                             value="Eval", state=tk.DISABLED, command=self.on_eval_button)
-        self.by_eval_button.value = "Eval"
+        self.by_eval_button = tk.Checkbutton(search_frame, variable=self.controller.by_eval, text="Eval",
+                                             command=self.on_eval_button)
+        self.by_eval_button.value = self.controller.by_eval
         self.by_eval_button.grid(row=0, column=0, sticky=tk.W)
         self.by_content_button = tk.Radiobutton(search_frame, variable=self.controller.parameter_option, text="Content",
                                                 value="Content", command=self.on_button_click)
@@ -335,18 +335,16 @@ class SearcherView:
             for button in enabled:
                 button.config(state=tk.NORMAL)
         elif self.controller.parameter_option.get() in map(lambda b: b.value, self.int_buttons):
-            self.by_eval_button.config(state=tk.DISABLED)
             for button in self.string_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
         elif self.controller.parameter_option.get() in map(lambda b: b.value, self.string_buttons):
-            self.by_eval_button.config(state=tk.DISABLED)
             for button in self.int_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
 
     def on_eval_button(self):
-        if self.controller.parameter_option.get() == "Eval":
+        if self.controller.by_eval.get():
             self.search_bar.delete(0, tk.END)
             query = self.controller.search_eval
             self.search_bar.insert(tk.END, query)
@@ -447,6 +445,7 @@ class SearcherController:
         self.leitner = leitner
         self.search_eval = "self.noteutil.get_list("
 
+        self.by_eval = tk.BooleanVar()
         self.by_is_pair = tk.BooleanVar()
         self.by_is_heading = tk.BooleanVar()
         self.by_has_extensions = tk.BooleanVar()
@@ -496,7 +495,7 @@ class SearcherController:
     def on_search(self, event=None):
         self.view.results_list.delete(0, tk.END)
         self.notes = []
-        if self.parameter_option.get() != "Eval":
+        if not self.by_eval.get():
             self.search_eval = "self.noteutil.get_list("
             self.add_kwargs(self.view.search_bar.get().strip())
         else:
