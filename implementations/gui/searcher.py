@@ -306,15 +306,17 @@ class SearcherView:
         self.search_bar.bind("<Return>", self.controller.on_search)
 
     def init_results_list(self):
-        self.results_list = tk.Listbox(self.root, activestyle="dotbox", selectmode=tk.SINGLE,
+        results_list_frame = tk.Frame(self.root)
+        self.results_list = tk.Listbox(results_list_frame, activestyle="dotbox", selectmode=tk.SINGLE,
                                        font=tkfont.Font(family="Ubuntu", size=12))
-        xscroll_bar = tk.Scrollbar(self.results_list, orient=tk.HORIZONTAL)
-        yscroll_bar = tk.Scrollbar(self.results_list, orient=tk.VERTICAL)
-        xscroll_bar.config(command=self.results_list.xview)
-        yscroll_bar.config(command=self.results_list.yview)
+        xscroll_bar = tk.Scrollbar(results_list_frame, width=16, orient=tk.HORIZONTAL, command=self.results_list.xview)
+        yscroll_bar = tk.Scrollbar(results_list_frame, width=16, orient=tk.VERTICAL, command=self.results_list.yview)
         self.results_list.config(xscrollcommand=xscroll_bar.set, yscrollcommand=yscroll_bar.set)
         self.results_list.insert(tk.END, "Your results will show up here.")
-        self.results_list.grid(row=2, column=1, columnspan=4, padx=(0, 20), pady=(0, 20), sticky=tk.NSEW)
+        xscroll_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        yscroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.results_list.pack(fill=tk.BOTH, expand=True)
+        results_list_frame.grid(row=2, column=1, columnspan=4, padx=(0, 20), pady=(0, 20), sticky=tk.NSEW)
 
     def modify_grid(self):
         self.root.grid_rowconfigure(2, weight=1)
