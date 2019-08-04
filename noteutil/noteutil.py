@@ -471,12 +471,76 @@ class NoteUtil:
 
         if not kwargs:
             return None
-
         notes = []
         compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
 
         for note in self.notes:
             if compare(note, **kwargs):
+                notes.append(note)
+        return notes if notes else None
+
+    def iget(self, **kwargs) -> Union[None, Note]:
+        """Retrieves a Note without attributes equal to passed keyword args.
+        "Inverted"-get
+
+        Parameters
+        ----------
+        kwargs
+            Keys are attribute names and Values are values you are looking for in those attributes.
+
+        Other Parameters
+        ----------------
+        compare
+            If one of the keys of kwargs is compare, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: Note, **kwargs
+
+        Returns
+        -------
+        Note or None
+            If a Note is found to not have the passed attributes.
+            If no Note is found.
+        """
+
+        if not kwargs:
+            return None
+
+        compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
+
+        for note in self.notes:
+            if not compare(note, **kwargs):
+                return note
+        return None
+
+    def iget_list(self, **kwargs) -> Union[None, List[Note]]:
+        """Retrieves all Notes without attributes equal to passed keyword args and stores them in a List.
+        "Inverted"-get_list
+
+        Parameters
+        ----------
+        kwargs
+            Keys are attribute names and Values are values you are looking for in those attributes.
+
+        Other Parameters
+        ----------------
+        compare
+            If one of the keys of kwargs is compare, comparisons will be used with the value of this key.
+            The custom compare must accept the parameters: Note, **kwargs
+
+        Returns
+        -------
+        List[Note] or None
+            If a Notes are found to not have the passed attributes.
+            If no Notes are found.
+        """
+
+        if not kwargs:
+            return None
+
+        notes = []
+        compare = kwargs.pop("compare") if kwargs.get("compare", False) else CompareOptions.EQUALS
+
+        for note in self.notes:
+            if not compare(note, **kwargs):
                 notes.append(note)
         return notes if notes else None
 
