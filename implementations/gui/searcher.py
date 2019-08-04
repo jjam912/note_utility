@@ -454,42 +454,47 @@ class SearcherController:
         self.narrow_option = tk.StringVar(value="New")
 
         self.compare_button_functions = {
-            "Equals":           CompareOptions.EQUALS,
-            "Similar":          CompareOptions.SIMILAR,
-            "In":               CompareOptions.IN,
-            "Similar in":       CompareOptions.SIMIN,
-            "Less than":        CompareOptions.LESS,
-            "Less/Equal":       CompareOptions.LESSE,
-            "Greater than":     CompareOptions.GREATER,
-            "Greater/Equal":    CompareOptions.GREATERE,
+            "Equals":           "CompareOptions.EQUALS",
+            "Similar":          "CompareOptions.SIMILAR",
+            "In":               "CompareOptions.IN",
+            "Similar in":       "CompareOptions.SIMIN",
+            "Less than":        "CompareOptions.LESS",
+            "Less/Equal":       "CompareOptions.LESSE",
+            "Greater than":     "CompareOptions.GREATER",
+            "Greater/Equal":    "CompareOptions.GREATERE",
         }
 
     def on_change_output_format(self):
         self.count += 1
         print(self.count)
 
-    def add_kwargs(self):
-        self.search_eval += "content=\"{0}\", " if self.by_content.get() else ""
-        self.search_eval += "rcontent=\"{1}\", " if self.by_rcontent.get() else ""
-        self.search_eval += "nindex={2}, " if self.by_nindex.get() else ""
-        self.search_eval += "term=\"{3}\", " if self.by_term.get() else ""
-        self.search_eval += "definition=\"{4}\", " if self.by_definition.get() else ""
-        self.search_eval += "heading=\"{5}\", " if self.by_heading.get() else ""
-        self.search_eval += "level={6}, " if self.by_level.get() else ""
-        self.search_eval += "level_name=\"{7}\", " if self.by_level_name.get() else ""
-        self.search_eval += "begin_nindex={8}, " if self.by_begin_nindex.get() else ""
-        self.search_eval += "end_nindex={9}, " if self.by_end_nindex.get() else ""
-        self.search_eval += "extension_names=\"{10}\", " if self.by_extension_names.get() else ""
-        self.search_eval += "category_names=\"{11}\", " if self.by_category_names.get() else ""
-        self.search_eval = self.search_eval[:-2]
+    def add_kwargs(self, query):
+        self.search_eval += "content=\"{}\"".format(query) if self.parameter_option.get() == "Content" else ""
+        self.search_eval += "rcontent=\"{}\"".format(query) if self.parameter_option.get() == "Raw content" else ""
+        self.search_eval += "nindex={}".format(query) if self.parameter_option.get() == "Note index" else ""
+        self.search_eval += "term=\"{}\"".format(query) if self.parameter_option.get() == "Term" else ""
+        self.search_eval += "definition=\"{}\"".format(query) if self.parameter_option.get() == "Definition" else ""
+        self.search_eval += "heading=\"{}\"".format(query) if self.parameter_option.get() == "Heading" else ""
+        self.search_eval += "level={}".format(query) if self.parameter_option.get() == "Level" else ""
+        self.search_eval += "level_name=\"{}\"".format(query) if self.parameter_option.get() == "Level name" else ""
+        self.search_eval += "begin_nindex={}".format(query) \
+            if self.parameter_option.get() == "Begin note index" else ""
+        self.search_eval += "end_nindex={}".format(query) if self.parameter_option.get() == "End note index" else ""
+        self.search_eval += "extension_names=\"{}\"".format(query) \
+            if self.parameter_option.get() == "Extension names" else ""
+        self.search_eval += "category_names=\"{}\"".format(query) \
+            if self.parameter_option.get() == "Category names" else ""
+
+        for compare_button in self.view.compare_option_buttons:
+            if self.compare_option.get() == compare_button.value:
+                self.search_eval += ", compare=" + self.compare_button_functions[compare_button.value]
         self.search_eval += ")"
 
     def on_search(self, event=None):
-        self.add_kwargs()
+        self.view.results_list.delete(0, tk.END)
+        self.add_kwargs(self.view.search_bar.get().strip())
         try:
-            print(self.search_eval)
-            searched_notes = eval(self.search_eval).format()
-            print(searched_notes)
+            searched_notes = eval(self.search_eval)
             self.notes.extend(searched_notes if searched_notes else [])
         except SyntaxError:
             tkmsgbox.showerror(title="Error searching", message="No search options were selected.")
