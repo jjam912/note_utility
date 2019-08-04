@@ -121,7 +121,8 @@ class SearcherView:
         notes_menu = tk.Menu(self.menu_bar, tearoff=False)
         notes_menu.add_command(label="Set note preview", command=self.init_set_note_preview_view)
         notes_menu.add_command(label="Select search bar", command=self.on_select_search_bar)
-        notes_menu.add_command(label="Edit note", command=self.controller.on_edit_note)
+        notes_menu.add_command(label="View note", command=self.controller.on_view_note)
+        notes_menu.add_command(label="Edit note", command=self.init_edit_note_view)
         notes_menu.add_separator()
         notes_menu.add_command(label="View correct", command=self.controller.on_view_correct)
         notes_menu.add_command(label="View incorrect", command=self.controller.on_view_incorrect)
@@ -426,6 +427,28 @@ class SearcherView:
         xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
         toplevel.notes_text.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
+    def init_edit_note_view(self):
+        toplevel = tk.Toplevel(self.root)
+        toplevel.title("Edit Note")
+        toplevel.transient(self.root)
+        tk.Label(toplevel, text="Displayed below is the raw content of the current note.",
+                 font=tkfont.Font(family="Ubuntu", size=12)).grid(row=0, column=0, ipady=5)
+
+        toplevel.text_editor = tk.Text(toplevel, wrap=tk.WORD, font=tkfont.Font(family="Ubuntu", size=12),
+                                       width=52, height=5)
+        yscrollbar = tk.Scrollbar(toplevel, orient=tk.VERTICAL, command=toplevel.text_editor.yview)
+        toplevel.text_editor.config(yscrollcommand=yscrollbar.set)
+
+        yscrollbar.grid(row=1, column=2, padx=(0, 10), sticky=tk.NS)
+
+        toplevel.nindex = self.results_list.curselection()[0]
+        toplevel.note = self.controller.notes[toplevel.nindex]
+        toplevel.text_editor.insert(tk.END, toplevel.note.rcontent)
+        toplevel.text_editor.grid(row=1, column=0, columnspan=2, padx=(10, 0), sticky=tk.NSEW)
+
+        tk.Button(toplevel, text="Edit", command=lambda: self.controller.edit_note(
+            toplevel)).grid(row=0, column=1, columnspan=2, padx=(5, 10), sticky=tk.EW)
+
     def init_image_link_view(self):
         from PIL import Image
         import requests
@@ -579,11 +602,6 @@ class SearcherController:
                 ", ".join(note.category_names) if note.category_names else "None",
             ))
 
-    def on_edit_note(self):
-        self.count += 1
-        print(self.count)
-        return "break"
-
     def on_view_note(self, event=None):
         nindex = self.view.results_list.curselection()[0]
         note = self.notes[nindex]
@@ -629,6 +647,13 @@ class SearcherController:
                                  "----------\n"
                                  ).format(extension.content, extension.name)
         self.view.init_notes_view(note_description)
+
+    def edit_note(self, view):
+        try:
+            self.noteutil.edit(view.note.nindex, view.text_editor.get(1.0, tk.END))
+            view.destroy()
+        except nu.NoteError as e:
+            tkmsgbox.showerror("Failed edit", message=e.args[0])
 
     def on_view_correct(self):
         notes_description = ""
