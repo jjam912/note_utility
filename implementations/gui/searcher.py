@@ -561,6 +561,51 @@ class SearcherController:
         print(self.count)
         return "break"
 
+    def on_view_note(self, event=None):
+        nindex = self.view.results_list.curselection()[0]
+        note = self.notes[nindex]
+        note_description = ("Note:\n"
+                            "-----\n"
+                            "Content:\n"
+                            "{0}\n"
+                            "\n"
+                            "Raw Content:\n"
+                            "{1}\n"
+                            "\n"
+                            "Note index: {2}\n"
+                            "\n"
+                            "Term:\n"
+                            "{3}\n"
+                            "\n"
+                            "Definition:\n"
+                            "{4}\n"
+                            "\n"
+                            "Heading: {5}\n"
+                            "\n"
+                            "Heading name:\n"
+                            "{6}\n"
+                            "\n"
+                            "Level: {7}\n"
+                            "Level name:       {8}\n"
+                            "Begin note index: {9}\n"
+                            "End note index:   {10}\n"
+                            "Extension names:  {11}\n"
+                            "Category names:   {12}\n"
+                            "-----\n"
+                            ).format(note.content, note.rcontent, note.nindex, note.term, note.definition, note.heading,
+                                     note.heading_name, note.level, note.level_name, note.begin_nindex, note.end_nindex,
+                                     ", ".join(note.extension_names), ", ".join(note.category_names))
+        for extension in note.extensions:
+            note_description += ("Extension:\n"
+                                 "----------\n"
+                                 "Content:\n"
+                                 "{0}\n"
+                                 "\n"
+                                 "Name: {1}\n"
+                                 "----------\n"
+                                 ).format(extension.content, extension.name)
+        self.view.init_notes_view(note_description)
+
     def on_view_correct(self):
         notes_description = ""
         for note in self.quiz.correct:
