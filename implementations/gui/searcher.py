@@ -513,6 +513,7 @@ class SearcherController:
             self.notes = list(filter(lambda n: n.has_catgeories(), self.notes))
         for note in self.notes:
             self.view.results_list.insert(tk.END, note.rcontent)
+        self.notes = []
         self.search_eval = "self.noteutil.get_list("
 
     def on_edit_note(self):
