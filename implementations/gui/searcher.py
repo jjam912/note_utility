@@ -61,17 +61,17 @@ class SearcherView:
             self.by_heading_button, self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
             self.by_end_nindex_button, self.by_extension_names_button, self.by_category_names_button
         ]
-        self.main_compare_buttons = [self.by_content_button, self.by_rcontent_button, self.by_nindex_button,
-                                     self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
-                                     self.by_has_categories_button]
+        self.main_param_buttons = [self.by_content_button, self.by_rcontent_button, self.by_nindex_button,
+                                   self.by_is_pair_button, self.by_is_heading_button, self.by_has_extensions_button,
+                                   self.by_has_categories_button]
         self.compare_option_buttons = [self.if_equals_button, self.if_similar_button, self.if_in_button,
                                        self.if_simin_button, self.if_less_button, self.if_lesse_button,
                                        self.if_greater_button, self.if_greatere_button]
         self.narrow_buttons = [self.new_button, self.or_this_button, self.and_this_button]
-        self.sub_compare_buttons = [self.by_term_button, self.by_definition_button, self.by_heading_button,
-                                    self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
-                                    self.by_end_nindex_button, self.by_extension_names_button,
-                                    self.by_category_names_button]
+        self.sub_param_buttons = [self.by_term_button, self.by_definition_button, self.by_heading_button,
+                                  self.by_level_button, self.by_level_name_button, self.by_begin_nindex_button,
+                                  self.by_end_nindex_button, self.by_extension_names_button,
+                                  self.by_category_names_button]
 
         self.int_buttons = [self.by_nindex_button, self.by_level_button, self.by_begin_nindex_button,
                             self.by_end_nindex_button, self.if_less_button, self.if_lesse_button,
@@ -323,7 +323,7 @@ class SearcherView:
     def on_button_click(self):
         if self.controller.compare_option.get() == "Equals":
             enabled = [self.by_eval_button]
-            enabled.extend(self.main_compare_buttons)
+            enabled.extend(self.main_param_buttons)
             enabled.extend(self.compare_option_buttons)
             for kbutton, linked_buttons in self.bool_button_links.items():
                 if kbutton.value.get():
@@ -347,12 +347,12 @@ class SearcherView:
             self.controller.add_kwargs()
             query = self.controller.search_eval + ")"
             self.search_bar.insert(tk.END, query)
-            for button in self.main_compare_buttons + self.compare_option_buttons + self.sub_compare_buttons:
+            for button in self.main_param_buttons + self.compare_option_buttons + self.sub_param_buttons:
                 button.deselect()
                 button.config(state=tk.DISABLED)
         else:
             self.controller.search_eval = "self.noteutil.get_list("
-            for button in self.main_compare_buttons + self.compare_option_buttons:
+            for button in self.main_param_buttons + self.compare_option_buttons:
                 button.config(state=tk.NORMAL)
 
     def on_bool_button(self):
