@@ -324,6 +324,7 @@ class NoteUtil:
                 except IndexError:
                     previous_level = 0
                 kwargs["level"] = current_level = content.count(self.heading_char, 0, self.levels)
+                kwargs["level_name"] = self.level_names[kwargs["level"] - 1]
                 if current_level - previous_level > 1:
                     raise HeadingJump(content, previous_level, current_level)
                 kwargs["heading"] = kwargs["heading_char"] * kwargs["level"]

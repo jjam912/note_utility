@@ -83,6 +83,7 @@ class Note:
         # Heading parameters
         self.heading_char = kwargs.get("heading_char", None)
         self.level = kwargs.get("level", None)
+        self.level_name = kwargs.get("level_name", None)
         self.heading = kwargs.get("heading", None)
         self.heading_name = kwargs.get("heading_name", None)
 
