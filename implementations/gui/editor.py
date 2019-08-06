@@ -1,6 +1,13 @@
+import os
 import tkinter as tk
 import tkinter.font as tkfont
-from disabled_text import DisabledText
+import tkinter.filedialog as tkfiledialog
+import tkinter.messagebox as tkmsgbox
+from noteutil.errors import NoteUtilError, QuizError, LeitnerError
+import webbrowser
+
+
+NOTES_DIR = os.path.join(os.getcwd(), "notes")
 
 
 class EditorView:
@@ -17,6 +24,10 @@ class EditorView:
         self.text_editor = None
         self.init_text_editor()
 
+        if noteutil is not None and quiz is not None and leitner is not None:
+            with open(noteutil.nu_file, mode="r") as f:
+                self.text_editor.insert(tk.END, f.read())
+
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
@@ -28,16 +39,30 @@ class EditorView:
 
     def init_file_menu(self):
         file_menu = tk.Menu(self.menu_bar, tearoff=False)
-        file_menu.add_command(label="New", command=self.controller.on_new_file)
-        file_menu.add_command(label="Open", command=self.controller.on_open_file)
-        file_menu.add_command(label="Save", command=self.controller.on_save)
-        file_menu.add_command(label="Save as", command=self.controller.on_save_as)
+        file_menu = tk.Menu(self.menu_bar, tearoff=False)
+        file_menu.add_command(label="New config", accelerator="Ctrl+N", command=self.controller.on_new_file)
+        self.root.bind("<Control-N>", lambda e: self.controller.on_new_file())
+        self.root.bind("<Control-n>", lambda e: self.controller.on_new_file())
+        file_menu.add_command(label="Open config", accelerator="Ctrl+O", command=self.controller.on_open_file)
+        self.root.bind("<Control-O>", lambda e: self.controller.on_open_file())
+        self.root.bind("<Control-o>", lambda e: self.controller.on_open_file())
+        file_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
+        self.root.bind("<Control-S>", lambda e: self.controller.on_save())
+        self.root.bind("<Control-s>", lambda e: self.controller.on_save())
+        file_menu.add_command(label="Save as", accelerator="Ctrl+Shift+S", command=self.controller.on_save_as)
+        self.root.bind("<Control-Shift-S>", lambda e: self.controller.on_save_as())
+        self.root.bind("<Control-Shift-s>", lambda e: self.controller.on_save_as())
         self.menu_bar.add_cascade(label="File", menu=file_menu)
 
     def init_edit_menu(self):
         edit_menu = tk.Menu(self.menu_bar, tearoff=False)
-        edit_menu.add_command(label="Find", command=self.controller.on_find)
-        edit_menu.add_command(label="Replace", command=self.controller.on_replace)
+        edit_menu = tk.Menu(self.menu_bar, tearoff=False)
+        edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.controller.on_find)
+        self.root.bind("<Control-F>", lambda e: self.controller.on_find())
+        self.root.bind("<Control-f>", lambda e: self.controller.on_find())
+        edit_menu.add_command(label="Replace", accelerator="Ctrl+R", command=self.controller.on_replace)
+        self.root.bind("<Control-R>", lambda e: self.controller.on_replace())
+        self.root.bind("<Control-r>", lambda e: self.controller.on_replace())
         self.menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
     def init_view_menu(self):
@@ -62,7 +87,8 @@ class EditorView:
 
     def init_text_editor(self):
         text_editor_frame = tk.Frame(self.root)
-        self.line_numbers_text = DisabledText(text_editor_frame, width=5, font=tkfont.Font(family="Ubuntu", size=12))
+        self.line_numbers_text = tk.Text(text_editor_frame, width=5, state=tk.DISABLED,
+                                         font=tkfont.Font(family="Ubuntu", size=12))
         self.text_editor = tk.Text(text_editor_frame, wrap=tk.WORD, undo=True,
                                    font=tkfont.Font(family="Ubuntu", size=12))
         yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=self.text_editor.yview)
