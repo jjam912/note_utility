@@ -14,7 +14,7 @@ NOTES_DIR = os.path.join(os.getcwd(), "notes")
 class ConfiguratorView:
     def __init__(self, root, noteutil=None, quiz=None, leitner=None):
         self.root = root
-        self.root.title("NoteUtil Configurator")
+        self.root.title("NoteUtil Configurator - Untitled")
         self.controller = ConfiguratorController(self, noteutil, quiz, leitner)
 
         self.menu_bar = None
