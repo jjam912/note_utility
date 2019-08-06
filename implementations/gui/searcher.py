@@ -4,6 +4,7 @@ import tkinter.simpledialog as tksimpledialog
 import tkinter.messagebox as tkmsgbox
 import noteutil as nu
 from noteutil.comparisons import CompareOptions
+import webbrowser
 
 
 class SearcherView:
@@ -735,8 +736,7 @@ class SearcherController:
         print(self.count)
 
     def on_about(self):
-        self.count += 1
-        print(self.count)
+        webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
 
 if __name__ == "__main__":
