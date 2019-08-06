@@ -249,6 +249,7 @@ class ConfiguratorController:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
+        self.save_settings()
         file_name = self.config_file_name if self.config_file_name is not None else ""
         file = tk.filedialog.asksaveasfile(defaultextension=".txt",
                                            initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
