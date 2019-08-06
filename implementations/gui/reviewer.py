@@ -6,7 +6,11 @@ import tkinter.messagebox as tkmsgbox
 import tkinter.simpledialog as tksimpledialog
 import tkinter.ttk as ttk
 import noteutil as nu
+import json
 import webbrowser
+
+
+SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
 class ReviewerView:
@@ -35,6 +39,7 @@ class ReviewerView:
         self.incorrect_button = None
         self.init_button_frame()
 
+        self.controller.read_settings()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
@@ -403,6 +408,7 @@ class ReviewerView:
         self.root.unbind("<Control-l>")
 
     def clear(self):
+        self.controller.save_settings()
         self.unbind_all()
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -432,6 +438,37 @@ class ReviewerController:
         for ext_name in self.noteutil.extension_names:
             self.extension_format[ext_name] = "\n{0}: {1}"
             self.extension_first[ext_name] = False
+
+        self.settings = {}
+
+    def read_settings(self):
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                program_settings = {}
+            self.settings = program_settings.get("quizzer", {})
+        if self.settings:
+            self.random.set(self.settings["random"])
+            self.term_first.set(self.settings["term_first"])
+            self.term_format1.set(self.settings["term_format1"])
+            self.term_format2.set(self.settings["term_format2"])
+            self.definition_format1.set(self.settings["definition_format1"])
+            self.definition_format2.set(self.settings["definition_format2"])
+            self.include_extensions.set(self.settings["include_extensions"])
+            self.extension_format = self.settings["extension_format"]
+            self.extension_first = self.settings["extension_first"]
+
+    def save_settings(self):
+        self.settings["random"] = self.random.get()
+        self.settings["term_first"] = self.term_first.get()
+        self.settings["term_format1"] = self.term_format1.get()
+        self.settings["term_format2"] = self.term_format2.get()
+        self.settings["definition_format1"] = self.definition_format1.get()
+        self.settings["definition_format2"] = self.definition_format2.get()
+        self.settings["include_extensions"] = self.include_extensions.get()
+        self.settings["extension_format"] = self.extension_format
+        self.settings["extension_first"] = self.extension_first
 
     def format_question(self, note, term_format):
         question = term_format.get().format(note.term, note.definition, note.separator, note.nindex)
@@ -718,6 +755,7 @@ class ReviewerController:
 
     def on_close(self):
         import sys
+        self.save_settings()
         self.noteutil.save()
         self.leitner.save()
         self.view.root.destroy()
