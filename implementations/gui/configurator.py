@@ -53,7 +53,7 @@ class ConfiguratorView:
         file_menu = tk.Menu(self.menu_bar, tearoff=False)
         file_menu.add_command(label="New config", accelerator="Ctrl+N", command=self.controller.on_new_config)
         self.root.bind("<Control-N>", lambda e: self.controller.on_new_config())
-        self.root.bind("<Control-N>", lambda e: self.controller.on_new_config())
+        self.root.bind("<Control-n>", lambda e: self.controller.on_new_config())
         file_menu.add_command(label="Open config", accelerator="Ctrl+O", command=self.controller.on_open_config)
         self.root.bind("<Control-O>", lambda e: self.controller.on_open_config())
         self.root.bind("<Control-o>", lambda e: self.controller.on_open_config())
@@ -236,10 +236,12 @@ class ConfiguratorController:
     def on_find(self):
         self.count += 1
         print(self.count)
+        return "break"
 
     def on_replace(self):
         self.count += 1
         print(self.count)
+        return "break"
 
     def on_line_numbers(self):
         self.count += 1
