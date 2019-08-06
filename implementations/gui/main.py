@@ -6,6 +6,8 @@ from welcomer import Welcomer
 class Main(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.text_popup = None
+        self.entry_popup = None
         self.init_binds()
 
     def init_text_popup(self, event):
