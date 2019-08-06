@@ -374,7 +374,34 @@ class ReviewerView:
         tk.Button(toplevel, text="Save", command=lambda: self.controller.on_save_extension_format(
             toplevel)).pack(side=tk.TOP, fill=tk.X, expand=True)
 
+    def unbind_all(self):
+        self.root.unbind("<Control-G>")
+        self.root.unbind("<Control-g>")
+        self.root.unbind("<H>")
+        self.root.unbind("<h>")
+        self.root.unbind("<J>")
+        self.root.unbind("<j>")
+        self.root.unbind("<K>")
+        self.root.unbind("<k>")
+        self.root.unbind("<L>")
+        self.root.unbind("<l>")
+        self.root.unbind("<Control-O>")
+        self.root.unbind("<Control-o>")
+        self.root.unbind("<Control-S>")
+        self.root.unbind("<Control-s>")
+        self.root.unbind("<Control-R>")
+        self.root.unbind("<Control-r>")
+        self.root.unbind("<Control-E>")
+        self.root.unbind("<Control-e>")
+        self.root.unbind("<Control-F>")
+        self.root.unbind("<Control-f>")
+        self.root.unbind("<Control-I>")
+        self.root.unbind("<Control-i>")
+        self.root.unbind("<Control-L>")
+        self.root.unbind("<Control-l>")
+
     def clear(self):
+        self.unbind_all()
         for widget in self.root.winfo_children():
             widget.destroy()
 

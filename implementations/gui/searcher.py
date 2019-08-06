@@ -509,6 +509,18 @@ class SearcherView:
             toplevel.image = image
             fail_label.destroy()
 
+    def unbind_all(self):
+        self.root.unbind("<Control-F>")
+        self.root.unbind("<Control-f>")
+        self.root.unbind("<Control-O>")
+        self.root.unbind("<Control-o>")
+        self.root.unbind("<Control-E>")
+        self.root.unbind("<Control-e>")
+        self.root.unbind("<Control-I>")
+        self.root.unbind("<Control-i>")
+        self.root.unbind("<Control-L>")
+        self.root.unbind("<Control-l>")
+
     def clear(self):
         self.root.unbind("<Button-1>")
         for widget in self.root.winfo_children():
