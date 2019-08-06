@@ -147,6 +147,29 @@ class EditorView:
             toplevel.image = image
             fail_label.destroy()
 
+    def unbind_all(self):
+        self.root.unbind("<Control-N>")
+        self.root.unbind("<Control-N>")
+        self.root.unbind("<Control-O>")
+        self.root.unbind("<Control-o>")
+        self.root.unbind("<Control-S>")
+        self.root.unbind("<Control-s>")
+        self.root.unbind("<Control-Shift-S>")
+        self.root.unbind("<Control-Shift-s>")
+        self.root.unbind("<Control-F>")
+        self.root.unbind("<Control-f>")
+        self.root.unbind("<Control-R>")
+        self.root.unbind("<Control-r>")
+        self.root.unbind("<Control-I>")
+        self.root.unbind("<Control-i>")
+        self.root.unbind("<Control-L>")
+        self.root.unbind("<Control-l>")
+
+    def clear(self):
+        self.unbind_all()
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
 
 class EditorController:
     def __init__(self, view, noteutil, quiz, leitner):
