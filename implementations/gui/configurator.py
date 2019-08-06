@@ -242,14 +242,12 @@ class ConfiguratorController:
         return "break"
 
     def on_save(self):
-        self.save_settings()
         if self.config_file_path is None:
             return self.on_save_as()
         with open(self.config_file_path, mode="w") as f:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
-        self.save_settings()
         file_name = self.config_file_name if self.config_file_name is not None else ""
         file = tk.filedialog.asksaveasfile(defaultextension=".txt",
                                            initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
@@ -327,11 +325,11 @@ class ConfiguratorController:
         if previous_text.strip() != self.view.text_editor.get(1.0, tk.END).strip():
             option = tkmsgbox.askyesnocancel(title="Window closing",
                                              message="Would you like to save before closing?")
-            if option == tk.YES:
-                self.on_save()
-                tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-            if option is not None:
-                self.view.clear()
+        if option == tk.YES:
+            self.on_save()
+            tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        if option is not None:
+            self.view.clear()
         return option
 
     def on_searcher(self):
