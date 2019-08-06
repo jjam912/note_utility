@@ -3,7 +3,6 @@ import tkinter.font as tkfont
 import tkinter.simpledialog as tksimpledialog
 import tkinter.messagebox as tkmsgbox
 import noteutil as nu
-from noteutil.comparisons import CompareOptions
 
 
 class SearcherView:
@@ -120,9 +119,9 @@ class SearcherView:
     def init_notes_menu(self):
         notes_menu = tk.Menu(self.menu_bar, tearoff=False)
         notes_menu.add_command(label="Set note preview", command=self.init_set_note_preview_view)
-        notes_menu.add_command(label="Select search bar", command=self.on_select_search_bar)
-        notes_menu.add_command(label="View note", command=self.controller.on_view_note)
-        notes_menu.add_command(label="Edit note", command=self.init_edit_note_view)
+        notes_menu.add_command(label="Select search bar", accelerator="Ctrl+F", command=self.on_select_search_bar)
+        notes_menu.add_command(label="View note", accelerator="Ctrl+O",  command=self.controller.on_view_note)
+        notes_menu.add_command(label="Edit note", accelerator="Ctrl+E", command=self.init_edit_note_view)
         notes_menu.add_separator()
         notes_menu.add_command(label="View correct", command=self.controller.on_view_correct)
         notes_menu.add_command(label="View incorrect", command=self.controller.on_view_incorrect)
@@ -141,9 +140,9 @@ class SearcherView:
 
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
-        tools_menu.add_command(label="View image link", command=self.init_image_link_view)
+        tools_menu.add_command(label="View image link", accelerator="Ctrl+I", command=self.init_image_link_view)
         tools_menu.add_command(label="Font selector", command=self.init_font_chooser_view)
-        tools_menu.add_command(label="Display LaTeX", command=self.init_display_latex_view)
+        tools_menu.add_command(label="Display LaTeX", accelerator="Ctrl+L", command=self.init_display_latex_view)
         self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
     def init_help_menu(self):
