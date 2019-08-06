@@ -42,6 +42,8 @@ class ConfiguratorView:
             with open(noteutil.config_file, mode="r") as f:
                 self.controller.on_open_config(f)
 
+        self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
+
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
@@ -191,8 +193,9 @@ class ConfiguratorController:
             self.config_file_name = self.settings.get("config_file_name", None)
             self.line_numbers.set(self.settings.get("line_numbers", True))
             self.highlight.set(self.settings.get("highlight", True))
-            with open(self.config_file_path, mode="r") as f:
-                self.on_open_config(f)
+            if self.config_file_path is not None:
+                with open(self.config_file_path, mode="r") as f:
+                    self.on_open_config(f)
 
     def save_settings(self):
         self.settings["config_file_path"] = self.config_file_path
@@ -200,14 +203,15 @@ class ConfiguratorController:
         self.settings["line_numbers"] = self.line_numbers.get()
         self.settings["highlight"] = self.highlight.get()
         self.program_settings["configurator"] = self.settings
+
         with open(SETTINGS_DIR, mode="w") as f:
             f.write(json.dumps(self.program_settings))
 
     def on_new_config(self):
-        self.file_update()
         self.view.text_editor.delete(1.0, tk.END)
         with open("CONFIG_TEMPLATE.txt", mode="r") as f:
             self.view.text_editor.insert(tk.END, f.read())
+            self.file_update()
         return "break"
 
     def on_open_config(self, file=None):
@@ -312,15 +316,21 @@ class ConfiguratorController:
     def handle_exit(self):
         self.save_settings()
         option = "ok"
-        with open(self.config_file_path, mode="r") as f:
-            if f.read().strip() != self.view.text_editor.get(1.0, tk.END).strip():
-                option = tkmsgbox.askyesnocancel(title="Window closing",
-                                                 message="Would you like to save before closing?")
-                if option == tk.YES:
-                    self.on_save()
-                    tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
-        if option is not None:
-            self.view.clear()
+        if self.config_file_path is not None:
+            with open(self.config_file_path, mode="r") as f:
+                previous_text = f.read()
+        else:
+            with open("CONFIG_TEMPLATE.txt", mode="r") as f:
+                previous_text = f.read()
+
+        if previous_text.strip() != self.view.text_editor.get(1.0, tk.END).strip():
+            option = tkmsgbox.askyesnocancel(title="Window closing",
+                                             message="Would you like to save before closing?")
+            if option == tk.YES:
+                self.on_save()
+                tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+            if option is not None:
+                self.view.clear()
         return option
 
     def on_searcher(self):
