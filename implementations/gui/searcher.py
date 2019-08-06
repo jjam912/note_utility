@@ -340,6 +340,7 @@ class SearcherView:
 
         self.results_list_menu = tk.Menu(self.results_list, tearoff=False)
         self.results_list_menu.add_command(label="View", command=self.controller.on_view_note)
+        self.results_list_menu.add_command(label="Edit", command=self.init_edit_note_view)
 
         def popup_menu(event):
             self.results_list.selection_clear(0, tk.END)
