@@ -28,6 +28,8 @@ class EditorView:
             with open(noteutil.nu_file, mode="r") as f:
                 self.controller.on_open_file(f)
 
+        self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
+
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
