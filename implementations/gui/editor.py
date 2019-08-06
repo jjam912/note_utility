@@ -2,8 +2,7 @@ import os
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.filedialog as tkfiledialog
-import tkinter.messagebox as tkmsgbox
-from noteutil.errors import NoteUtilError, QuizError, LeitnerError
+import tkinter.simpledialog as tksimpledialog
 import webbrowser
 
 
@@ -13,7 +12,7 @@ NOTES_DIR = os.path.join(os.getcwd(), "notes")
 class EditorView:
     def __init__(self, root, noteutil, quiz, leitner):
         self.root = root
-        self.root.title("NoteUtil Editor")
+        self.root.title("NoteUtil Editor - Untitled")
 
         self.controller = EditorController(self, noteutil, quiz, leitner)
 
@@ -26,7 +25,7 @@ class EditorView:
 
         if noteutil is not None and quiz is not None and leitner is not None:
             with open(noteutil.nu_file, mode="r") as f:
-                self.text_editor.insert(tk.END, f.read())
+                self.controller.on_open_file(f)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
@@ -39,11 +38,10 @@ class EditorView:
 
     def init_file_menu(self):
         file_menu = tk.Menu(self.menu_bar, tearoff=False)
-        file_menu = tk.Menu(self.menu_bar, tearoff=False)
-        file_menu.add_command(label="New config", accelerator="Ctrl+N", command=self.controller.on_new_file)
+        file_menu.add_command(label="New file", accelerator="Ctrl+N", command=self.controller.on_new_file)
         self.root.bind("<Control-N>", lambda e: self.controller.on_new_file())
         self.root.bind("<Control-n>", lambda e: self.controller.on_new_file())
-        file_menu.add_command(label="Open config", accelerator="Ctrl+O", command=self.controller.on_open_file)
+        file_menu.add_command(label="Open file", accelerator="Ctrl+O", command=self.controller.on_open_file)
         self.root.bind("<Control-O>", lambda e: self.controller.on_open_file())
         self.root.bind("<Control-o>", lambda e: self.controller.on_open_file())
         file_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
@@ -55,7 +53,6 @@ class EditorView:
         self.menu_bar.add_cascade(label="File", menu=file_menu)
 
     def init_edit_menu(self):
-        edit_menu = tk.Menu(self.menu_bar, tearoff=False)
         edit_menu = tk.Menu(self.menu_bar, tearoff=False)
         edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.controller.on_find)
         self.root.bind("<Control-F>", lambda e: self.controller.on_find())
@@ -75,9 +72,9 @@ class EditorView:
 
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
-        tools_menu.add_command(label="View image link", command=self.controller.on_view_image_link)
-        tools_menu.add_command(label="Font selector", command=self.controller.on_font_selector)
-        tools_menu.add_command(label="Display LaTeX", command=self.controller.on_display_latex)
+        tools_menu.add_command(label="View image link", command=self.init_image_link_view)
+        tools_menu.add_command(label="Font selector", command=self.init_font_chooser_view)
+        tools_menu.add_command(label="Display LaTeX", command=self.init_display_latex_view)
         self.menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
     def init_help_menu(self):
@@ -100,6 +97,49 @@ class EditorView:
 
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx="1in", pady=("0.25in", 0))
 
+    def init_image_link_view(self):
+        from PIL import Image
+        import requests
+        from io import BytesIO
+
+        url = tksimpledialog.askstring(parent=self.root, title="Image", prompt="Enter the image link.")
+        if url:
+            toplevel = tk.Toplevel(self.root)
+            toplevel.transient(self.root)
+            toplevel.title("Image link")
+            toplevel.resizable(False, False)
+            tk.Label(toplevel, text="Image load failed.").grid(row=0, column=0)
+
+            # Thanks to https://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url-in-python
+            response = requests.get(url)
+            image = Image.open(BytesIO(response.content))
+            image.save("temp.png")
+
+            image = tk.PhotoImage(file="temp.png")
+            tk.Label(toplevel, image=image).grid(row=0, column=0)
+            toplevel.image = image
+
+    def init_font_chooser_view(self):
+        pass
+
+    def init_display_latex_view(self):
+        from sympy import preview
+
+        latex = tksimpledialog.askstring(parent=self.root, title="LaTeX", prompt="Enter your latex code.")
+        if latex:
+            toplevel = tk.Toplevel(self.root)
+            toplevel.transient(self.root)
+            toplevel.title("LaTeX")
+            toplevel.resizable(False, False)
+            fail_label = tk.Label(toplevel, text="LaTeX load failed.")
+            fail_label.grid(row=0, column=0)
+
+            preview(latex, viewer="file", filename="temp.png")
+            image = tk.PhotoImage(file="temp.png")
+            tk.Label(toplevel, image=image).grid(row=0, column=0)
+            toplevel.image = image
+            fail_label.destroy()
+
     def clear(self):
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -113,24 +153,56 @@ class EditorController:
         self.quiz = quiz
         self.leitner = leitner
 
+        self.file_path = None
+        self.file_name = None
         self.line_numbers = tk.BooleanVar(value=True)
         self.highlight = tk.BooleanVar(value=True)
 
     def on_new_file(self):
-        self.count += 1
-        print(self.count)
+        self.file_update()
+        self.view.text_editor.delete(1.0, tk.END)
+        return "break"
 
-    def on_open_file(self):
-        self.count += 1
-        print(self.count)
+    def on_open_file(self, file=None):
+        if file is None:
+            file = tkfiledialog.askopenfile(parent=self.view.root, defaultextension=".txt", initialdir=NOTES_DIR,
+                                            title="Open file",
+                                            filetypes=[("NoteUtil Notes", "*.nu"), ("Text Documents", "*.txt"),
+                                                       ("Markdown Documents", "*.md"), ("All Files", "*.*")])
+        if file:
+            self.view.text_editor.delete(1.0, tk.END)
+            self.view.text_editor.insert(tk.END, file.read())
+            self.file_update(file)
+        return "break"
+
+    def file_update(self, file=None):
+        if file:
+            self.file_name = os.path.basename(file.name)
+            self.file_path = file.name
+            self.view.root.title("NoteUtil Editor - " + self.file_name)
+        else:
+            self.file_name = None
+            self.file_path = None
+            self.view.root.title("NoteUtil Editor - Untitled")
+        return "break"
 
     def on_save(self):
-        self.count += 1
-        print(self.count)
+        if self.file_path is None:
+            return self.on_save_as()
+        with open(self.file_path, mode="w") as f:
+            f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
-        self.count += 1
-        print(self.count)
+        file_name = self.file_name if self.file_name is not None else ""
+        file = tk.filedialog.asksaveasfile(defaultextension=".txt",
+                                           initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
+                                           filetypes=[("NoteUtil Notes", "*.nu"), ("Text Documents", "*.txt"),
+                                                      ("Markdown Documents", "*.md"), ("All Files", "*.*")])
+        if file:
+            self.file_update(file)
+            with open(self.file_path, mode="w") as f:
+                f.write(self.view.text_editor.get(1.0, tk.END).strip())
+        return "break"
 
     def on_find(self):
         self.count += 1
@@ -148,27 +220,5 @@ class EditorController:
         self.count += 1
         print(self.count)
 
-    def on_view_image_link(self):
-        self.count += 1
-        print(self.count)
-
-    def on_font_selector(self):
-        self.count += 1
-        print(self.count)
-
-    def on_display_latex(self):
-        self.count += 1
-        print(self.count)
-
     def on_about(self):
-        self.count += 1
-        print(self.count)
-
-
-if __name__ == "__main__":
-    gui = tk.Tk()
-    app = EditorView(gui, None, None, None)
-    gui.geometry("1600x900+160+90")
-    gui.mainloop()
-
-
+        webbrowser.open("https://github.com/JJamesWWang/noteutil")
