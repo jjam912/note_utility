@@ -5,6 +5,7 @@ implementations/gui/notes
 docs/_build
 .idea
 *.json
+*.ini
 venv
 .venv
 .vscode
