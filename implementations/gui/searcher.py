@@ -431,7 +431,7 @@ class SearcherView:
         toplevel = tk.Toplevel(self.root)
         toplevel.title("Edit Note")
         toplevel.transient(self.root)
-        tk.Label(toplevel, text="Displayed below is the raw content of the current note.",
+        tk.Label(toplevel, text="Displayed below is the raw content of the selected note.",
                  font=tkfont.Font(family="Ubuntu", size=12)).grid(row=0, column=0, ipady=5)
 
         toplevel.text_editor = tk.Text(toplevel, wrap=tk.WORD, font=tkfont.Font(family="Ubuntu", size=12),
@@ -441,8 +441,13 @@ class SearcherView:
 
         yscrollbar.grid(row=1, column=2, padx=(0, 10), sticky=tk.NS)
 
-        toplevel.nindex = self.results_list.curselection()[0]
-        toplevel.note = self.controller.notes[toplevel.nindex]
+        try:
+            toplevel.nindex = self.results_list.curselection()[0]
+            toplevel.note = self.controller.notes[toplevel.nindex]
+        except IndexError:
+            toplevel.destroy()
+            return tkmsgbox.showerror(title="Error editing", message="Please select a valid note from the list.")
+
         toplevel.text_editor.insert(tk.END, toplevel.note.rcontent)
         toplevel.text_editor.grid(row=1, column=0, columnspan=2, padx=(10, 0), sticky=tk.NSEW)
 
@@ -603,8 +608,11 @@ class SearcherController:
             ))
 
     def on_view_note(self, event=None):
-        nindex = self.view.results_list.curselection()[0]
-        note = self.notes[nindex]
+        try:
+            nindex = self.view.results_list.curselection()[0]
+            note = self.notes[nindex]
+        except IndexError:
+            return tkmsgbox.showerror(title="Error viewing", message="Please select a valid note from the list.")
         note_description = ("Note:\n"
                             "-----\n"
                             "Content:\n"
