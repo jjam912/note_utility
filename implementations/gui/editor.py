@@ -161,16 +161,15 @@ class EditorController:
         self.line_numbers = tk.BooleanVar(value=True)
         self.highlight = tk.BooleanVar(value=True)
 
-        self.program_settings = {}
         self.settings = {}
 
     def read_settings(self):
         with open(SETTINGS_DIR, mode="r") as f:
             try:
-                self.program_settings = json.loads(f.read())
+                program_settings = json.loads(f.read())
             except json.JSONDecodeError:
-                self.program_settings = {}
-            self.settings = self.program_settings.get("editor", {})
+                program_settings = {}
+            self.settings = program_settings.get("editor", {})
         if self.settings:
             self.file_path = self.settings.get("file_path", None)
             self.file_name = self.settings.get("file_name", None)
@@ -185,10 +184,16 @@ class EditorController:
         self.settings["file_name"] = self.file_name
         self.settings["line_numbers"] = self.line_numbers.get()
         self.settings["highlight"] = self.highlight.get()
-        self.program_settings["editor"] = self.settings
+
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                program_settings = {}
+        program_settings["editor"] = self.settings
 
         with open(SETTINGS_DIR, mode="w") as f:
-            f.write(json.dumps(self.program_settings))
+            f.write(json.dumps(program_settings))
 
     def on_new_file(self):
         self.file_update()

@@ -569,24 +569,29 @@ class SearcherController:
         }
 
         self.settings = {}
-        self.program_settings = {}
 
     def read_settings(self):
         with open(SETTINGS_DIR, mode="r") as f:
             try:
-                self.program_settings = json.loads(f.read())
+                program_settings = json.loads(f.read())
             except json.JSONDecodeError:
-                self.program_settings = {}
-            self.settings = self.program_settings.get("searcher", {})
+                program_settings = {}
+            self.settings = program_settings.get("searcher", {})
         if self.settings:
             self.note_preview.set(self.settings.get("note_preview", "{1}"))
 
     def save_settings(self):
         self.settings["note_preview"] = self.note_preview.get()
-        self.program_settings["searcher"] = self.settings
+
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                program_settings = {}
+        program_settings["searcher"] = self.settings
 
         with open(SETTINGS_DIR, mode="w") as f:
-            f.write(json.dumps(self.program_settings))
+            f.write(json.dumps(program_settings))
 
     def add_kwargs(self, query):
         self.search_eval += "content=\"{}\"".format(query) if self.parameter_option.get() == "Content" else ""
