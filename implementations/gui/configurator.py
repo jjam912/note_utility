@@ -6,10 +6,12 @@ import tkinter.filedialog as tkfiledialog
 import tkinter.messagebox as tkmsgbox
 import noteutil as nu
 from noteutil.errors import NoteUtilError, QuizError, LeitnerError
+import json
 import webbrowser
 
 
 NOTES_DIR = os.path.join(os.getcwd(), "notes")
+SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
 class ConfiguratorView:
@@ -35,14 +37,10 @@ class ConfiguratorView:
         self.reviewer_button = None
         self.init_actions_frame()
 
-        if not os.path.exists(NOTES_DIR):
-            os.mkdir(NOTES_DIR)
-
+        self.controller.read_settings()
         if noteutil is not None and quiz is not None and leitner is not None:
             with open(noteutil.config_file, mode="r") as f:
                 self.controller.on_open_config(f)
-
-        self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
@@ -167,10 +165,43 @@ class ConfiguratorController:
         self.quiz = quiz
         self.leitner = leitner
 
+        if not os.path.exists(NOTES_DIR):
+            os.mkdir(NOTES_DIR)
+        if not os.path.exists(SETTINGS_DIR):
+            with open(SETTINGS_DIR, mode="w") as f:
+                f.write("{}")
+
         self.config_file_path = None
         self.config_file_name = None
         self.line_numbers = tk.BooleanVar(value=True)
         self.highlight = tk.BooleanVar(value=True)
+
+        self.program_settings = {}
+        self.settings = {}
+
+    def read_settings(self):
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                self.program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                self.program_settings = {}
+            self.settings = self.program_settings.get("configurator", {})
+        if self.settings:
+            self.config_file_path = self.settings.get("config_file_path", None)
+            self.config_file_name = self.settings.get("config_file_name", None)
+            self.line_numbers.set(self.settings.get("line_numbers", True))
+            self.highlight.set(self.settings.get("highlight", True))
+            with open(self.config_file_path, mode="r") as f:
+                self.on_open_config(f)
+
+    def save_settings(self):
+        self.settings["config_file_path"] = self.config_file_path
+        self.settings["config_file_name"] = self.config_file_name
+        self.settings["line_numbers"] = self.line_numbers.get()
+        self.settings["highlight"] = self.highlight.get()
+        self.program_settings["configurator"] = self.settings
+        with open(SETTINGS_DIR, mode="w") as f:
+            f.write(json.dumps(self.program_settings))
 
     def on_new_config(self):
         self.file_update()
@@ -207,6 +238,7 @@ class ConfiguratorController:
         return "break"
 
     def on_save(self):
+        self.save_settings()
         if self.config_file_path is None:
             return self.on_save_as()
         with open(self.config_file_path, mode="w") as f:
@@ -278,6 +310,7 @@ class ConfiguratorController:
         toplevel.mainloop()
 
     def handle_exit(self):
+        self.save_settings()
         option = "ok"
         with open(self.config_file_path, mode="r") as f:
             if f.read().strip() != self.view.text_editor.get(1.0, tk.END).strip():
