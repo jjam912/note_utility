@@ -52,17 +52,31 @@ class ConfiguratorView:
     def init_file_menu(self):
         file_menu = tk.Menu(self.menu_bar, tearoff=False)
         file_menu.add_command(label="New config", accelerator="Ctrl+N", command=self.controller.on_new_config)
+        self.root.bind("<Control-N>", lambda e: self.controller.on_new_config())
+        self.root.bind("<Control-N>", lambda e: self.controller.on_new_config())
         file_menu.add_command(label="Open config", accelerator="Ctrl+O", command=self.controller.on_open_config)
+        self.root.bind("<Control-O>", lambda e: self.controller.on_open_config())
+        self.root.bind("<Control-o>", lambda e: self.controller.on_open_config())
         file_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
+        self.root.bind("<Control-S>", lambda e: self.controller.on_save())
+        self.root.bind("<Control-s>", lambda e: self.controller.on_save())
         file_menu.add_command(label="Save as", accelerator="Ctrl+Shift+S", command=self.controller.on_save_as)
+        self.root.bind("<Control-Shift-S>", lambda e: self.controller.on_save_as())
+        self.root.bind("<Control-Shift-s>", lambda e: self.controller.on_save_as())
         file_menu.add_separator()
         file_menu.add_command(label="Compile", accelerator="Ctrl+G", command=self.controller.on_compile)
+        self.root.bind("<Control-G>", lambda e: self.controller.on_compile())
+        self.root.bind("<Control-g>", lambda e: self.controller.on_compile())
         self.menu_bar.add_cascade(menu=file_menu, label="File")
 
     def init_edit_menu(self):
         edit_menu = tk.Menu(self.menu_bar, tearoff=False)
         edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.controller.on_find)
+        self.root.bind("<Control-F>", lambda e: self.controller.on_find())
+        self.root.bind("<Control-f>", lambda e: self.controller.on_find())
         edit_menu.add_command(label="Replace", accelerator="Ctrl+R", command=self.controller.on_replace)
+        self.root.bind("<Control-R>", lambda e: self.controller.on_replace())
+        self.root.bind("<Control-r>", lambda e: self.controller.on_replace())
         self.menu_bar.add_cascade(menu=edit_menu, label="Edit")
 
     def init_view_menu(self):
@@ -120,7 +134,24 @@ class ConfiguratorView:
         self.reviewer_button.pack(side=tk.LEFT, padx=5, pady=(5, 10), fill=tk.X, expand=True)
         actions_frame.pack(side=tk.TOP, fill=tk.X, padx=40, pady=(0, 10))
 
+    def unbind_all(self):
+        self.root.unbind("<Control-N>")
+        self.root.unbind("<Control-N>")
+        self.root.unbind("<Control-O>")
+        self.root.unbind("<Control-o>")
+        self.root.unbind("<Control-S>")
+        self.root.unbind("<Control-s>")
+        self.root.unbind("<Control-Shift-S>")
+        self.root.unbind("<Control-Shift-s>")
+        self.root.unbind("<Control-G>")
+        self.root.unbind("<Control-g>")
+        self.root.unbind("<Control-F>")
+        self.root.unbind("<Control-f>")
+        self.root.unbind("<Control-R>")
+        self.root.unbind("<Control-r>")
+
     def clear(self):
+        self.unbind_all()
         for widget in self.root.winfo_children():
             widget.destroy()
 
