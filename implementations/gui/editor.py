@@ -140,10 +140,6 @@ class EditorView:
             toplevel.image = image
             fail_label.destroy()
 
-    def clear(self):
-        for widget in self.root.winfo_children():
-            widget.destroy()
-
 
 class EditorController:
     def __init__(self, view, noteutil, quiz, leitner):
