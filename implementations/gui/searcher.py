@@ -749,12 +749,10 @@ class SearcherController:
         ConfiguratorView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_to_editor(self):
-        from main import Main
         from editor import EditorView
-        toplevel = Main()
+        toplevel = tk.Toplevel()
         toplevel.geometry("1600x900+160+90")
         EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
-        toplevel.mainloop()
 
     def on_to_quizzer(self):
         from quizzer import QuizzerView
