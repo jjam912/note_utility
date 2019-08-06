@@ -3,11 +3,14 @@ import os
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.filedialog as tkfiledialog
+import tkinter.messagebox as tkmsgbox
 import tkinter.simpledialog as tksimpledialog
+import json
 import webbrowser
 
 
 NOTES_DIR = os.path.join(os.getcwd(), "notes")
+SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
 class EditorView:
@@ -24,6 +27,7 @@ class EditorView:
         self.text_editor = None
         self.init_text_editor()
 
+        self.controller.read_settings()
         if noteutil is not None and quiz is not None and leitner is not None:
             with open(noteutil.nu_file, mode="r") as f:
                 self.controller.on_open_file(f)
@@ -157,6 +161,35 @@ class EditorController:
         self.line_numbers = tk.BooleanVar(value=True)
         self.highlight = tk.BooleanVar(value=True)
 
+        self.program_settings = {}
+        self.settings = {}
+
+    def read_settings(self):
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                self.program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                self.program_settings = {}
+            self.settings = self.program_settings.get("editor", {})
+        if self.settings:
+            self.file_path = self.settings.get("file_path", None)
+            self.file_name = self.settings.get("file_name", None)
+            self.line_numbers.set(self.settings.get("line_numbers", True))
+            self.highlight.set(self.settings.get("highlight", True))
+            if self.file_path is not None:
+                with open(self.file_path, mode="r") as f:
+                    self.on_open_file(f)
+
+    def save_settings(self):
+        self.settings["file_path"] = self.file_path
+        self.settings["file_name"] = self.file_name
+        self.settings["line_numbers"] = self.line_numbers.get()
+        self.settings["highlight"] = self.highlight.get()
+        self.program_settings["editor"] = self.settings
+
+        with open(SETTINGS_DIR, mode="w") as f:
+            f.write(json.dumps(self.program_settings))
+
     def on_new_file(self):
         self.file_update()
         self.view.text_editor.delete(1.0, tk.END)
@@ -186,12 +219,14 @@ class EditorController:
         return "break"
 
     def on_save(self):
+        self.save_settings()
         if self.file_path is None:
             return self.on_save_as()
         with open(self.file_path, mode="w") as f:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
+        self.save_settings()
         file_name = self.file_name if self.file_name is not None else ""
         file = tk.filedialog.asksaveasfile(defaultextension=".txt",
                                            initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
@@ -221,3 +256,23 @@ class EditorController:
 
     def on_about(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
+
+    def handle_exit(self):
+        self.save_settings()
+        option = "ok"
+        with open(self.file_path, mode="r") as f:
+            if f.read().strip() != self.view.text_editor.get(1.0, tk.END).strip():
+                option = tkmsgbox.askyesnocancel(title="Window closing",
+                                                 message="Would you like to save before closing?")
+                if option == tk.YES:
+                    self.on_save()
+                    tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        if option is not None:
+            self.view.clear()
+        return option
+
+    def on_close(self):
+        import sys
+        if self.handle_exit() is not None:
+            self.view.root.destroy()
+            sys.exit()
