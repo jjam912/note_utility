@@ -1,10 +1,12 @@
 """GUI for searching through NoteUtil Notes."""
+import os
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.simpledialog as tksimpledialog
 import tkinter.messagebox as tkmsgbox
 import noteutil as nu
 from noteutil.comparisons import CompareOptions
+from configparser import ConfigParser
 import webbrowser
 
 
@@ -110,6 +112,7 @@ class SearcherView:
         self.init_menu_bar()
 
         self.modify_grid()
+        self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
@@ -752,11 +755,8 @@ class SearcherController:
     def on_about(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
-
-if __name__ == "__main__":
-    gui = tk.Tk()
-    app = SearcherView(gui, None, None, None)
-    gui.geometry("1600x900+160+90")
-    gui.mainloop()
-
-
+    def on_close(self):
+        import sys
+        self.noteutil.save()
+        self.view.root.destroy()
+        sys.exit()

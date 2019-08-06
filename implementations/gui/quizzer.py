@@ -688,6 +688,7 @@ class QuizzerController:
 
     def on_close(self):
         import sys
+        self.noteutil.save()
         self.quiz.save()
         self.view.root.destroy()
         sys.exit()

@@ -1,4 +1,5 @@
 """GUI for reviewing through NoteUtil.Leitner."""
+import os
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.messagebox as tkmsgbox
@@ -717,6 +718,7 @@ class ReviewerController:
 
     def on_close(self):
         import sys
+        self.noteutil.save()
         self.leitner.save()
         self.view.root.destroy()
         sys.exit()
