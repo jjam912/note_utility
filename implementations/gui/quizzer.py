@@ -38,6 +38,7 @@ class QuizzerView:
         self.incorrect_button = None
         self.init_button_frame()
 
+        self.controller.read_settings()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):

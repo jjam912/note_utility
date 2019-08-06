@@ -115,6 +115,7 @@ class SearcherView:
         self.init_menu_bar()
 
         self.modify_grid()
+        self.controller.read_settings()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
