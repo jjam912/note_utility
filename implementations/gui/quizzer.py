@@ -651,7 +651,7 @@ class QuizzerController:
 
     def on_to_editor(self):
         from editor import EditorView
-        toplevel = tk.Toplevel()
+        toplevel = tk.Toplevel(self.view.root)
         toplevel.geometry("1600x900+160+90")
         EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
 
