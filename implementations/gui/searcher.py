@@ -576,7 +576,7 @@ class SearcherController:
             elif self.narrow_option.get() == "Or":
                 self.notes.extend(searched_notes if searched_notes else [])
                 self.notes.sort()
-                notes_set = []
+                notes_set = [self.notes[0]]
                 for i in range(1, len(self.notes)):
                     if self.notes[i] != self.notes[i-1]:
                         notes_set.append(self.notes[i])
