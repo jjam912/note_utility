@@ -6,8 +6,11 @@ import tkinter.simpledialog as tksimpledialog
 import tkinter.messagebox as tkmsgbox
 import noteutil as nu
 from noteutil.comparisons import CompareOptions
-from configparser import ConfigParser
+import json
 import webbrowser
+
+
+SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
 class SearcherView:
@@ -526,6 +529,7 @@ class SearcherView:
         self.root.unbind("<Control-l>")
 
     def clear(self):
+        self.controller.save_settings()
         self.unbind_all()
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -564,9 +568,25 @@ class SearcherController:
             "Greater/Equal":    "CompareOptions.GREATERE",
         }
 
-    def on_change_output_format(self):
-        self.count += 1
-        print(self.count)
+        self.settings = {}
+        self.program_settings = {}
+
+    def read_settings(self):
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                self.program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                self.program_settings = {}
+            self.settings = self.program_settings.get("searcher", {})
+        if self.settings:
+            self.note_preview.set(self.settings.get("note_preview", "{1}"))
+
+    def save_settings(self):
+        self.settings["note_preview"] = self.note_preview.get()
+        self.program_settings["searcher"] = self.settings
+
+        with open(SETTINGS_DIR, mode="w") as f:
+            f.write(json.dumps(self.program_settings))
 
     def add_kwargs(self, query):
         self.search_eval += "content=\"{}\"".format(query) if self.parameter_option.get() == "Content" else ""
@@ -757,6 +777,7 @@ class SearcherController:
 
     def on_close(self):
         import sys
+        self.save_settings()
         self.noteutil.save()
         self.view.root.destroy()
         sys.exit()
