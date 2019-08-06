@@ -14,7 +14,7 @@ SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
 class EditorView:
-    def __init__(self, root, noteutil, quiz, leitner):
+    def __init__(self, root, noteutil=None, quiz=None, leitner=None):
         self.root = root
         self.root.title("NoteUtil Editor - Untitled")
 
@@ -247,14 +247,12 @@ class EditorController:
         return "break"
 
     def on_save(self):
-        self.save_settings()
         if self.file_path is None:
             return self.on_save_as()
         with open(self.file_path, mode="w") as f:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
-        self.save_settings()
         file_name = self.file_name if self.file_name is not None else ""
         file = tk.filedialog.asksaveasfile(defaultextension=".txt",
                                            initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
@@ -288,19 +286,20 @@ class EditorController:
     def handle_exit(self):
         self.save_settings()
         option = "ok"
-        with open(self.file_path, mode="r") as f:
-            if f.read().strip() != self.view.text_editor.get(1.0, tk.END).strip():
-                option = tkmsgbox.askyesnocancel(title="Window closing",
-                                                 message="Would you like to save before closing?")
-                if option == tk.YES:
-                    self.on_save()
-                    tkmsgbox.showinfo(title="Success!", message="Saved successfully.")
+        previous_text = ""
+        if self.file_path is not None:
+            with open(self.file_path, mode="r") as f:
+                previous_text = f.read()
+        if previous_text.strip() != self.view.text_editor.get(1.0, tk.END).strip():
+            option = tkmsgbox.askyesnocancel(parent=self.view.root, title="Window closing",
+                                             message="Would you like to save before closing?")
+            if option == tk.YES:
+                self.on_save()
+                tkmsgbox.showinfo(parent=self.view.root, title="Success!", message="Saved successfully.")
         if option is not None:
             self.view.clear()
         return option
 
     def on_close(self):
-        import sys
         if self.handle_exit() is not None:
             self.view.root.destroy()
-            sys.exit()
