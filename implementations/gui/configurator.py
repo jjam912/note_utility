@@ -351,7 +351,5 @@ class ConfiguratorController:
             ReviewerView(self.view.root, self.noteutil, self.quiz, self.leitner)
 
     def on_close(self):
-        import sys
         if self.handle_exit() is not None:
             self.view.root.destroy()
-            sys.exit()
