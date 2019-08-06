@@ -522,7 +522,7 @@ class SearcherView:
         self.root.unbind("<Control-l>")
 
     def clear(self):
-        self.root.unbind("<Button-1>")
+        self.unbind_all()
         for widget in self.root.winfo_children():
             widget.destroy()
 

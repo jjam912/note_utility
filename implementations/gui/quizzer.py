@@ -396,6 +396,7 @@ class QuizzerView:
         self.root.unbind("<Control-l>")
 
     def clear(self):
+        self.unbind_all()
         for widget in self.root.winfo_children():
             widget.destroy()
 
