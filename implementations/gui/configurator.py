@@ -51,18 +51,18 @@ class ConfiguratorView:
 
     def init_file_menu(self):
         file_menu = tk.Menu(self.menu_bar, tearoff=False)
-        file_menu.add_command(label="New config", command=self.controller.on_new_config)
-        file_menu.add_command(label="Open config", command=self.controller.on_open_config)
-        file_menu.add_command(label="Save", command=self.controller.on_save)
-        file_menu.add_command(label="Save as", command=self.controller.on_save_as)
+        file_menu.add_command(label="New config", accelerator="Ctrl+N", command=self.controller.on_new_config)
+        file_menu.add_command(label="Open config", accelerator="Ctrl+O", command=self.controller.on_open_config)
+        file_menu.add_command(label="Save", accelerator="Ctrl+S", command=self.controller.on_save)
+        file_menu.add_command(label="Save as", accelerator="Ctrl+Shift+S", command=self.controller.on_save_as)
         file_menu.add_separator()
-        file_menu.add_command(label="Compile", command=self.controller.on_compile)
+        file_menu.add_command(label="Compile", accelerator="Ctrl+G", command=self.controller.on_compile)
         self.menu_bar.add_cascade(menu=file_menu, label="File")
 
     def init_edit_menu(self):
         edit_menu = tk.Menu(self.menu_bar, tearoff=False)
-        edit_menu.add_command(label="Find", command=self.controller.on_find)
-        edit_menu.add_command(label="Replace", command=self.controller.on_replace)
+        edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.controller.on_find)
+        edit_menu.add_command(label="Replace", accelerator="Ctrl+R", command=self.controller.on_replace)
         self.menu_bar.add_cascade(menu=edit_menu, label="Edit")
 
     def init_view_menu(self):
