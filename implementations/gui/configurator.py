@@ -267,8 +267,9 @@ class ConfiguratorController:
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
 
     def on_editor(self):
+        from main import Main
         from editor import EditorView
-        toplevel = tk.Tk()
+        toplevel = Main()
         toplevel.geometry("1600x900+160+90")
         EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
         toplevel.mainloop()
