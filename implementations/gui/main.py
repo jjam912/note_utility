@@ -1,6 +1,5 @@
 """The starting program that greets the user and then continues to the configurator."""
 import tkinter as tk
-import tkinter.font as tkfont
 from welcomer import Welcomer
 
 

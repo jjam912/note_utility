@@ -1,3 +1,4 @@
+"""GUI for configuring NoteUtil and editing the config file."""
 import os
 import tkinter as tk
 import tkinter.font as tkfont

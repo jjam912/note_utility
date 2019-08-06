@@ -1,3 +1,4 @@
+"""GUI for quizzing through NoteUtil.Quiz."""
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.messagebox as tkmsgbox

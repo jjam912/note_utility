@@ -1,3 +1,4 @@
+"""GUI for reviewing through NoteUtil.Leitner."""
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.messagebox as tkmsgbox

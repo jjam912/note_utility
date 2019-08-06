@@ -1,3 +1,4 @@
+"""GUI for editing NoteUtil Notes, but can be used for general text editing."""
 import os
 import tkinter as tk
 import tkinter.font as tkfont
