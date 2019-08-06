@@ -170,6 +170,7 @@ class ConfiguratorController:
         self.highlight = tk.BooleanVar(value=True)
 
     def on_new_config(self):
+        self.file_update()
         self.view.text_editor.delete(1.0, tk.END)
         with open("CONFIG_TEMPLATE.txt", mode="r") as f:
             self.view.text_editor.insert(tk.END, f.read())
@@ -186,12 +187,20 @@ class ConfiguratorController:
             self.on_compile()
         return "break"
 
-    def file_update(self, file):
-        self.config_file_name = os.path.basename(file.name)
-        self.config_file_path = file.name
-        self.view.config_label.config(text="Your current config file is: " + self.config_file_name)
-        self.view.status_label.config(text="Compile your file using File >> Compile")
-        self.view.root.title("NoteUtil Configurator - " + self.config_file_name)
+    def file_update(self, file=None):
+        if file:
+            self.config_file_name = os.path.basename(file.name)
+            self.config_file_path = file.name
+            self.view.config_label.config(text="Your current config file is: " + self.config_file_name)
+            self.view.status_label.config(text="Compile your file using File >> Compile")
+            self.view.root.title("NoteUtil Configurator - " + self.config_file_name)
+        else:
+            self.config_file_name = None
+            self.config_file_path = None
+            self.view.config_label.config(text="Your current config file is: None")
+            self.view.status_label.config(text="Open a config file or create a new one and then compile it. " +
+                                               "If you already have a config file, use File >> Open Config.",)
+            self.view.root.title("NoteUtil Configurator - Untitled")
         return "break"
 
     def on_save(self):
