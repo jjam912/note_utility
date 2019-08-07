@@ -20,13 +20,17 @@ class EditorView:
 
         self.controller = EditorController(self, noteutil, quiz, leitner)
 
-        self.menu_bar = None
-        self.init_menu_bar()
+        self.find_entry = None
+        self.replace_entry = None
+        self.init_search_bars()
 
         self.line_numbers_text = None
         self.text_editor = None
         self.yscrollbar = None
         self.init_text_editor()
+
+        self.menu_bar = None
+        self.init_menu_bar()
 
         self.controller.read_settings()
         self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
@@ -60,12 +64,12 @@ class EditorView:
 
     def init_edit_menu(self):
         edit_menu = tk.Menu(self.menu_bar, tearoff=False)
-        edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.controller.on_find)
-        self.root.bind("<Control-F>", lambda e: self.controller.on_find())
-        self.root.bind("<Control-f>", lambda e: self.controller.on_find())
-        edit_menu.add_command(label="Replace", accelerator="Ctrl+R", command=self.controller.on_replace)
-        self.root.bind("<Control-R>", lambda e: self.controller.on_replace())
-        self.root.bind("<Control-r>", lambda e: self.controller.on_replace())
+        edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.on_select_find)
+        self.root.bind("<Control-F>", lambda e: self.on_select_find())
+        self.root.bind("<Control-f>", lambda e: self.on_select_find())
+        edit_menu.add_command(label="Replace", accelerator="Ctrl+R", command=self.on_select_replace())
+        self.root.bind("<Control-R>", lambda e: self.on_select_replace())
+        self.root.bind("<Control-r>", lambda e: self.on_select_replace())
         self.menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
     def init_tools_menu(self):
@@ -79,6 +83,43 @@ class EditorView:
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
         help_menu.add_command(label="About", command=self.controller.on_about)
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
+
+    def init_search_bars(self):
+        search_frame = tk.Frame(self.root)
+        tk.Label(search_frame, text="Find: ").grid(row=0, column=0, sticky=tk.W)
+        tk.Label(search_frame, text="Replace: ").grid(row=1, column=0, sticky=tk.W)
+        self.find_entry = tk.Entry(search_frame, textvariable=self.controller.find_query)
+        find_prev_button = tk.Button(search_frame, text="Previous", command=self.controller.on_find_prev)
+        find_next_button = tk.Button(search_frame, text="Next", command=self.controller.on_find_next)
+        self.replace_entry = tk.Entry(search_frame, textvariable=self.controller.replace_query)
+        replace_next_button = tk.Button(search_frame, text="Replace", command=self.controller.on_replace_next)
+        replace_all_button = tk.Button(search_frame, text="Replace all", command=self.controller.on_replace_all)
+
+        self.find_entry.grid(row=0, column=1, sticky=tk.EW)
+        find_prev_button.grid(row=0, column=2, sticky=tk.EW, pady=3, padx=5)
+        find_next_button.grid(row=0, column=3, sticky=tk.EW, pady=3)
+        self.replace_entry.grid(row=1, column=1, sticky=tk.EW)
+        replace_next_button.grid(row=1, column=2, sticky=tk.EW, pady=3, padx=5)
+        replace_all_button.grid(row=1, column=3, sticky=tk.EW, pady=3)
+
+        self.find_entry.bind("<Any-KeyPress>", lambda e: self.controller.on_find())
+        self.find_entry.bind("<Return>", lambda e: self.controller.on_find_next())
+        find_prev_button.bind("<Return>", lambda e: self.controller.on_find_prev())
+        find_next_button.bind("<Return>", lambda e: self.controller.on_find_next())
+        self.replace_entry.bind("<Return>", lambda e: self.controller.on_replace_next())
+        replace_next_button.bind("<Return>", lambda e: self.controller.on_replace_next())
+        replace_all_button.bind("<Return>", lambda e: self.controller.on_replace_all())
+
+        search_frame.grid_columnconfigure(1, weight=1)
+        search_frame.pack(side=tk.TOP, fill=tk.X, padx="1in", pady=("0.25in", 0))
+
+    def on_select_find(self):
+        self.find_entry.event_generate("<<Select All>>")
+        self.find_entry.focus_set()
+
+    def on_select_replace(self):
+        self.replace_entry.event_generate("<<Select All>>")
+        self.replace_entry.focus_set()
 
     def init_text_editor(self):
         text_editor_frame = tk.Frame(self.root)
@@ -105,7 +146,7 @@ class EditorView:
         self.line_numbers_text.pack(side=tk.LEFT, fill=tk.Y)
         self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx="1in", pady=("0.25in", 0))
+        text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx="1in", pady=(10, 0))
         self.text_editor.tag_config("highlight", background="light gray")
 
     def init_image_link_view(self):
@@ -186,6 +227,8 @@ class EditorController:
 
         self.file_path = None
         self.file_name = None
+        self.find_query = tk.StringVar()
+        self.replace_query = tk.StringVar()
 
         self.settings = {}
 
@@ -267,7 +310,19 @@ class EditorController:
         self.count += 1
         print(self.count)
 
-    def on_replace(self):
+    def on_find_prev(self):
+        self.count += 1
+        print(self.count)
+
+    def on_find_next(self):
+        self.count += 1
+        print(self.count)
+
+    def on_replace_next(self):
+        self.count += 1
+        print(self.count)
+
+    def on_replace_all(self):
         self.count += 1
         print(self.count)
 
