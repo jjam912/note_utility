@@ -30,6 +30,7 @@ class EditorView:
 
         self.controller.read_settings()
         self.bind_content_change()
+        self.controller.set_line_numbers()
         self.controller.update_highlight()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
@@ -283,7 +284,7 @@ class EditorController:
     def set_line_numbers(self):
         actual_line_numbers = ""
         row, col = self.view.text_editor.index(tk.END).split(".")
-        for i in range(1, int(row) + 1):
+        for i in range(1, int(row)):
             actual_line_numbers += str(i) + "\n"
         actual_line_numbers = actual_line_numbers[:-1]
         self.view.line_numbers_text.config(state=tk.NORMAL)
