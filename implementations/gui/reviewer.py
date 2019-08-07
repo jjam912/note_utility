@@ -447,7 +447,7 @@ class ReviewerController:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
                 program_settings = {}
-            self.settings = program_settings.get("quizzer", {})
+            self.settings = program_settings.get("reviewer", {})
         if self.settings:
             self.random.set(self.settings["random"])
             self.term_first.set(self.settings["term_first"])
@@ -469,6 +469,16 @@ class ReviewerController:
         self.settings["include_extensions"] = self.include_extensions.get()
         self.settings["extension_format"] = self.extension_format
         self.settings["extension_first"] = self.extension_first
+
+        with open(SETTINGS_DIR, mode="r") as f:
+            try:
+                program_settings = json.loads(f.read())
+            except json.JSONDecodeError:
+                program_settings = {}
+        program_settings["quizzer"] = self.settings
+
+        with open(SETTINGS_DIR, mode="w") as f:
+            f.write(json.dumps(program_settings))
 
     def format_question(self, note, term_format):
         question = term_format.get().format(note.term, note.definition, note.separator, note.nindex)
