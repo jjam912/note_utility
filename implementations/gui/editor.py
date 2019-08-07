@@ -100,6 +100,7 @@ class EditorView:
         self.yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=scroll_y)
         self.text_editor.config(xscrollcommand=xscrollbar.set, yscrollcommand=on_textscroll)
 
+        xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
         self.yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.line_numbers_text.pack(side=tk.LEFT, fill=tk.Y)
         self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
