@@ -475,7 +475,7 @@ class ReviewerController:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
                 program_settings = {}
-        program_settings["quizzer"] = self.settings
+        program_settings["reviewer"] = self.settings
 
         with open(SETTINGS_DIR, mode="w") as f:
             f.write(json.dumps(program_settings))
