@@ -327,9 +327,11 @@ class EditorController:
                     print(end_pos)
                     print(repr(self.view.text_editor.get("{}+{}c".format(start_pos, len(query)))))
 
-                    if (start_pos == "{}.0".format(start_pos.split(".")[0]) or self.view.text_editor.get("{}-1c".format(start_pos)).isspace()):
-                        if (end_pos == "{}.end".format(start_pos.split(".")[0]) or self.view.text_editor.get("{}+{}c".format(start_pos, len(query))).isspace()):
-                            self.view.text_editor.tag_add("MATCH", start_pos, end_pos)
+                    if (start_pos == "{}.0".format(start_pos.split(".")[0]) or
+                            self.view.text_editor.get("{}-1c".format(start_pos)).isspace()) and \
+                                (end_pos == "{}.end".format(start_pos.split(".")[0]) or
+                                    self.view.text_editor.get("{}+{}c".format(start_pos, len(query))).isspace()):
+                        self.view.text_editor.tag_add("MATCH", start_pos, end_pos)
                 else:
                     self.view.text_editor.tag_add("MATCH", start_pos, end_pos)
                 start_pos = end_pos
