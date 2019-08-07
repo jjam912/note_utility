@@ -47,7 +47,6 @@ class ConfiguratorView:
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
-        self.init_edit_menu()
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
 
@@ -70,16 +69,6 @@ class ConfiguratorView:
         self.root.bind("<Control-G>", lambda e: self.controller.on_compile())
         self.root.bind("<Control-g>", lambda e: self.controller.on_compile())
         self.menu_bar.add_cascade(menu=file_menu, label="File")
-
-    def init_edit_menu(self):
-        edit_menu = tk.Menu(self.menu_bar, tearoff=False)
-        edit_menu.add_command(label="Find", accelerator="Ctrl+F", command=self.controller.on_find)
-        self.root.bind("<Control-F>", lambda e: self.controller.on_find())
-        self.root.bind("<Control-f>", lambda e: self.controller.on_find())
-        edit_menu.add_command(label="Replace", accelerator="Ctrl+R", command=self.controller.on_replace)
-        self.root.bind("<Control-R>", lambda e: self.controller.on_replace())
-        self.root.bind("<Control-r>", lambda e: self.controller.on_replace())
-        self.menu_bar.add_cascade(menu=edit_menu, label="Edit")
 
     def init_help_menu(self):
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
@@ -282,24 +271,6 @@ class ConfiguratorController:
         self.view.quizzer_button.config(state=tk.NORMAL)
         self.view.reviewer_button.config(state=tk.NORMAL)
         return "break"
-
-    def on_find(self):
-        self.count += 1
-        print(self.count)
-        return "break"
-
-    def on_replace(self):
-        self.count += 1
-        print(self.count)
-        return "break"
-
-    def on_line_numbers(self):
-        self.count += 1
-        print(self.count)
-
-    def on_highlight(self):
-        self.count += 1
-        print(self.count)
 
     def on_what_config(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil/blob/master/README.md#Config")
