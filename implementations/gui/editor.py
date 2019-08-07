@@ -94,6 +94,8 @@ class EditorView:
         self.replace_entry = tk.Entry(search_frame, textvariable=self.controller.replace_query)
         replace_next_button = tk.Button(search_frame, text="Replace", command=self.controller.on_replace_next)
         replace_all_button = tk.Button(search_frame, text="Replace all", command=self.controller.on_replace_all)
+        match_query_button = tk.Checkbutton(search_frame, text="Match query", variable=self.controller.match_query)
+        ignore_case_button = tk.Checkbutton(search_frame, text="Ignore case", variable=self.controller.ignore_case)
 
         self.find_entry.grid(row=0, column=1, sticky=tk.EW)
         find_prev_button.grid(row=0, column=2, sticky=tk.EW, pady=3, padx=5)
@@ -101,6 +103,8 @@ class EditorView:
         self.replace_entry.grid(row=1, column=1, sticky=tk.EW)
         replace_next_button.grid(row=1, column=2, sticky=tk.EW, pady=3, padx=5)
         replace_all_button.grid(row=1, column=3, sticky=tk.EW, pady=3)
+        match_query_button.grid(row=0, column=4, sticky=tk.W)
+        ignore_case_button.grid(row=1, column=4, sticky=tk.W)
 
         self.find_entry.bind("<Any-KeyRelease>", lambda e: self.controller.on_find())
         self.find_entry.bind("<Return>", lambda e: self.controller.on_find_next())
@@ -228,6 +232,8 @@ class EditorController:
         self.file_name = None
         self.find_query = tk.StringVar()
         self.replace_query = tk.StringVar()
+        self.match_query = tk.BooleanVar(value=False)
+        self.ignore_case = tk.BooleanVar(value=True)
 
         self.settings = {}
 
