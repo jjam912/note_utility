@@ -332,14 +332,18 @@ class SearcherView:
         self.search_button.pack(side=tk.RIGHT)
         self.search_bar.pack(fill=tk.X, expand=True)
         search_bar_frame.grid(row=1, column=1, columnspan=4, padx=(0, 20), pady=10, sticky=tk.EW)
+
+        self.search_button.bind("<Return>", self.controller.on_search)
         self.search_bar.bind("<Return>", self.controller.on_search)
 
     def init_results_list(self):
         results_list_frame = tk.Frame(self.root)
-        self.results_list = tk.Listbox(results_list_frame, activestyle="dotbox", selectmode=tk.SINGLE,
+        self.results_list = tk.Listbox(results_list_frame, activestyle="dotbox", selectmode=tk.SINGLE, takefocus=False,
                                        font=tkfont.Font(family="Ubuntu", size=12))
-        xscroll_bar = tk.Scrollbar(results_list_frame, width=16, orient=tk.HORIZONTAL, command=self.results_list.xview)
-        yscroll_bar = tk.Scrollbar(results_list_frame, width=16, orient=tk.VERTICAL, command=self.results_list.yview)
+        xscroll_bar = tk.Scrollbar(results_list_frame, width=16, orient=tk.HORIZONTAL, takefocus=False,
+                                   command=self.results_list.xview)
+        yscroll_bar = tk.Scrollbar(results_list_frame, width=16, orient=tk.VERTICAL, takefocus=False,
+                                   command=self.results_list.yview)
         self.results_list.config(xscrollcommand=xscroll_bar.set, yscrollcommand=yscroll_bar.set)
         self.results_list.insert(tk.END, "Your results will show up here.")
         xscroll_bar.pack(side=tk.BOTTOM, fill=tk.X)
