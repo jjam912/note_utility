@@ -33,7 +33,7 @@ class EditorView:
         self.init_menu_bar()
 
         self.controller.read_settings()
-        self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
+        self.text_editor.bind("<Any-KeyRelease>", lambda e: self.controller.on_content_change(), add=True)
         self.controller.set_line_numbers()
         self.controller.update_highlight()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
@@ -102,7 +102,7 @@ class EditorView:
         replace_next_button.grid(row=1, column=2, sticky=tk.EW, pady=3, padx=5)
         replace_all_button.grid(row=1, column=3, sticky=tk.EW, pady=3)
 
-        self.find_entry.bind("<Any-KeyPress>", lambda e: self.controller.on_find())
+        self.find_entry.bind("<Any-KeyRelease>", lambda e: self.controller.on_find())
         self.find_entry.bind("<Return>", lambda e: self.controller.on_find_next())
         find_prev_button.bind("<Return>", lambda e: self.controller.on_find_prev())
         find_next_button.bind("<Return>", lambda e: self.controller.on_find_next())
@@ -135,7 +135,6 @@ class EditorView:
         def on_textscroll(*args):
             self.yscrollbar.set(*args)
             scroll_y("moveto", args[0])
-            self.controller.on_content_change()
 
         xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
         self.yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=scroll_y)
@@ -209,7 +208,7 @@ class EditorView:
         self.root.unbind("<Control-i>")
         self.root.unbind("<Control-L>")
         self.root.unbind("<Control-l>")
-        self.root.unbind("<Any-KeyPress>")
+        self.root.unbind("<Any-KeyRelease>")
 
     def clear(self):
         self.unbind_all()

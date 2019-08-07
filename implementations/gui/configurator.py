@@ -39,7 +39,7 @@ class ConfiguratorView:
         self.init_actions_frame()
 
         self.controller.read_settings()
-        self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
+        self.text_editor.bind("<Any-KeyRelease>", lambda e: self.controller.on_content_change(), add=True)
         self.controller.set_line_numbers()
         self.controller.update_highlight()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
@@ -98,7 +98,6 @@ class ConfiguratorView:
         def on_textscroll(*args):
             self.yscrollbar.set(*args)
             scroll_y("moveto", args[0])
-            self.controller.on_content_change()
 
         xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
         self.yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=scroll_y)
@@ -144,7 +143,7 @@ class ConfiguratorView:
         self.root.unbind("<Control-f>")
         self.root.unbind("<Control-R>")
         self.root.unbind("<Control-r>")
-        self.root.unbind("<Any-KeyPress>")
+        self.root.unbind("<Any-KeyRelease>")
 
     def clear(self):
         self.unbind_all()
