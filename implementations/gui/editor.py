@@ -312,8 +312,29 @@ class EditorController:
         return "break"
 
     def on_find(self):
-        self.count += 1
-        print(self.count)
+        self.view.text_editor.tag_remove("MATCH", 1.0, tk.END)
+        query = self.find_query.get()
+        if query != "":
+            start_pos = "1.0"
+            while True:
+                start_pos = self.view.text_editor.search(query, start_pos, nocase=self.ignore_case.get(),
+                                                         stopindex=tk.END)
+                if not start_pos:
+                    break
+                end_pos = "{}+{}c".format(start_pos, len(query))
+                if self.match_query.get():
+                    print(start_pos)
+                    print(end_pos)
+                    print(repr(self.view.text_editor.get("{}+{}c".format(start_pos, len(query)))))
+
+                    if (start_pos == "{}.0".format(start_pos.split(".")[0]) or self.view.text_editor.get("{}-1c".format(start_pos)).isspace()):
+                        if (end_pos == "{}.end".format(start_pos.split(".")[0]) or self.view.text_editor.get("{}+{}c".format(start_pos, len(query))).isspace()):
+                            self.view.text_editor.tag_add("MATCH", start_pos, end_pos)
+                else:
+                    self.view.text_editor.tag_add("MATCH", start_pos, end_pos)
+                start_pos = end_pos
+            self.view.text_editor.tag_config("MATCH", foreground="white", background="black")
+        self.on_find_next()
 
     def on_find_prev(self):
         self.count += 1
