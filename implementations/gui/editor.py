@@ -94,8 +94,10 @@ class EditorView:
         self.replace_entry = tk.Entry(search_frame, textvariable=self.controller.replace_query)
         replace_next_button = tk.Button(search_frame, text="Replace", command=self.controller.on_replace_next)
         replace_all_button = tk.Button(search_frame, text="Replace all", command=self.controller.on_replace_all)
-        match_query_button = tk.Checkbutton(search_frame, text="Match query", variable=self.controller.match_query)
-        ignore_case_button = tk.Checkbutton(search_frame, text="Ignore case", variable=self.controller.ignore_case)
+        match_query_button = tk.Checkbutton(search_frame, text="Match query", variable=self.controller.match_query,
+                                            command=self.controller.on_find)
+        ignore_case_button = tk.Checkbutton(search_frame, text="Ignore case", variable=self.controller.ignore_case,
+                                            command=self.controller.on_find)
 
         self.find_entry.grid(row=0, column=1, sticky=tk.EW)
         find_prev_button.grid(row=0, column=2, sticky=tk.EW, pady=3, padx=5)
@@ -150,7 +152,13 @@ class EditorView:
         self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx="1in", pady=(10, 0))
-        self.text_editor.tag_config("highlight", background="light gray")
+        self.text_editor.tag_config("HIGHLIGHT", background="light gray")
+        self.text_editor.tag_config("MATCH", foreground="white", background="black")
+        self.text_editor.tag_config("FIND_SELECTION", background="orange")
+        self.text_editor.tag_config(tk.SEL, background="light blue")
+        self.text_editor.tag_raise(tk.SEL, "HIGHLIGHT")
+        self.text_editor.tag_raise("MATCH", tk.SEL)
+        self.text_editor.tag_raise("FIND_SELECTION", "MATCH")
 
     def init_image_link_view(self):
         from PIL import Image
@@ -234,6 +242,7 @@ class EditorController:
         self.replace_query = tk.StringVar()
         self.match_query = tk.BooleanVar(value=False)
         self.ignore_case = tk.BooleanVar(value=True)
+        self.current_find_range = None
 
         self.settings = {}
 
@@ -323,9 +332,6 @@ class EditorController:
                     break
                 end_pos = "{}+{}c".format(start_pos, len(query))
                 if self.match_query.get():
-                    print(start_pos)
-                    print(end_pos)
-                    print(repr(self.view.text_editor.get("{}+{}c".format(start_pos, len(query)))))
 
                     if (start_pos == "{}.0".format(start_pos.split(".")[0]) or
                             self.view.text_editor.get("{}-1c".format(start_pos)).isspace()) and \
@@ -335,16 +341,37 @@ class EditorController:
                 else:
                     self.view.text_editor.tag_add("MATCH", start_pos, end_pos)
                 start_pos = end_pos
-            self.view.text_editor.tag_config("MATCH", foreground="white", background="black")
         self.on_find_next()
 
     def on_find_prev(self):
-        self.count += 1
-        print(self.count)
+        prev_range = self.view.text_editor.tag_prevrange("MATCH", self.view.text_editor.index(tk.INSERT), 1.0)
+        if not prev_range:
+            prev_range = self.view.text_editor.tag_prevrange("MATCH", tk.END, self.view.text_editor.index(tk.INSERT))
+        if prev_range:
+            if self.current_find_range:
+                self.view.text_editor.tag_remove("FIND_SELECTION", *self.current_find_range)
+                self.view.text_editor.tag_add("MATCH", *self.current_find_range)
+            self.current_find_range = prev_range
+
+            self.view.text_editor.mark_set(tk.INSERT, prev_range[0])
+            self.view.text_editor.see(tk.INSERT)
+            self.view.text_editor.tag_add("FIND_SELECTION", *prev_range)
 
     def on_find_next(self):
-        self.count += 1
-        print(self.count)
+
+        next_range = self.view.text_editor.tag_nextrange("MATCH", self.view.text_editor.index(tk.INSERT) + "+1c",
+                                                         tk.END)
+        if not next_range:
+            next_range = self.view.text_editor.tag_nextrange("MATCH", 1.0, self.view.text_editor.index(tk.INSERT))
+        if next_range:
+            if self.current_find_range:
+                self.view.text_editor.tag_remove("FIND_SELECTION", *self.current_find_range)
+                self.view.text_editor.tag_add("MATCH", *self.current_find_range)
+            self.current_find_range = next_range
+
+            self.view.text_editor.mark_set(tk.INSERT, next_range[0])
+            self.view.text_editor.see(tk.INSERT)
+            self.view.text_editor.tag_add("FIND_SELECTION", *next_range)
 
     def on_replace_next(self):
         self.count += 1
@@ -373,8 +400,8 @@ class EditorController:
         self.view.line_numbers_text.yview(tk.MOVETO, self.view.yscrollbar.get()[0])
 
     def update_highlight(self, interval=100):
-        self.view.text_editor.tag_remove("highlight", 1.0, tk.END)
-        self.view.text_editor.tag_add("highlight", "insert linestart", "insert lineend+1c")
+        self.view.text_editor.tag_remove("HIGHLIGHT", 1.0, tk.END)
+        self.view.text_editor.tag_add("HIGHLIGHT", "insert linestart", "insert lineend+1c")
         self.view.text_editor.after(interval, self.update_highlight)
 
     def handle_exit(self):
