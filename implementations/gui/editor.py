@@ -25,16 +25,18 @@ class EditorView:
 
         self.line_numbers_text = None
         self.text_editor = None
+        self.yscrollbar = None
         self.init_text_editor()
 
         self.controller.read_settings()
+        self.bind_content_change()
+        self.controller.update_highlight()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
         self.init_edit_menu()
-        self.init_view_menu()
         self.init_tools_menu()
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
@@ -65,14 +67,6 @@ class EditorView:
         self.root.bind("<Control-r>", lambda e: self.controller.on_replace())
         self.menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
-    def init_view_menu(self):
-        view_menu = tk.Menu(self.menu_bar, tearoff=False)
-        view_menu.add_checkbutton(label="Show line number", variable=self.controller.line_numbers,
-                                  command=self.controller.on_line_numbers)
-        view_menu.add_checkbutton(label="Highlight current line", variable=self.controller.highlight,
-                                  command=self.controller.on_highlight)
-        self.menu_bar.add_cascade(label="View", menu=view_menu)
-
     def init_tools_menu(self):
         tools_menu = tk.Menu(self.menu_bar, tearoff=False)
         tools_menu.add_command(label="View image link", command=self.init_image_link_view)
@@ -89,16 +83,27 @@ class EditorView:
         text_editor_frame = tk.Frame(self.root)
         self.line_numbers_text = tk.Text(text_editor_frame, width=5, state=tk.DISABLED,
                                          font=tkfont.Font(family="Ubuntu", size=12))
-        self.text_editor = tk.Text(text_editor_frame, wrap=tk.WORD, undo=True,
+        self.text_editor = tk.Text(text_editor_frame, wrap=tk.NONE, undo=True,
                                    font=tkfont.Font(family="Ubuntu", size=12))
-        yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=self.text_editor.yview)
-        self.text_editor.config(yscrollcommand=yscrollbar.set)
 
-        yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        def scroll_y(*args):
+            self.text_editor.yview(*args)
+            self.line_numbers_text.yview(*args)
+
+        def on_textscroll(*args):
+            self.yscrollbar.set(*args)
+            scroll_y("moveto", args[0])
+
+        xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
+        self.yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=scroll_y)
+        self.text_editor.config(xscrollcommand=xscrollbar.set, yscrollcommand=on_textscroll)
+
+        self.yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.line_numbers_text.pack(side=tk.LEFT, fill=tk.Y)
         self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx="1in", pady=("0.25in", 0))
+        self.text_editor.tag_config("highlight", background="light gray")
 
     def init_image_link_view(self):
         from PIL import Image
@@ -143,6 +148,13 @@ class EditorView:
             toplevel.image = image
             fail_label.destroy()
 
+    def bind_content_change(self):
+        self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
+        self.text_editor.bind("<<Cut>>", lambda e: self.controller.on_content_change(), add=True)
+        self.text_editor.bind("<<Paste>>", lambda e: self.controller.on_content_change(), add=True)
+        self.text_editor.bind("<<Undo>>", lambda e: self.controller.on_content_change(), add=True)
+        self.text_editor.bind("<<Redo>>", lambda e: self.controller.on_content_change(), add=True)
+
     def unbind_all(self):
         self.root.unbind("<Control-N>")
         self.root.unbind("<Control-N>")
@@ -177,8 +189,6 @@ class EditorController:
 
         self.file_path = None
         self.file_name = None
-        self.line_numbers = tk.BooleanVar(value=True)
-        self.highlight = tk.BooleanVar(value=True)
 
         self.settings = {}
 
@@ -192,8 +202,6 @@ class EditorController:
         if self.settings:
             self.file_path = self.settings.get("file_path", None)
             self.file_name = self.settings.get("file_name", None)
-            self.line_numbers.set(self.settings.get("line_numbers", True))
-            self.highlight.set(self.settings.get("highlight", True))
             if self.file_path is not None:
                 with open(self.file_path, mode="r") as f:
                     self.on_open_file(f)
@@ -201,8 +209,6 @@ class EditorController:
     def save_settings(self):
         self.settings["file_path"] = self.file_path
         self.settings["file_name"] = self.file_name
-        self.settings["line_numbers"] = self.line_numbers.get()
-        self.settings["highlight"] = self.highlight.get()
 
         with open(SETTINGS_DIR, mode="r") as f:
             try:
@@ -268,16 +274,28 @@ class EditorController:
         self.count += 1
         print(self.count)
 
-    def on_line_numbers(self):
-        self.count += 1
-        print(self.count)
-
-    def on_highlight(self):
-        self.count += 1
-        print(self.count)
-
     def on_about(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
+
+    def on_content_change(self):
+        self.set_line_numbers()
+
+    def set_line_numbers(self):
+        actual_line_numbers = ""
+        row, col = self.view.text_editor.index(tk.END).split(".")
+        for i in range(1, int(row) + 1):
+            actual_line_numbers += str(i) + "\n"
+        actual_line_numbers = actual_line_numbers[:-1]
+        self.view.line_numbers_text.config(state=tk.NORMAL)
+        self.view.line_numbers_text.delete(1.0, tk.END)
+        self.view.line_numbers_text.insert(tk.END, actual_line_numbers)
+        self.view.line_numbers_text.config(state=tk.DISABLED)
+        self.view.line_numbers_text.yview(tk.MOVETO, self.view.yscrollbar.get()[0])
+
+    def update_highlight(self, interval=100):
+        self.view.text_editor.tag_remove("highlight", 1.0, tk.END)
+        self.view.text_editor.tag_add("highlight", "insert linestart", "insert lineend+1c")
+        self.view.text_editor.after(interval, self.update_highlight)
 
     def handle_exit(self):
         self.save_settings()
