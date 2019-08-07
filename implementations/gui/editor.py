@@ -356,6 +356,8 @@ class EditorController:
             self.view.text_editor.mark_set(tk.INSERT, prev_range[0])
             self.view.text_editor.see(tk.INSERT)
             self.view.text_editor.tag_add("FIND_SELECTION", *prev_range)
+        else:
+            self.current_find_range = None
 
     def on_find_next(self):
 
@@ -372,14 +374,24 @@ class EditorController:
             self.view.text_editor.mark_set(tk.INSERT, next_range[0])
             self.view.text_editor.see(tk.INSERT)
             self.view.text_editor.tag_add("FIND_SELECTION", *next_range)
+        else:
+            self.current_find_range = None
 
     def on_replace_next(self):
-        self.count += 1
-        print(self.count)
+        if self.current_find_range:
+            self.view.text_editor.tag_remove("FIND_SELECTION", *self.current_find_range)
+            self.view.text_editor.delete(self.current_find_range[0], self.current_find_range[1])
+            self.view.text_editor.insert(self.current_find_range[0], self.replace_query.get())
+            self.current_find_range = None
+            self.on_find_next()
 
     def on_replace_all(self):
-        self.count += 1
-        print(self.count)
+        find_range = self.view.text_editor.tag_nextrange("MATCH", 1.0)
+        while find_range:
+            self.view.text_editor.tag_remove("MATCH", *find_range)
+            self.view.text_editor.delete(find_range[0], find_range[1])
+            self.view.text_editor.insert(find_range[0], self.replace_query.get())
+            find_range = self.view.text_editor.tag_nextrange("MATCH", 1.0)
 
     def on_about(self):
         webbrowser.open("https://github.com/JJamesWWang/noteutil")
