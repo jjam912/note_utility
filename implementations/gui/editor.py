@@ -29,7 +29,7 @@ class EditorView:
         self.init_text_editor()
 
         self.controller.read_settings()
-        self.bind_content_change()
+        self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
         self.controller.set_line_numbers()
         self.controller.update_highlight()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
@@ -94,6 +94,7 @@ class EditorView:
         def on_textscroll(*args):
             self.yscrollbar.set(*args)
             scroll_y("moveto", args[0])
+            self.controller.on_content_change()
 
         xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
         self.yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=scroll_y)
@@ -149,13 +150,6 @@ class EditorView:
             toplevel.image = image
             fail_label.destroy()
 
-    def bind_content_change(self):
-        self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
-        self.text_editor.bind("<<Cut>>", lambda e: self.controller.on_content_change(), add=True)
-        self.text_editor.bind("<<Paste>>", lambda e: self.controller.on_content_change(), add=True)
-        self.text_editor.bind("<<Undo>>", lambda e: self.controller.on_content_change(), add=True)
-        self.text_editor.bind("<<Redo>>", lambda e: self.controller.on_content_change(), add=True)
-
     def unbind_all(self):
         self.root.unbind("<Control-N>")
         self.root.unbind("<Control-N>")
@@ -173,6 +167,7 @@ class EditorView:
         self.root.unbind("<Control-i>")
         self.root.unbind("<Control-L>")
         self.root.unbind("<Control-l>")
+        self.root.unbind("<Any-KeyPress>")
 
     def clear(self):
         self.unbind_all()
