@@ -29,6 +29,7 @@ class ConfiguratorView:
 
         self.line_numbers_text = None
         self.text_editor = None
+        self.yscrollbar = None
         self.init_text_editor()
 
         self.editor_button = None
@@ -38,13 +39,15 @@ class ConfiguratorView:
         self.init_actions_frame()
 
         self.controller.read_settings()
+        self.text_editor.bind("<Any-KeyPress>", lambda e: self.controller.on_content_change(), add=True)
+        self.controller.set_line_numbers()
+        self.controller.update_highlight()
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
         self.menu_bar = tk.Menu(self.root, tearoff=False)
         self.init_file_menu()
         self.init_edit_menu()
-        self.init_view_menu()
         self.init_help_menu()
         self.root.config(menu=self.menu_bar)
 
@@ -78,14 +81,6 @@ class ConfiguratorView:
         self.root.bind("<Control-r>", lambda e: self.controller.on_replace())
         self.menu_bar.add_cascade(menu=edit_menu, label="Edit")
 
-    def init_view_menu(self):
-        view_menu = tk.Menu(self.menu_bar, tearoff=False)
-        view_menu.add_checkbutton(label="Show line number", variable=self.controller.line_numbers,
-                                  command=self.controller.on_line_numbers)
-        view_menu.add_checkbutton(label="Highlight current line", variable=self.controller.highlight,
-                                  command=self.controller.on_highlight)
-        self.menu_bar.add_cascade(menu=view_menu, label="View")
-
     def init_help_menu(self):
         help_menu = tk.Menu(self.menu_bar, tearoff=False)
         help_menu.add_command(label="What config?", command=self.controller.on_what_config)
@@ -106,17 +101,29 @@ class ConfiguratorView:
                                          state=tk.DISABLED)
         self.text_editor = tk.Text(text_editor_frame, wrap=tk.NONE, undo=True,
                                    font=tkfont.Font(family="Ubuntu", size=12))
+
+        def scroll_y(*args):
+            self.text_editor.yview(*args)
+            self.line_numbers_text.yview(*args)
+
+        def on_textscroll(*args):
+            self.yscrollbar.set(*args)
+            scroll_y("moveto", args[0])
+            self.controller.on_content_change()
+
         xscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.HORIZONTAL, command=self.text_editor.xview)
-        yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=self.text_editor.yview)
-        self.text_editor.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        self.yscrollbar = tk.Scrollbar(text_editor_frame, orient=tk.VERTICAL, command=scroll_y)
+        self.text_editor.config(xscrollcommand=xscrollbar.set, yscrollcommand=on_textscroll)
 
         xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
-        yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.line_numbers_text.pack(side=tk.LEFT, fill=tk.Y)
         self.text_editor.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         self.controller.on_new_config()
         text_editor_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=40, pady=10)
+        self.text_editor.tag_config("highlight", background="light gray")
+
 
     def init_actions_frame(self):
         actions_frame = tk.LabelFrame(self.root, text="Choose a method of review:")
@@ -148,6 +155,7 @@ class ConfiguratorView:
         self.root.unbind("<Control-f>")
         self.root.unbind("<Control-R>")
         self.root.unbind("<Control-r>")
+        self.root.unbind("<Any-KeyPress>")
 
     def clear(self):
         self.unbind_all()
@@ -171,8 +179,6 @@ class ConfiguratorController:
 
         self.config_file_path = None
         self.config_file_name = None
-        self.line_numbers = tk.BooleanVar(value=True)
-        self.highlight = tk.BooleanVar(value=True)
 
         self.settings = {}
 
@@ -186,8 +192,6 @@ class ConfiguratorController:
         if self.settings:
             self.config_file_path = self.settings.get("config_file_path", None)
             self.config_file_name = self.settings.get("config_file_name", None)
-            self.line_numbers.set(self.settings.get("line_numbers", True))
-            self.highlight.set(self.settings.get("highlight", True))
             if self.config_file_path is not None:
                 with open(self.config_file_path, mode="r") as f:
                     self.on_open_config(f)
@@ -195,8 +199,6 @@ class ConfiguratorController:
     def save_settings(self):
         self.settings["config_file_path"] = self.config_file_path
         self.settings["config_file_name"] = self.config_file_name
-        self.settings["line_numbers"] = self.line_numbers.get()
-        self.settings["highlight"] = self.highlight.get()
 
         with open(SETTINGS_DIR, mode="r") as f:
             try:
@@ -310,6 +312,26 @@ class ConfiguratorController:
         toplevel = tk.Toplevel(self.view.root)
         toplevel.geometry("1600x900+160+90")
         EditorView(toplevel, self.noteutil, self.quiz, self.leitner)
+
+    def on_content_change(self):
+        self.set_line_numbers()
+
+    def set_line_numbers(self):
+        actual_line_numbers = ""
+        row, col = self.view.text_editor.index(tk.END).split(".")
+        for i in range(1, int(row)):
+            actual_line_numbers += str(i) + "\n"
+        actual_line_numbers = actual_line_numbers[:-1]
+        self.view.line_numbers_text.config(state=tk.NORMAL)
+        self.view.line_numbers_text.delete(1.0, tk.END)
+        self.view.line_numbers_text.insert(tk.END, actual_line_numbers)
+        self.view.line_numbers_text.config(state=tk.DISABLED)
+        self.view.line_numbers_text.yview(tk.MOVETO, self.view.yscrollbar.get()[0])
+
+    def update_highlight(self, interval=100):
+        self.view.text_editor.tag_remove("highlight", 1.0, tk.END)
+        self.view.text_editor.tag_add("highlight", "insert linestart", "insert lineend+1c")
+        self.view.text_editor.after(interval, self.update_highlight)
 
     def handle_exit(self):
         self.save_settings()
