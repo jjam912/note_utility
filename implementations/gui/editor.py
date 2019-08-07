@@ -28,10 +28,6 @@ class EditorView:
         self.init_text_editor()
 
         self.controller.read_settings()
-        if noteutil is not None and quiz is not None and leitner is not None:
-            with open(noteutil.nu_file, mode="r") as f:
-                self.controller.on_open_file(f)
-
         self.root.protocol("WM_DELETE_WINDOW", self.controller.on_close)
 
     def init_menu_bar(self):
