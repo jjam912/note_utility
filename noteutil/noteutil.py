@@ -84,6 +84,8 @@ class NoteUtil:
         If there were any severe problems during the Note creation process.
     """
 
+    CONFIG_IGNORE_PREFIX = "#|"
+
     def __init__(self, config_file: str, refresh: bool = True):
         self.notes = []
         self.config_file = config_file
@@ -145,13 +147,14 @@ class NoteUtil:
                 if line.startswith("\n") and index != 0 and lines[index - 1].startswith("\n"):
                     raise ExtraLine(index)
                 # If this line is a blank line and the previous one was not a comment, there's an unexpected line.
-                if line.startswith("\n") and index != 0 and lines[index - 1].strip().startswith(">>>") is False:
+                if line.startswith("\n") and index != 0 and lines[index - 1].strip().startswith(
+                        self.CONFIG_IGNORE_PREFIX) is False:
                     raise UnexpectedLine(index)
 
                 line = line.strip()
 
                 # Remove any comments and leave only intended lines
-                if line.startswith(">>>"):
+                if line.startswith(self.CONFIG_IGNORE_PREFIX):
                     continue
 
                 else:

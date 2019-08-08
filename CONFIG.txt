@@ -1,47 +1,47 @@
->>> Welcome to NoteUtil's configuration file!
->>>
->>> Enter in the following configurations in the lines without a ">>>". There must not be any blank lines surrounding what you enter.
->>> Any lines with a ">>>" will be ignored.
->>> Any optional configurations should be left blank to be left out. Make sure there are no two consecutive blank lines anywhere.
->>>
->>> I recommend copying and pasting this file's contents and creating your own config file and keeping this as a template.
->>>
->>> ----------------------
->>> NOTEUTIL CONFIGURATION
->>> ----------------------
->>>
->>> [Required] File path - To detect your notes file.
+#| Welcome to NoteUtil's configuration file!
+#|
+#| Enter in the following configurations in the lines without a "#|". There must not be any blank lines surrounding what you enter.
+#| Any lines starting with a "#|" will be ignored.
+#| Any optional configurations should be left blank to be left out. Make sure there are no two consecutive blank lines anywhere.
+#|
+#| I recommend copying and pasting this file's contents and creating your own config file and keeping this as a template.
+#|
+#| ----------------------
+#| NOTEUTIL CONFIGURATION
+#| ----------------------
+#|
+#| [Required] File path - To detect your notes file.
 
->>> [Optional] Comments (cannot be >>>) - Prefix a line in your notes with this so it is ignored while your notes are being read.
+#| [Optional] Comments (cannot be #|) - Prefix a line in your notes with this so it is ignored while your notes are being read.
 
->>> [Optional] Blocks (cannot be >>>) - Prefix a line and suffix a different line with this to make a multi-line note.
+#| [Optional] Blocks (cannot be #|) - Prefix a line and suffix a different line with this to make a multi-line note.
 
->>> [Recommended] Separator - For the creation of Pairs.
+#| [Recommended] Separator - For the creation of Pairs.
 
->>> [Recommended] Heading character - To indicate a Headings hierarchy.
+#| [Recommended] Heading character - To indicate a Headings hierarchy.
 
-    >>> [Required if Heading character given, otherwise leave blank.]
-    >>> Number of Headings - To tell how many levels of Headings there are.
+    #| [Required if Heading character given, otherwise leave blank.]
+    #| Number of Headings - To tell how many levels of Headings there are.
 
-    >>> A name for each Heading separated by newlines - To give each level of Heading a general name to refer to.
-    >>> The number of names should match the number of Headings.
+    #| A name for each Heading separated by newlines - To give each level of Heading a general name to refer to.
+    #| The number of names should match the number of Headings.
 
->>> [Optional] Number of Categories - To know how many different Categories will be created.
+#| [Optional] Number of Categories - To know how many different Categories will be created.
 
-    >>> [Required if Number of Categories given, otherwise leave blank]
-    >>> A name for each Category separated by newlines - To give each Category a general name to refer to. Order matters.
+    #| [Required if Number of Categories given, otherwise leave blank]
+    #| A name for each Category separated by newlines - To give each Category a general name to refer to. Order matters.
 
-    >>> For each name on a newline in the same order, enter the character prefix.
+    #| For each name on a newline in the same order, enter the character prefix.
 
->>> [Optional] Number of Extensions - To know how many different types of Extensions will be created.
+#| [Optional] Number of Extensions - To know how many different types of Extensions will be created.
 
-    >>> [Required if Number of Extensions given, otherwise leave blank.]
-    >>> A name for each extension separated by newlines - To give each Extension a general name to refer to.
+    #| [Required if Number of Extensions given, otherwise leave blank.]
+    #| A name for each extension separated by newlines - To give each Extension a general name to refer to.
 
-    >>> For each name on a newline, enter the 1. left bound, and 2. right bound separated by a space.
+    #| For each name on a newline, enter the 1. left bound, and 2. right bound separated by a space.
 
->>>
->>>
->>>
->>>
->>>
+#|
+#|
+#|
+#|
+#|
