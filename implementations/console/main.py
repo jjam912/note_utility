@@ -1,7 +1,7 @@
 from noteutil import NoteUtil, Quiz, Leitner
 from noteutil.notes import Note
 from noteutil.comparisons import CompareOptions
-from noteutil.errors import NoteError, TimeTooShort, LastBox
+from noteutil.errors import NoteError, TimeTooShort, LastBox, LeitnerError
 import os
 from typing import List
 from itertools import filterfalse
@@ -764,15 +764,32 @@ class Commands:
     def leitner_settings(self):
         leitner = self.current_notebook.leitner
         self.leitner_boxes()
+        edit_box = yn_input("Would you like to edit a current box?")
+        if edit_box is None:
+            return print("Canceled input. (0)")
+        if edit_box:
+            box = range_input("Which box would you like to edit? (1 - {0})".format(len(leitner.times)),
+                              range(1, len(leitner.times) + 1))
+            if box is None:
+                return print("Canceled input. (1)")
+            time = range_input("What is the new time for the box? ({0} - {1})".format(
+                leitner.times.get(box - 1, 1), leitner.times.get(box + 1, 9999999)))
+            if time is None:
+                return print("Canceled input. (2)")
+            try:
+                leitner.edit_box(box, time)
+            except LeitnerError as e:
+                return print(e.args[0])
+
         add_box = yn_input("Would you like to add another box to the end?")
         if add_box is None:
-            return print("Canceled input. (0)")
+            return print("Canceled input. (3)")
         if add_box:
             time = range_input("Enter a time period for the box (how long between each review.)\n"
                                "It must be greater than the current longest time period (max 9999999).",
                                range(leitner.times[len(leitner.times)] + 1, 10000000))
             if time is None:
-                return print("Canceled input. (1)")
+                return print("Canceled input. (4)")
             try:
                 leitner.append_box(time)
                 return print("Added Box {0} with time period {1}.".format(len(leitner.boxes), time))
@@ -781,7 +798,7 @@ class Commands:
 
         pop_box = yn_input("Would you like to remove the last box?")
         if pop_box is None:
-            return print("Canceled input. (2)")
+            return print("Canceled input. (5)")
         if pop_box:
             try:
                 leitner.pop_box()
