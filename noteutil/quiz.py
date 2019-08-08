@@ -172,35 +172,40 @@ class Quiz:
             If the str provided is not None and it isn't a recognized heading or category name.
         """
 
-        if division is None or division == "none":
-            self.division = "none"
+        if division is None:
+            self.division = "None"
             self.pairs = self.noteutil.pairs
             return
 
-        if division == "correct":
-            self.division = "correct"
-            self.pairs = self.correct
-            return
-        elif division == "incorrect":
-            self.division = "incorrect"
-            self.pairs = self.incorrect
-            return
-        elif division == "unmarked":
-            self.division = "unmarked"
-            self.pairs = self.unmarked
-            return
-
-        if division in self.noteutil.heading_names:
-            division = self.noteutil.get(heading_name=division)
+        if isinstance(division, str):
+            if division.lower() == "none":
+                self.division = "None"
+                self.pairs = self.noteutil.pairs
+                return
+            elif division.lower() == "correct":
+                self.division = "Correct"
+                self.pairs = self.correct
+                return
+            elif division.lower() == "incorrect":
+                self.division = "Incorrect"
+                self.pairs = self.incorrect
+                return
+            elif division.lower() == "unmarked":
+                self.division = "Unmarked"
+                self.pairs = self.unmarked
+                return
+            elif division in self.noteutil.category_names:
+                self.division = division
+                self.pairs = list(filter(lambda n: n.is_pair(), self.noteutil.categories[division]))
+                return
+            elif division in self.noteutil.heading_names:
+                division = self.noteutil.get(heading_name=division)
         if isinstance(division, Note):
             if not division.is_heading():
                 raise HeadingExpected(division)
             self.division = division
             self.pairs = list(filter(lambda n: n.is_pair(),
                                      self.noteutil.notes[self.division.begin_nindex: self.division.end_nindex]))
-        elif division in self.noteutil.category_names:
-            self.division = division
-            self.pairs = list(filter(lambda n: n.is_pair(), self.noteutil.categories[division]))
         else:
             raise DivisionNotFound(division)
 
