@@ -436,7 +436,7 @@ class Leitner:
         self.times.pop(len(self.times))
         self.boxes[len(self.boxes)].extend(pairs)
 
-    def modify_box(self, box: int, time: int) -> None:
+    def edit_box(self, box: int, time: int) -> None:
         """Modifies the box and changes its time.
 
         Returns

@@ -698,7 +698,7 @@ class ReviewerController:
         if time is None:
             return
         try:
-            self.leitner.modify_box(box, time)
+            self.leitner.edit_box(box, time)
         except (nu.TimeTooShort, nu.TimeTooLong) as e:
             tkmsgbox.showerror(title="Error modifying box", message=e.args[0])
 
