@@ -645,7 +645,7 @@ class NoteUtil:
                 note.begin_nindex -= 1
         self._complete_headings()
 
-    def save(self) -> None:
+    def save(self, override_notes: bool = False) -> None:
         """Writes all of the Notes back into what they were when they were being parsed into a .nu file.
 
         If any changes to the Notes were made, they will be written here as well.
@@ -658,6 +658,9 @@ class NoteUtil:
         raw_notes = "\n".join(list(map(lambda n: n.rcontent, self.notes)))
         with open(self.nu_file, mode="w") as f:
             f.write(raw_notes)
+        if override_notes:
+            with open(self.note_file, mode="w") as f:
+                f.write(raw_notes)
 
     def load(self) -> None:
         """Re-parses the .nu file, reverting any changes that could have been made to NoteUtil during use.
