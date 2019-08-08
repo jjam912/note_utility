@@ -81,7 +81,7 @@ class Quiz:
                 yield note
         else:
             index = 0
-            while index != len(self.pairs):
+            while index < len(self.pairs):
                 note = self.pairs[index]
                 self.last_nindex = note.nindex
                 yield note
