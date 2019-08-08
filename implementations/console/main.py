@@ -287,7 +287,7 @@ class Commands:
             if query is None:
                 return print("Canceled input. (1)")
 
-            note_list = noteutil.get_list(content=query, compare=CompareOptions.SIN)
+            note_list = noteutil.get_list(content=query, compare=CompareOptions.SIMIN)
             if not note_list:
                 return print("No Notes found. (1)")
 
@@ -318,7 +318,7 @@ class Commands:
                                            "\n\t3. In"
                                            "\n\t4. Similar & In", range(1, 5))
                 compare_conversion = {1: CompareOptions.EQUALS, 2: CompareOptions.SIMILAR,
-                                      3: CompareOptions.IN, 4: CompareOptions.SIN}
+                                      3: CompareOptions.IN, 4: CompareOptions.SIMIN}
                 if compare_type is None:
                     return print("Canceled input. (2)")
 
