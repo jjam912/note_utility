@@ -484,7 +484,8 @@ class QuizzerController:
         self.view.menu_bar.winfo_children()[0].entryconfigure(0, state=tk.NORMAL)
         self.view.root.bind("<Control-G>", lambda e: self.on_generate())
         self.view.root.bind("<Control-g>", lambda e: self.on_generate())
-        self.view.division_combobox.config(values=list(map(lambda n: n.heading_name, self.noteutil.heading_order)))
+        self.view.division_combobox.config(values=["None", "Correct", "Incorrect", "Unmarked"] +
+                                           list(map(lambda n: n.heading_name, self.noteutil.heading_order)))
 
     def format_question(self, note, term_format):
         question = term_format.get().format(note.term, note.definition, note.separator, note.nindex)
