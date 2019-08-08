@@ -299,9 +299,10 @@ class Commands:
                                       "\n\t4. Definition"
                                       "\n\t5. Heading level"
                                       "\n\t6. Heading name"
-                                      "\n\t7. Extension name", range(8))
+                                      "\n\t7. Extension name"
+                                      "\n\t8. Category name", range(9))
             search_conversion = {1: "content", 2: "nindex", 3: "term", 4: "definition",
-                                 5: "level", 6: "heading_name", 7: "extension_names"}
+                                 5: "level", 6: "heading_name", 7: "extension_names", 8: "category_names"}
 
             if search_type is None:
                 return print("Canceled input. (1)")
@@ -373,6 +374,14 @@ class Commands:
                 note_list = noteutil.get_list(**{search_conversion[search_type]: query, "compare": CompareOptions.IN})
                 if not note_list:
                     return print("No Notes found. (5)")
+            elif search_type in [8]:
+                query = text_input("Enter the Category name and make sure it matches exactly.")
+                if query is None:
+                    return print("Canceled input. (8)")
+
+                note_list = noteutil.get_list(**{search_conversion[search_type]: query, "compare": CompareOptions.IN})
+                if not note_list:
+                    return print("No Notes found. (6)")
             else:
                 return print("Error: Search type not in range.")
 
@@ -399,10 +408,12 @@ class Commands:
                   "Heading level: {5}\n"
                   "Heading name: {6}\n"
                   "Note Range: {7}\n"
-                  "Extensions: {8}".format(note.content, note.rcontent, note.nindex, note.term, note.definition,
+                  "Extensions: {8}\n"
+                  "Categories: {9}".format(note.content, note.rcontent, note.nindex, note.term, note.definition,
                                            note.level, note.heading_name,
                                            "range(" + str(note.begin_nindex) + ", " + str(note.end_nindex) + ")",
-                                           "\n\t".join(list(map(lambda e: e.name + ":" + e.content, note.extensions)))))
+                                           "\n\t".join(list(map(lambda e: e.name + ":" + e.content, note.extensions))),
+                                           "\n\t".join(note.category_names)))
 
     def noteutil_edit(self):
         noteutil = self.current_notebook.noteutil
