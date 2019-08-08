@@ -305,13 +305,21 @@ class Commands:
                                  5: "level", 6: "heading_name", 7: "extension_names", 8: "category_names"}
 
             if search_type is None:
-                return print("Canceled input. (1)")
+                return print("Canceled input. (2)")
+
+            invert_search = yn_input("Would you like to invert your search (show notes that weren't found)?")
+            if invert_search is None:
+                return print("Canceled input. (3)")
+
             if search_type in [0]:
                 kwargs = text_input("You've found the hidden eval search option!\n"
                                     "Type your eval statement:")
                 if kwargs is None:
                     return print("Canceled input. (0)")
                 note_list = eval(kwargs)
+
+                if not note_list:
+                    return print("No Notes found. (0)")
             elif search_type in [1, 3, 4, 6]:
                 compare_type = range_input("How do you want to compare?"
                                            "\n\t1. Equals"
@@ -321,14 +329,18 @@ class Commands:
                 compare_conversion = {1: CompareOptions.EQUALS, 2: CompareOptions.SIMILAR,
                                       3: CompareOptions.IN, 4: CompareOptions.SIMIN}
                 if compare_type is None:
-                    return print("Canceled input. (2)")
+                    return print("Canceled input. (4)")
 
                 query = text_input("Enter the part of the Note you are searching for.")
                 if query is None:
-                    return print("Canceled input. (3)")
+                    return print("Canceled input. (5)")
 
-                note_list = noteutil.get_list(**{search_conversion[search_type]: query,
-                                                 "compare": compare_conversion[compare_type]})
+                if invert_search:
+                    note_list = noteutil.iget_list(**{search_conversion[search_type]: query,
+                                                      "compare": compare_conversion[compare_type]})
+                else:
+                    note_list = noteutil.get_list(**{search_conversion[search_type]: query,
+                                                     "compare": compare_conversion[compare_type]})
                 if not note_list:
                     return print("No Notes found. (2)")
 
@@ -336,23 +348,23 @@ class Commands:
                 if search_type == 2:
                     specific = yn_input("Would you like a specific index (Y) or a range of Notes (N)?")
                     if specific is None:
-                        return print("Canceled input. (4)")
+                        return print("Canceled input. (6)")
                     if specific:
                         query = range_input("Enter the note index of the Note.", range(len(noteutil.notes)))
                         if query is None:
-                            return print("Canceled input. (5)")
+                            return print("Canceled input. (7)")
 
                         note_list = noteutil.get_list(**{search_conversion[search_type]: query})
                     else:
                         begin = range_input("Enter the note index of the beginning Note.", range(len(noteutil.notes)))
                         if begin is None:
-                            return print("Canceled input. (5)")
+                            return print("Canceled input. (8)")
 
                         end = range_input("Enter the note index of the ending Note. "
                                           "It must be greater than the beginning Note",
                                           range(begin + 1, len(noteutil.notes) + 1))
                         if end is None:
-                            return print("Canceled input. (6)")
+                            return print("Canceled input. (9)")
 
                         note_list = []
                         for nindex in range(begin, end):
@@ -369,7 +381,7 @@ class Commands:
             elif search_type in [7]:
                 query = text_input("Enter the Extension name and make sure it matches exactly.")
                 if query is None:
-                    return print("Canceled input. (7)")
+                    return print("Canceled input. (10)")
 
                 note_list = noteutil.get_list(**{search_conversion[search_type]: query, "compare": CompareOptions.IN})
                 if not note_list:
@@ -377,7 +389,7 @@ class Commands:
             elif search_type in [8]:
                 query = text_input("Enter the Category name and make sure it matches exactly.")
                 if query is None:
-                    return print("Canceled input. (8)")
+                    return print("Canceled input. (11)")
 
                 note_list = noteutil.get_list(**{search_conversion[search_type]: query, "compare": CompareOptions.IN})
                 if not note_list:
@@ -391,12 +403,12 @@ class Commands:
         if settings.ask_define:
             define = yn_input("Would you like to look at a specific Note more in depth?")
             if define is None or define is False:
-                return print("Canceled input. (8)")
+                return print("Canceled input. (12)")
 
             if len(note_list) > 1:
                 nindex = range_input("Choose the number of a Note from the Note list", range(1, len(note_list) + 1))
                 if nindex is None:
-                    return print("Canceled input. (9)")
+                    return print("Canceled input. (13)")
             else:
                 nindex = 1
             note = note_list[nindex - 1]
