@@ -98,7 +98,7 @@ class NoteUtilSettings:
     def __init__(self, notebook: Notebook):
         self.notebook = notebook
         self.file = notebook.noteutil.note_file
-        self.simple_search = True
+        self.simple_search = False
         self.ask_define = True
 
 
@@ -307,10 +307,10 @@ class Commands:
                 return print("Canceled input. (1)")
             if search_type in [0]:
                 kwargs = text_input("You've found the hidden eval search option!\n"
-                                    "Complete the code: noteutil.get_list(<...>)")
+                                    "Type your eval statement:")
                 if kwargs is None:
                     return print("Canceled input. (0)")
-                note_list = eval("noteutil.get_list(" + kwargs + ")")
+                note_list = eval(kwargs)
             elif search_type in [1, 3, 4, 6]:
                 compare_type = range_input("How do you want to compare?"
                                            "\n\t1. Equals"
