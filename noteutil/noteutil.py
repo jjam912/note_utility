@@ -85,6 +85,7 @@ class NoteUtil:
     """
 
     CONFIG_IGNORE_PREFIX = "#|"
+    TEMPORARY_CONFIG_FILE = "noteutil_temporary_config.txt"
 
     def __init__(self, config_file: str, refresh: bool = True):
         self.notes = []
@@ -160,18 +161,18 @@ class NoteUtil:
                 else:
                     raw_config += line + "\n"
 
-        with open("temp.cfg", mode="w") as f:
+        with open("noteutil_temporary_config.txt", mode="w") as f:
             f.write(raw_config)
 
     def _read_config(self) -> None:
         """Parses the config file into NoteUtil attributes."""
 
-        with open("temp.cfg", mode="r") as f:
+        with open(self.TEMPORARY_CONFIG_FILE, mode="r") as f:
             lines = f.readlines()
             if len(lines) < 13:
                 raise IncorrectConfig(len(lines))
 
-        with open("temp.cfg", mode="r") as f:
+        with open(self.TEMPORARY_CONFIG_FILE, mode="r") as f:
             lines = readlines(f)
 
             # Read line by line to get each variable
@@ -184,6 +185,8 @@ class NoteUtil:
             self._read_headings(lines)
             self._read_categories(lines)
             self._read_extensions(lines)
+
+        os.remove(self.TEMPORARY_CONFIG_FILE)
 
     def _read_headings(self, lines):
         self.heading_char = next(lines) or None
