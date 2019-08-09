@@ -274,11 +274,12 @@ class NoteUtil:
                 if self.blocks is not None:
                     if line.strip().startswith(self.blocks):
                         line = line[len(self.blocks):]
+                        index += 1
                         while index < len(lines):
-                            index += 1
                             line += "\n" + lines[index]
                             if lines[index].strip().endswith(self.blocks):
                                 break
+                            index += 1
                         line = line[:-1 * len(self.blocks)]
                 if line != "":
                     yield line.strip()
