@@ -19,4 +19,4 @@ noteutil.get(content="Note's content")
 
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[GPL 3.0](https://choosealicense.com/licenses/gpl-3.0/)
