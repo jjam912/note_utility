@@ -27,16 +27,16 @@ class ConfiguratorView:
         self.status_label = None
         self.init_info_labels()
 
-        self.line_numbers_text = None
-        self.text_editor = None
-        self.yscrollbar = None
-        self.init_text_editor()
-
         self.editor_button = None
         self.searcher_button = None
         self.quizzer_button = None
         self.reviewer_button = None
         self.init_actions_frame()
+
+        self.line_numbers_text = None
+        self.text_editor = None
+        self.yscrollbar = None
+        self.init_text_editor()
 
         self.controller.read_settings()
         self.text_editor.bind("<Any-KeyRelease>", lambda e: self.controller.on_content_change(), add=True)
