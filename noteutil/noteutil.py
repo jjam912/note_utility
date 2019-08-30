@@ -140,7 +140,7 @@ class NoteUtil:
         Detects unusual spacing and writes stripped contents into a temporary config file.
         """
 
-        with open(self.config_file, mode="r") as f:
+        with open(self.config_file, mode="r", encoding="utf8") as f:
             raw_config = ""
             lines = f.readlines()
             for index, line in enumerate(lines):
@@ -161,18 +161,18 @@ class NoteUtil:
                 else:
                     raw_config += line + "\n"
 
-        with open("noteutil_temporary_config.txt", mode="w") as f:
+        with open("noteutil_temporary_config.txt", mode="w", encoding="utf8") as f:
             f.write(raw_config)
 
     def _read_config(self) -> None:
         """Parses the config file into NoteUtil attributes."""
 
-        with open(self.TEMPORARY_CONFIG_FILE, mode="r") as f:
+        with open(self.TEMPORARY_CONFIG_FILE, mode="r", encoding="utf8") as f:
             lines = f.readlines()
             if len(lines) < 13:
                 raise IncorrectConfig(len(lines))
 
-        with open(self.TEMPORARY_CONFIG_FILE, mode="r") as f:
+        with open(self.TEMPORARY_CONFIG_FILE, mode="r", encoding="utf8") as f:
             lines = readlines(f)
 
             # Read line by line to get each variable
@@ -236,11 +236,11 @@ class NoteUtil:
         """
 
         try:
-            open(self.note_file, mode="r").close()
+            open(self.note_file, mode="r", encoding="utf8").close()
         except FileNotFoundError:
             raise NoteFileNotFound(self.note_file)
 
-        with open(self.note_file, mode="r") as f:
+        with open(self.note_file, mode="r", encoding="utf8") as f:
             raw_notes = ""
             for line in f.readlines():
                 # Check for comments or empty line
@@ -253,7 +253,7 @@ class NoteUtil:
                 # Passed, add it to the raw notes
                 raw_notes += line
 
-        with open(self.nu_file, mode="w") as f:
+        with open(self.nu_file, mode="w", encoding="utf8") as f:
             f.write(raw_notes)
 
     def _read_notes(self) -> Generator[str, None, None]:
@@ -265,7 +265,7 @@ class NoteUtil:
         str
         """
 
-        with open(self.nu_file, mode="r") as f:
+        with open(self.nu_file, mode="r", encoding="utf8") as f:
             lines = f.read().split("\n")
 
             index = 0
@@ -660,10 +660,10 @@ class NoteUtil:
         """
 
         raw_notes = "\n".join(list(map(lambda n: n.rcontent, self.notes)))
-        with open(self.nu_file, mode="w") as f:
+        with open(self.nu_file, mode="w", encoding="utf8") as f:
             f.write(raw_notes)
         if override_notes:
-            with open(self.note_file, mode="w") as f:
+            with open(self.note_file, mode="w", encoding="utf8") as f:
                 f.write(raw_notes)
 
     def load(self) -> None:

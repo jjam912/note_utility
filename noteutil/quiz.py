@@ -50,7 +50,7 @@ class Quiz:
         # Saving
         self.qz_file = self.noteutil.note_file.split(".")[0] + ".qz"
         if not os.path.exists(self.qz_file):
-            open(self.qz_file, mode="w").close()
+            open(self.qz_file, mode="w", encoding="utf8").close()
 
     @property
     def unmarked(self):
@@ -219,7 +219,7 @@ class Quiz:
         kwargs = dict()
         kwargs["correct"] = list(map(lambda p: p.rcontent, self.correct))
         kwargs["incorrect"] = list(map(lambda p: p.rcontent, self.incorrect))
-        with open(self.qz_file, mode="w") as f:
+        with open(self.qz_file, mode="w", encoding="utf8") as f:
             f.write(json.dumps(kwargs))
 
     def load(self) -> None:
@@ -232,7 +232,7 @@ class Quiz:
 
         self.reset()
         kwargs = dict()
-        with open(self.qz_file, mode="r") as f:
+        with open(self.qz_file, mode="r", encoding="utf8") as f:
             try:
                 kwargs = json.loads(f.read())
             except json.JSONDecodeError:

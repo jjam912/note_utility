@@ -576,7 +576,7 @@ class SearcherController:
         self.settings = {}
 
     def read_settings(self):
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
@@ -588,14 +588,14 @@ class SearcherController:
     def save_settings(self):
         self.settings["note_preview"] = self.note_preview.get()
 
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
                 program_settings = {}
         program_settings["searcher"] = self.settings
 
-        with open(SETTINGS_DIR, mode="w") as f:
+        with open(SETTINGS_DIR, mode="w", encoding="utf8") as f:
             f.write(json.dumps(program_settings))
 
     def add_kwargs(self, query):

@@ -447,7 +447,7 @@ class ReviewerController:
         self.settings = {}
 
     def read_settings(self):
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
@@ -475,14 +475,14 @@ class ReviewerController:
         self.settings["extension_format"] = self.extension_format
         self.settings["extension_first"] = self.extension_first
 
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
                 program_settings = {}
         program_settings["reviewer"] = self.settings
 
-        with open(SETTINGS_DIR, mode="w") as f:
+        with open(SETTINGS_DIR, mode="w", encoding="utf8") as f:
             f.write(json.dumps(program_settings))
 
     def format_question(self, note, term_format):

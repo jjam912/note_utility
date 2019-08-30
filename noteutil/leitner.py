@@ -49,7 +49,7 @@ class Leitner:
         # Saving
         self.lt_file = self.noteutil.note_file.split(".")[0] + ".lt"
         if not os.path.exists(self.lt_file):
-            open(self.lt_file, mode="w").close()
+            open(self.lt_file, mode="w", encoding="utf8").close()
 
     def generate(self, *, randomize: bool) -> Generator[Note, None, None]:
         """A generator that yields Notes according to the session number.
@@ -205,7 +205,7 @@ class Leitner:
         kwargs["times"] = self.times
         kwargs["session"] = self.session
 
-        with open(self.lt_file, mode="w") as f:
+        with open(self.lt_file, mode="w", encoding="utf8") as f:
             f.write(json.dumps(kwargs))
 
     def load(self) -> None:
@@ -218,7 +218,7 @@ class Leitner:
 
         self.reset()
         kwargs = dict()
-        with open(self.lt_file, mode="r") as f:
+        with open(self.lt_file, mode="r", encoding="utf8") as f:
             try:
                 kwargs = json.loads(f.read())
             except json.JSONDecodeError:

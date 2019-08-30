@@ -162,7 +162,7 @@ class ConfiguratorController:
         if not os.path.exists(NOTES_DIR):
             os.mkdir(NOTES_DIR)
         if not os.path.exists(SETTINGS_DIR):
-            with open(SETTINGS_DIR, mode="w") as f:
+            with open(SETTINGS_DIR, mode="w", encoding="utf8") as f:
                 f.write("{}")
 
         self.config_file_path = None
@@ -171,7 +171,7 @@ class ConfiguratorController:
         self.settings = {}
 
     def read_settings(self):
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
@@ -181,26 +181,26 @@ class ConfiguratorController:
             self.config_file_path = self.settings.get("config_file_path", None)
             self.config_file_name = self.settings.get("config_file_name", None)
             if self.config_file_path is not None:
-                with open(self.config_file_path, mode="r") as f:
+                with open(self.config_file_path, mode="r", encoding="utf8") as f:
                     self.on_open_config(f)
 
     def save_settings(self):
         self.settings["config_file_path"] = self.config_file_path
         self.settings["config_file_name"] = self.config_file_name
 
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
                 program_settings = {}
         program_settings["configurator"] = self.settings
 
-        with open(SETTINGS_DIR, mode="w") as f:
+        with open(SETTINGS_DIR, mode="w", encoding="utf8") as f:
             f.write(json.dumps(program_settings))
 
     def on_new_config(self):
         self.view.text_editor.delete(1.0, tk.END)
-        with open("CONFIG_TEMPLATE.txt", mode="r") as f:
+        with open("CONFIG_TEMPLATE.txt", mode="r", encoding="utf8") as f:
             self.view.text_editor.insert(tk.END, f.read())
             self.file_update()
         return "break"
@@ -235,7 +235,7 @@ class ConfiguratorController:
     def on_save(self):
         if self.config_file_path is None:
             return self.on_save_as()
-        with open(self.config_file_path, mode="w") as f:
+        with open(self.config_file_path, mode="w", encoding="utf8") as f:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
@@ -245,7 +245,7 @@ class ConfiguratorController:
                                            filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
         if file:
             self.file_update(file)
-            with open(self.config_file_path, mode="w") as f:
+            with open(self.config_file_path, mode="w", encoding="utf8") as f:
                 f.write(self.view.text_editor.get(1.0, tk.END).strip())
         return "break"
 
@@ -307,10 +307,10 @@ class ConfiguratorController:
         self.save_settings()
         option = "ok"
         if self.config_file_path is not None:
-            with open(self.config_file_path, mode="r") as f:
+            with open(self.config_file_path, mode="r", encoding="utf8") as f:
                 previous_text = f.read()
         else:
-            with open("CONFIG_TEMPLATE.txt", mode="r") as f:
+            with open("CONFIG_TEMPLATE.txt", mode="r", encoding="utf8") as f:
                 previous_text = f.read()
 
         if previous_text.strip() != self.view.text_editor.get(1.0, tk.END).strip():

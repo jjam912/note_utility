@@ -247,7 +247,7 @@ class EditorController:
         self.settings = {}
 
     def read_settings(self):
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
@@ -257,21 +257,21 @@ class EditorController:
             self.file_path = self.settings.get("file_path", None)
             self.file_name = self.settings.get("file_name", None)
             if self.file_path is not None:
-                with open(self.file_path, mode="r") as f:
+                with open(self.file_path, mode="r", encoding="utf8") as f:
                     self.on_open_file(f)
 
     def save_settings(self):
         self.settings["file_path"] = self.file_path
         self.settings["file_name"] = self.file_name
 
-        with open(SETTINGS_DIR, mode="r") as f:
+        with open(SETTINGS_DIR, mode="r", encoding="utf8") as f:
             try:
                 program_settings = json.loads(f.read())
             except json.JSONDecodeError:
                 program_settings = {}
         program_settings["editor"] = self.settings
 
-        with open(SETTINGS_DIR, mode="w") as f:
+        with open(SETTINGS_DIR, mode="w", encoding="utf8") as f:
             f.write(json.dumps(program_settings))
 
     def on_new_file(self):
@@ -305,7 +305,7 @@ class EditorController:
     def on_save(self):
         if self.file_path is None:
             return self.on_save_as()
-        with open(self.file_path, mode="w") as f:
+        with open(self.file_path, mode="w", encoding="utf8") as f:
             f.write(self.view.text_editor.get(1.0, tk.END).strip())
 
     def on_save_as(self):
@@ -316,7 +316,7 @@ class EditorController:
                                                       ("Markdown Documents", "*.md"), ("All Files", "*.*")])
         if file:
             self.file_update(file)
-            with open(self.file_path, mode="w") as f:
+            with open(self.file_path, mode="w", encoding="utf8") as f:
                 f.write(self.view.text_editor.get(1.0, tk.END).strip())
         return "break"
 
@@ -421,7 +421,7 @@ class EditorController:
         option = "ok"
         previous_text = ""
         if self.file_path is not None:
-            with open(self.file_path, mode="r") as f:
+            with open(self.file_path, mode="r", encoding="utf8") as f:
                 previous_text = f.read()
         if previous_text.strip() != self.view.text_editor.get(1.0, tk.END).strip():
             option = tkmsgbox.askyesnocancel(parent=self.view.root, title="Window closing",
