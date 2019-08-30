@@ -9,7 +9,6 @@ import json
 import webbrowser
 
 
-NOTES_DIR = os.path.join(os.getcwd(), "notes")
 SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
@@ -281,7 +280,7 @@ class EditorController:
 
     def on_open_file(self, file=None):
         if file is None:
-            file = tkfiledialog.askopenfile(parent=self.view.root, defaultextension=".txt", initialdir=NOTES_DIR,
+            file = tkfiledialog.askopenfile(parent=self.view.root, defaultextension=".txt",
                                             title="Open file",
                                             filetypes=[("NoteUtil Notes", "*.nu"), ("Text Documents", "*.txt"),
                                                        ("Markdown Documents", "*.md"), ("All Files", "*.*")])
@@ -311,7 +310,7 @@ class EditorController:
     def on_save_as(self):
         file_name = self.file_name if self.file_name is not None else ""
         file = tk.filedialog.asksaveasfile(defaultextension=".txt",
-                                           initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
+                                           initialfile=file_name, title="Save as",
                                            filetypes=[("NoteUtil Notes", "*.nu"), ("Text Documents", "*.txt"),
                                                       ("Markdown Documents", "*.md"), ("All Files", "*.*")])
         if file:

@@ -10,7 +10,6 @@ import json
 import webbrowser
 
 
-NOTES_DIR = os.path.join(os.getcwd(), "notes")
 SETTINGS_DIR = os.path.join(os.getcwd(), "settings.json")
 
 
@@ -159,8 +158,6 @@ class ConfiguratorController:
         self.quiz = quiz
         self.leitner = leitner
 
-        if not os.path.exists(NOTES_DIR):
-            os.mkdir(NOTES_DIR)
         if not os.path.exists(SETTINGS_DIR):
             with open(SETTINGS_DIR, mode="w", encoding="utf8") as f:
                 f.write("{}")
@@ -207,7 +204,7 @@ class ConfiguratorController:
 
     def on_open_config(self, file=None):
         if file is None:
-            file = tkfiledialog.askopenfile(defaultextension=".txt", initialdir=NOTES_DIR, title="Open config",
+            file = tkfiledialog.askopenfile(defaultextension=".txt", title="Open config",
                                             filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
         if file:
             self.view.text_editor.delete(1.0, tk.END)
@@ -241,7 +238,7 @@ class ConfiguratorController:
     def on_save_as(self):
         file_name = self.config_file_name if self.config_file_name is not None else ""
         file = tk.filedialog.asksaveasfile(defaultextension=".txt",
-                                           initialdir=NOTES_DIR, initialfile=file_name, title="Save as",
+                                           initialfile=file_name, title="Save as",
                                            filetypes=[("Text Documents", "*.txt"), ("All Files", "*.*")])
         if file:
             self.file_update(file)
