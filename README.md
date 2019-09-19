@@ -15,13 +15,6 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the not
 ```bash
 python3 -m pip install noteutil
 ```
-
-However, should you wish to install the implementations of NoteUtil, you should directly clone the repository.
-
-```bash
-git clone https://github.com/JJamesWWang/noteutil.git
-```
-
 ### Usage
 
 NoteUtil requires a configuration file in order to work properly. Please see [RULES.md](RULES.md) for an in-depth
