@@ -1,3 +1,26 @@
+# Table of Contents
+* [NoteUtil Rules](#noteutil-rules)
+    * [Typing Notes](#typing-notes)
+        * [Headings](#headings)
+        * [Categories](#categories)
+        * [Extensions](#extensions)
+        * [Pairs](#pairs)
+    * [Order of Conversation](#order-of-conversion)
+    * [Editing Notes](#editing-notes)
+* [Configuration Setup](#configuration-setup)
+    * [Configuration Parameters](#configuration-parameters)
+    * [Configuration Example](#configuration-example)
+* [Quiz Rules](#quiz-rules)
+    * [Usage of Terms and Definitions in Quiz](#usage-of-terms-and-definitions-in-quiz)
+    * [Usage of Headings in Quiz](#usage-of-headings-in-quiz)
+    * [Quiz Options](#quiz-options)
+    * [Saving, Loading, and Refreshing in Quiz](#saving-loading-and-refreshing-in-quiz)
+* [Leitner Rules](#leitner-rules)
+    * [Usage of Terms and Definitions in Leitner](#usage-of-terms-and-definitions-in-leitner)
+    * [Boxes](#boxes)
+    * [Saving, Loading, and Refreshing in Leitner](#saving-loading-and-refreshing-in-leitner)
+    
+
 # NoteUtil Rules:
 
 ## Typing Notes:
