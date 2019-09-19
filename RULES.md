@@ -28,13 +28,13 @@ When typing your notes, it is essential that you follow these guidelines so that
     with as few bugs as possible. 
 The following rules dictate a few requirements for your notes:
 
-1. Each intended *note* must be separated by a newline (what you get by pressing enter).
-2. If you intend for a *note* to become a *pair*, it must have only one *separator*.
-3. If you want a *note* to be ignored, you must start the line with whatever you put for *Comments* in the Config file.
+1. Each intended note must be separated by a newline (what you get by pressing enter), unless it is a block.
+2. Create blocks by surrounding the note by the "block" string designated in the config file.
+3. If you want a note to be ignored, you must start the line with whatever you put for "comments" in the config file.
 
 Your notes are read from the beginning of the file to the end, so order will matter, especially if you use headings.
 
-## Headings:
+### Headings:
 When you want to structure your notes into a hierarchy, you use *headings*. In Markdown, one "#" indicates the highest 
 level heading, while six "#"s indicate the lowest level heading. You must construct your notes in this way too, 
 repeating one character at the start of a line, if you want to use headings in your notes.
@@ -60,10 +60,11 @@ Rules for using headings:
     You cannot go from a level 1 heading to a level 3 heading.
 3. Going back up a level of heading (level 3 to 2) to the previous heading is not allowed. 
     Either type the notes that are intended for the 2nd level heading immediately after it, or create a new 2nd level heading.
-4. Do not use the heading character within the first n characters of your notes when starting a new line, with n being the number of headings.
-5. Headings are considered notes too, and thus must also comply with the note rules.
+4. Heading names (content) must be unique.
+5. Do not use the heading character within the first n characters of your notes when starting a new line, with n being the number of headings.
+6. Headings are considered notes too, and thus must also comply with the note rules.
 
-## Categories:
+### Categories:
 When you want to group together specific notes, but they don't appear in chronological order, you can use Categories to 
 include all of them into the same "heading-like" way. These are prefixed the similarly to Headings, except that you definitely
 should use a different character and category characters do not repeat. 
@@ -82,7 +83,7 @@ Rules for using Categories:
 3. If Category prefixes are not in the order shown in the config file, then they will not be recognized.
 4. The Categories themselves aren't Notes, but they reference to a group of Notes similar to Headings.
 
-## Extensions:
+### Extensions:
 Extensions are an additional piece of text that you want to separate from either the main content of the *Note*. 
 They are created by surrounding your notes with a specific string (bounds) and are useful for adding information to a *Note* that's not required.
 
@@ -104,6 +105,23 @@ Rules for using extensions:
 1. Extensions must have a name, left bound string, and right bound string.
 2. If your note is a pair, that does not affect how your extension is made, but you should be careful for conflicts between the separators and the extension's bounds.
 3. Extensions are an addition to a *note*, so it must be included in the content of a *note*. Otherwise it just becomes a note.
+
+### Pairs:
+Pairs are notes that are separated into two parts by a separator; the left part is called the term, and the right part
+is called the definition. Pairs are essential to NoteUtil because of their usage in Quiz and Leitner as the basis of
+questions and answers. 
+
+Example:
+```
+Scalars ~ These are elements of fields (F). It is a fancy word for "number," and is often used when we want to emphasize that an object is a number, as opposed to a vector. 
+```
+In this case, the separator is the tilde (~), and the term is everything before the separator ("Scalar"), 
+while the definition is everything after the separator. 
+
+Rules for using pairs:
+1. A pair may only have one separator.
+2. Pairs must have content after the separator (no empty definitions).
+3. Terms may not be duplicated.
 
 ## Order of Conversion:
 The order of conversion is the order in which NoteUtil creates its notes. Here is the order:
@@ -129,12 +147,14 @@ You are able to:
     * ~~If you remove a heading, it will also delete every other note and  headings that were under that heading.~~
 3. ~~Append notes by parsing new content.~~
 
-Too hard to implement; just copy your .nu file to your original note file, and then add/remove what you need.
+Numbers 2 and 3 have not been implemented yet.
+
+# Configuration Setup:
 
 # Quiz Module Rules:
 
-## Quiz:
-### Terms and Definitions:
+# Quiz Rules:
+## Usage of Terms and Definitions in Quiz:
 
 The quiz revolves around notes that are pairs - those who have a separator that distinguish between term and definition.
 Any notes that are not pairs have no use in the quiz module, aside from headings. With your terms and definitions, 
@@ -144,7 +164,7 @@ Once the quiz gives you the pair, you can mark the term as correct or incorrect,
 A standard procedure of quizzing is to cycle through all of the terms, marking each one of them correct or incorrect 
 as you answer them, and then reviewing all of the ones you got incorrect until you memorize them. 
 
-### Use of Headings in Quiz:
+## Usage of Headings in Quiz:
 
 Headings help you decide which group of notes you want to study. If you only want to study a single chapter out of many,
 then you can simply select that chapter (heading) to quiz yourself on without worrying about the other notes. 
@@ -155,7 +175,7 @@ WARNING: You should not have a heading with the name "correct" or "incorrect" be
 to only use notes that you marked as correct or incorrect. This name is case sensitive, however, so you can have a heading
 named "Correct" or "Incorrect" without any issues.
 
-### Options:
+## Quiz Options:
 
 Several options are available to help you customize your quizzing session. Among them include:
 
@@ -164,7 +184,7 @@ Several options are available to help you customize your quizzing session. Among
 * Tracking of correct and incorrect answers
 * Selecting terms that you haven't marked as correct or incorrect
 
-### Saving, Loading, and Refreshing:
+## Saving, Loading, and Refreshing in Quiz:
 
 Once you are done quizzing, you can save the terms that you marked as correct and incorrect in a .qz file. 
 However, be aware that if you decide to change your notes and then try to load your save progress, the quiz will only
@@ -175,9 +195,9 @@ An alternative to saving and loading while using the program is to refresh the q
 and have another NoteUtil, you can update the quiz with your new notes. Again, the quiz will discard any old notes that
 do not match exactly with any of the new notes.
 
-## Leitner Rules:
+# Leitner Rules:
 
-### Terms and Definitions:
+## Usage of Terms and Definitions in Leitner:
 
 The Leitner uses notes that are pairs - those who have a separator that distinguish between term and definition.
 Any notes that are not pairs will have no use in the Leitner module. With your terms and definitions, you will go
@@ -186,7 +206,7 @@ review "session." The next review session will always include all of the terms t
 after a few sessions the terms that you got right will start appearing less and less frequently. Thus, you will review
 the terms that you marked incorrect more often than the ones that you marked correct.
 
-### Boxes
+## Boxes
 The Leitner system is a method of spaced repetition where cards are reviewed at increasing intervals. This program
 uses seven boxes, or groups of terms for spaced repetition. By default, cards in Box 1 (default) will be reviewed every
 other session because these are the ones that are new or marked incorrect. Card boxes will appear in the following
@@ -202,7 +222,7 @@ periods:
 
 You can change the periods of review for each box or limit the number of boxes.
 
-### Saving, Loading, and Refreshing:
+## Saving, Loading, and Refreshing in Leitner:
 
 Once you are done reviewing, you can save the terms that are in your boxes into a .lt file.
 However, be aware that if you decide to change your notes and then try to load your save progress, the Leitner will only
