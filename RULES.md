@@ -151,7 +151,131 @@ Numbers 2 and 3 have not been implemented yet.
 
 # Configuration Setup:
 
-# Quiz Module Rules:
+## Configuration Parameters
+This section assumes you understand the rules from [NoteUtil Rules](#noteutil-rules). The core content of the config
+file consists of:
+
+1. File path
+    * The full file path to the notes file.
+    
+    * Examples:
+        * C:\Users\NAME\Documents\notes.txt
+        *  /home/NAME/Documents/notes.md
+   
+2. Comments
+    * This is a string prefix attached to lines to indicate that the line is not a note.
+    
+    Example of a comment in a note file.
+    ```
+    // Comments are defined as "//"
+    // These lines will not be seen by NoteUtil.
+    ```
+   
+3. Blocks
+    * Surround lines with this string in a way similar to bounding them. 
+    * Blocks allow newlines \\n inside of a note.
+    
+    Example of a block in a note file. Let the block string be defined as \`\`\`
+    ````
+    ```
+    print("Hello "
+          " world!")
+    ```
+    ````
+   
+4. Separator
+    * This is a string used to create pairs by separating terms from definitions.
+    * Common separators are the hyphen `-` and the colon `:`.
+5. Heading
+    * Used to denote a hierarchy from general to more specific.
+    1. Heading character
+        * This is a character prefix attached to lines to indicate a new heading.
+        * One example of a heading character is the `#` character, as used in Markdown.
+        ```
+        # This indicates the highest level heading in Markdown
+        ## Second highest level
+        ### h3
+        ```
+    2. Number of headings
+    3. Heading names
+6. Category
+    1. Number of categories
+    2. Category names
+    3. Category prefixes
+        * This is a string prefix attached to lines to indicate that the note belongs to a certain category.
+        * These are usually used when some category applies to notes across different headings.
+        * One example of a category prefix is `!`, which could be used to denote an important note or a warning.
+        ```
+        ! This note is important.
+        While this note is not.
+        ```
+7. Extensions
+    1. Number of extensions
+    2. Extension names
+    3. Extension bounds
+        * These are two strings that bound part of a line.
+        * Examples:
+            * Images without text in Markdown
+                * Here the left bound is `![](` and the right bound is `)`
+            ```
+            ![](https://website.com/image.png)
+            ```
+            * LaTeX
+                * Here the left bound is `\[` and the right bound is `\]`
+                ```
+                \[0v = (0 + 0)v = 0v + 0v = 0\]
+                ```
+
+## Configuration Example
+Feel free to check out my [notes repository](https://github.com/JJamesWWang/notes) if you want to see how I am using 
+notes in conjunction with NoteUtil. Here is an example from my [Honors Linear Algebra notes](https://authorea.com/users/263364/articles/384581-linear-algebra)
+```
+#| ----------------------
+#| NOTEUTIL CONFIGURATION
+#| ----------------------
+#|
+#| [Required] File path - To detect your notes file.
+C:\Users\JSW_XPS13\Documents\code\python\notes\linalg_notes.md
+#| [Optional] Comments (cannot be #|) - Prefix a line in your notes with this so it is ignored while your notes are being read.
+>>>
+#| [Optional] Blocks (cannot be #|) - Prefix a line and suffix a different line with this to make a multi-line note.
+^^^
+#| [Recommended] Separator - For the creation of Pairs.
+~
+#| [Recommended] Heading character - To indicate a Headings hierarchy.
+#
+    #| [Required if Heading character given, otherwise leave blank.]
+    #| Number of Headings - To tell how many levels of Headings there are.
+2
+    #| A name for each Heading separated by newlines - To give each level of Heading a general name to refer to.
+    #| The number of names should match the number of Headings.
+Classification
+Topic
+#| [Optional] Number of Categories - To know how many different Categories will be created.
+1
+    #| [Required if Number of Categories given, otherwise leave blank]
+    #| A name for each Category separated by newlines - To give each Category a general name to refer to. Order matters.
+Important
+    #| For each name on a newline in the same order, enter the character prefix.
+!
+#| [Optional] Number of Extensions - To know how many different types of Extensions will be created.
+6
+    #| [Required if Number of Extensions given, otherwise leave blank.]
+    #| A name for each extension separated by newlines - To give each Extension a general name to refer to.
+Additional Information
+Example
+LaTeX
+Simple Definition
+Image
+Image Explanation
+    #| For each name on a newline, enter the 1. left bound, and 2. right bound separated by a space.
+&& &&
+%% %%
+\[ \]
+<e> <z>
+![]( )
+![ ]
+```
 
 # Quiz Rules:
 ## Usage of Terms and Definitions in Quiz:
