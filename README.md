@@ -21,6 +21,13 @@ NoteUtil requires a configuration file in order to work properly. Please see [RU
 tutorial on writing notes that satisfy NoteUtil's note creation process and correctly completing the config file. 
 A config file template can be found at [CONFIG.txt](CONFIG.txt) 
 
+#### Implementations
+
+NoteUtil currently has two implementations using its design.
+
+1. [NoteUtil GUI](https://github.com/JJamesWWang/noteutil_gui)
+2. [NoteUtil Console](https://github.com/JJamesWWang/noteutil_console)
+
 ## Testing
 
 Tests using [pytest](https://docs.pytest.org/en/latest/) are currently in development. 
