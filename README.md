@@ -5,7 +5,7 @@ document of information. NoteUtil identifies different parts of the document bas
 itself so that it maintains the same structure. This makes retrieving information through code as easy and simple as 
 looking at the document itself. It also makes searching through loads of information more automated and effortless. 
 In addition to storing information, NoteUtil also contains separate data structures that handles studying the 
-information (See [Quiz](https://github.com/JJamesWWang/noteutil/RULES.md#quiz-rules), [Leitner](https://github.com/JJamesWWang/noteutil/RULES.md#leitner-rules)). 
+information (See [Quiz](https://github.com/JJamesWWang/noteutil/blob/master/RULES.md#quiz-rules), [Leitner](https://github.com/JJamesWWang/noteutil/blob/master/RULES.md#leitner-rules)). 
 
 ## Getting Started
 
