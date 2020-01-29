@@ -44,3 +44,4 @@ This project is licensed under the [GPL 3.0 License](LICENSE)
 
 NoteUtil arose from the need for a better way to study for my history classes starting sophomore year;  I wish to thank
 Mr. Brennan and Mr. Sima for the inspiration of this project.
+The original [Java project!](https://github.com/JJamesWWang/quizlet-simulator)

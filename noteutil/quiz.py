@@ -71,17 +71,18 @@ class Quiz:
             A pair that is either in random or chronological order.
         """
 
+        notes = [n for n in self.pairs]
         if randomize:
-            indexes = [i for i in range(len(self.pairs))]
-            random.shuffle(indexes)
-            while indexes:
-                note = self.pairs[indexes.pop()]
+            random.shuffle(notes)
+            while notes:
+                index = random.randint(0, len(notes) - 1)
+                note = notes.pop(index)
                 self.last_nindex = note.nindex
                 yield note
         else:
             index = 0
-            while index < len(self.pairs):
-                note = self.pairs[index]
+            while index < len(notes):
+                note = notes[index]
                 self.last_nindex = note.nindex
                 yield note
                 index += 1
